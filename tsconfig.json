@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true, //允许默认导入CommonJS模块
+    "baseUrl": "./", // 这里需要配置
+    "paths": {
+      "@/*": ["./src/*"]// 这里需要配置
+    }
+    // 如果baseUrl设置为'src',那paths就应该配置为{"@/*": "./*"},如下：
+    // "baseUrl": "src",
+    // "paths": {
+    //  "@/*": ["./*"]
+    // }
+  },
+  "include": [
+    "types/index.d.ts",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    }
+  ]
+}

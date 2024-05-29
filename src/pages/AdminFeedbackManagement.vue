@@ -1,0 +1,193 @@
+<template>
+  <el-header class="header1">
+    反馈管理
+  </el-header>
+  <div class="header2">
+    <span></span>
+    <el-button @click="clearFilter">清空全部筛选</el-button>
+  </div>
+     <el-main  style="padding-bottom:0;padding-top: 0 ">
+    <el-table ref="tableRef" :data="tableData" style="width: 100%" max-height="500" stripe border highlight-current-row
+              table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }"
+              @sort-change="handleSortChange">
+      <el-table-column fixed prop="id" label="ID" width="70" sortable/>
+      <el-table-column prop="contact" label="联系方式" width="200"/>
+      <el-table-column prop="content" label="反馈内容" width="400"/>
+      <el-table-column prop="status" label="状态" width="100" :filters="[
+        { text: '已标记', value: 1 },
+        { text: '未标记', value: 0 },
+      ]" :filter-method="filterHandler">
+        <template #default="scope">
+          <el-button text type="primary" v-if="scope.row.status===1">已标记</el-button>
+          <el-button text type="info" v-else-if="scope.row.status===0">未标记</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column prop="created_time" label="创建时间" width="150">
+        <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
+      </el-table-column>
+           <el-table-column prop="updated_time" label="标记时间" width="150">
+        <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
+      </el-table-column>
+      <el-table-column fixed="right" label="操作" width="120" align="center">
+        <template #default="scope">
+
+          <el-button link type="primary" size="small" @click="updateFeedback(scope.$index, scope.row)"><span v-if="scope.row.status===0">标记</span><span v-else>取消标记</span></el-button>
+          <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row.id)">
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+  </el-main>
+</template>
+
+
+<script setup lang="ts">
+import {useRouter} from 'vue-router'
+import axios from "axios";
+import {ElMessage, ElMessageBox} from "element-plus";
+import type {TableColumnCtx, TableInstance} from "element-plus";
+import {reactive, ref} from 'vue'
+import useTimeStamp from "@/hooks/useTimestamp";
+
+const {getTime} = useTimeStamp()
+
+const router = useRouter()
+
+//管理员登录判断
+import useUserInfo from "@/hooks/useUserInfo";
+
+const {isAdmin} = useUserInfo()
+if (!isAdmin.value) router.replace({name: 'home'})
+
+const tableRef = ref<TableInstance>()
+let tableData = reactive([])
+
+//清空全部筛选条件
+const clearFilter = () => {
+  tableRef.value!.clearFilter()
+}
+
+//筛选器
+const filterHandler = (
+    value: string,
+    row: Feedback,
+    column: TableColumnCtx<Feedback>
+) => {
+  const property = column['property']
+  return row[property] === value
+}
+
+//监听排序行为，并修改数组顺序,否则删除会出错
+function handleSortChange({column, prop, order}) {
+  // 根据 column 和 order 对 this.tableData 进行排序
+  tableData.sort((a, b) => {
+    if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
+    if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
+    return 0;
+  })
+}
+
+
+interface Feedback {
+  id: number,
+  contact?: string,
+  content: string,
+  status: number,
+  created_time: string,
+  updated_time: string,
+}
+
+//获取全部公告
+getFeedback()
+
+function getFeedback() {
+  axios({
+    url: '/getFeedback',
+  }).then(result => {
+    // console.log(result)
+    const {msg, data} = result.data
+    ElMessage.success(msg)
+    tableData.splice(0, tableData.length)
+    data.forEach((item: Feedback) => {
+      tableData.push(item)
+    })
+  }).catch(error => {
+    console.log('发生错误：')
+    console.dir(error)
+  })
+}
+
+//上传更新的反馈信息(标记)
+function updateFeedback(index: number, oldData: Feedback) {
+  let status=oldData.status
+  if (status===1) status=0
+  else status=1
+  axios({
+    url: '/updateFeedback',
+    method: 'post',
+    data: {
+      status,
+      id:oldData.id
+    }
+  }).then(result => {
+    // console.log(result)
+    const {msg} = result.data
+    //更新修订时间为当前时间
+    const updated_time = new Date().toISOString()
+    //将修改后的信息显示出来
+    Object.assign(oldData, {status,updated_time})
+    ElMessage.success(msg)
+  }).catch(error => {
+    console.log('发生错误：')
+    console.log(error)
+    ElMessage.error(error.message)
+  })
+}
+
+
+//确认删除操作
+const deleteRow = (index: number, id: number) => {
+  ElMessageBox.confirm(
+      '确认删除该反馈吗?',
+      'Warning',
+      {
+        confirmButtonText: '确认删除',
+        cancelButtonText: '取消删除',
+        type: 'warning',
+        showClose: false
+      }
+  )
+      .then(() => {
+        deleteFeedback(index, id)
+        console.log(index, id)
+      })
+      .catch(() => {
+        ElMessage({
+          type: 'info',
+          message: '删除操作已取消',
+        })
+      })
+}
+
+//删除公告
+const deleteFeedback = (index: number, id: number) => {
+  axios({
+    url: '/deleteFeedback',
+    method: 'delete',
+    params: {id}
+  }).then((result) => {
+    // console.log(result)
+    ElMessage.success(result.data.msg)
+    tableData.splice(index, 1)
+    console.log(tableData)
+  }).catch(error => {
+    console.dir('发生错误：' + error)
+  })
+}
+</script>
+
+
+<style scoped>
+
+</style>

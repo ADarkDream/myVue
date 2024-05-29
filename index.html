@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta content="默默" name="author"/>
+    <meta content="此网站为默默的个人网站，用于分享一些软件或网站，侵权请联系删除。" name="description"/>
+    <title>默默的小站</title>
+    <style>
+        body {
+            //background: no-repeat  center / cover fixed;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+
+        /*夜间模式*/
+        .dark {
+            /* 自定义深色背景颜色 */
+            --el-bg-color: #626aef;
+        }
+
+        a {
+            text-decoration: none;
+        }
+        /*去除未被访问的a标签的下划线*/
+        a:link {
+            text-decoration: none;
+        }
+        /*去除已经被访问过的a标签的下划线*/
+        a:visited {
+            text-decoration: none;
+        }
+        /*去除鼠标悬停时的a标签的下划线*/
+        a:hover {
+            text-decoration: none;
+        }
+        /*去除正在点击的a标签的下划线（鼠标按下，尚未松开）*/
+        a:active {
+            text-decoration: none;
+        }
+        /*去除获得焦点的a标签的下划线（被鼠标点击过）*/
+        a:focus {
+            text-decoration: none;
+        }
+
+        @media (max-width: 980px) {
+            body {
+                overflow-Y: visible;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<script type="module" src="./src/main.ts"></script>
+</body>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+</html>

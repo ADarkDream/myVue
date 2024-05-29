@@ -1,0 +1,248 @@
+<template>
+  <!--    导航栏-->
+  <el-menu mode="horizontal" default-active="1">
+    <el-menu-item index="1" @click="isShow=1">
+      网站介绍
+    </el-menu-item>
+    <el-menu-item index="2" @click="isShow=2">
+      更新说明
+    </el-menu-item>
+    <el-menu-item index="3" @click="isShow=3">
+      其它
+    </el-menu-item>
+  </el-menu>
+
+  <el-scrollbar height="400px">
+    <!--       网站介绍区-->
+    <el-collapse-transition v-show="isShow===1">
+      <el-collapse v-model="activeName" >
+        <!--    待更新的功能-->
+        <el-collapse-item title="介绍" name="1">
+          <el-card class="notice">
+            <el-text>
+              1.本页面为
+              <el-button link @click="m=!m" title="点击查看联系方式"><b>Resource sharing群</b></el-button>
+              <template v-if="m">
+                <el-link target="_blank" type="primary"
+                         href="https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V"
+                         title="点击跳转">QQ群:1005993749
+                </el-link>
+              </template>
+              群友
+              <el-button link @click="n=!n" title="点击查看联系方式"><b>默默</b></el-button>
+              <template v-if="n">
+                <el-link target="_blank" type="primary" href="tencent://message/?uin=1224021291" title="点击跳转">
+                  QQ:1224021291
+                </el-link>
+              </template>
+              的个人网站,
+              <el-text style="color: orangered">暂时仅用作个人毕业设计项目</el-text>
+              。资源来自网络,侵权请联系删除。
+            </el-text>
+            <br>
+            <el-text>
+              2.当前界面勉强适配移动端。等我学废了再回来继续优化。
+            </el-text>
+            <br>
+            <el-text>
+              3.若部分网站无法访问，请使用Chrome,Edge,Firefox等国外浏览器或使用VPN，也可能是因为网站暂时关闭。
+            </el-text>
+            <br>
+            <el-text>4.你也可以
+              <el-link target="_blank" type="primary"
+                       href="https://mp-00526be3-cd12-41bd-84f7-bfbce63bb7d0.cdn.bspapp.com/test1/BookMarks_2023_8_15_2.zip"
+                       title="下载书签">点击此处
+              </el-link>
+              下载，解压出HTML文件，导入到自己的浏览器收藏夹。导入步骤可参考相关教程视频：
+              <el-link target="_blank" type="primary"
+                       href="https://www.bilibili.com/video/BV1rr4y1S79J/"
+                       title="B站教程视频">点击此处
+              </el-link>
+              。
+            </el-text>
+            <br>
+          </el-card>
+        </el-collapse-item>
+        <el-collapse-item title="友情链接" name="2" >
+          <template style="display: flex;justify-content: left">
+              <el-link target="_blank"
+                       href="https://letsgofishing5.github.io/lsgfish-resource-sharing/"
+                       title="资源收藏与分享">
+          <el-button type="primary" ><img src="@/assets/custom.png" alt="" style="width: 25px">&ensp; lsgfish-resource-sharing</el-button>
+      </el-link>
+       </template>
+
+        </el-collapse-item>
+
+      </el-collapse>
+
+    </el-collapse-transition>
+
+    <!--    更新说明-->
+    <el-collapse-transition v-show="isShow===2">
+      <el-timeline><br>
+        <el-timeline-item v-for="item in  updateNotes.slice().reverse()" :key="item.id" style="text-align: left"
+                          :timestamp="item.timestamp" placement="top">
+          <el-card>
+            <b>{{ item.title }}</b><br>
+            <el-text> &ensp;{{ item.content }}</el-text>
+          </el-card>
+        </el-timeline-item>
+      </el-timeline>
+    </el-collapse-transition>
+
+    <!--其它-->
+    <el-collapse-transition v-show="isShow===3">
+      <el-collapse v-model="activeName" accordion>
+        <!--    待更新的功能-->
+        <el-collapse-item title="待更新的功能" name="1">
+          <template v-for="item in noUpdated" :key="item.id">
+            <el-button text :icon="Edit">{{ item.content }}</el-button>
+            <br>
+          </template>
+        </el-collapse-item>
+        <!--    留言反馈-->
+        <el-collapse-item title="留言反馈" name="2">
+          <el-form style="margin: 0 5%">
+            <el-form-item label="联系方式：">
+              <el-input type="text" v-model.trim="contact" maxlength="30"
+                        placeholder="可以在此填写联系方式【例：本站注册邮箱：12345@qq.com】（非必填项）"></el-input>
+            </el-form-item>
+            <el-form-item label="反馈内容：">
+              <el-input type="textarea" v-model.trim="content" minlength="5" maxlength="200" show-word-limit
+                        placeholder="可以在此提交建议、bug反馈或其他内容（必填项）"/>
+            </el-form-item>
+          </el-form>
+          <el-button type="primary" @click="submitFeedback">提交反馈</el-button>
+        </el-collapse-item>
+      </el-collapse>
+    </el-collapse-transition>
+
+
+    <el-divider>已加载全部内容</el-divider>
+  </el-scrollbar>
+</template>
+
+<script setup lang="ts">
+import {reactive, ref} from "vue";
+import {Back, Edit} from "@element-plus/icons-vue";
+import {ElCollapseTransition, ElMessage} from 'element-plus'
+import axios from "axios";
+import useTimeStamp from "@/hooks/useTimestamp";
+
+const {getTime} = useTimeStamp()
+
+let n = ref(false)
+let m = ref(false)
+let isShow = ref(1)
+
+//公告标题
+// let t = 6
+// let notice = ref('点击查看公告')
+// const noticeTime = setInterval(() => {
+//   t--
+//   notice.value = `点击查看公告(${t}秒后自动隐藏)`
+//   if (t === 0) {
+//     isShow.value = false
+//     clearInterval(noticeTime)
+//   }
+// }, 1000)
+//
+//
+// function showNotice() {
+//   clearInterval(noticeTime)
+//   notice.value = '点击查看公告'
+// }
+
+//region公告设置
+//endregion
+
+//region更新说明
+const updateNotes = reactive([])
+const noUpdated = reactive([])
+
+interface Notice {
+  id: number,
+  title: string,
+  sort: string,
+  content: string,
+  created_time: string,
+  updated_time: string,
+  status: number,
+  timestamp?: string
+}
+
+//获取已发布公告
+getNotices()
+
+function getNotices() {
+  axios({
+    url: '/getNotices',
+  }).then(result => {
+    // console.log(result)
+    const {noticeList} = result.data
+    // ElMessage.success( result.data.msg)
+    updateNotes.splice(0, updateNotes.length)
+    noUpdated.splice(0, noUpdated.length)
+    noticeList.forEach((item: Notice) => {
+      if (item.created_time === item.updated_time) item.timestamp = getTime(item.created_time)
+      else item.timestamp = '发布时间：' + getTime(item.created_time) + '  上次修订于：' + getTime(item.updated_time)
+      if (item.sort === 'updateNotes') updateNotes.push(item)
+      if (item.sort === 'noUpdated') noUpdated.push(item)
+    })
+  }).catch(error => {
+    console.log('发生错误：')
+    console.dir(error)
+  })
+}
+
+
+//endregion
+
+//region待更新功能
+//默认展开第几条,因为设置了accordion，所以必须是字符串格式
+const activeName = ref(['1'])
+
+//endregion
+
+
+//反馈
+let contact = ref('')
+let content = ref('')
+
+function submitFeedback() {
+  console.log(content.value.length)
+  if (content.value === '') return ElMessage.error('反馈内容不能为空')
+  if (contact.value.length > 30) return ElMessage.error('联系方式超出长度限制')
+  if (content.value.length < 5 || content.value.length > 200) return ElMessage.error('反馈内容应为5-200个字符')
+  axios({
+    url: '/submitFeedback',
+    method: 'post',
+    data: {
+      contact: contact.value,
+      content: content.value
+    }
+  }).then(result => {
+    // console.log(result)
+    contact.value = ''
+    content.value = ''
+    ElMessage.success(result.data.msg)
+  }).catch(error => {
+    console.log('发生错误：')
+    console.log(error)
+    //ElMessage.error('发生错误：' + error.message)
+  })
+}
+
+
+</script>
+
+<style scoped>
+.notice {
+  text-align: left;
+}
+
+@media (max-width: 980px) {
+
+}
+</style>
