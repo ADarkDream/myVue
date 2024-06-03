@@ -12,7 +12,7 @@
 
 
     <el-card class="footer">
-      <el-button link type="success">本网站暂时用作毕业设计</el-button>
+<!--      <el-button link type="success">本网站暂时用作毕业设计</el-button>-->
       <!--    备案信息-->
       <div>
         <el-space spacer="|">
