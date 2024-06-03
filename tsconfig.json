@@ -1,9 +1,14 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true, //允许默认导入CommonJS模块
-    "baseUrl": "./", // 这里需要配置
+    "esModuleInterop": true,
+    //允许默认导入CommonJS模块
+    "baseUrl": "./",
+    // 这里需要配置
     "paths": {
-      "@/*": ["./src/*"]// 这里需要配置
+      "@/*": [
+        "./src/*"
+      ]
+      // 这里需要配置
     }
     // 如果baseUrl设置为'src',那paths就应该配置为{"@/*": "./*"},如下：
     // "baseUrl": "src",
@@ -11,6 +16,9 @@
     //  "@/*": ["./*"]
     // }
   },
+  //使用 import.meta.dev需要配置下面两排
+  "--module": "es2022",
+  "moduleResolution": "Node",
   "include": [
     "types/index.d.ts",
     "src/**/*.ts",

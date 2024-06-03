@@ -12,7 +12,7 @@
 
 
     <el-card class="footer">
-<!--      <el-button link type="success">本网站暂时用作毕业设计</el-button>-->
+      <!--      <el-button link type="success">本网站暂时用作毕业设计</el-button>-->
       <!--    备案信息-->
       <div>
         <el-space spacer="|">
@@ -64,8 +64,8 @@ interface Token {
 }
 
 
-// 本地服务器基地址
-axios.defaults.baseURL = 'http://127.0.0.1:9000'
+// 本地服务器基地址,根据本环境配置的DEV参数判断是生产环境还是开发环境
+axios.defaults.baseURL = import.meta.env.DEV === true ? 'http://127.0.0.1:9000' : 'https://muxidream.cn/api/'
 
 //云服务器基地址
 // axios.defaults.baseURL = 'https://muxidream.cn/api/'
