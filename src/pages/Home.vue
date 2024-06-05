@@ -52,7 +52,7 @@ Main {
   position: absolute;
   display: flex;
   justify-content: center;
-  bottom: 30px;
+  bottom: 5px;
 }
 
 #jinrishici-sentence {
@@ -76,10 +76,13 @@ Main {
   }
 */
   Aside {
+    display: none;
+    /*
     position: fixed;
     top: 0;
     width: 20%;
     height: 10%;
+    */
   }
 
 }

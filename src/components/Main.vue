@@ -141,7 +141,6 @@ import ico_360 from '@/assets/360.png';
 import ico_custom from '@/assets/custom.png';
 
 
-
 const {isLogin} = useUserInfo()
 
 //上传导航网站面板的显示与隐藏
@@ -712,6 +711,10 @@ img {
     transform: translateY(-15%);
     animation: ease 0.8s;
     height: 20%;
+  }
+
+  .content {
+    width: 100%
   }
 
   .contentUp {

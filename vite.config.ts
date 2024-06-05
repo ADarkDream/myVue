@@ -13,6 +13,9 @@ export default defineConfig({
     define: {//打开控制台插件
         __VUE_PROD_DEVTOOLS__: true,
     },
+    server: {
+        host: "0.0.0.0"
+    },
     plugins: [
         vue(),
         VueSetupExtend(),

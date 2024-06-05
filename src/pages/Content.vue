@@ -5,7 +5,7 @@
         <el-button class="refresh" type="success" circle @click="changeFlag" :icon="UploadFilled"/>
       </el-tooltip>
       <el-button link type="primary" style="font-size: 20px">
-        {{ nameList[num]}}[{{ listType }}]
+        {{ nameList[num] }}[{{ listType }}]
       </el-button>
       <el-button v-if="false" @click="addAllUrl(localList[num],targetList[num])">批量上传 {{ nameList[num] }}
         网址到数据库
@@ -40,7 +40,7 @@ import emitter from "@/utils/emitter";
 
 // import {useRoute} from "vue-router";
 
-defineProps(['showContent','changeFlag'])
+defineProps(['showContent', 'changeFlag'])
 // const route = useRoute()
 
 
@@ -105,7 +105,7 @@ let num = ref<number>(0)
 emitter.on('getListNum', (Num?: number) => {
   if (typeof Num === "number") {
     //调用方法，获取云端列表,失败则使用本地数据
-        num.value = Num
+    num.value = Num
     listType.value = '云端'
     getImgUrl(targetList[Num]).catch((error) => {
       console.error('调用getImgUrl函数时捕获到错误:', error);
@@ -144,7 +144,6 @@ function refresh() {
 }
 
 
-
 //region 批量上传网址到数据库
 function addAllUrl(urlList, tableName) {
   urlList.forEach(item => {
@@ -172,7 +171,6 @@ function addUrl(urlInfo, table) {
 }
 
 //endregion
-
 
 
 </script>
@@ -220,29 +218,40 @@ function addUrl(urlInfo, table) {
   width: 15px;
 }
 
+.hide {
+  display: none;
+}
+
 @media (max-width: 980px) {
+  .show {
+    display: none;
+  }
+
+  .hide {
+    display: block;
+  }
+
   .mainContent {
     display: block;
     justify-content: space-between;
     flex-flow: wrap;
+    padding: 0;
   }
 
   .cards {
-    height: 30%;
-    width: 70%;
+    display: inline-block;
+    height: 100px;
+    width: 45%;
     margin: 0 auto;
     font-size: 12px;
   }
 
-  .cards:active {
-    width: 80%;
-  }
-
   .cards:hover {
-    flex-shrink: 0;
-    flex-grow: 2;
+    height: 100px;
+    font-size: 12px;
     width: 90%;
-    height: 20%;
+    transition: initial 0.5s;
+
   }
 }
 </style>

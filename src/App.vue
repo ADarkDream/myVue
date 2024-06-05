@@ -11,24 +11,26 @@
     </el-main>
 
 
-    <el-card class="footer">
-      <!--      <el-button link type="success">本网站暂时用作毕业设计</el-button>-->
-      <!--    备案信息-->
-      <div>
-        <el-space spacer="|">
-          <el-button link tag="a" type="info"
-                     @click="copyText('50011502001039','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
-            <img src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败">
-            &ensp;渝公网安备50011502001039
-          </el-button>
-
-          <el-button link tag="a" type="info" @click="copyText('渝ICP备2024030473号','http://beian.miit.gov.cn/')">
-            渝ICP备2024030473号
-          </el-button>
-        </el-space>
-      </div>
-    </el-card>
   </el-container>
+  <div class="footer">
+    <!--  <el-card class="footer" shadow="none">-->
+    <!--      <el-button link type="success">本网站暂时用作毕业设计</el-button>-->
+    <!--    备案信息-->
+    <div>
+      <el-space spacer="|">
+        <el-button link tag="a" type="info"
+                   @click="copyText('50011502001039','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
+          <img src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败">
+          &ensp;渝公网安备50011502001039
+        </el-button>
+
+        <el-button link tag="a" type="info" @click="copyText('渝ICP备2024030473号','http://beian.miit.gov.cn/')">
+          渝ICP备2024030473号
+        </el-button>
+      </el-space>
+    </div>
+    <!--    </el-card>-->
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -174,6 +176,7 @@ aside {
   .footer {
     background-color: transparent;
     border: transparent;
+    height: 25px;
   }
 }
 
@@ -186,6 +189,7 @@ aside {
 
   .footer {
     position: fixed;
+    height: 25px;
   }
 }
 
