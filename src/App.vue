@@ -6,7 +6,7 @@
     </el-header>
 
     <!-- 主要呈现部分(Home / Forum)-->
-    <el-main class="mainContent">
+    <el-main class="main">
       <router-view/>
     </el-main>
 
@@ -185,6 +185,10 @@ aside {
     padding: 0;
     position: fixed;
     width: 100%;
+  }
+
+  .main {
+    padding-top: 50px
   }
 
   .footer {

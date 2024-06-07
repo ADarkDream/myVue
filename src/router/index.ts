@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import Home from "@/pages/Home.vue";
-import Content from "@/pages/Content.vue";
+import Forum from "@/pages/Forum.vue";
 import User from "@/pages/User.vue";
 import AdminLogin from "@/pages/AdminLogin.vue";
 import AdminCenter from "@/pages/AdminCenter.vue";
@@ -37,7 +37,7 @@ const router = createRouter({
         },
         {
             path: '/forum',//论坛
-            // component: Forum,
+            component: Forum,
             children: [
                 {
                     name: 'center',//大厅

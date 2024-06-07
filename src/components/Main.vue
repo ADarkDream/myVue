@@ -29,7 +29,7 @@
     <el-button class="searchBtn" @click="search" :icon="Search"/>
   </div>
   <!-- 用户更改搜索引擎列表-->
-  <el-dialog title="更改搜索引擎列表" :width="dialogWidth" :show-close="false" v-model="engineOption">
+  <el-dialog title="更改搜索引擎列表" :width="dialogWidth"  v-model="engineOption" :fullscreen="!isPC">
     <el-divider>【当前使用的搜索引擎不可隐藏且不在此展示】</el-divider>
     <el-scrollbar height="400">
       <el-divider>默认搜索引擎</el-divider>
@@ -139,8 +139,8 @@ import ico_bing from '@/assets/bing.png';
 import ico_google from '@/assets/google.png';
 import ico_360 from '@/assets/360.png';
 import ico_custom from '@/assets/custom.png';
-
-
+import useResponsive from "@/hooks/useResponsive";
+const {screenWidth, isPC,dialogWidth,dialogWidth2} = useResponsive()
 const {isLogin} = useUserInfo()
 
 //上传导航网站面板的显示与隐藏
@@ -194,7 +194,7 @@ function showContent() {
   // console.log('是否显示内容区')
   // console.log('isShow' + isShow.value)
   isShow.value = !isShow.value
-  if (isShow.value && width > 980) timeClass.value = 'timeUp'
+  if (isShow.value && isPC.value) timeClass.value = 'timeUp'
   else timeClass.value = 'time'
 }
 
@@ -350,19 +350,6 @@ function hideUserEngine(engine: engineData) {
 
 //region 添加搜索引擎
 let addEngineFlag = ref(false)
-//控制PC和手机的dialog宽度
-let dialogWidth = ref('50%')
-let dialogWidth2 = ref('40%')
-//获取当前屏幕宽度
-const width = document.body.clientWidth
-//修改dialog框的宽度
-if (width <= 980) {
-  dialogWidth.value = '90%'
-  dialogWidth2.value = '80%'
-} else {
-  dialogWidth.value = '50%'
-  dialogWidth2.value = '40%'
-}
 
 //新加搜索引擎的图标
 let src = ref(ico_custom)
@@ -714,7 +701,7 @@ img {
   }
 
   .content {
-    width: 100%
+    width: 100%;
   }
 
   .contentUp {

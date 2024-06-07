@@ -19,7 +19,8 @@
       <!--网址显示区域-->
       <el-card class="cards" shadow="hover" v-for="item in resultList">
         <el-button plain link><img class="urlImg" :src="item.img" alt="">
-          <el-link :href="item.url" type="primary" :underline="false" target="_blank">{{ item.name }}</el-link>
+<!--          <el-text type="primary" @click="location.href=item.url" truncated>{{ item.name }}</el-text>-->
+          <el-link :href="item.url" type="primary" :underline="false" target="_blank"> {{ item.name }}</el-link>
         </el-button>
         <template #footer>{{ item.detail }}</template>
       </el-card>

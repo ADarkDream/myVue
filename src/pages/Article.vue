@@ -13,7 +13,8 @@
       刷新
     </el-button>
   </div>
-  <el-scrollbar height="700px" class="mainContent">
+
+  <div class="mainContent">
     <el-container style="min-height: 400px">
       <el-header>
         <div class="articleTitle">{{ article.title }}<span v-if="article.status===0"
@@ -37,7 +38,7 @@
       </el-footer>
     </el-container>
 
-
+    <!--评论区-->
     <el-container class="commentArea">
       <el-header>
         <el-divider>评论区</el-divider>
@@ -67,6 +68,8 @@
         </el-row>
       </el-main>
     </el-container>
+
+    <!--    添加评论-->
     <el-card class="addCommentDiv" v-if="isShow&&!isAdmin">
       <el-row class="addComment">
         <el-col :span="1">
@@ -85,7 +88,7 @@
 
       </el-row>
     </el-card>
-  </el-scrollbar>
+  </div>
 
 
 </template>
@@ -99,7 +102,6 @@ import {ref} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {ArrowLeftBold, Refresh, Comment, Delete} from "@element-plus/icons-vue";
 import useUserInfo from "@/hooks/useUserInfo";
-
 
 const {isLogin, isAdmin, uid, headImgUrl, errorImage} = useUserInfo()
 const router = useRouter()
@@ -288,6 +290,7 @@ const deleteComment = (id: number) => {
   position: relative;
   background-color: var(--el-color-primary-light-9);
   color: var(--el-text-color-primary);
+  padding-bottom: 80px;
 }
 
 
@@ -316,7 +319,6 @@ const deleteComment = (id: number) => {
 
 .el-col { /*评论区文字垂直居中*/
   display: flex;
-
   align-items: center;
 }
 
@@ -337,11 +339,13 @@ const deleteComment = (id: number) => {
    position: absolute;
 
  margin: 0 10%;
-
-  */
   position: sticky;
   bottom: 0;
-
+  */
+  position: absolute;
+  width: 100%;
+  height: 80px;
+  bottom: 0;
 }
 
 .addComment {

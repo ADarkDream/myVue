@@ -230,7 +230,6 @@ function submitFeedback() {
   }).catch(error => {
     console.log('发生错误：')
     console.log(error)
-    //ElMessage.error('发生错误：' + error.message)
   })
 }
 

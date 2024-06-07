@@ -4,10 +4,7 @@
     <Aside/>
   </el-aside>
 
-
-
   <Main/>
-
 
   <el-footer class="footer">
     <el-button type="primary" link id="jinrishici-sentence">命里有时终须有，命里无时梦里有。
@@ -76,13 +73,13 @@ Main {
   }
 */
   Aside {
-    display: none;
     /*
+    display: none;
+    */
     position: fixed;
     top: 0;
     width: 20%;
     height: 10%;
-    */
   }
 
 }
