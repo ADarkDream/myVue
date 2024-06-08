@@ -1,12 +1,13 @@
 <template>
   <!--  PC端-->
+  <div >
   <el-scrollbar :height="screenHeight-100" class="centerScrollbar" v-if="isPC">
       <router-view/>
   </el-scrollbar>
 
   <!--移动端-->
   <router-view class="centerScrollbar" v-else/>
-
+</div>
 </template>
 
 <script setup lang="ts">

@@ -2,7 +2,7 @@
   <!--PC端标题-->
   <el-row class="title" v-if="isPC">
     <!--左上角-->
-    <el-col :lg="5" :md="6" :sm="8" class="title-left ">
+    <el-col :lg="5" :md="6" :sm="8">
       <!--更换背景-->
       <el-button class="bgBtn" @click="changeBG(0)">更换背景</el-button>
       <!--下载背景-->
@@ -10,7 +10,7 @@
         <el-link :href="bgUrl" target="_blank" :underline="false">下载背景</el-link>
       </el-button>
       <!--日夜切换-->
-      <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日" class="isDark">
+      <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日" class="isDarkBtn">
         <template #active-action>
           <el-icon>
             <Moon/>
@@ -24,31 +24,28 @@
       </el-switch>
     </el-col>
     <!--中间导航-->
-    <el-col :lg="14" :md="12" :sm="8" class="bar">
-      <el-space spacer="">
-        <!--        首页-->
-        <router-link :to="{name:'home'}" replace>
-          <el-button plain :icon="HomeFilled">
-            首页
-          </el-button>
-        </router-link>
-        <!--        论坛-->
-        <router-link :to="{name:'center'}" replace>
-          <el-button plain :icon="Comment">
-            论坛
-          </el-button>
-        </router-link>
-      </el-space>
+    <el-col :lg="13" :md="11" :sm="8">
+      <!--            <el-space spacer="">-->
+      <!--              &lt;!&ndash;        首页&ndash;&gt;-->
+      <!--              <router-link :to="{name:'home'}" replace>-->
+      <!--                <el-button plain :icon="HomeFilled" v-show="isHome">-->
+      <!--                  首页-->
+      <!--                </el-button>-->
+      <!--              </router-link>-->
+      <!--              &lt;!&ndash;        论坛&ndash;&gt;-->
+      <!--              <router-link :to="{name:'center'}" v-show="!isHome" replace >-->
+      <!--                <el-button plain :icon="Comment">-->
+      <!--                  论坛-->
+      <!--                </el-button>-->
+      <!--              </router-link>-->
+      <!--            </el-space>-->
     </el-col>
-    <!--右上角登录窗口-->
-    <el-col :lg="5" :md="6" :sm="8" class="title-right">
+    <!--右上角-->
+    <el-col :lg="6" :md="7" :sm="8">
       <el-space>
-        <el-button class="username " type="primary" v-if="isLogin" @click="goCenter">{{ username }}
-          <el-image class="headIcon" :src="headImgUrl" alt="" :onerror="errorImage"/>
-        </el-button>
         <!--登录按钮-->
         <el-button @click="showLogin = true" v-if="!isLogin">登录
-          <svg type="primary" style="margin-left: 16px" class="headIcon" viewBox="0 0 1024 1024">
+          <svg type="primary" style="margin-left: 16px;height: 20px;width: 20px" viewBox="0 0 1024 1024">
             <path
                 d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"
                 fill=""></path>
@@ -57,8 +54,25 @@
                 fill=""></path>
           </svg>
         </el-button>
+        <!--登陆后的按钮-->
+        <el-button class="username " type="primary" v-if="isLogin" @click="goCenter">{{ username }}
+          <el-image class="headIcon" :src="headImgUrl" alt="" :onerror="errorImage"/>
+        </el-button>
+        <!--首页-->
+        <router-link :to="{name:'home'}" v-if="!isHome" replace>
+          <el-button plain :icon="HomeFilled">
+            首页
+          </el-button>
+        </router-link>
+        <!--论坛-->
+        <router-link :to="{name:'center'}" v-if="isHome" replace>
+          <el-button plain :icon="Comment">
+            论坛
+          </el-button>
+        </router-link>
         <!--选项菜单-->
         <el-dropdown>
+
           <el-button class="option" :icon="Operation">
             选项
           </el-button>
@@ -92,23 +106,32 @@
   </el-row>
 
   <!--  移动端标题-->
-  <div class="title " v-if="!isPC">
-    <!--手机的选项下拉菜单-->
-    <!--中间导航-->
-    <div class="bar">
-      <el-space>
-        <!--首页-->
-        <router-link :to="{name:'home'}">
-          <el-button plain :icon="HomeFilled"/>
-        </router-link>
+  <el-row class="title" v-if="!isPC">
+    <!--左上角返回-->
+    <el-col class="title-left">
+      <el-space spacer="">
         <!--论坛-->
-        <router-link :to="{name:'center'}">
+        <router-link :to="{name:'center'}" v-if="isHome" style="margin-left: 53px">
           <el-button plain :icon="Comment"/>
         </router-link>
+        <!--    返回键-->
+        <el-button :icon="ArrowLeftBold" @click="router.back()" v-if="!isHome"/>
+        <!--首页-->
+        <router-link :to="{name:'home'}" v-if="!isHome">
+          <el-button plain :icon="HomeFilled"/>
+        </router-link>
       </el-space>
-    </div>
+
+    </el-col>
+    <!--中间导航-->
+    <el-col class="bar">
+      <!--      <el-space>-->
+
+
+      <!--      </el-space>-->
+    </el-col>
     <!--右上角登录和选项-->
-    <div class="title-right">
+    <el-col class="title-right">
       <el-space>
         <el-button class="username " type="primary" v-if="isLogin" @click="goCenter">
           <!--{{ username }}太窄了不够显示-->
@@ -116,7 +139,7 @@
         </el-button>
         <!--登录按钮-->
         <el-button @click="showLogin = true" v-if="!isLogin">
-          <svg type="primary" class="headIcon" viewBox="0 0 1024 1024">
+          <svg type="primary" style="width: 20px;height: 20px" viewBox="0 0 1024 1024">
             <path
                 d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"
                 fill=""></path>
@@ -151,7 +174,7 @@
               </el-dropdown-item>
               <!--日夜切换-->
               <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日"
-                         :inactive-action-icon="Sunny" :active-action-icon="Moon" class="isDark"/>
+                         :inactive-action-icon="Sunny" :active-action-icon="Moon" class="isDarkBtn"/>
               <!--公告-->
               <el-dropdown-item :icon="Comment" @click="showNotice=!showNotice">
                 公告
@@ -164,13 +187,12 @@
           </template>
         </el-dropdown>
       </el-space>
-    </div>
-  </div>
-
+    </el-col>
+  </el-row>
 
 
   <!--登录和注册窗口-->
-  <el-drawer v-model="showLogin" class="login" :before-close="isClose" :size="isPC? '30%':'100%' " :show-close="!isPC"
+  <el-drawer v-model="showLogin" :before-close="isClose" :size="isPC? '30%':'100%' " :show-close="!isPC"
              destroy-on-close="destroy-on-close">
     <template #header="{titleClass }">
       <el-button v-show="isShow" @click="isShow=!isShow" class="backBtn" :icon="ArrowLeftBold">
@@ -244,13 +266,13 @@ import useUserInfo from '@/hooks/useUserInfo'
 import {useRouter} from "vue-router";
 import useResponsive from "@/hooks/useResponsive";
 
-const {screenWidth, isPC} = useResponsive()
+const {isDark, isPC, isHome} = useResponsive()
 
 const router = useRouter()
 
 const {isLogin, isAdmin, username, headImgUrl, bgUrl, errorImage} = useUserInfo()
 
-//获取背景图,有用户的且选择使用则使用用户的图，没有则使用默认图
+// //获取背景图,有用户的且选择使用则使用用户的图，没有则使用默认图
 if (localStorage.getItem('useUserBGUrl') !== '1') bgUrl.value = ''
 if (bgUrl.value === '') bgUrl.value = localStorage.getItem('bgUrl')
 
@@ -263,7 +285,7 @@ let showSetting = ref(false)
 //下拉按钮里面的字，暂时用不上
 // let darkStr = ref('夜间模式')
 //控制日夜模式切换
-let isDark = ref(sessionStorage.getItem('isDark') === '1' || false)
+// let isDark = ref(sessionStorage.getItem('isDark') === '1' || false)
 //登录和注册界面的判断
 const showLogin = ref(false)
 //登录和注册界面的标题——————待修改，需要响应式
@@ -308,8 +330,8 @@ function light() {
     sessionStorage.setItem('isDark', '0')
     // console.log('当前为日间模式')
   } else {
-    html.classList.add('dark')
     body.style.backgroundImage = ''
+    html.classList.add('dark')
     // darkStr.value = '夜间模式'
     sessionStorage.setItem('isDark', '1')
     // console.log('当前为夜间模式')
@@ -336,7 +358,7 @@ function changeBG(number: number) {
   console.log(`一共有${list.length}张图。现在是第${num}张图`)
   console.log('当前背景图片地址是：' + list[num] + '\r\n如需更多壁纸请前往重返未来1999官网：' + 'https://re.bluepoch.com/home/detail.html#wallpaper')
   bgUrl.value = list[num]
-  body.style.backgroundImage = `url(${list[num]})`
+  if (!isDark.value) body.style.backgroundImage = `url(${list[num]})`
   localStorage.setItem('bgUrl', list[num])
 }
 
@@ -385,10 +407,11 @@ const isClose = (done: Function) => {
           // 动画关闭需要一定的时间
         }, 200)
       })
-      .catch(err => {
-        //什么都不选
-        // ElMessage.error(err)
-      })
+  // .catch(msg => {
+  //   //什么都不选
+  //   console.log(msg)
+  //   ElMessage.info(msg)
+  // })
 }
 
 
@@ -412,22 +435,36 @@ function closeNotice() {
   showNotice.value = false
 }
 
+//判断当前页面
+watch(router.currentRoute, (newValue, oldValue) => {
+  if (newValue === oldValue) return
+  if (newValue.path !== '/') {
+    isHome.value = false
+    console.log('路由切换了,当前不是主页')
+  } else {
+    isHome.value = true
+    console.log('是主页')
+  }
+})
+// setInterval(() => {
+//   // console.log(router.currentRoute.value.path,router.currentRoute.value.path==='/',isHome.value)
+//   // if (!isHome.value) console.log(router.currentRoute.value.path)
+//   if (isHome.value) console.log('是主页')
+//   else console.log('不是主页')
+// }, 1000)
 
 </script>
 
 <style scoped>
 .title {
-  margin-top: 10px;
+  padding: 5px 0;
   justify-content: space-between;
+  background-color: -webkit-focus-ring-color;
 }
 
 
-.isDark {
+.isDarkBtn {
   margin-left: 10px;
-}
-
-.hide {
-  display: none;
 }
 
 
@@ -436,7 +473,7 @@ function closeNotice() {
   /*图片从button里面移除就需要这个调整位置
 margin-top: -20px ;
   */
-  margin-top: -5px;
+  padding-top: 0;
   background-color: transparent;
   border: transparent;
   font: 20px bold, '华文行楷', serif;
@@ -452,8 +489,8 @@ margin-top: -20px ;
 /*导航栏头像*/
 .headIcon {
   margin-left: 10px;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   border-radius: 15px;
 }
 
@@ -486,28 +523,17 @@ margin-top: -20px ;
 
 
 @media (max-width: 980px) {
-  .show {
-    display: none;
-  }
 
-  .hide {
-    display: block;
-  }
-
-  .icon {
-    width: 18px;
-    height: 18px;
-  }
 
   .title-left {
     position: absolute;
-    top: 10px;
+    top: 5px;
     left: 0;
   }
 
   .title-right {
     position: absolute;
-    top: 10px;
+    top: 5px;
     right: 0;
   }
 

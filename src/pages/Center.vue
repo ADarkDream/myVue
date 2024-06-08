@@ -3,9 +3,10 @@
     <el-main class="content">
       <div class="searchDiv">
         <!--   文章筛选区-->
+
         <el-collapse>
           <el-collapse-item title="&ensp;&ensp;&ensp;文章筛选条件">
-            <el-form class="search" :model="data" label-position="left" label-width="auto">
+            <el-form class="search" size="small" :inline="true" :model="data" label-position="left" >
               <el-form-item label="文章标题">
                 <el-input v-model="data.title" placeholder="填写文章标题" clearable :prefix-icon="Search"/>
               </el-form-item>
@@ -34,8 +35,6 @@
                 <el-button type="primary" @click="getArticleList">查询</el-button>
               </div>
             </el-form>
-
-
           </el-collapse-item>
         </el-collapse>
       </div>
@@ -52,8 +51,8 @@
       <!--        </el-card>-->
       <div class="card" v-for="item in articleList" @click="toArticle(item.id)">
         <div class="articleCover">
-                      <el-image :src="item.coverUrl">
-<!--          <el-image src="http://muxi-dream.oss-cn-chengdu.aliyuncs.com/bg/1717785767035_1717785800322.jpeg">-->
+          <el-image :src="item.coverUrl">
+            <!--          <el-image src="http://muxi-dream.oss-cn-chengdu.aliyuncs.com/bg/1717785767035_1717785800322.jpeg">-->
             <template #error>
               <div class="image-slot">
                 <el-icon style="width: 50px">
@@ -75,7 +74,9 @@
           </div>
           <div class="footer">
             <el-text size="small" tag="b" style="width: 30%" truncated>{{ item.author }}</el-text>
-            <el-text size="small" v-if="item.created_time===item.updated_time" truncated>&ensp;&ensp;发布于:{{ getTime(item.created_time) }}</el-text>
+            <el-text size="small" v-if="item.created_time===item.updated_time" truncated>
+              &ensp;&ensp;发布于:{{ getTime(item.created_time) }}
+            </el-text>
             <el-text size="small" v-else truncated>&ensp;&ensp;修改于:{{ getTime(item.created_time) }}</el-text>
           </div>
         </div>
@@ -183,14 +184,17 @@ el-main {
   border-radius: 20px;
 }
 
-.search {
-  margin: 0 10%;
+.el-form-item  {
+  width: 20%;
 }
 
+
+/*
 .btn {
   display: flex;
   justify-content: center;
 }
+*/
 
 
 .content {
@@ -217,7 +221,10 @@ el-main {
   .container {
     margin: 0;
   }
-
+.el-form-item  {
+  width: 80%;
+  margin: 3px auto;
+}
   .content {
     padding-left: 0;
     padding-right: 0;

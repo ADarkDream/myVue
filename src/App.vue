@@ -12,25 +12,26 @@
 
 
   </el-container>
-  <div class="footer">
-    <!--  <el-card class="footer" shadow="none">-->
-    <!--      <el-button link type="success">本网站暂时用作毕业设计</el-button>-->
-    <!--    备案信息-->
-    <div>
-      <el-space spacer="|">
-        <el-button link tag="a" type="info"
-                   @click="copyText('50011502001039','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
-          <img src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败">
-          &ensp;渝公网安备50011502001039
-        </el-button>
+<!--  <div class="footer" v-if="isHome">-->
+<!--    &lt;!&ndash;  <el-card class="footer" shadow="none">&ndash;&gt;-->
+<!--    &lt;!&ndash;      <el-button link type="success">本网站暂时用作毕业设计</el-button>&ndash;&gt;-->
+<!--    &lt;!&ndash;    备案信息&ndash;&gt;-->
+<!--    <div>-->
+<!--      <el-space spacer="|">-->
+<!--        <el-button link tag="a" type="info"-->
+<!--                   @click="copyText('50011502001039','备案号','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">-->
+<!--          <img src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败">-->
+<!--          &ensp;渝公网安备50011502001039-->
+<!--        </el-button>-->
 
-        <el-button link tag="a" type="info" @click="copyText('渝ICP备2024030473号','http://beian.miit.gov.cn/')">
-          渝ICP备2024030473号
-        </el-button>
-      </el-space>
-    </div>
-    <!--    </el-card>-->
-  </div>
+<!--        <el-button link tag="a" type="info"-->
+<!--                   @click="copyText('渝ICP备2024030473号','备案号','http://beian.miit.gov.cn/')">-->
+<!--          渝ICP备2024030473号-->
+<!--        </el-button>-->
+<!--      </el-space>-->
+<!--    </div>-->
+<!--    &lt;!&ndash;    </el-card>&ndash;&gt;-->
+<!--  </div>-->
 </template>
 
 <script setup lang="ts">
@@ -39,25 +40,28 @@ import axios from "axios";
 import TitleDiv from "@/components/TitleDiv.vue";
 import {ElMessage} from "element-plus";
 import {jwtDecode} from "jwt-decode";
+import useFunction from "@/hooks/useFunction";
+import useResponsive from "@/hooks/useResponsive";
+import {watch} from "vue";
+import {useRouter} from "vue-router";
 
+const router=useRouter()
+const {isHome}=useResponsive()
+const {copyText} = useFunction()
+// watch(router.currentRoute, (newValue, oldValue) => {
+//   if (newValue === oldValue) return
+//   if (newValue.path !== '/') {
+//     isHome.value = false
+//     console.log('路由切换了,当前不是主页')
+//   } else {
+//     isHome.value = true
+//     console.log('是主页')
+//   }
+// })
 
-function copyText(text: string, url: string) {
-  navigator.clipboard.writeText(text).then(
-      () => {
-        ElMessage.success('备案号已复制到剪贴板')
-        setTimeout(() => {
-          window.open(url)
-        }, 1500)
-      },
-      () => {
-        alert('备案号复制失败,请自行复制')
-        setTimeout(() => {
-          window.open(url)
-        }, 1500)
-      }
-  )
-}
-
+// setInterval(()=>{
+//   console.log(isHome.value)
+// },2000)
 
 interface Token {
   value: {
@@ -157,8 +161,7 @@ aside {
    backdrop-filter: blur(30px);
  */
   padding: 0;
-  height: 50px;
-
+  height: 40px;
   z-index: 1000;
 }
 
@@ -173,6 +176,10 @@ aside {
 }
 
 @media (min-width: 981px) {
+  .main {
+    padding-top: 0
+  }
+
   .footer {
     background-color: transparent;
     border: transparent;
@@ -181,15 +188,17 @@ aside {
 }
 
 @media (max-width: 980px) {
+  .main {
+    padding-top: 40px
+  }
+
   .shade {
     padding: 0;
     position: fixed;
     width: 100%;
+
   }
 
-  .main {
-    padding-top: 50px
-  }
 
   .footer {
     position: fixed;

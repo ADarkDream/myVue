@@ -29,7 +29,7 @@
     <el-button class="searchBtn" @click="search" :icon="Search"/>
   </div>
   <!-- 用户更改搜索引擎列表-->
-  <el-dialog title="更改搜索引擎列表" :width="dialogWidth"  v-model="engineOption" :fullscreen="!isPC">
+  <el-dialog title="更改搜索引擎列表" :width="dialogWidth" v-model="engineOption" :fullscreen="!isPC">
     <el-divider>【当前使用的搜索引擎不可隐藏且不在此展示】</el-divider>
     <el-scrollbar height="400">
       <el-divider>默认搜索引擎</el-divider>
@@ -122,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, ref} from "vue";
+import {reactive, ref, watch} from "vue";
 import {Delete, More, Search, Sort} from "@element-plus/icons-vue";
 import emitter from "@/utils/emitter";
 import AddUrl from "@/components/AddUrl.vue";
@@ -132,6 +132,7 @@ import type {FormInstance} from "element-plus";
 import axios from "axios";
 import {ElCollapseTransition} from 'element-plus'
 import useUserInfo from "@/hooks/useUserInfo";
+import useResponsive from "@/hooks/useResponsive";
 
 import ico_baidu from '@/assets/baidu.png';
 import ico_bilibili from '@/assets/bilibili.png';
@@ -139,9 +140,10 @@ import ico_bing from '@/assets/bing.png';
 import ico_google from '@/assets/google.png';
 import ico_360 from '@/assets/360.png';
 import ico_custom from '@/assets/custom.png';
-import useResponsive from "@/hooks/useResponsive";
-const {screenWidth, isPC,dialogWidth,dialogWidth2} = useResponsive()
+
+const {screenWidth, isPC, dialogWidth, dialogWidth2} = useResponsive()
 const {isLogin} = useUserInfo()
+
 
 //上传导航网站面板的显示与隐藏
 let dialogVisible = ref(false)
@@ -159,6 +161,12 @@ const isShow = ref(false)
 let timeClass = ref('time')
 let searchClass = ref('searchDiv')
 
+//传递到Home，用于判断是否显示主页底部备案号
+
+const {showRecord} = defineProps(['showRecord'])
+if (!isPC.value) watch(isShow, (newValue, oldValue) => {
+  showRecord(!isShow.value)
+})
 
 let time = ref()
 changeTime()

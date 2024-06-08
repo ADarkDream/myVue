@@ -12,7 +12,7 @@ export default function () {
     let username = ref(userInfo.username)
     let signature = ref(userInfo.signature)
     let headImgUrl = ref(userInfo.headImgUrl)
-      let bgUrl = ref(userInfo.bgUrl)
+    let bgUrl = ref(userInfo.bgUrl)
     let isLogin = ref(false)
     let isAdmin = ref(sessionStorage.getItem('isAdmin') === '1' || false)
 

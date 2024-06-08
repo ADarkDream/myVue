@@ -1,15 +1,16 @@
-import axios from "axios";
-import {reactive, ref} from "vue";
-import {ElMessage} from "element-plus";
+import { ref} from "vue";
+import {useRouter} from "vue-router";
 
 export default function () {
+    const router=useRouter()
     const screenWidth = ref(document.body.clientWidth)
     const screenHeight = ref(window.innerHeight)
     const isPC = ref(screenWidth.value > 980)
+    const isDark = ref(sessionStorage.getItem('isDark') === '1' || false)
+    const isHome = ref(router.currentRoute.value.path === '/')
     //控制PC和手机的dialog宽度
-    let dialogWidth = ref(isPC.value ? '50%' : '90%')
-    let dialogWidth2 = ref(isPC.value ? '40%' : '80%')
-    console.log(screenHeight.value)
+    const dialogWidth = ref(isPC.value ? '50%' : '90%')
+    const dialogWidth2 = ref(isPC.value ? '40%' : '80%')
 
     if (!isPC.value) {
         dialogWidth.value = '90%'
@@ -43,7 +44,6 @@ export default function () {
         }
     }
 
-
     // 向外暴露
-    return {screen, screenWidth, screenHeight, isPC, dialogWidth, dialogWidth2}
+    return {screen, screenWidth, screenHeight, isPC, isDark,isHome, dialogWidth, dialogWidth2}
 }

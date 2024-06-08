@@ -12,32 +12,19 @@
     </el-menu-item>
   </el-menu>
 
-  <el-scrollbar height="400px">
+  <el-scrollbar height="350px">
     <!--       网站介绍区-->
     <el-collapse-transition v-show="isShow===1">
-      <el-collapse v-model="activeName" >
+      <el-collapse v-model="activeName">
         <!--    待更新的功能-->
-        <el-collapse-item title="介绍" name="1">
+        <el-collapse-item title="网站介绍" name="1">
           <el-card class="notice">
             <el-text>
               1.本页面为
-              <el-button link @click="m=!m" title="点击查看联系方式"><b>Resource sharing群</b></el-button>
-              <template v-if="m">
-                <el-link target="_blank" type="primary"
-                         href="https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V"
-                         title="点击跳转">QQ群:1005993749
-                </el-link>
-              </template>
+              <el-button link target="_blank" type="primary" @click="copyText('1005993749','QQ群号','https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V')" title="点击前往QQ">Resource sharing群</el-button>
               群友
-              <el-button link @click="n=!n" title="点击查看联系方式"><b>默默</b></el-button>
-              <template v-if="n">
-                <el-link target="_blank" type="primary" href="tencent://message/?uin=1224021291" title="点击跳转">
-                  QQ:1224021291
-                </el-link>
-              </template>
-              的个人网站,
-              <el-text style="color: orangered">暂时仅用作个人毕业设计项目</el-text>
-              。资源来自网络,侵权请联系删除。
+              <el-button link target="_blank" type="primary"  style="margin-left: 0" @click="copyText('1224021291','QQ号','tencent://message/?uin=1224021291')" title="点击前往QQ">默默</el-button>
+              的个人网站,<el-text style="color: orangered">资源来自网络,侵权请联系删除</el-text>。
             </el-text>
             <br>
             <el-text>
@@ -45,7 +32,7 @@
             </el-text>
             <br>
             <el-text>
-              3.若部分网站无法访问，请使用Chrome,Edge,Firefox等国外浏览器或使用VPN，也可能是因为网站暂时关闭。
+              3.若部分网站无法访问，请使用Chrome、Edge、Firefox等国外浏览器或使用VPN，也可能是因为网站暂时关闭。
             </el-text>
             <br>
             <el-text>4.你也可以
@@ -63,24 +50,46 @@
             <br>
           </el-card>
         </el-collapse-item>
-        <el-collapse-item title="友情链接" name="2" >
+        <el-collapse-item title="友情链接" name="2">
           <template style="display: flex;justify-content: left">
-              <el-link target="_blank"
-                       href="https://letsgofishing5.github.io/lsgfish-resource-sharing/"
-                       title="资源收藏与分享">
-          <el-button type="primary" ><img src="@/assets/custom.png" alt="" style="width: 25px">&ensp; lsgfish-resource-sharing</el-button>
-      </el-link>
-       </template>
-
+            <el-link target="_blank"
+                     href="https://letsgofishing5.github.io/lsgfish-resource-sharing/"
+                     title="资源收藏与分享">
+              <el-button ><img src="@/assets/custom.png" alt="" style="width: 25px">&ensp;
+                lsgfish-resource-sharing
+              </el-button>
+            </el-link>
+          </template>
         </el-collapse-item>
+        <br>
+        <el-space v-if="isPC" spacer="|">
+          <el-button link tag="a" type="info"
+                     @click="copyText('50011502001039','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
+            <img src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败">
+            &ensp;渝公网安备50011502001039
+          </el-button>
 
+          <el-button link tag="a" type="info" @click="copyText('渝ICP备2024030473号','http://beian.miit.gov.cn/')">
+            渝ICP备2024030473号
+          </el-button>
+        </el-space>
+        <div v-else>
+          <el-button link tag="a" type="info"
+                     @click="copyText('50011502001039','备案号','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
+            <img src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败">
+            &ensp;渝公网安备50011502001039
+          </el-button>
+          <el-button link tag="a" type="info"
+                     @click="copyText('渝ICP备2024030473号','备案号','http://beian.miit.gov.cn/')">
+            渝ICP备2024030473号
+          </el-button>
+        </div>
       </el-collapse>
-
     </el-collapse-transition>
 
     <!--    更新说明-->
     <el-collapse-transition v-show="isShow===2">
-      <el-timeline><br>
+      <el-timeline style="padding-left: 0"><br>
         <el-timeline-item v-for="item in  updateNotes.slice().reverse()" :key="item.id" style="text-align: left"
                           :timestamp="item.timestamp" placement="top">
           <el-card>
@@ -129,8 +138,13 @@ import {Back, Edit} from "@element-plus/icons-vue";
 import {ElCollapseTransition, ElMessage} from 'element-plus'
 import axios from "axios";
 import useTimeStamp from "@/hooks/useTimestamp";
+import useResponsive from "@/hooks/useResponsive";
+import useFunction from "@/hooks/useFunction";
+
+const {copyText} = useFunction()
 
 const {getTime} = useTimeStamp()
+const {isPC} = useResponsive()
 
 let n = ref(false)
 let m = ref(false)

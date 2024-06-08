@@ -1,103 +1,154 @@
 <template>
-
-  <div class="articleBar">
-    <el-button @click="router.back()">
-      <el-icon>
-        <ArrowLeftBold/>
-      </el-icon>
-      返回
-    </el-button>
-    <el-button v-if="isAdmin" @click="checkArticle(1)" type="success">审核通过</el-button>
-    <el-button v-if="isAdmin" @click="checkArticle(2)" type="danger">审核不通过</el-button>
-    <el-button @click="getArticle" :icon="Refresh">
-      刷新
-    </el-button>
-  </div>
-
-  <div class="mainContent">
-    <el-container style="min-height: 400px">
-      <el-header>
-        <div class="articleTitle">{{ article.title }}<span v-if="article.status===0"
-                                                           style="color: skyblue">[待审核]</span><span
-            v-if="article.status===2" style="color: red;">[未过审]</span></div>
-        <el-button text type="primary" @click="go(article.author,  '',  '')">{{ article.author }}</el-button>
-      </el-header>
-      <el-divider/>
-      <el-main>
-        <div v-html="article.text" class="articleContent" style="text-align: initial;font-size: 18px"></div>
-      </el-main>
-      <el-divider/>
-      <el-footer>
-        <el-space class="articleFooter" style="text-align: initial;font-size: 14px">
+  <div>
+    <div class="articleBar" v-if="false">
+      <el-button @click="router.back()">
+        <el-icon>
+          <ArrowLeftBold/>
+        </el-icon>
+        返回
+      </el-button>
+      <el-button v-if="isAdmin" @click="checkArticle(1)" type="success">审核通过</el-button>
+      <el-button v-if="isAdmin" @click="checkArticle(2)" type="danger">审核不通过</el-button>
+      <el-button @click="getArticle" :icon="Refresh">
+        刷新
+      </el-button>
+    </div>
+    <div class="mainContent">
+      <el-container style="min-height: 400px">
+        <el-header>
+          <h1 class="articleTitle">{{ article.title }}
+            <el-text v-if="article.status===0" type="primary">[待审核]</el-text>
+            <el-text v-if="article.status===2" type="danger">[未过审]</el-text>
+          </h1>
+          <el-link type="primary" @click="go(article.author,  '',  '')">{{ article.author }}</el-link>
+        </el-header>
+        <el-divider/>
+        <el-main style="padding:0 20px">
+          <el-text v-html="article.text" class="articleContent"/>
+        </el-main>
+        <el-divider/>
+        <el-footer>
+          <el-space class="articleFooter" style="text-align: initial;font-size: 14px">
           <span>板块：<el-button link @click="go('',  article.area,'')" type="primary">
             {{ article.area }}</el-button><br>
             标签：<el-button link @click="go('',  '',  article.tags)" type="primary">
               {{ article.tags }}</el-button></span>
-          <span>创建时间：{{ getTime(article.created_time) }}<br>修改时间：{{ getTime(article.updated_time) }}</span>
-        </el-space>
-      </el-footer>
-    </el-container>
+            <span>发布于：{{ getTime(article.created_time) }}<br><template
+                v-if="article.created_time!==article.updated_time">修改于：{{
+                getTime(article.updated_time)
+              }}</template></span>
+          </el-space>
+        </el-footer>
+      </el-container>
 
-    <!--评论区-->
-    <el-container class="commentArea">
-      <el-header>
-        <el-divider>评论区</el-divider>
-      </el-header>
-      <el-main>
-        <div v-if="comments.length===0">暂无评论</div>
-        <el-row v-else v-for="(item,index) in comments" :key="index" class="comments" style="text-align: initial;">
-          <el-col :span="3">
-            <el-button text type="primary">
-              <el-avatar :src="item.headImgUrl" style="margin: 0 5px" @error="errorImage"/>
-              <el-button text type="success" style="padding: 0" v-if="item.uid===article.authorId">[作者]</el-button>
-              <span v-if="item.observer.length>5"> {{ item.observer.slice(0, 5) }}...</span>
-              <span v-else> {{ item.observer }}</span>
-            </el-button>
+      <!--    添加评论-->
+      <el-card v-if="isShow&&!isAdmin" style="height: 10%;padding: 0">
+        <el-row class="addComment" :gutter="10">
+          <el-col :lg="2" :md="3" :sm="3" :xs="4">
+            <el-avatar :src="headImgUrl" shape="circle"/>
           </el-col>
-          <el-col :span="13">
-            {{ item.comment }}
+          <el-col :lg="20" :md="18" :sm="18" :xs="15">
+            <el-input class="input" v-model="comment" maxlength="100" size="small"
+                      placeholder="发表你的评论"
+                      show-word-limit
+                      :prefix-icon="Comment"
+                      type="textarea"></el-input>
           </el-col>
-          <el-col :span="3" class="time">
-            <el-space>
-              {{ getTime(item.created_time) }}
-              <el-text type="primary">{{ index + 1 }}楼</el-text>
-              <el-button v-if="isAdmin||article.authorId===uid || item.uid===uid" type="danger" circle :icon="Delete"
-                         @click="deleteRow(item.id)"/>
-            </el-space>
+          <el-col :lg="2" :md="3" :sm="3" :xs="5">
+            <el-button @click="addComment" type="primary">发表</el-button>
           </el-col>
+
         </el-row>
-      </el-main>
-    </el-container>
+      </el-card>
+      <!--评论区-->
+      <el-container class="commentArea">
+        <el-header style="height: 30px">
+          <el-divider>评论区</el-divider>
+        </el-header>
 
-    <!--    添加评论-->
-    <el-card class="addCommentDiv" v-if="isShow&&!isAdmin">
-      <el-row class="addComment">
-        <el-col :span="1">
-          <el-avatar :src="headImgUrl" shape="circle"/>
-        </el-col>
-        <el-col :span="21">
-          <el-input class="input" v-model="comment" maxlength="100" size="large"
-                    placeholder="发表你的评论"
-                    show-word-limit
-                    :prefix-icon="Comment"
-                    type="textarea"></el-input>
-        </el-col>
-        <el-col :span="2">
-          <el-button @click="addComment" type="primary" style="margin: 0 auto">发表</el-button>
-        </el-col>
+        <el-main style="padding: 15px">
+          <div v-if="comments.length===0">暂无评论</div>
 
-      </el-row>
-    </el-card>
+          <el-row v-else v-for="(item,index) in comments" :key="index" class="comments" :gutter="10">
+            <el-col :sm="2" :xs="4">
+              <el-button text type="primary" style="padding: 0;margin: 10px 0;" size="small">
+                <el-avatar :src="item.headImgUrl" style="width: 40px;" @error="errorImage"/>
+              </el-button>
+            </el-col>
+            <el-col :sm="21" :xs="18">
+              <div style="width: 100%;height: 20px;margin-bottom: 5px;display: flex;justify-content: space-between">
+                <el-space spacer="" style="text-align: left;">
+                  <el-text type="success" v-if="item.uid===article.authorId">[作者]</el-text>
+                  <el-text type="primary"> {{ item.observer }}</el-text>
+                </el-space>
+                <el-space spacer="" style="margin-right: 10px">
+                  <el-text>{{ getTime(item.created_time) }}</el-text>
+                  <el-text type="primary">{{ index + 1 }}楼</el-text>
+                </el-space>
+              </div>
+              <div style="width: 100%;text-align: left">
+                <el-text> {{ item.comment }}</el-text>
+
+              </div>
+            </el-col>
+            <el-col :sm="1" :xs="2">
+              <el-button size="small" v-if="isAdmin||article.authorId===uid || item.uid===uid" type="danger" circle
+                         :icon="Delete"
+                         @click="deleteRow(item.id)"/>
+            </el-col>
+            <!--          <el-col :lg="2" :md="3" :sm="3" :xs="4">-->
+            <!--            <el-button text type="primary" style="padding: 0;" size="small">-->
+            <!--              <el-avatar :src="item.headImgUrl" style="margin: 0 5px;width: 20px;height: 20px" @error="errorImage"/>-->
+            <!--              <el-text type="success" v-if="item.uid===article.authorId">[作者]</el-text>-->
+            <!--              <el-text style="width: 20%" size="small" truncated> {{ item.observer}}</el-text>-->
+            <!--            </el-button>-->
+            <!--           <br><el-text style="font-size: 8px " type="primary">{{ index + 1 }}楼</el-text>-->
+            <!--          </el-col>-->
+            <!--          <el-col :lg="20" :md="18" :sm="18" :xs="15" style="text-align: left;">-->
+            <!--           <el-text > {{ item.comment }}</el-text>-->
+            <!--          </el-col>-->
+            <!--          <el-col :lg="2" :md="3" :sm="3" :xs="5" class="time">-->
+            <!--            <el-space>-->
+            <!--              <span><el-text style="font-size: 8px " type="primary">{{ index + 1 }}楼</el-text><br>-->
+            <!--                <el-text style="font-size: 8px ">{{ getTime(item.created_time) }}</el-text>-->
+            <!--              </span>-->
+            <!--              <el-button v-if="isAdmin||article.authorId===uid || item.uid===uid" type="danger" circle :icon="Delete"-->
+            <!--                         @click="deleteRow(item.id)"/>-->
+            <!--            </el-space>-->
+            <!--          </el-col>-->
+          </el-row>
+        </el-main>
+      </el-container>
+
+      <!--    添加评论-->
+      <el-card class="addCommentDiv" v-if="isShow&&!isAdmin">
+        <el-row class="addComment">
+          <el-col :span="1">
+            <el-avatar :src="headImgUrl" shape="circle"/>
+          </el-col>
+          <el-col :span="21">
+            <el-input class="input" v-model="comment" maxlength="100" size="large"
+                      placeholder="发表你的评论"
+                      show-word-limit
+                      :prefix-icon="Comment"
+                      type="textarea"></el-input>
+          </el-col>
+          <el-col :span="2">
+            <el-button @click="addComment" type="primary" style="margin: 0 auto">发表</el-button>
+          </el-col>
+
+        </el-row>
+      </el-card>
+    </div>
+
   </div>
-
-
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
 import useTimeStamp from '@/hooks/useTimestamp'
 import {ElMessage, ElMessageBox, ElLoading} from "element-plus";
-import {reactive} from "vue";
+import {onMounted, reactive, watch} from "vue";
 import {ref} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {ArrowLeftBold, Refresh, Comment, Delete} from "@element-plus/icons-vue";
@@ -179,6 +230,23 @@ function getArticle() {
 }
 
 getArticle()
+
+// watch(article, () => {
+//   const images = document.querySelectorAll('.articleContent p img');
+//   images.forEach(img => {
+//     // 移除内联样式中的宽度
+//     if (img instanceof HTMLElement) img.style.width = '100%';
+//   })
+// })
+setTimeout(()=>{
+    const images = document.querySelectorAll('.articleContent p img');
+  images.forEach(img => {
+    // 移除内联样式中的宽度
+    if (img instanceof HTMLElement) img.style.width = '100%';
+  })
+
+
+},100)
 
 //用户发表评论框输入的值
 let comment = ref('')
@@ -290,22 +358,29 @@ const deleteComment = (id: number) => {
   position: relative;
   background-color: var(--el-color-primary-light-9);
   color: var(--el-text-color-primary);
-  padding-bottom: 80px;
+
 }
 
 
 .articleBar {
-
+  height: 30px;
   width: 100%;
   display: flex;
   justify-content: space-between;
 }
 
 .articleTitle {
-  font-size: 40px;
-  font-family: 华文楷体, serif;
+  margin: 10px 0 0 0;
 }
 
+.articleContent {
+  text-align: initial;
+  font-size: 18px
+}
+
+.articleContent p img {
+  max-width: 100%;
+}
 
 .articleFooter {
   display: flex;
@@ -313,19 +388,24 @@ const deleteComment = (id: number) => {
 }
 
 .commentArea {
-  margin-bottom: 3%;
-  min-height: 150px;
+  min-height: 100px;
 }
 
 .el-col { /*评论区文字垂直居中*/
   display: flex;
   align-items: center;
+  text-align: center;
+  align-content: flex-start;
 }
 
 .comments {
   display: flex;
   justify-content: space-between;
-  margin: 20px 0;
+  margin: 10px 10px 30px 10px;
+  font-size: 12px;
+  /*
+    text-align: initial;
+  */
 }
 
 .time {
@@ -342,6 +422,7 @@ const deleteComment = (id: number) => {
   position: sticky;
   bottom: 0;
   */
+  display: none;
   position: absolute;
   width: 100%;
   height: 80px;
