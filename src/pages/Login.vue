@@ -13,7 +13,7 @@
       <el-input v-model.lazy.trim="ruleForm.username" placeholder="输入昵称"/>
     </el-form-item>
     <el-form-item prop="email">
-      <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" autocomplete="off" />
+      <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" autocomplete="off"/>
     </el-form-item>
     <el-form-item prop="password">
       <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码"/>
@@ -38,11 +38,11 @@
 import {reactive, ref} from 'vue'
 import {ElMessage, type FormInstance, type FormRules} from 'element-plus'
 import axios from "axios";
-import {useRouter} from "vue-router";
+import {onBeforeRouteLeave, useRouter} from "vue-router";
 import useUserInfo from "@/hooks/useUserInfo";
 
 const {email} = useUserInfo()
-const router=useRouter()
+const router = useRouter()
 
 //按键的字
 let str = ref('')
@@ -116,9 +116,9 @@ const validatePassword2 = (rule: any, value: any, callback: any) => {
 //验证邮箱验证码
 const checkEmailCode = (rule: any, value: any, callback: any) => {
   if (value === '') {
-   return   callback(new Error('请输入邮箱验证码，大小写敏感！'))
+    return callback(new Error('请输入邮箱验证码，大小写敏感！'))
   } else if (value.length !== 6) {
-   return  callback(new Error("邮箱验证码位数错误！"))
+    return callback(new Error("邮箱验证码位数错误！"))
   } else {
     callback()
   }
@@ -163,25 +163,32 @@ checkFlag()
 let isDisabled = ref(false)
 let getStr = ref('获取')
 let t = ref(61)
+const timer1 = ref(null)
+const timer2 = ref(null)
 
 function getEmailCode() {
   let reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+(([.\-])[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/i;
   if (!reg.test(ruleForm.email)) return ElMessage.error('邮箱格式不正确，请重新输入！')
 
-  const deadline = setInterval(() => {
+  timer1.value = setInterval(() => {
     t.value--
     isDisabled.value = true
     getStr.value = `${t.value}秒后获取`
     console.log('定时器', t.value)
   }, 1000)
 
-  setTimeout(() => {
+  timer2.value = setTimeout(() => {
     t.value = 61
     isDisabled.value = false
-    clearInterval(deadline)
+    clearInterval(timer1.value)
     getStr.value = '获取'
   }, 61000)
 
+  onBeforeRouteLeave(() => {
+    clearInterval(timer1.value)
+    clearTimeout(timer2.value)
+    console.log('计时器和倒计时已清除')
+  })
   axios({
     url: '/getEmailCode',
     method: 'POST',

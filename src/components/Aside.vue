@@ -133,9 +133,8 @@
     </el-menu-item>
   </el-menu>
 
-  <!--  移动端导航栏-->
-  <el-button @click="showAside=true" :icon="Switch" v-if="!isPC" style="margin-top: 5px;float: left"/>
-  <!--导航栏-->
+
+  <!--  移动端侧边导航栏-->
   <el-drawer v-model="showAside" :show-close="false" size="50%" direction="ltr" :with-header="false" v-if="!isPC">
     <h4>导航列表</h4>
     <el-menu default-active="0">
@@ -263,6 +262,7 @@ import {ref} from 'vue'
 import {Switch} from '@element-plus/icons-vue'
 import emitter from "@/utils/emitter";
 import useResponsive from "@/hooks/useResponsive";
+import {ElMessage} from "element-plus";
 
 const {isPC} = useResponsive()
 
@@ -278,6 +278,12 @@ function toContent(num: Number) {
   if (!isPC.value) showAside.value = false
 }
 
+const showBtn = ref(true)
+emitter.on('showAsideBtn', (flag: number) => {
+  if (flag === 0) showBtn.value = false
+  else if (flag === 1) showBtn.value = true
+  else if (flag === 2) showAside.value = true
+})
 
 </script>
 
@@ -315,10 +321,11 @@ function toContent(num: Number) {
   background-color: transparent;
 }
 
-/*PC要隐藏的*/
-.hide {
-  display: none;
+@media (max-width: 980px) {
+  .change2 {
+    margin: 5px 0 0 20px;
+    float: left
+  }
 }
-
 
 </style>

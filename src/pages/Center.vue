@@ -3,15 +3,14 @@
     <el-main class="content">
       <div class="searchDiv">
         <!--   文章筛选区-->
-
-        <el-collapse>
+        <el-collapse style="background-color: var(--el-color-primary-light-9)">
           <el-collapse-item title="&ensp;&ensp;&ensp;文章筛选条件">
             <el-form class="search" size="small" :inline="true" :model="data" label-position="left" >
               <el-form-item label="文章标题">
-                <el-input v-model="data.title" placeholder="填写文章标题" clearable :prefix-icon="Search"/>
+                <el-input v-model="data.title" placeholder="填写文章标题" clearable :prefix-icon="Search" @keyup.enter="getArticleList"/>
               </el-form-item>
               <el-form-item label="文章作者">
-                <el-input v-model="data.author" placeholder="填写作者昵称" clearable :prefix-icon="Search"/>
+                <el-input v-model="data.author" placeholder="填写作者昵称" clearable :prefix-icon="Search" @keyup.enter="getArticleList"/>
               </el-form-item>
               <el-form-item label="发布板块">
                 <el-select v-model="data.area" placeholder="All">
@@ -40,15 +39,6 @@
       </div>
 
       <!--文章列表区-->
-      <!--        <el-card shadow="hover" class="card" v-for="item in articleList" @click="toArticle(item.id)">-->
-      <!--          <template #header>{{ item.title }}——作者：{{ item.author }}</template>-->
-      <!--          &lt;!&ndash;        板块：{{item.area}}&ndash;&gt;-->
-      <!--          标签：{{ item.tags }}-->
-      <!--          <template #footer class="footer">-->
-      <!--            创建时间：{{ getTime(item.created_time) }}<br>-->
-      <!--            修改时间：{{ getTime(item.created_time) }}-->
-      <!--          </template>-->
-      <!--        </el-card>-->
       <div class="card" v-for="item in articleList" @click="toArticle(item.id)">
         <div class="articleCover">
           <el-image :src="item.coverUrl">
@@ -74,21 +64,18 @@
           </div>
           <div class="footer">
             <el-text size="small" tag="b" style="width: 30%" truncated>{{ item.author }}</el-text>
-            <el-text size="small" v-if="item.created_time===item.updated_time" truncated>
-              &ensp;&ensp;发布于:{{ getTime(item.created_time) }}
+            <el-text size="small" truncated>
+              &ensp;&ensp;发布于:{{ getDiffTime(item.created_time) }}
             </el-text>
-            <el-text size="small" v-else truncated>&ensp;&ensp;修改于:{{ getTime(item.created_time) }}</el-text>
           </div>
         </div>
       </div>
     </el-main>
-
-
   </el-container>
 </template>
 
 <script setup lang="ts">
-import {reactive, ref, watch} from 'vue'
+import {reactive} from 'vue'
 import {Search, Picture as IconPicture} from '@element-plus/icons-vue'
 import axios from "axios";
 import {ElMessage} from 'element-plus'
@@ -96,7 +83,7 @@ import {useRouter, useRoute} from 'vue-router';
 //格式化时间戳,将TS 国际时间转化为北京时间
 import useTimeStamp from '@/hooks/useTimestamp'
 
-let {getTime} = useTimeStamp()
+let {getDiffTime} = useTimeStamp()
 
 
 //路由跳转，前往文章页
@@ -198,6 +185,7 @@ el-main {
 
 
 .content {
+  padding: 0;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -208,7 +196,7 @@ el-main {
   padding: 10px;
   width: 30%;
   border-radius: 10px;
-  background-color: white;
+background-color: var(--el-color-primary-light-9);
 }
 
 .image-slot {

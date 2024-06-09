@@ -1,67 +1,23 @@
 <template>
   <el-container>
-    <!--    顶部一排菜单栏，保持不变-->
+    <!--    顶部导航栏-->
     <el-header class="shade">
       <TitleDiv/>
     </el-header>
-
     <!-- 主要呈现部分(Home / Forum)-->
     <el-main class="main">
       <router-view/>
     </el-main>
-
-
   </el-container>
-<!--  <div class="footer" v-if="isHome">-->
-<!--    &lt;!&ndash;  <el-card class="footer" shadow="none">&ndash;&gt;-->
-<!--    &lt;!&ndash;      <el-button link type="success">本网站暂时用作毕业设计</el-button>&ndash;&gt;-->
-<!--    &lt;!&ndash;    备案信息&ndash;&gt;-->
-<!--    <div>-->
-<!--      <el-space spacer="|">-->
-<!--        <el-button link tag="a" type="info"-->
-<!--                   @click="copyText('50011502001039','备案号','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">-->
-<!--          <img src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败">-->
-<!--          &ensp;渝公网安备50011502001039-->
-<!--        </el-button>-->
-
-<!--        <el-button link tag="a" type="info"-->
-<!--                   @click="copyText('渝ICP备2024030473号','备案号','http://beian.miit.gov.cn/')">-->
-<!--          渝ICP备2024030473号-->
-<!--        </el-button>-->
-<!--      </el-space>-->
-<!--    </div>-->
-<!--    &lt;!&ndash;    </el-card>&ndash;&gt;-->
-<!--  </div>-->
 </template>
 
 <script setup lang="ts">
-// axios 公共配置,请求拦截器和响应拦截器
 import axios from "axios";
 import TitleDiv from "@/components/TitleDiv.vue";
 import {ElMessage} from "element-plus";
 import {jwtDecode} from "jwt-decode";
-import useFunction from "@/hooks/useFunction";
-import useResponsive from "@/hooks/useResponsive";
-import {watch} from "vue";
-import {useRouter} from "vue-router";
 
-const router=useRouter()
-const {isHome}=useResponsive()
-const {copyText} = useFunction()
-// watch(router.currentRoute, (newValue, oldValue) => {
-//   if (newValue === oldValue) return
-//   if (newValue.path !== '/') {
-//     isHome.value = false
-//     console.log('路由切换了,当前不是主页')
-//   } else {
-//     isHome.value = true
-//     console.log('是主页')
-//   }
-// })
 
-// setInterval(()=>{
-//   console.log(isHome.value)
-// },2000)
 
 interface Token {
   value: {
@@ -69,16 +25,16 @@ interface Token {
   }
 }
 
-
+// axios 公共配置,请求拦截器和响应拦截器
 // 本地服务器基地址,根据本环境配置的DEV参数判断是生产环境还是开发环境
 axios.defaults.baseURL = import.meta.env.DEV === true ? 'http://127.0.0.1:9000' : 'https://muxidream.cn/api/'
-
 //云服务器基地址
 // axios.defaults.baseURL = 'https://muxidream.cn/api/'
-// 添加请求拦截器,如果axios没设置基地址则执行以下方法
+
+
+// 添加请求拦截器，在发送请求之前做些什么
 axios.interceptors.request.use(function (config) {
   // console.log('当前服务器基地址是：'+axios.defaults.baseURL)
-  // 在发送请求之前做些什么
   // 统一携带 token 令牌字符串在请求头上
   let token = sessionStorage.getItem('token') || localStorage.getItem('token')
   token && (config.headers.Authorization = `Bearer ${token}`)
@@ -91,10 +47,9 @@ axios.interceptors.request.use(function (config) {
 // 响应拦截器标志位，判断同一时间是否有多个相同错误，默认为false
 let isErrorPrinted = false;
 
-// 添加响应拦截器
+// 添加响应拦截器，对响应数据做点什么
 axios.interceptors.response.use(function (response) {
   // 2xx 范围内的状态码都会触发该函数。
-  // 对响应数据做点什么，例如：直接返回服务器的响应结果对象
 
   // console.log('App组件打印的response数据如下：')
   // console.log(response)
@@ -162,28 +117,13 @@ aside {
  */
   padding: 0;
   height: 40px;
-  z-index: 1000;
+  z-index: 100;
 }
 
-.footer {
-  width: 100%;
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  bottom: 0;
-  flex-direction: column;
-  height: 50px;
-}
 
 @media (min-width: 981px) {
   .main {
     padding-top: 0
-  }
-
-  .footer {
-    background-color: transparent;
-    border: transparent;
-    height: 25px;
   }
 }
 
@@ -197,12 +137,6 @@ aside {
     position: fixed;
     width: 100%;
 
-  }
-
-
-  .footer {
-    position: fixed;
-    height: 25px;
   }
 }
 

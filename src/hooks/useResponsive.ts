@@ -8,17 +8,18 @@ export default function () {
     const isPC = ref(screenWidth.value > 980)
     const isDark = ref(sessionStorage.getItem('isDark') === '1' || false)
     const isHome = ref(router.currentRoute.value.path === '/')
+    const isForum = ref(router.currentRoute.value.path.concat('/forum'))
     //控制PC和手机的dialog宽度
     const dialogWidth = ref(isPC.value ? '50%' : '90%')
     const dialogWidth2 = ref(isPC.value ? '40%' : '80%')
 
-    if (!isPC.value) {
-        dialogWidth.value = '90%'
-        dialogWidth2.value = '80%'
-    } else {
-        dialogWidth.value = '50%'
-        dialogWidth2.value = '40%'
-    }
+    // if (!isPC.value) {
+    //     dialogWidth.value = '90%'
+    //     dialogWidth2.value = '80%'
+    // } else {
+    //     dialogWidth.value = '50%'
+    //     dialogWidth2.value = '40%'
+    // }
     window.addEventListener('resize', () => {
         screen()
     })
@@ -45,5 +46,5 @@ export default function () {
     }
 
     // 向外暴露
-    return {screen, screenWidth, screenHeight, isPC, isDark,isHome, dialogWidth, dialogWidth2}
+    return {screen, screenWidth, screenHeight, isPC, isDark,isHome,isForum, dialogWidth, dialogWidth2}
 }

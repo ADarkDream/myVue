@@ -1,26 +1,28 @@
 <template>
+  <!--显示网站图标-->
+  <el-card>
+    <img :src='src' alt="该地址无法获取默认图标" style="width: 40px;height: 40px"></el-card>
   <el-form :model="form" label-width="auto" style="max-width: 600px;margin: 0 auto">
-    <el-form-item label="网站图标">
-      <el-input v-model="form.img"/>
+    <el-form-item label="站点名称">
+      <el-input v-model="form.name" placeholder="必填"/>
     </el-form-item>
-    <el-form-item label="网站名">
-      <el-input v-model="form.name"/>
+    <el-form-item label="站点地址">
+      <el-input v-model="form.url" @blur="checkIco" type="text" placeholder="必填，站点地址"/>
     </el-form-item>
-    <el-form-item label="网站详情">
-      <el-input v-model="form.detail"/>
-    </el-form-item>
-    <el-form-item label="网站分类">
-      <el-select v-model="form.sort" placeholder="选择网站类型">
+    <el-form-item label="站点分类">
+      <el-select v-model="form.sort" placeholder="必选，选择站点类型">
         <el-option v-for="item in sort" :label="item.text" :value="item.value"/>
       </el-select>
     </el-form-item>
-    <el-form-item label="网站标签">
-      <el-input v-model="form.tags" type="text"/>
+    <el-form-item label="站点标签">
+      <el-input v-model="form.tags" type="text" placeholder="选填"/>
     </el-form-item>
-    <el-form-item label="网站地址">
-      <el-input v-model="form.url" type="text"/>
+    <el-form-item label="站点详情">
+      <el-input v-model="form.detail" placeholder="选填，站点的一句话介绍"/>
     </el-form-item>
-
+    <el-form-item label="站点图标">
+      <el-input v-model="form.img" placeholder="选填，站点图标链接或base64编码图片"/>
+    </el-form-item>
     <div>
       <!--        <el-button @click="dialogVisible=false">取消上传</el-button>-->
       <el-button type="primary" @click="addUrl(form)">上传新的导航</el-button>
@@ -29,9 +31,10 @@
 </template>
 
 <script setup lang="ts">
-import {reactive} from 'vue'
+import {reactive, ref} from 'vue'
 import {ElMessage} from "element-plus";
 import axios from "axios";
+import ico_custom from "@/assets/custom.png";
 
 
 interface Url {
@@ -45,6 +48,7 @@ interface Url {
   status?: number,
   updated_time?: string,
 }
+
 
 const form = reactive<Url>({
   img: '',
@@ -74,9 +78,18 @@ let sort = reactive<Sort[]>([
 ])
 
 
+const src = ref(ico_custom)
+
+//展示网址图片
+function checkIco() {
+  if (form.url.trim() !== '') src.value = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
+  else src.value = ico_custom
+}
+
 //上传新的导航网址
 function addUrl(data: Url) {
-  if (data.name === '' || data.sort === '' || data.url === '') return ElMessage.error('导航网站名、分类、网址均不能为空！')
+  if (data.name === '' || data.sort === '' || data.url === '') return ElMessage.error('导航站点名、分类、网址均不能为空！')
+  if (data.img.trim() === '' || data.img.trim() === undefined) data.img = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
   axios({
     url: '/addUrl',
     method: 'post',

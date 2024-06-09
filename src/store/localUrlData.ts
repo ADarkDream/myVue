@@ -12,7 +12,7 @@ export const useUrlStore = defineStore('urlDataList', {
                 {
                     id: 1,
                    img: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAC1klEQVQ4jQXBy0tUURwA4HN+59yH470zcxkFx8eoJCPooKLLwhqqRbUIJAgiV4HQwm3QTvoXahGuRHGnOC5cyFj0AKUgMgysyMcMMzh10e6VuXNf59H34cuVldbqKsnlhG1LzsE02ekp6Drp6eHn57xeJ4ODGAAsi9dqxtwcma/Xo709GUUoiqL9fePxY0xpsL0dffqk377dduMGGAYiBEzTW16GdJo8v3eP12rWq1ciiqwXL6QQpKtLeh47ORGO0z4zQ4eGhJTB2hr/+1fJ5yE+PVXGxmQUxd++hXt70nHYr1/B27dgGCSfh2zWf/eOWlbb3bs4mRS2TZ5NTupXrwrP08bH6ciIt76uTkwI28aU6rduyYsLms2CacowlK6LNQ2wEM3FRazrSFXDclkdHaX9/fHv3+H377xaRQDBzk5QLmNF8T9+pAMDAP398dFRUCr5pRLJ5TBA9PmzOjwMigKWJVstVq/jTAYyGQAQ5+e4cf9+sL0tgoCYJh0YCA8OEEK0owMxJnxfLxZJV5e4uAjev5eel3jwACCVEkFgPnmiTk2xajX59Knx6JH0fSQlzeV4rcaOjyGd1qanBWM4nabxwYF+/Xr77KxoNKKTE21ykh0fY1VtLi21zcwkHj7kjQZJpaL9fX9rS3oekN5e2t0dfPiALQu5bvP1a27bvFIBw6BXrmBKsao2NzeVqanEnTvx169Au7ul57UVi/zsTJ2Y0ItF6Tjh7i7WNDI4yP79E64LmobiOD48VEZHQbguVlWSzUrXlYxBJqPfvEnyedFs+hsbeqEAiYR+7Ro7OoorFYQxxD9/Qk+P8H3a1yfDUDgOAkCMIQBlePjy5UucTCKEkK4jjIXjUCRlUC5HX75gIUSzKTlHnMc/fkAqxet1Vq0ihITjIIwlY9DZiVtv3jgLC0o+L2xbtlrQ2yuDQPz5Q/v6WKWCLUucneFkUikUUBwn5+f/A3gvfAEHLK4lAAAAAElFTkSuQmCC",
-                   name: "吾爱破解论坛[本地数据]",
+                   name: "吾爱破解论坛",
                    detail: "精品软件区",
                    url: "https://www.52pojie.cn/forum-16-1.html"
                 },

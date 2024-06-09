@@ -13,21 +13,29 @@
 </template>
 
 <script setup lang="ts">
-import {useRouter} from "vue-router";
+import {onBeforeRouteLeave, useRouter} from "vue-router";
 import {ref} from "vue";
 
 const router = useRouter()
 
-let time = ref(10)
+const time = ref(10)
+const timer1=ref(null)
+const timer2=ref(null)
 
-
-setTimeout(() => {
+timer1.value= setTimeout(() => {
   router.replace({name: 'home'})
 }, 11000)
 
-setInterval(() => {
+timer2.value= setInterval(() => {
   time.value--
+  console.log(111)
 }, 1000)
+
+onBeforeRouteLeave(()=>{
+  console.log('计时器和倒计时已清除')
+  clearTimeout(timer1.value)
+  clearInterval(timer2.value)
+})
 </script>
 
 <style scoped>

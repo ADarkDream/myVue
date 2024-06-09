@@ -58,7 +58,6 @@
   <el-dialog v-model="addEngineFlag" title="添加搜索引擎" :width="dialogWidth2" :show-close="false">
     <el-form
         ref="addEngineFormRef"
-
         status-icon
         :model="addEngineForm"
         label-width="auto"
@@ -115,14 +114,14 @@
   </el-collapse-transition>
 
   <!--上传导航网址-->
-  <el-dialog v-model="dialogVisible" :show-close="false" title="推荐导航网站">
+  <el-dialog v-model="dialogVisible" :show-close="false" title="推荐导航网站" :width="dialogWidth">
     <AddUrl/>
   </el-dialog>
 
 </template>
 
 <script setup lang="ts">
-import {reactive, ref, watch} from "vue";
+import {onUnmounted, reactive, ref, watch} from "vue";
 import {Delete, More, Search, Sort} from "@element-plus/icons-vue";
 import emitter from "@/utils/emitter";
 import AddUrl from "@/components/AddUrl.vue";
@@ -140,6 +139,7 @@ import ico_bing from '@/assets/bing.png';
 import ico_google from '@/assets/google.png';
 import ico_360 from '@/assets/360.png';
 import ico_custom from '@/assets/custom.png';
+import {onBeforeRouteLeave} from "vue-router";
 
 const {screenWidth, isPC, dialogWidth, dialogWidth2} = useResponsive()
 const {isLogin} = useUserInfo()
@@ -165,10 +165,11 @@ let searchClass = ref('searchDiv')
 
 const {showRecord} = defineProps(['showRecord'])
 if (!isPC.value) watch(isShow, (newValue, oldValue) => {
-  showRecord(!isShow.value)
+  showRecord(isShow.value)
 })
 
-let time = ref()
+const time = ref()
+const timer=ref(null)
 changeTime()
 
 
@@ -184,10 +185,15 @@ function changeTime() {
 }
 
 //每秒倒计时，刷新时间
-setInterval(() => {
+ timer.value = setInterval(() => {
   changeTime()
+  console.log(111)
 }, 1000)
 
+onBeforeRouteLeave(() => {
+  console.log('首页时钟定时器已清除')
+  clearInterval(timer.value)
+})
 //endregion
 
 

@@ -2,11 +2,15 @@
   <!--PC端标题-->
   <el-row class="title" v-if="isPC">
     <!--左上角-->
-    <el-col :lg="5" :md="6" :sm="8">
+    <el-col :lg="5" :md="6" :sm="8" class="title-left">
+      <!--    返回键-->
+      <el-button :icon="ArrowLeftBold" @click="router.back()" v-if="!isHome">返回</el-button>
+      <!--首页-->
+      <el-button @click="router.push({name:'home'})" plain :icon="HomeFilled" v-if="!isHome">首页</el-button>
       <!--更换背景-->
-      <el-button class="bgBtn" @click="changeBG(0)">更换背景</el-button>
+      <el-button class="bgBtn" @click="changeBG(0)" v-if="isHome">更换背景</el-button>
       <!--下载背景-->
-      <el-button class="bgBtn">
+      <el-button class="bgBtn" v-if="isHome">
         <el-link :href="bgUrl" target="_blank" :underline="false">下载背景</el-link>
       </el-button>
       <!--日夜切换-->
@@ -41,35 +45,25 @@
       <!--            </el-space>-->
     </el-col>
     <!--右上角-->
-    <el-col :lg="6" :md="7" :sm="8">
+    <el-col :lg="6" :md="7" :sm="8" class="title-right">
       <el-space>
         <!--登录按钮-->
         <el-button @click="showLogin = true" v-if="!isLogin">登录
           <svg type="primary" style="margin-left: 16px;height: 20px;width: 20px" viewBox="0 0 1024 1024">
             <path
                 d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"
-                fill=""></path>
+                fill="CurrentColor"></path>
             <path
                 d="M512 220.223c-88.224 0-160 71.776-160 160s71.776 160 160 160c88.225 0 160-71.775 160-160s-71.775-160-160-160z m0 256c-52.935 0-96-43.065-96-96s43.065-96 96-96 96 43.065 96 96-43.065 96-96 96z"
-                fill=""></path>
+                fill="CurrentColor"></path>
           </svg>
         </el-button>
         <!--登陆后的按钮-->
         <el-button class="username " type="primary" v-if="isLogin" @click="goCenter">{{ username }}
           <el-image class="headIcon" :src="headImgUrl" alt="" :onerror="errorImage"/>
         </el-button>
-        <!--首页-->
-        <router-link :to="{name:'home'}" v-if="!isHome" replace>
-          <el-button plain :icon="HomeFilled">
-            首页
-          </el-button>
-        </router-link>
         <!--论坛-->
-        <router-link :to="{name:'center'}" v-if="isHome" replace>
-          <el-button plain :icon="Comment">
-            论坛
-          </el-button>
-        </router-link>
+        <el-button @click="router.push({name:'center'})" plain :icon="Comment" v-if="!isForum">论坛</el-button>
         <!--选项菜单-->
         <el-dropdown>
 
@@ -107,50 +101,52 @@
 
   <!--  移动端标题-->
   <el-row class="title" v-if="!isPC">
-    <!--左上角返回-->
-    <el-col class="title-left">
+    <!--左上角-->
+    <el-col :span="8" class="title-left">
       <el-space spacer="">
+        <!--侧边导航栏-->
+        <el-button size="small" @click="emitter.emit('showAsideBtn',2)" plain :icon="Switch" v-if="isHome"/>
         <!--论坛-->
-        <router-link :to="{name:'center'}" v-if="isHome" style="margin-left: 53px">
-          <el-button plain :icon="Comment"/>
-        </router-link>
+        <el-button size="small" @click="router.push({name:'center'})" plain :icon="Comment" v-if="isHome"/>
         <!--    返回键-->
-        <el-button :icon="ArrowLeftBold" @click="router.back()" v-if="!isHome"/>
+        <el-button size="small" :icon="ArrowLeftBold" @click="router.back()" plain v-if="!isHome"/>
         <!--首页-->
-        <router-link :to="{name:'home'}" v-if="!isHome">
-          <el-button plain :icon="HomeFilled"/>
-        </router-link>
+        <el-button size="small" @click="router.push({name:'home'})" plain :icon="HomeFilled" v-if="!isHome"/>
+        <!--日夜切换-->
+        <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日"
+                   :inactive-action-icon="Sunny" :active-action-icon="Moon" size="small"/>
       </el-space>
 
     </el-col>
     <!--中间导航-->
-    <el-col class="bar">
+    <el-col :span="8" class="bar">
       <!--      <el-space>-->
-
-
       <!--      </el-space>-->
     </el-col>
     <!--右上角登录和选项-->
-    <el-col class="title-right">
+    <el-col :span="8" class="title-right">
       <el-space>
-        <el-button class="username " type="primary" v-if="isLogin" @click="goCenter">
+        <el-button size="small" class="username " type="primary" v-if="isLogin" @click="goCenter">
           <!--{{ username }}太窄了不够显示-->
           <el-image class="headIcon" :src="headImgUrl" alt="" :onerror="errorImage"/>
         </el-button>
         <!--登录按钮-->
-        <el-button @click="showLogin = true" v-if="!isLogin">
+        <el-button size="small" @click="showLoginDrawer" v-if="!isLogin">
           <svg type="primary" style="width: 20px;height: 20px" viewBox="0 0 1024 1024">
             <path
                 d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"
-                fill=""></path>
+                fill="CurrentColor"></path>
             <path
                 d="M512 220.223c-88.224 0-160 71.776-160 160s71.776 160 160 160c88.225 0 160-71.775 160-160s-71.775-160-160-160z m0 256c-52.935 0-96-43.065-96-96s43.065-96 96-96 96 43.065 96 96-43.065 96-96 96z"
-                fill=""></path>
+                fill="CurrentColor"></path>
           </svg>
         </el-button>
+
+        <!--论坛-->
+        <el-button size="small" @click="router.push({name:'center'})" plain :icon="Comment" v-if="!isHome&&!isForum"/>
         <!--选项下拉菜单-->
         <el-dropdown>
-          <el-button class="option" :icon="Operation"/>
+          <el-button size="small" class="option" :icon="Operation"/>
           <template #dropdown>
             <el-dropdown-menu>
               <!--管理中心-->
@@ -161,7 +157,6 @@
               <el-dropdown-item v-else-if="isLogin" :icon="UserFilled" @click="goCenter">
                 用户中心
               </el-dropdown-item>
-
               <!--退出登录-->
               <el-dropdown-item v-if="isLogin" @click="exit" :icon="SwitchButton">
                 退出登录
@@ -209,10 +204,10 @@
       <svg class="headImg" v-if="!showHeadImg" viewBox="0 0 1024 1024">
         <path
             d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"
-            fill=""></path>
+            fill="CurrentColor"></path>
         <path
             d="M512 220.223c-88.224 0-160 71.776-160 160s71.776 160 160 160c88.225 0 160-71.775 160-160s-71.775-160-160-160z m0 256c-52.935 0-96-43.065-96-96s43.065-96 96-96 96 43.065 96 96-43.065 96-96 96z"
-            fill=""></path>
+            fill="CurrentColor"></path>
       </svg>
       <Login v-if="isShow" :flag="flag" :toLogin="toLogin"/>
       <br>
@@ -225,6 +220,7 @@
   </el-drawer>
   <!--  公告界面-->
   <el-dialog v-model="showNotice" :width="isPC? '60%':'90%' " :before-close="closeNotice" :show-close="!isPC"
+             style="z-index: 500"
              destroy-on-close>
     <template #header><span style="font-size: 24px">公告</span></template>
     <!--  Notice组件-->
@@ -255,7 +251,7 @@ import {
   Comment,
   HomeFilled,
   Moon, Operation,
-  Sunny, SwitchButton,
+  Sunny, Switch, SwitchButton, SwitchFilled,
   Tools,
   UserFilled
 } from "@element-plus/icons-vue";
@@ -265,8 +261,9 @@ import Notice from "@/components/Notice.vue";
 import useUserInfo from '@/hooks/useUserInfo'
 import {useRouter} from "vue-router";
 import useResponsive from "@/hooks/useResponsive";
+import emitter from "@/utils/emitter";
 
-const {isDark, isPC, isHome} = useResponsive()
+const {isDark, isPC, isHome, isForum} = useResponsive()
 
 const router = useRouter()
 
@@ -393,6 +390,13 @@ function clearAll() {
   location.reload()
 }
 
+//打开登录窗口
+function showLoginDrawer() {
+  showLogin.value = true;
+  setTimeout(() => {
+    emitter.emit('showAsideBtn', 0)//移动端的Aside按钮会挡住左上角
+  }, 200)
+}
 
 //关闭登录和注册窗口时的提示
 const isClose = (done: Function) => {
@@ -403,6 +407,7 @@ const isClose = (done: Function) => {
   })
       .then(() => {
         setTimeout(() => {
+          emitter.emit('showAsideBtn', 1)//移动端的Aside按钮会挡住左上角
           done()
           // 动画关闭需要一定的时间
         }, 200)
@@ -436,15 +441,29 @@ function closeNotice() {
 }
 
 //判断当前页面
+// checkRoute(router.currentRoute.value.path)
+
+function checkRoute(path: string) {
+  console.log('路由切换了')
+  if (path === '/') {
+    isHome.value = true
+    isForum.value = false
+    console.log('当前是首页')
+  } else if (path.includes('/forum')) {
+    console.log(path)
+    isHome.value = false
+    isForum.value = true
+    console.log('当前是论坛')
+  } else {
+    isHome.value = false
+    isForum.value = false
+    console.log('不是首页和论坛')
+  }
+}
+
 watch(router.currentRoute, (newValue, oldValue) => {
   if (newValue === oldValue) return
-  if (newValue.path !== '/') {
-    isHome.value = false
-    console.log('路由切换了,当前不是主页')
-  } else {
-    isHome.value = true
-    console.log('是主页')
-  }
+  checkRoute(newValue.path)
 })
 // setInterval(() => {
 //   // console.log(router.currentRoute.value.path,router.currentRoute.value.path==='/',isHome.value)
@@ -462,6 +481,17 @@ watch(router.currentRoute, (newValue, oldValue) => {
   background-color: -webkit-focus-ring-color;
 }
 
+.title-left {
+  display: flex;
+  flex-flow: row;
+  padding-left: 20px
+}
+
+.title-right {
+  display: flex;
+  flex-flow: row-reverse;
+  padding-right: 20px
+}
 
 .isDarkBtn {
   margin-left: 10px;
@@ -469,11 +499,7 @@ watch(router.currentRoute, (newValue, oldValue) => {
 
 
 .username {
-  display: inline;
-  /*图片从button里面移除就需要这个调整位置
-margin-top: -20px ;
-  */
-  padding-top: 0;
+  padding-top: 9px;
   background-color: transparent;
   border: transparent;
   font: 20px bold, '华文行楷', serif;
@@ -524,21 +550,14 @@ margin-top: -20px ;
 
 @media (max-width: 980px) {
 
-
-  .title-left {
-    position: absolute;
-    top: 5px;
-    left: 0;
-  }
-
-  .title-right {
-    position: absolute;
-    top: 5px;
-    right: 0;
-  }
-
   .headIcon {
     margin-left: 0;
+    width: 24px;
+    height: 24px;
+  }
+
+  .username {
+    padding: 0;
   }
 
   /*

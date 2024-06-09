@@ -1,12 +1,12 @@
 <template>
   <el-card class="content">
     <div class="title">
-      <el-tooltip content="推荐导航网站" placement="right">
+      <el-tooltip content="推荐导航网站" placement="right" >
         <el-button class="refresh" type="success" circle @click="changeFlag" :icon="UploadFilled"/>
       </el-tooltip>
-      <el-button link type="primary" style="font-size: 20px">
+      <el-text type="primary"  size="large" style="font-size: 20px">
         {{ nameList[num] }}[{{ listType }}]
-      </el-button>
+      </el-text>
       <el-button v-if="false" @click="addAllUrl(localList[num],targetList[num])">批量上传 {{ nameList[num] }}
         网址到数据库
       </el-button>
@@ -184,7 +184,7 @@ function addUrl(urlInfo, table) {
 .title {
   display: flex;
   justify-content: space-between;
-  margin: 0 40px;
+  margin: 0 auto
 }
 
 .refresh {
