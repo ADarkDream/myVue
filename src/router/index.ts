@@ -21,7 +21,7 @@ import AdminUrlsManagement from "@/pages/AdminUrlsManagement.vue";
 import AdminImagesManagement from "@/pages/AdminImagesManagement.vue";
 import AdminFeedbackManagement from "@/pages/AdminFeedbackManagement.vue";
 import AdminCommentsManagement from "@/pages/AdminCommentsManagement.vue";
-import Login from "@/pages/Login.vue";
+import Reverse1999 from "@/pages/Reverse1999.vue";
 
 const router = createRouter({
     history: createWebHistory(),//路由器工作模式，有web和hash两种，web上线后需要服务器配置，hash地址栏会出现#号
@@ -118,6 +118,10 @@ const router = createRouter({
                     component: UserEdit
                 }
             ]
+        },{
+        path:"/reverse1999",
+            name:"reverse1999",
+            component:Reverse1999
         },
         {
             path: "/:pathMatch(.*)*",//匹配所有路由，找不到就显示404NotFound

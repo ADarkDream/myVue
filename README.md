@@ -31,3 +31,13 @@ npm run dev
 ```sh
 npm run build
 ```
+## 记录
+
+### 关于瀑布流
+
+>column纯CSS会从上到下，从左到右排列，也就是会将元素均分为N列，然后依次展示；
+适合不会变化的数据，如果数据动态变化，会重新排布整个页面
+
+>grid布局纯CSS可以实现自定义网格展示(不变的数据)，但要动态实现瀑布流需要结合JS计算每一个新增元素的位置和坐标，[实现思路](https://www.bilibili.com/video/BV1dt421L7a7/?share_source=copy_web&vd_source=4a848b0771dedcff278c8618837fdf90)
+
+>最后使用第三方库`wc-flow-layout`实现，[项目地址](https://www.npmjs.com/package/wc-flow-layout)

@@ -10,8 +10,8 @@
       <!--更换背景-->
       <el-button class="bgBtn" @click="changeBG(0)" v-if="isHome">更换背景</el-button>
       <!--下载背景-->
-      <el-button class="bgBtn" v-if="isHome">
-        <el-link :href="bgUrl" target="_blank" :underline="false">下载背景</el-link>
+      <el-button class="bgBtn" @click="router.push({name:'reverse1999'})" v-if="isHome">
+        下载背景
       </el-button>
       <!--日夜切换-->
       <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日" class="isDarkBtn">
@@ -164,9 +164,7 @@
               <!--更换背景-->
               <el-dropdown-item class="bgBtn" @click="changeBG(1)">更换背景</el-dropdown-item>
               <!--下载背景-->
-              <el-dropdown-item class="bgBtn">
-                <el-link :href="bgUrl" target="_blank" :underline="false">下载背景</el-link>
-              </el-dropdown-item>
+              <el-dropdown-item class="bgBtn" @click="router.push({name:'reverse1999'})">下载背景</el-dropdown-item>
               <!--日夜切换-->
               <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日"
                          :inactive-action-icon="Sunny" :active-action-icon="Moon" class="isDarkBtn"/>
