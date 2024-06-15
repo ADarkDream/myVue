@@ -52,7 +52,7 @@ export default function () {
         })
         console.log('userInfo', userInfo)
         console.log('newUserInfo', newUserInfo)
-        if (isAdmin) sessionStorage.setItem('userInfo', JSON.stringify(userInfo))
+        if (isAdmin.value) sessionStorage.setItem('userInfo', JSON.stringify(userInfo))
         else localStorage.setItem('userInfo', JSON.stringify(userInfo))
     }
 

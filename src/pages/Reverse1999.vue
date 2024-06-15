@@ -4,7 +4,7 @@
       <el-header>
         <el-card>
           <h1>1999国服官图(以影像之)下载</h1>
-          <div class="links">
+          <template class="links">
             <el-link type="primary" href="https://gitee.com/MuXi-Dream/download-reverse1999" target="_blank">本项目开源地址
             </el-link>
             <el-link type="primary" href="https://re.bluepoch.com/home/detail.html#wallpaper" target="_blank">官网下载地址
@@ -12,35 +12,104 @@
             <el-link type="primary" href="https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999" target="_blank">
               百度网盘下载地址
             </el-link>
-          </div>
-          <br>
-          <el-form label-position="left" :size="elSize">
-            <el-form-item label="选择下载版本：">
-              <el-select multiple filterable placeholder="不选则默认全选，可多选" v-model="condition.version">
-                <el-option v-for="item in versionInfo" :key="item.version" :label="item.versionName"
-                           :value="item.version"/>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="选择壁纸类型：">
-              <el-select placeholder="不选则默认全选" v-model="condition.sort">
-                <el-option label="横屏壁纸" :value="1"/>
-                <el-option label="竖屏壁纸" :value="0"/>
-                <el-option label="全选" :value="2"/>
-              </el-select>
-            </el-form-item>
-            <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">查看</el-button>
-            <!--            <el-button type="info" :size="elSize" :icon="Download" v-model="showDownload" v-show="isShow">显示下载按钮</el-button>-->
-            <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">批量下载
-            </el-button>
-            <br>
-            <el-text type="danger">请注意流量消耗，所加载均为官网原图，根据每个版本的壁纸质量消耗有所不同。</el-text>
-          </el-form>
+          </template>
+          <el-collapse v-model="activeIndex" accordion>
+            <el-collapse-item title="筛选条件" name="1">
+              <el-form label-position="left" :size="elSize">
+                <el-form-item label="选择版本：">
+                  <el-checkbox
+                      v-model="checkAllVersions"
+                      :indeterminate="isIndeterminateVersion"
+                      @change="handleCheckAllVersionChange"
+                  >
+                    全选
+                  </el-checkbox>
+                  <el-checkbox-group v-model="condition.version" style="text-align: left"
+                                     @change="handleCheckedVersionsChange">
+                    <el-checkbox v-for="item in versionInfo" :key="item.version" :label="item.versionName"
+                                 :value="item.version"/>
+                  </el-checkbox-group>
+                  <!--              <el-select multiple filterable placeholder="不选则默认全选，可多选" v-model="condition.version">-->
+                  <!--                <el-option v-for="item in versionInfo" :key="item.version" :label="item.versionName"-->
+                  <!--                           :value="item.version"/>-->
+                  <!--              </el-select>-->
+                </el-form-item>
+                <el-form-item label="选择角色：">
+                  <el-button size="small" type="primary" @click="reset">重置</el-button>&ensp;
+                  <el-checkbox
+                      v-model="checkAllRoles"
+                      :indeterminate="isIndeterminateRole"
+                      @change="handleCheckAllRoleChange"
+                  >
+                    全选角色(无角色的图不会被选中)
+                  </el-checkbox>
+                  <el-button @click="addRoles('圣洛夫基金会');btnA=true" :disabled="btnA">
+                    添加圣洛夫基金会
+                  </el-button>
+                  <el-button @click="addRoles('重塑之手');btnB=true" :disabled="btnB">
+                    添加重塑之手
+                  </el-button>
+                  <el-button @click="addRoles('阿派朗学派');btnC=true" :disabled="btnC">
+                    添加阿派朗学派
+                  </el-button>
+                  <el-button @click="addRoles('');btnD=true" :disabled="btnD">
+                    添加其他
+                  </el-button>
+                  <!--                  &ensp; <el-link type="primary" href="https://weibo.com/5569768274/5040217780129813" target="_blank">部分角色关系参考</el-link>-->
+                  <el-checkbox-group v-model="condition.roles" style="text-align: left"
+                                     @change="handleCheckedRolesChange">
+                    <el-checkbox v-for="item in roleInfo" :key="item.id" :label="item.name"
+                                 :value="item.id"/>
+                  </el-checkbox-group>
+                  <!--              <el-select multiple filterable placeholder="不选则默认全选，可多选" v-model="condition.version">-->
+                  <!--                <el-option v-for="item in versionInfo" :key="item.version" :label="item.versionName"-->
+                  <!--                           :value="item.version"/>-->
+                  <!--              </el-select>-->
+                </el-form-item>
+                <el-form-item label="选择类型：">
+                  <el-radio-group v-model="condition.sort">
+                    <el-radio-button label="全选" :value="2"/>
+                    <el-radio-button label="横屏壁纸" :value="0"/>
+                    <el-radio-button label="横屏壁纸" :value="1"/>
+                  </el-radio-group>
+                </el-form-item>
+                <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
+                <!--            <el-button type="info" :size="elSize" :icon="Download" v-model="showDownload" v-show="isShow">显示下载按钮</el-button>-->
+                <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">批量下载
+                </el-button>
+                <br>
+                <el-text type="danger">请注意流量消耗，所加载均为官网原图，根据每个版本的壁纸质量消耗有所不同。</el-text>
+                <br>
+                <el-text type="success">本站仅供技术学习和交流分享，如何任何侵权行为请联系我删除。</el-text>
+              </el-form>
+            </el-collapse-item>
+            <el-collapse-item title="待完善功能" style="text-align: left" name="2">
+              <template v-for="item in  unCompleted.slice().reverse()">
+                <el-icon>
+                  <Edit/>
+                </el-icon>
+                <el-text>&ensp;{{ item.content }}</el-text>
+                <br></template>
 
-          <el-collapse>
-            <el-collapse-item title="待完善功能('公告→其它→反馈'向我提建议)" style="text-align: left">
-              <el-text>
-                1、 设置背景图，如果是登录用户则询问是否保存到账户信息中
+            </el-collapse-item>
+            <el-collapse-item title="已实现功能" style="text-align: left" name="3">
+              <template v-for="item in completed.slice().reverse()">
+                <el-icon>
+                  <Check/>
+                </el-icon>
+                <el-text>&ensp;{{ item.content }}</el-text>
+                <br></template>
+            </el-collapse-item>
+            <el-collapse-item title="其它" name="4">
+              <el-text>欢迎通过
+                <el-text type="success">公告→其它→反馈</el-text>
+                向我提出功能建议或BUG。
+                也欢迎来咱们九群玩
               </el-text>
+              <el-link type="primary" target="_blank" href="https://qm.qq.com/q/Oq8R7YS6sM">
+                点击链接加入群聊【金兔子特供部门🐰】
+              </el-link>
+              <br>
             </el-collapse-item>
           </el-collapse>
         </el-card>
@@ -112,24 +181,37 @@
 
 <script lang="ts" setup>
 import {reactive, ref, watch} from 'vue'
-import {Download, Picture as IconPicture, Search} from "@element-plus/icons-vue";
+import {Check, Download, Edit, Picture as IconPicture, Search} from "@element-plus/icons-vue";
 import axios from "axios";
 import {ElMessage} from "element-plus";
 import useResponsive from "@/hooks/useResponsive";
 import useUserInfo from "@/hooks/useUserInfo";
 
 const {isPC, elSize, screenWidth} = useResponsive()
-const {bgUrl, isLogin} = useUserInfo()
+const {bgUrl, isLogin,updateLocalUserInfo} = useUserInfo()
 
 //用户选择项目
 const condition = reactive({
-      version: null,
-      sort: null
+      version: [],
+      roles: [],
+      sort: 2,
     }
 )
 
-//多选框版本信息
+//筛选
+const activeIndex = ref(['1'])  //激活的面板
+const checkAllVersions = ref(false)   //全选版本
+const isIndeterminateVersion = ref(false)  //全选版本按钮状态
 const versionInfo = reactive([])
+const checkAllRoles = ref(false)   //全选角色
+const isIndeterminateRole = ref(false)  //全选版本按钮状态
+const roleInfo = reactive([]) //存角色信息
+
+
+//完成和未完成的功能
+const completed = reactive([])
+const unCompleted = reactive([])
+
 const imgList = reactive([])  //展示列表，存的图片信息对象
 const previewImgList = reactive([]) //大图展示列表，存的图片链接
 const downloadList = reactive([])   //下载图片的列表
@@ -140,6 +222,66 @@ const colNum = ref(isPC.value ? 5 : 1)
 const autoFlag = ref(true)
 const isClose = ref(false)
 
+interface Notice {
+  id: number,
+  title: string,
+  sort: string,
+  content: string,
+  created_time: string,
+  updated_time: string,
+  status: number,
+}
+
+
+//全选版本时：单选按钮的状态改变
+const handleCheckAllVersionChange = (val: boolean) => {
+  if (val) versionInfo.forEach(item => condition.version.push(item.version))
+  else condition.version = []
+  isIndeterminateVersion.value = false  //取消全选按钮符号 -
+}
+//单选版本时：全选按钮的状态改变
+const handleCheckedVersionsChange = (value: string[]) => {
+  const checkedCount = condition.version.length
+  checkAllVersions.value = checkedCount === versionInfo.length //全选时变更按钮为√
+  isIndeterminateVersion.value = checkedCount > 0 && checkedCount < versionInfo.length//未全选时变更按钮为 -
+}
+
+//全选角色时：单选按钮的状态改变
+const handleCheckAllRoleChange = (val: boolean) => {
+  if (val) roleInfo.forEach(item => condition.roles.push(item.id))
+  else condition.roles = []
+  isIndeterminateRole.value = false  //取消全选按钮符号 -
+}
+//单选角色时：全选按钮的状态改变
+const handleCheckedRolesChange = (value: string[]) => {
+  const checkedCount = condition.roles.length
+  checkAllRoles.value = checkedCount === roleInfo.length //全选时变更按钮为√
+  isIndeterminateRole.value = checkedCount > 0 && checkedCount < roleInfo.length//未全选时变更按钮为 -
+}
+
+
+const btnA = ref(false)
+const btnB = ref(false)
+const btnC = ref(false)
+const btnD = ref(false)
+
+//一键勾选分类角色
+function addRoles(val: string) {
+  roleInfo.forEach(item => {
+    if (item.camp === val) condition.roles.push(item.id)
+  })
+  console.log(condition.roles)
+}
+
+function reset() {
+  checkAllRoles.value = false
+  isIndeterminateRole.value = false
+  condition.roles = []
+  btnA.value = false
+  btnB.value = false
+  btnC.value = false
+  btnD.value = false
+}
 
 getVersion()
 
@@ -148,15 +290,42 @@ function getVersion() {
   axios({
     url: '/getVersion',
   }).then(result => {
-    const {data} = result.data
+    console.log(result)
+    const {versionList, roleList} = result.data.data
     //更新版本列表
-    versionInfo.splice(0, versionInfo.length, ...data)
+    versionInfo.splice(0, versionInfo.length, ...versionList)
+    //更新角色列表
+    roleInfo.splice(0, roleInfo.length, ...roleList)
   }).catch(error => {
     console.log('发生错误：')
     console.log(error)
     ElMessage.error('发生错误：' + error.message)
   })
 }
+
+//获取已发布公告
+getNotices()
+
+function getNotices() {
+  axios({
+    url: '/getNotices',
+    params: {sort: ['completed', 'unCompleted']}
+  }).then(result => {
+    console.log(result)
+    const {noticeList} = result.data
+    // ElMessage.success( result.data.msg)
+    completed.splice(0, completed.length)
+    unCompleted.splice(0, unCompleted.length)
+    noticeList.forEach((item: Notice) => {
+      if (item.sort === 'completed') completed.push(item)
+      if (item.sort === 'unCompleted') unCompleted.push(item)
+    })
+  }).catch(error => {
+    console.log('发生错误：')
+    console.dir(error)
+  })
+}
+
 
 //获取图片
 function getImages() {
@@ -245,7 +414,7 @@ function checkImage(url, name, e) {//这个事件要绑定el-image父级盒子�
   })
   //设置壁纸监听
   setBG.addEventListener('click', () => {
-    setBackground(url)
+    setBackground(url, name)
   })
   menu.appendChild(downloadBtn)
   menu.appendChild(setBG)
@@ -253,28 +422,35 @@ function checkImage(url, name, e) {//这个事件要绑定el-image父级盒子�
 
 
 //设置背景图
-function setBackground(url: string) {
+function setBackground(url: string, name: string) {
   localStorage.setItem('bgUrl', url)
   // bgUrl.value = url
   const body = (document.querySelector('body') as HTMLElement)
   body.style.backgroundImage = `url(${url})`
   ElMessage.success('设置本地背景图成功')
-  //如果是登录用户则询问是否设置到账户信息中
-  // axios({
-  //   url: '',
-  //   method: 'post',
-  //   data: {url}
-  // }).then(result => {
-  //   console.log(result)
-  //   const {status, msg} = result.data
-  //   if (status === 200) {
-  //     ElMessage.success(msg)
-  //
-  //   }
-  // }).catch(error => {
-  //   console.log('发生错误：')
-  //   console.log(error)
-  // })
+  //如果是登录用户则设置到账户信息中
+  if (isLogin.value) axios({
+    url: '/updateImgUrl',
+    method: 'post',
+    data: {
+      isUrl: true,
+      imgUrl: url,
+      imgName: name,
+      sort: 'bg',
+      md5: ''
+    }
+  }).then(result => {
+    console.log(result)
+    const {status, msg} = result.data
+    if (status === 200) {
+      ElMessage.success(msg)
+      updateLocalUserInfo({bgUrl:url})
+      localStorage.setItem('useUserBGUrl','1')
+    }
+  }).catch(error => {
+    console.log('发生错误：')
+    console.log(error)
+  })
 }
 
 //endregion
@@ -295,6 +471,7 @@ body {
 .links {
   display: flex;
   justify-content: center;
+  height: 30px;
 }
 
 .links .el-link {

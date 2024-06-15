@@ -79,8 +79,9 @@ const deleteRow = () => {
 
 function deleteBGImage() {
   axios({
-    url: '/updateBGUrl',
+    url: '/updateImgUrl',
     method: 'post',
+    data:{}
   }).then(result => {
     console.log(result)
     const {msg} = result.data

@@ -7,11 +7,11 @@
       <el-button :icon="ArrowLeftBold" @click="router.back()" v-if="!isHome">返回</el-button>
       <!--首页-->
       <el-button @click="router.push({name:'home'})" plain :icon="HomeFilled" v-if="!isHome">首页</el-button>
-      <!--更换背景-->
-      <el-button class="bgBtn" @click="changeBG(0)" v-if="isHome">更换背景</el-button>
-      <!--下载背景-->
+      <!--更换壁纸-->
+      <el-button class="bgBtn" @click="changeBG(0)" v-if="isHome">更换壁纸</el-button>
+      <!--下载壁纸-->
       <el-button class="bgBtn" @click="router.push({name:'reverse1999'})" v-if="isHome">
-        下载背景
+        下载壁纸
       </el-button>
       <!--日夜切换-->
       <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日" class="isDarkBtn">
@@ -161,10 +161,10 @@
               <el-dropdown-item v-if="isLogin" @click="exit" :icon="SwitchButton">
                 退出登录
               </el-dropdown-item>
-              <!--更换背景-->
-              <el-dropdown-item class="bgBtn" @click="changeBG(1)">更换背景</el-dropdown-item>
-              <!--下载背景-->
-              <el-dropdown-item class="bgBtn" @click="router.push({name:'reverse1999'})">下载背景</el-dropdown-item>
+              <!--更换壁纸-->
+              <el-dropdown-item class="bgBtn" @click="changeBG(1)">更换壁纸</el-dropdown-item>
+              <!--下载壁纸-->
+              <el-dropdown-item class="bgBtn" @click="router.push({name:'reverse1999'})">下载壁纸</el-dropdown-item>
               <!--日夜切换-->
               <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日"
                          :inactive-action-icon="Sunny" :active-action-icon="Moon" class="isDarkBtn"/>
@@ -345,7 +345,7 @@ watch(isDark, (newValue, oldValue) => {
 })
 
 
-//更换背景
+//更换壁纸
 function changeBG(number: number) {
   //bgList[0]是横屏壁纸，bgList[1]是竖屏壁纸
   const list = bgList[number]

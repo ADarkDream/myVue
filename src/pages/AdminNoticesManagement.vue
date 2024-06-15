@@ -19,21 +19,19 @@
         </template>
       </el-table-column>
       <el-table-column prop="sort" label="公告分类" width="150"
-                       :filters="[
-        { text: '更新说明', value: 'updateNotes' },
-        { text: '待更新内容', value: 'noUpdated' },
-      ]"
+                       :filters="noticeSort"
                        :filter-method="filterHandler"
       >
         <template #default="scope">
           <div v-if="isEditRow===scope.$index">
             <el-select placeholder="选择分类(默认为更新说明)" v-model="newNotice.sort" default-first-option>
-              <el-option label="更新说明" value="updateNotes"/>
-              <el-option label="待更新内容" value="noUpdated"/>
+              <el-option v-for="item in noticeSort" :label="item.text" :value="item.value"/>
             </el-select>
           </div>
           <div v-else-if="scope.row.sort==='updateNotes'">更新说明</div>
           <div v-else-if="scope.row.sort==='noUpdated'">待更新内容</div>
+          <div v-else-if="scope.row.sort==='completed'">1999已完成内容</div>
+          <div v-else-if="scope.row.sort==='unCompleted'">1999待完成内容</div>
         </template>
       </el-table-column>
       <el-table-column prop="content" label="公告内容" width="300">
@@ -94,8 +92,7 @@
       </el-form-item>
       <el-form-item label="公告分类">
         <el-select v-model="form.sort" placeholder="选择公告类型">
-          <el-option label="更新说明" value="updateNotes"/>
-          <el-option label="待更新内容" value="noUpdated"/>
+           <el-option v-for="item in noticeSort" :label="item.text" :value="item.value"/>
         </el-select>
       </el-form-item>
       <el-form-item label="公告内容">
@@ -132,6 +129,13 @@ if (!isAdmin.value) router.replace({name: 'home'})
 let dialogVisible = ref(false)
 
 const tableRef = ref<TableInstance>()
+//公告分类
+const noticeSort=reactive([
+        { text: '更新说明', value: 'updateNotes' },
+        { text: '待更新内容', value: 'noUpdated' },
+        { text: '1999已完成功能', value: 'completed' },
+        { text: '1999待完成功能', value: 'unCompleted' },
+      ])
 
 //清空全部筛选条件
 const clearFilter = () => {

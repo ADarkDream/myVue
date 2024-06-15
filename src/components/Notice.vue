@@ -91,7 +91,7 @@
     <el-collapse-transition v-show="isShow===2">
       <el-timeline style="padding-left: 0"><br>
         <el-timeline-item v-for="item in  updateNotes.slice().reverse()" :key="item.id" style="text-align: left"
-                          :timestamp="item.timestamp" placement="top">
+                          :timestamp="item.time" placement="top">
           <el-card>
             <b>{{ item.title }}</b><br>
             <el-text> &ensp;{{ item.content }}</el-text>
@@ -143,7 +143,7 @@ import useFunction from "@/hooks/useFunction";
 
 const {copyText} = useFunction()
 
-const {getTime} = useTimeStamp()
+const {getDiffTime} = useTimeStamp()
 const {isPC} = useResponsive()
 
 let n = ref(false)
@@ -183,7 +183,7 @@ interface Notice {
   created_time: string,
   updated_time: string,
   status: number,
-  timestamp?: string
+  time?: string
 }
 
 //获取已发布公告
@@ -192,6 +192,7 @@ getNotices()
 function getNotices() {
   axios({
     url: '/getNotices',
+    params:{sort:['updateNotes','noUpdated']}
   }).then(result => {
     // console.log(result)
     const {noticeList} = result.data
@@ -199,8 +200,8 @@ function getNotices() {
     updateNotes.splice(0, updateNotes.length)
     noUpdated.splice(0, noUpdated.length)
     noticeList.forEach((item: Notice) => {
-      if (item.created_time === item.updated_time) item.timestamp = getTime(item.created_time)
-      else item.timestamp = '发布时间：' + getTime(item.created_time) + '  上次修订于：' + getTime(item.updated_time)
+      if (item.created_time === item.updated_time) item.time = '发布时间：' +getDiffTime(item.created_time)
+      else item.time = '发布时间：' + getDiffTime(item.created_time) + '  上次修订于：' + getDiffTime(item.updated_time)
       if (item.sort === 'updateNotes') updateNotes.push(item)
       if (item.sort === 'noUpdated') noUpdated.push(item)
     })

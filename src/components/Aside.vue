@@ -289,11 +289,6 @@ emitter.on('showAsideBtn', (flag: number) => {
 
 
 <style scoped>
-.icon {
-  width: 18px;
-  height: 18px;
-}
-
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 400px;
