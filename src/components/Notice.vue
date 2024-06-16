@@ -115,11 +115,11 @@
           <el-form style="margin: 0 5%">
             <el-form-item label="联系方式：">
               <el-input type="text" v-model.trim="contact" maxlength="30"
-                        placeholder="可以在此填写联系方式【例：本站注册邮箱：12345@qq.com】（非必填项）"></el-input>
+                        placeholder="[选填]可在此填写联系方式"></el-input>
             </el-form-item>
             <el-form-item label="反馈内容：">
-              <el-input type="textarea" v-model.trim="content" minlength="5" maxlength="200" show-word-limit
-                        placeholder="可以在此提交建议、bug反馈或其他内容（必填项）"/>
+              <el-input type="textarea" v-model.trim="content" minlength="5" maxlength="200" :autosize="true" show-word-limit
+                        placeholder="[必填]可在此提交建议、bug反馈或其他内容"/>
             </el-form-item>
           </el-form>
           <el-button type="primary" @click="submitFeedback">提交反馈</el-button>

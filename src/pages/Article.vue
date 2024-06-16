@@ -50,7 +50,7 @@
               <el-avatar :src="headImgUrl" shape="circle"/>
             </el-col>
             <el-col :lg="20" :md="18" :sm="18" :xs="15">
-              <el-input class="input" v-model="comment" maxlength="100" size="small"
+              <el-input class="input" v-model="comment" maxlength="300" :autosize="true"
                         placeholder="发表你的评论"
                         show-word-limit
                         :prefix-icon="Comment"

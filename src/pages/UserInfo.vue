@@ -23,7 +23,7 @@
       <el-card class="textareaDiv" shadow="hover">
         <el-divider>个人简介</el-divider>
         <el-input class="textarea" v-model="newSignature" @blur="isUpdateSignature" @keyup.enter="editSignature"
-                  type="textarea" maxlength="30" show-word-limit placeholder="请留下你的足迹……"/>
+                  type="textarea" maxlength="50" show-word-limit placeholder="请留下你的足迹……"/>
       </el-card>
     </el-main>
 
