@@ -355,6 +355,7 @@ function changeBG(number: number) {
   bgUrl.value = list[num]
   if (!isDark.value) body.style.backgroundImage = `url(${list[num]})`
   localStorage.setItem('bgUrl', list[num])
+  localStorage.setItem('useUserBGUrl','0') //取消用户个人信息的背景设置
 }
 
 //前往管理中心
