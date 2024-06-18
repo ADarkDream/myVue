@@ -169,7 +169,7 @@ if (!isPC.value) watch(isShow, (newValue, oldValue) => {
 })
 
 const time = ref()
-const timer=ref(null)
+const timer = ref(null)
 changeTime()
 
 
@@ -185,10 +185,7 @@ function changeTime() {
 }
 
 //每秒倒计时，刷新时间
- timer.value = setInterval(() => {
-  changeTime()
-  console.log(111)
-}, 1000)
+timer.value = setInterval(() => changeTime(), 1000)
 
 onBeforeRouteLeave(() => {
   console.log('首页时钟定时器已清除')

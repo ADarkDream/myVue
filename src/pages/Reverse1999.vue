@@ -14,7 +14,7 @@
             </el-link>
           </template>
           <el-collapse v-model="activeIndex" accordion>
-            <el-collapse-item title="筛选条件" name="1">
+            <el-collapse-item title="筛选条件【所有条件不选则默认全选】" name="1">
               <el-form label-position="left" :size="elSize">
                 <el-form-item label="选择版本：">
                   <el-checkbox
@@ -40,9 +40,15 @@
                       v-model="checkAllRoles"
                       :indeterminate="isIndeterminateRole"
                       @change="handleCheckAllRoleChange"
-                  >
-                    全选角色(无角色的图不会被选中)
+                  >全选角色(仅包含角色)
                   </el-checkbox>
+                  <el-checkbox
+                      v-model="checkNoRole"
+                      :indeterminate="isIndeterminateNoRole"
+                      @change="handleCheckNoRoleChange"
+                  >全选无角色
+                  </el-checkbox>
+                  &ensp; &ensp;
                   <el-button @click="addRoles('圣洛夫基金会');btnA=true" :disabled="btnA">
                     添加圣洛夫基金会
                   </el-button>
@@ -53,7 +59,7 @@
                     添加阿派朗学派
                   </el-button>
                   <el-button @click="addRoles('');btnD=true" :disabled="btnD">
-                    添加其他
+                    添加其他角色
                   </el-button>
                   <!--                  &ensp; <el-link type="primary" href="https://weibo.com/5569768274/5040217780129813" target="_blank">部分角色关系参考</el-link>-->
                   <el-checkbox-group v-model="condition.roles" style="text-align: left"
@@ -69,13 +75,21 @@
                 <el-form-item label="选择类型：">
                   <el-radio-group v-model="condition.sort">
                     <el-radio-button label="全选" :value="2"/>
-                    <el-radio-button label="横屏壁纸" :value="0"/>
-                    <el-radio-button label="横屏壁纸" :value="1"/>
+                     <el-radio-button label="横屏壁纸" :value="1"/>
+                    <el-radio-button label="竖屏壁纸" :value="0"/>
                   </el-radio-group>
                 </el-form-item>
                 <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
                 <!--            <el-button type="info" :size="elSize" :icon="Download" v-model="showDownload" v-show="isShow">显示下载按钮</el-button>-->
-                <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">批量下载
+                <el-button :type="isChoose? 'danger':'warning' " :size="elSize" :icon="isChoose? CloseBold : Select"
+                           @click="selectBtn" v-show="isShow">
+                  <el-text
+                      v-if="isChoose">取消选择
+                  </el-text>
+                  <el-text v-else>选择下载项</el-text>
+                </el-button>
+                <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow"
+                           :disabled="!isChoose">开始下载
                 </el-button>
                 <br>
                 <el-text type="danger">请注意流量消耗，所加载均为官网原图，根据每个版本的壁纸质量消耗有所不同。</el-text>
@@ -142,18 +156,19 @@
           <span>5列</span>
         </el-button>
       </el-button-group>
+
+
       <!--    第三方库，瀑布流标签-->
       <wc-flow-layout :gap="10" :cols="colNum">
-        <div v-for="item in imgList" @click="checkImage(item.imgUrl,item.imgName,$event)">
-          <el-image :src="item.imgUrl" :zoom-rate="1.2"
+        <div v-for="item in imgList" @click="checkImage(item.imgUrl,item.imgName,$event)" class="preImg"
+             :id="'imgDiv-'+item.imgIndex">
+          <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-'+item.imgIndex"
                     :max-scale="7"
                     :min-scale="0.2"
-                    :preview-src-list="previewImgList"
+                    :preview-src-list="isChoose? [] : previewImgList"
                     :initial-index="item.imgIndex"
                     fit="scale-down"
                     lazy>
-            <template #viewer>123</template>
-
             <template #error>
               <div class="image-slot">
                 <el-icon style="width: 50px">
@@ -176,19 +191,30 @@
       <!--      </div>-->
     </el-container>
   </el-scrollbar>
-
 </template>
 
 <script lang="ts" setup>
 import {reactive, ref, watch} from 'vue'
-import {Check, Download, Edit, Picture as IconPicture, Search} from "@element-plus/icons-vue";
+import {
+  Check, CloseBold,
+  Download,
+  Edit,
+  Minus,
+  Picture as IconPicture,
+  Plus,
+  Search,
+  Select,
+  Switch
+} from "@element-plus/icons-vue";
 import axios from "axios";
 import {ElMessage} from "element-plus";
 import useResponsive from "@/hooks/useResponsive";
 import useUserInfo from "@/hooks/useUserInfo";
+import Main from "@/components/Main.vue";
+
 
 const {isPC, elSize, screenWidth} = useResponsive()
-const {bgUrl, isLogin,updateLocalUserInfo} = useUserInfo()
+const {isLogin, updateLocalUserInfo} = useUserInfo()
 
 //用户选择项目
 const condition = reactive({
@@ -204,11 +230,13 @@ const checkAllVersions = ref(false)   //全选版本
 const isIndeterminateVersion = ref(false)  //全选版本按钮状态
 const versionInfo = reactive([])
 const checkAllRoles = ref(false)   //全选角色
-const isIndeterminateRole = ref(false)  //全选版本按钮状态
+const checkNoRole = ref(false)   //全选无角色
+const isIndeterminateRole = ref(false)  //全选角色按钮状态
+const isIndeterminateNoRole = ref(false)  //全选无角色按钮状态
 const roleInfo = reactive([]) //存角色信息
 
 
-//完成和未完成的功能
+//公告列表：完成和未完成的功能
 const completed = reactive([])
 const unCompleted = reactive([])
 
@@ -220,7 +248,7 @@ const isShow = ref(false)
 //修改显示列数
 const colNum = ref(isPC.value ? 5 : 1)
 const autoFlag = ref(true)
-const isClose = ref(false)
+const isChoose = ref(false)   //是否是批量选择状态
 
 interface Notice {
   id: number,
@@ -259,7 +287,6 @@ const handleCheckedRolesChange = (value: string[]) => {
   isIndeterminateRole.value = checkedCount > 0 && checkedCount < roleInfo.length//未全选时变更按钮为 -
 }
 
-
 const btnA = ref(false)
 const btnB = ref(false)
 const btnC = ref(false)
@@ -271,6 +298,12 @@ function addRoles(val: string) {
     if (item.camp === val) condition.roles.push(item.id)
   })
   console.log(condition.roles)
+}
+
+//全选无角色时：全选按钮的状态改变
+const handleCheckNoRoleChange = (val: boolean) => {
+  if (val) condition.roles = [9999]
+  else condition.roles = []
 }
 
 function reset() {
@@ -334,9 +367,8 @@ function getImages() {
     params: condition,
   }).then(result => {
     console.log(result)
-    const {status, msg, data} = result.data
     isShow.value = true //显示布局按钮
-    imgList.splice(0, imgList.length, ...data)
+    imgList.splice(0, imgList.length, ...result.data.data)
     //imgIndex用于排序，但不连续
     let index = 0
     imgList.forEach(item => {
@@ -348,6 +380,7 @@ function getImages() {
     imgList.forEach(item => {
       previewImgList.push(item.imgUrl)
     })
+    autoCol()   //再次触发自动布局
   }).catch(error => {
     console.log('发生错误：')
     console.log(error)
@@ -355,69 +388,48 @@ function getImages() {
 }
 
 
-//下载测试
-// downloadImg('https://gamecms-res.sl916.com/official_website_resource/50001/4/PICTURE/20240612/253%201440x2560_4f4a8ecb95334367ab4a83842926e1c6.jpg','123.jpg')
-//下载单张图片
-function downloadImg(url: string, imgName: string) {
-  //将下载链接替换为本地代理地址
-  const imageUrl = url.replace('https://gamecms-res.sl916.com', '/download1999/')
-  fetch(imageUrl)
-      .then(response => response.blob())
-      .then(blob => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = imgName // 在这里指定下载的文件名
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      })
-      .catch(error => console.error('Error:', error));
-}
-
-//批量下载壁纸
-function downloadImages() {
-  imgList.forEach(item => {
-    downloadImg(item.imgUrl, item.imgName)
-  })
-}
-
-//检测屏幕变化，计算自动布局
-watch(screenWidth, (newVal, oldVal) => {
-  if (newVal === oldVal) return
-  if (autoFlag.value) autoCol()
-})
-
-//自动布局，计算图片列数
-function autoCol() {
-  if (Number((screenWidth.value / 250).toFixed(0)) === colNum.value) return
-  console.log(screenWidth.value)
-  console.log(Math.floor(screenWidth.value / 250))
-  colNum.value = Number(Math.floor(screenWidth.value / 250))
-}
-
-
-//region 全屏浏览图片，添加底部菜单
-function checkImage(url, name, e) {//这个事件要绑定el-image父级盒子上
-  if (e.target.tagName !== 'IMG') return  //如果点击的不是图片元素则终止函数,以防重复添加
-  const menu = document.querySelector('.el-image-viewer__actions__inner') //菜单组
-  // const downloadClass = document.querySelector('.el-icon-download')  //下载按钮
-  // if (!!downloadClass || isClose.value) return
-  const downloadBtn = document.createElement('i')
-  downloadBtn.innerHTML = `<i class="el-icon-download" id="downloadBtn" ><svg class="el-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M160 832h704a32 32 0 1 1 0 64H160a32 32 0 1 1 0-64m384-253.696 236.288-236.352 45.248 45.248L508.8 704 192 387.2l45.248-45.248L480 584.704V128h64z"></path></svg></i>`
-  const setBG = document.createElement('i')
-  setBG.innerHTML = `<i class="el-icon-download" id="downloadBtn" ><svg t="1718365540691" class="el-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4274" width="200" height="200"><path d="M137.216 894.016a38.656 38.656 0 0 1-29.248-63.68l177.024-267.008a38.592 38.592 0 0 1 52.288-5.76l156.224 116.096L773.76 355.456c13.184-16.64 83.52-94.976 124.8-6.208 0-0.256 0.128 117.568 0.128 237.696v307.072c-0.576-0.384-761.088 0-761.472 0m192.256-713.6a125.312 125.312 0 1 1 0.128 250.56 125.312 125.312 0 0 1-0.128-250.624M81.728 0C36.672 0 0 37.952 0 89.152v841.856C0 982.208 36.864 1024 81.728 1024h864c44.8 0 78.272-41.856 78.272-92.992V89.152C1024 37.952 983.744 0 938.88 0H81.728z" p-id="4275"></path></svg></i>`
+//region 点击图片事件
+function checkImage(url: string, name: string, e: Event) {//这个事件要绑定el-image父级盒子上
+  const target = e.target as HTMLInputElement
+  if (!isChoose.value) {//没有进入多选状态，此时点击是全屏浏览图片，添加底部菜单
+    if (target.tagName !== 'IMG' || target.classList.contains('el-image-viewer__img')) return  //如果点击的不是图片元素则终止函数,以防重复添加
+    const menu = document.querySelector('.el-image-viewer__actions__inner') //菜单组
+    // const downloadClass = document.querySelector('.el-icon-download')  //下载按钮
+    // if (!!downloadClass || isClose.value) return
+    const downloadBtn = document.createElement('i')
+    downloadBtn.innerHTML = `<i class="el-icon-download" id="downloadBtn" ><svg class="el-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M160 832h704a32 32 0 1 1 0 64H160a32 32 0 1 1 0-64m384-253.696 236.288-236.352 45.248 45.248L508.8 704 192 387.2l45.248-45.248L480 584.704V128h64z"></path></svg></i>`
+    const setBG = document.createElement('i')
+    setBG.innerHTML = `<i class="el-icon-download" id="downloadBtn" ><svg t="1718365540691" class="el-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4274" width="200" height="200"><path d="M137.216 894.016a38.656 38.656 0 0 1-29.248-63.68l177.024-267.008a38.592 38.592 0 0 1 52.288-5.76l156.224 116.096L773.76 355.456c13.184-16.64 83.52-94.976 124.8-6.208 0-0.256 0.128 117.568 0.128 237.696v307.072c-0.576-0.384-761.088 0-761.472 0m192.256-713.6a125.312 125.312 0 1 1 0.128 250.56 125.312 125.312 0 0 1-0.128-250.624M81.728 0C36.672 0 0 37.952 0 89.152v841.856C0 982.208 36.864 1024 81.728 1024h864c44.8 0 78.272-41.856 78.272-92.992V89.152C1024 37.952 983.744 0 938.88 0H81.728z" p-id="4275"></path></svg></i>`
 //下载图片监听
-  downloadBtn.addEventListener('click', () => {
-    downloadImg(url, name)
-  })
-  //设置壁纸监听
-  setBG.addEventListener('click', () => {
-    setBackground(url, name)
-  })
-  menu.appendChild(downloadBtn)
-  menu.appendChild(setBG)
+    downloadBtn.addEventListener('click', () => {
+      downloadImg(url, name)
+    })
+    //设置壁纸监听
+    setBG.addEventListener('click', () => {
+      setBackground(url, name)
+    })
+    menu.appendChild(downloadBtn)
+    menu.appendChild(setBG)
+  } else {//进入多选状态
+    //根据id里面的数字获取是第几张图
+    const imgNum = target.id.match(/\d+/g)[0]
+    const imgDiv = document.querySelector(`#imgDiv-${imgNum}`)
+    const isChecked = imgDiv.classList.contains('checked')
+    if (isChecked) {
+      //取消选中样式
+      imgDiv.classList.remove('checked')
+      //遍历下载列表，删除取消选中的图片链接
+      for (let i = downloadList.length - 1; i >= 0; i--) {
+        if (downloadList[i].imgName === name) downloadList.splice(i, 1)
+      }
+    } else {
+      //添加选中样式及下载链接
+      imgDiv.classList.add('checked')
+      downloadList.push(imgList[imgNum])
+    }
+    //console.log(downloadList)
+    console.log('isChecked', !isChecked)
+  }
 }
 
 
@@ -444,14 +456,85 @@ function setBackground(url: string, name: string) {
     const {status, msg} = result.data
     if (status === 200) {
       ElMessage.success(msg)
-      updateLocalUserInfo({bgUrl:url})
-      localStorage.setItem('useUserBGUrl','1')
+      updateLocalUserInfo({bgUrl: url})
+      const body = (document.querySelector('body') as HTMLElement)
+      body.style.backgroundImage = `url(${url})`
+      localStorage.setItem('useUserBGUrl', '1')
     }
   }).catch(error => {
     console.log('发生错误：')
     console.log(error)
   })
 }
+
+
+//进入多选状态
+function selectBtn() {
+  const preList = document.querySelectorAll('.preImg')
+  if (!isChoose.value) {
+    isChoose.value = true     //进入多选状态
+    //给所有呈现的图片添加选中状态
+    preList.forEach(item => {
+      item.classList.add('checked')
+    })
+    //将所有呈现的图片加入下载列表
+    downloadList.splice(0, downloadList.length, ...imgList)
+  } else {
+    isChoose.value = false     //退出多选状态
+    //给所有呈现的图片移除选中状态
+    preList.forEach(item => {
+      item.classList.remove('checked')
+    })
+    //将所有呈现的图片加入下载列表
+    downloadList.splice(0, downloadList.length)
+  }
+
+}
+
+
+//下载测试
+// downloadImg('https://gamecms-res.sl916.com/official_website_resource/50001/4/PICTURE/20240612/253%201440x2560_4f4a8ecb95334367ab4a83842926e1c6.jpg','123.jpg')
+//下载单张图片
+function downloadImg(url: string, imgName: string) {
+  //将下载链接替换为本地代理地址
+  const imageUrl = url.replace('https://gamecms-res.sl916.com', '/download1999/')
+  fetch(imageUrl)
+      .then(response => response.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = imgName // 在这里指定下载的文件名
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      })
+      .catch(error => console.error('Error:', error));
+}
+
+//批量下载壁纸
+function downloadImages() {
+  console.log(downloadList)
+  if (downloadList.length === 0) return ElMessage.error('请先选中需要下载的图片！')
+  downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName))
+}
+
+//检测屏幕变化，计算自动布局
+watch(screenWidth, (newVal, oldVal) => {
+  if (newVal === oldVal) return
+  if (autoFlag.value) autoCol()
+})
+
+//自动布局，计算图片列数
+function autoCol() {
+  if (Number((screenWidth.value / 250).toFixed(0)) === colNum.value) return
+  console.log(screenWidth.value)
+  console.log(Math.floor(screenWidth.value / 250))
+  colNum.value = Number(Math.floor(screenWidth.value / 250))
+  if (previewImgList.length < 5 && isPC.value) colNum.value = previewImgList.length //PC版如果图片小于五张，则有几张就分几列
+}
+
 
 //endregion
 
@@ -489,5 +572,21 @@ body {
   display: flex;
   justify-content: right;
   margin: 10px 0;
+}
+
+
+.el-image:hover {
+  box-shadow: var(--el-box-shadow-dark);
+}
+
+.el-checkbox-button {
+  border: 0;
+  padding: 0;
+}
+
+
+.checked {
+  padding: 0;
+  border: 3px #6bfac3 dotted;
 }
 </style>
