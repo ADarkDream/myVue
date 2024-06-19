@@ -7,6 +7,7 @@ import Components from 'unplugin-vue-components/vite'
 import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 import legacy from "@vitejs/plugin-legacy"
+import compression from 'vite-plugin-compression';
 // https://vitejs.dev/config/
 
 export default defineConfig({
@@ -15,15 +16,15 @@ export default defineConfig({
     },
     server: {
         host: "0.0.0.0",//开发模式开启调试的外网网址
-        proxy: {
-            "/download1999": { //代理的接口
-                target: "https://gamecms-res.sl916.com",
-                changeOrigin: true, //是否跨域
-                rewrite: (path) => path.replace(/^\/download1999/, ""), //将代理的地址替换为目标地址
-                // ws: true,                       //是否代理 websockets
-                secure: true, //是否https接口
-            }
-        }
+        // proxy: { //前端代理的接口，仅限本地开发使用，上线之后需要nginx或后端代理
+        //     "/download1999": {
+        //         target: "https://gamecms-res.sl916.com",
+        //         changeOrigin: true, //是否跨域
+        //         rewrite: (path) => path.replace(/^\/download1999/, ""), //将代理的地址替换为目标地址
+        //         // ws: true,                       //是否代理 websockets
+        //         secure: true, //是否https接口
+        //     }
+        // }
     },
     plugins: [
         vue({
@@ -43,6 +44,13 @@ export default defineConfig({
         legacy({
             targets: ["defaults", "ie 11"]
         }),
+        //压缩成gzip，减少传输的资源大小，提高网站资源加载速度
+        compression({
+            algorithm: 'gzip',
+            ext: '.gz', // 输出文件的扩展名
+            threshold: 10240, // 只压缩大于 10KB 的文件
+            deleteOriginFile: false, // 是否删除源文件
+        })
 
     ],
     resolve: {

@@ -134,7 +134,7 @@
 
 <script setup lang="ts">
 import {reactive, ref} from "vue";
-import {Back, Edit} from "@element-plus/icons-vue";
+import {Edit} from "@element-plus/icons-vue";
 import {ElCollapseTransition, ElMessage} from 'element-plus'
 import axios from "axios";
 import useTimeStamp from "@/hooks/useTimestamp";
@@ -146,8 +146,7 @@ const {copyText} = useFunction()
 const {getDiffTime} = useTimeStamp()
 const {isPC} = useResponsive()
 
-let n = ref(false)
-let m = ref(false)
+
 let isShow = ref(1)
 
 //公告标题

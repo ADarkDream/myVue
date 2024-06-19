@@ -75,26 +75,36 @@
                 <el-form-item label="选择类型：">
                   <el-radio-group v-model="condition.sort">
                     <el-radio-button label="全选" :value="2"/>
-                     <el-radio-button label="横屏壁纸" :value="1"/>
+                    <el-radio-button label="横屏壁纸" :value="1"/>
                     <el-radio-button label="竖屏壁纸" :value="0"/>
                   </el-radio-group>
                 </el-form-item>
+
                 <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
-                <!--            <el-button type="info" :size="elSize" :icon="Download" v-model="showDownload" v-show="isShow">显示下载按钮</el-button>-->
+                <el-button type="primary" :size="elSize" :icon="Warning" @click="showNotice = true" v-show="isShow">
+                  下载须知
+                </el-button>
+                <br v-if="!isPC">
                 <el-button :type="isChoose? 'danger':'warning' " :size="elSize" :icon="isChoose? CloseBold : Select"
                            @click="selectBtn" v-show="isShow">
                   <el-text
-                      v-if="isChoose">取消选择
+                      v-if="isChoose">退出选择模式
                   </el-text>
                   <el-text v-else>选择下载项</el-text>
                 </el-button>
-                <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow"
-                           :disabled="!isChoose">开始下载
+                <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
                 </el-button>
+
+
+                <br>
+                <el-text size="large" type="info">
+                  批量下载功能bug已修复，目前提供了两种下载方案，请查看下载须知——24/06/20
+                </el-text>
+
                 <br>
                 <el-text type="danger">请注意流量消耗，所加载均为官网原图，根据每个版本的壁纸质量消耗有所不同。</el-text>
                 <br>
-                <el-text type="success">本站仅供技术学习和交流分享，如何任何侵权行为请联系我删除。</el-text>
+                <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系我删除。</el-text>
               </el-form>
             </el-collapse-item>
             <el-collapse-item title="待完善功能" style="text-align: left" name="2">
@@ -191,6 +201,130 @@
       <!--      </div>-->
     </el-container>
   </el-scrollbar>
+
+  <!--  下载公告界面-->
+  <el-dialog v-model="showNotice" :width="isPC? '60%':'90%' " :show-close="!isPC"
+             style="z-index: 500"
+             destroy-on-close>
+    <template #header><span style="font-size: 24px">下载须知</span></template>
+    <!--    导航栏-->
+    <el-menu mode="horizontal" default-active="1">
+      <el-menu-item index="1" @click="isShowNum=1">
+        少量下载
+      </el-menu-item>
+      <el-menu-item index="2" @click="isShowNum=2">
+        下载大量(仅限PC)
+      </el-menu-item>
+      <el-menu-item index="3" @click="isShowNum=3">
+        详细说明
+      </el-menu-item>
+    </el-menu>
+
+    <!--少量下载说明-->
+    <el-collapse-transition v-show="isShowNum===1" style="text-align: left;">
+      <el-card>默认情况下，你可以一次性批量下载最多5张图片。
+        <el-text type="warning">下载速度取决于你我之间网速最低的那个</el-text>
+        <br>
+        <el-text class="text">
+          1.如果你要一次性下载更多图片，请查看
+          <el-text type="primary">下载大量(仅限PC)</el-text>
+          。
+        </el-text>
+        <br>
+        <el-text class="text">2.如果你想了解更多，请查看
+          <el-text type="primary">详细说明</el-text>
+          。
+        </el-text>
+      </el-card>
+    </el-collapse-transition>
+
+    <!--大量下载说明-->
+    <el-collapse-transition v-show="isShowNum===2" style="text-align: left;">
+      <el-card>如果你要一次性下载大于五张或更多图片，这里有两种方式(
+        <el-text type="primary">仅限Windows电脑端</el-text>
+        )：
+        <el-text type="warning">下载速度完全取决于你的网速</el-text>
+        <br>
+        <el-text class="text">
+          1.点击下载
+          <el-link href="https://wwo.lanzout.com/ifh7w228mjod" target="_blank" type="success">
+            EXE格式(38.5MB)[密码:1999]
+          </el-link>
+          ，双击运行，允许联网即可。
+        </el-text>
+        <br>
+        <el-text class="text">
+          2.点击下载
+          <el-link @click="downloadFile('https://qiniu.muxidream.cn/files/1999server.js')" target="_blank"
+                   type="success">JS格式(2KB)
+          </el-link>
+          。使用方式：电脑配有
+          <el-text type="primary">Node.js环境</el-text>
+          ，在脚本所在目录的CMD窗口输入命令
+          <el-text type="primary">node 1999server.js</el-text>
+          即可运行。
+        </el-text>
+        <br>
+        满足以上任一条件，
+        <el-text type="primary">再次点击批量下载</el-text>
+        即可进行正常下载。
+      </el-card>
+    </el-collapse-transition>
+    <!--详细说明-->
+    <el-collapse-transition v-show="isShowNum===3">
+      <el-collapse style="text-align: left;" accordion>
+        <el-collapse-item name="1" title="Q：为什么要作出限制？">
+          <el-text class="text">
+            A：网站图片
+            <el-text type="primary">提供下载需要带宽</el-text>
+            ，而我的免费服务器带宽有限，如果
+            <el-text type="danger">带宽耗尽</el-text>
+            我只能暂时
+            <el-text type="danger">关闭网站</el-text>
+            了。
+          </el-text>
+        </el-collapse-item>
+        <el-collapse-item name="2" title="Q：两种下载方式有什么区别？">
+          <el-text class="text">
+            A：1.
+            <el-text type="primary">少量下载</el-text>
+            ：通过本站从深蓝官网的服务器下载图片，然后我将图片发送到你的电脑，会消耗我双倍带宽(上传+下载)【因为网站跨域配置了代理】，但少量下载还在我的承受范围内；
+          </el-text>
+          <br>
+          <el-text class="text">
+            2.
+            <el-text type="primary">大量下载</el-text>
+            ：通过我提供的脚本，在你的本地可以运行一个网站代理，再从本地直接从深蓝官网下载图片(简单来说就是，你直接从深蓝官网下载，不通过我的中转，不会额外消耗我的带宽)
+          </el-text>
+        </el-collapse-item>
+        <el-collapse-item name="3" title="Q：还有什么要狡辩的吗？">
+          <el-text class="text">
+            A：1.技术有限，只能做到防君子不防小人(你可以每次刷新选五张下载然后再刷新)。本着为爱发颠为大家提供这个便利功能(虽然平时用不上)，如果带宽耗尽后续可能就不会提供
+            <el-text type="primary">少量下载</el-text>
+            服务了，仅提供
+            <el-text type="primary">分类查询</el-text>
+            和
+            <el-text type="primary">大量下载</el-text>
+            (自己动手丰衣足食)。
+          </el-text>
+          <br>
+          <el-text class="text">
+            2.关于下载的脚本，可前往
+            <el-link style="margin: 0 3px" type="success" href="https://gitee.com/MuXi-Dream/download-reverse1999"
+                     target="_blank">开源地址
+            </el-link>
+            查看详细的说明(不过我最近没更新,里面还是批量下载功能的旧代码，没有代理服务器的部分)
+          </el-text>
+          <br>
+          <el-text class="text">
+            3.关于做这个的初衷：最开始是因为热爱(个人喜欢收集壁纸)，人力一张一张搜罗，然后上传网盘；后来是践行所学(为了偷懒)，写了脚本开始批量下载；至于现在嘛，都做了这么多了，何不一步做完呢？边学边做，边做边学，学以致用嘛。
+          </el-text>
+        </el-collapse-item>
+      </el-collapse>
+    </el-collapse-transition>
+    <br>
+    <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系我删除。</el-text>
+  </el-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -199,15 +333,12 @@ import {
   Check, CloseBold,
   Download,
   Edit,
-  Minus,
   Picture as IconPicture,
-  Plus,
   Search,
-  Select,
-  Switch
+  Select, Warning,
 } from "@element-plus/icons-vue";
 import axios from "axios";
-import {ElMessage} from "element-plus";
+import {ElCollapseTransition, ElMessage} from "element-plus";
 import useResponsive from "@/hooks/useResponsive";
 import useUserInfo from "@/hooks/useUserInfo";
 import Main from "@/components/Main.vue";
@@ -239,6 +370,12 @@ const roleInfo = reactive([]) //存角色信息
 //公告列表：完成和未完成的功能
 const completed = reactive([])
 const unCompleted = reactive([])
+//控制下载公告界面的显示
+const showNotice = ref(false)
+const isShowNum = ref(1)
+//默认展开第几条,因为设置了accordion，所以必须是字符串格式
+const activeName = ref(['1'])
+
 
 const imgList = reactive([])  //展示列表，存的图片信息对象
 const previewImgList = reactive([]) //大图展示列表，存的图片链接
@@ -306,6 +443,7 @@ const handleCheckNoRoleChange = (val: boolean) => {
   else condition.roles = []
 }
 
+//重置角色选择
 function reset() {
   checkAllRoles.value = false
   isIndeterminateRole.value = false
@@ -360,8 +498,9 @@ function getNotices() {
 }
 
 
-//获取图片
+//筛选图片
 function getImages() {
+  if (isChoose.value) selectBtn() //如果是选择状态，则退出
   axios({
     url: '/getWallpaper',
     params: condition,
@@ -402,7 +541,9 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
     setBG.innerHTML = `<i class="el-icon-download" id="downloadBtn" ><svg t="1718365540691" class="el-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4274" width="200" height="200"><path d="M137.216 894.016a38.656 38.656 0 0 1-29.248-63.68l177.024-267.008a38.592 38.592 0 0 1 52.288-5.76l156.224 116.096L773.76 355.456c13.184-16.64 83.52-94.976 124.8-6.208 0-0.256 0.128 117.568 0.128 237.696v307.072c-0.576-0.384-761.088 0-761.472 0m192.256-713.6a125.312 125.312 0 1 1 0.128 250.56 125.312 125.312 0 0 1-0.128-250.624M81.728 0C36.672 0 0 37.952 0 89.152v841.856C0 982.208 36.864 1024 81.728 1024h864c44.8 0 78.272-41.856 78.272-92.992V89.152C1024 37.952 983.744 0 938.88 0H81.728z" p-id="4275"></path></svg></i>`
 //下载图片监听
     downloadBtn.addEventListener('click', () => {
-      downloadImg(url, name)
+      //  if (isLogin.value) downloadImg(url, name)
+      // else window.open(url)
+      window.open(url)
     })
     //设置壁纸监听
     setBG.addEventListener('click', () => {
@@ -431,7 +572,6 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
     console.log('isChecked', !isChecked)
   }
 }
-
 
 //设置背景图
 function setBackground(url: string, name: string) {
@@ -473,7 +613,7 @@ function selectBtn() {
   const preList = document.querySelectorAll('.preImg')
   if (!isChoose.value) {
     isChoose.value = true     //进入多选状态
-    //给所有呈现的图片添加选中状态
+    //将所有呈现的图片添加选中状态
     preList.forEach(item => {
       item.classList.add('checked')
     })
@@ -485,27 +625,23 @@ function selectBtn() {
     preList.forEach(item => {
       item.classList.remove('checked')
     })
-    //将所有呈现的图片加入下载列表
+    //清空下载列表
     downloadList.splice(0, downloadList.length)
   }
 
 }
 
-
-//下载测试
-// downloadImg('https://gamecms-res.sl916.com/official_website_resource/50001/4/PICTURE/20240612/253%201440x2560_4f4a8ecb95334367ab4a83842926e1c6.jpg','123.jpg')
-//下载单张图片
-function downloadImg(url: string, imgName: string) {
+//下载文件(下载网站代理的脚本)
+function downloadFile(url: string) {
   //将下载链接替换为本地代理地址
-  const imageUrl = url.replace('https://gamecms-res.sl916.com', '/download1999/')
-  fetch(imageUrl)
+  fetch(url)
       .then(response => response.blob())
       .then(blob => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = imgName // 在这里指定下载的文件名
-        document.body.appendChild(a);
+        a.download = '1999server.js' // 在这里指定下载的文件名
+        document.body.appendChild(a)
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
@@ -513,12 +649,75 @@ function downloadImg(url: string, imgName: string) {
       .catch(error => console.error('Error:', error));
 }
 
-//批量下载壁纸
-function downloadImages() {
-  console.log(downloadList)
-  if (downloadList.length === 0) return ElMessage.error('请先选中需要下载的图片！')
-  downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName))
+
+//端口代理是否开启的标志
+const isOpenProxy = ref(false)
+
+//检查代理端口是否打开
+async function checkPort() {
+  await axios({
+    url: 'http://127.0.0.1:3000/',
+  }).then(result => {
+    console.log(result)
+    const {status, msg} = result.data
+    if (status === 200) {
+      ElMessage.success(msg)
+      isOpenProxy.value = true
+      // return true
+    } else {
+      isOpenProxy.value = false
+      ElMessage.error('代理端口未正确运行，请检查错误原因')
+      // return false
+    }
+  }).catch(error => {
+    console.log('发生错误：')
+    console.log(error)
+    ElMessage.error('代理端口检查发生错误')
+    isOpenProxy.value = false
+  })
 }
+
+//批量下载壁纸
+async function downloadImages() {
+  ElMessage.info('如有任何问题，请先查看下载须知')
+  if (downloadList.length === 0) return ElMessage.error('请先选中需要下载的图片！')
+  else if (downloadList.length <= 5) {//下载数量不大于5
+    ElMessage.success('当前下载数量不大于5，可以直接下载')
+    console.log(downloadList)
+    downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName))
+  } else {//下载数量大于5
+    await checkPort()
+    if (!!isOpenProxy.value) {
+      ElMessage.success('正在通过代理端口进行下载，感谢您的耐心合作ღ( ´･ᴗ･` )')
+      console.log(downloadList)
+      downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName))
+    } else return ElMessage.error('当前下载数量大于5且未开启代理，请先查看下载须知→下载大量')
+  }
+}
+
+//下载图片测试
+// downloadImg('https://gamecms-res.sl916.com/official_website_resource/50001/4/PICTURE/20240612/253%201440x2560_4f4a8ecb95334367ab4a83842926e1c6.jpg','123.jpg')
+//下载单张图片
+function downloadImg(url: string, imgName: string) {
+  //将下载链接替换为本地代理地址
+  const replacePort = isOpenProxy.value ? 'http://localhost:3000/download1999' : axios.defaults.baseURL + '/download1999'
+  const imageUrl = url.replace('https://gamecms-res.sl916.com', replacePort)
+  // const option={url,}
+  fetch(imageUrl)
+      .then(response => response.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = imgName // 在这里指定下载的文件名
+        document.body.appendChild(a)
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      })
+      .catch(error => console.error('Error:', error));
+}
+
 
 //检测屏幕变化，计算自动布局
 watch(screenWidth, (newVal, oldVal) => {
@@ -555,12 +754,16 @@ body {
   display: flex;
   justify-content: center;
   height: 30px;
+
 }
 
 .links .el-link {
-  margin: 20px;
+  margin: 0 10px;
 }
 
+.text {
+  margin-left: 30px
+}
 
 .image-slot {
   width: 50px;
@@ -584,9 +787,12 @@ body {
   padding: 0;
 }
 
+/*解决因为边框选中之后乱跳的bug*/
+.preImg {
+  border: 3px transparent dotted;
+}
 
 .checked {
-  padding: 0;
   border: 3px #6bfac3 dotted;
 }
 </style>
