@@ -335,6 +335,8 @@ onUnmounted(() => {
   console.log('移除页面滚动监听')
 })
 //endregion
+
+console.log(getTime((new Date()).toISOString()))
 </script>
 
 <style scoped>

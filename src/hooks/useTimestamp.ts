@@ -72,7 +72,7 @@ export default function () {
     //需要一个ISO时间戳("2024-05-07T11:15:22.000Z") getTime((new Date()).toISOString())
     function getTime(timestamp: string) {
         let d = new Date(timestamp)
-        let month = addZero(d.getMonth())
+        let month = addZero(d.getMonth()+1)
         let day = addZero(d.getDate())
         let date = (d.getFullYear() - 2000) + '/' + month + '/' + day
         let hour =addZero(d.getHours())

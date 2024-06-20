@@ -35,32 +35,31 @@
                   <!--              </el-select>-->
                 </el-form-item>
                 <el-form-item label="选择角色：">
-                  <el-button size="small" type="primary" @click="reset">重置</el-button>&ensp;
-                  <el-checkbox
-                      v-model="checkAllRoles"
-                      :indeterminate="isIndeterminateRole"
-                      @change="handleCheckAllRoleChange"
-                  >全选角色(仅包含角色)
-                  </el-checkbox>
-                  <el-checkbox
-                      v-model="checkNoRole"
-                      :indeterminate="isIndeterminateNoRole"
-                      @change="handleCheckNoRoleChange"
-                  >全选无角色
-                  </el-checkbox>
-                  &ensp; &ensp;
-                  <el-button @click="addRoles('圣洛夫基金会');btnA=true" :disabled="btnA">
-                    添加圣洛夫基金会
-                  </el-button>
-                  <el-button @click="addRoles('重塑之手');btnB=true" :disabled="btnB">
-                    添加重塑之手
-                  </el-button>
-                  <el-button @click="addRoles('阿派朗学派');btnC=true" :disabled="btnC">
-                    添加阿派朗学派
-                  </el-button>
-                  <el-button @click="addRoles('');btnD=true" :disabled="btnD">
-                    添加其他角色
-                  </el-button>
+                  <div class="roleSort">
+                    <el-text type="primary">是否包含角色：</el-text>
+                    <el-checkbox
+                        v-model="checkAllRoles"
+                        :indeterminate="isIndeterminateRole"
+                        @change="handleCheckAllRoleChange"
+                    >全选角色(仅包含角色)
+                    </el-checkbox>
+                    <el-checkbox
+                        v-model="checkNoRole"
+                        :indeterminate="isIndeterminateNoRole"
+                        @change="handleCheckNoRoleChange"
+                    >全选无角色(无角色或角色未命名)
+                    </el-checkbox>
+                    <el-button size="small" plain style="margin-left: 30px" type="primary" @click="reset">清空所有选择
+                    </el-button>
+                  </div>
+                  <div class="roleSort">
+                    <!--遍历阵营-->
+                    <el-text type="primary">角色所属阵营：</el-text>
+                    <el-checkbox v-for="(item,index) in campInfo" :key="index" @click="campName=campInfo[index]"
+                                 @change="handleCheckTypeAChange">
+                      {{ campInfo[index] }}
+                    </el-checkbox>
+                  </div>
                   <!--                  &ensp; <el-link type="primary" href="https://weibo.com/5569768274/5040217780129813" target="_blank">部分角色关系参考</el-link>-->
                   <el-checkbox-group v-model="condition.roles" style="text-align: left"
                                      @change="handleCheckedRolesChange">
@@ -231,7 +230,7 @@
           。
         </el-text>
         <br>
-        <el-text class="text">2.如果你想了解更多，请查看
+        <el-text class="text">2.如果你想了解更多信息，请查看
           <el-text type="primary">详细说明</el-text>
           。
         </el-text>
@@ -255,18 +254,20 @@
         <br>
         <el-text class="text">
           2.点击下载
-          <el-link @click="downloadFile('https://qiniu.muxidream.cn/files/1999server.js')" target="_blank"
-                   type="success">JS格式(2KB)
+          <el-link href="https://wwo.lanzout.com/i7vSy2298l5i" target="_blank"
+                   type="success">JS脚本压缩包(11KB)
           </el-link>
           。使用方式：电脑配有
           <el-text type="primary">Node.js环境</el-text>
           ，在脚本所在目录的CMD窗口输入命令
+          <el-text type="primary"> node i</el-text>
+          安装依赖，然后输入
           <el-text type="primary">node 1999server.js</el-text>
           即可运行。
         </el-text>
         <br>
-        满足以上任一条件，
-        <el-text type="primary">再次点击批量下载</el-text>
+        满足以上任一条件，再次点击
+        <el-text type="primary">开始下载</el-text>
         即可进行正常下载。
       </el-card>
     </el-collapse-transition>
@@ -341,7 +342,6 @@ import axios from "axios";
 import {ElCollapseTransition, ElMessage} from "element-plus";
 import useResponsive from "@/hooks/useResponsive";
 import useUserInfo from "@/hooks/useUserInfo";
-import Main from "@/components/Main.vue";
 
 
 const {isPC, elSize, screenWidth} = useResponsive()
@@ -356,35 +356,34 @@ const condition = reactive({
 )
 
 //筛选
-const activeIndex = ref(['1'])  //激活的面板
+const activeIndex = ref(['1'])  //激活的折叠面板序号
+const versionInfo = reactive([])    //存版本信息
+const roleInfo = reactive([]) //存角色信息
+const campInfo = reactive([]) //存阵营信息
+
 const checkAllVersions = ref(false)   //全选版本
 const isIndeterminateVersion = ref(false)  //全选版本按钮状态
-const versionInfo = reactive([])
 const checkAllRoles = ref(false)   //全选角色
 const checkNoRole = ref(false)   //全选无角色
 const isIndeterminateRole = ref(false)  //全选角色按钮状态
 const isIndeterminateNoRole = ref(false)  //全选无角色按钮状态
-const roleInfo = reactive([]) //存角色信息
+const campName = ref('')      //阵营名称
 
 
-//公告列表：完成和未完成的功能
-const completed = reactive([])
+const completed = reactive([])      //筛选下方的公告列表：完成和未完成的功能
 const unCompleted = reactive([])
-//控制下载公告界面的显示
-const showNotice = ref(false)
-const isShowNum = ref(1)
-//默认展开第几条,因为设置了accordion，所以必须是字符串格式
-const activeName = ref(['1'])
 
+const showNotice = ref(false)     //控制下载须知界面的显示
+const isShowNum = ref(1)      //控制下载公告须知的显示第几个页面
 
 const imgList = reactive([])  //展示列表，存的图片信息对象
 const previewImgList = reactive([]) //大图展示列表，存的图片链接
 const downloadList = reactive([])   //下载图片的列表
-//显示布局按钮组
-const isShow = ref(false)
-//修改显示列数
-const colNum = ref(isPC.value ? 5 : 1)
-const autoFlag = ref(true)
+
+const isShow = ref(false)//显示布局按钮组
+const colNum = ref(isPC.value ? 5 : 1)    //修改显示列数
+
+const autoFlag = ref(true)    //是否开启自动布局
 const isChoose = ref(false)   //是否是批量选择状态
 
 interface Notice {
@@ -398,60 +397,71 @@ interface Notice {
 }
 
 
-//全选版本时：单选按钮的状态改变
+//全选版本：单选按钮的状态改变
 const handleCheckAllVersionChange = (val: boolean) => {
   if (val) versionInfo.forEach(item => condition.version.push(item.version))
   else condition.version = []
   isIndeterminateVersion.value = false  //取消全选按钮符号 -
 }
-//单选版本时：全选按钮的状态改变
-const handleCheckedVersionsChange = (value: string[]) => {
+//单选版本：全选按钮的状态改变
+const handleCheckedVersionsChange = () => {
   const checkedCount = condition.version.length
   checkAllVersions.value = checkedCount === versionInfo.length //全选时变更按钮为√
   isIndeterminateVersion.value = checkedCount > 0 && checkedCount < versionInfo.length//未全选时变更按钮为 -
 }
 
-//全选角色时：单选按钮的状态改变
+//全选角色：单选按钮的状态改变
 const handleCheckAllRoleChange = (val: boolean) => {
   if (val) roleInfo.forEach(item => condition.roles.push(item.id))
   else condition.roles = []
   isIndeterminateRole.value = false  //取消全选按钮符号 -
+  console.log(condition.roles)
 }
-//单选角色时：全选按钮的状态改变
+//单选角色：全选按钮的状态改变
 const handleCheckedRolesChange = (value: string[]) => {
   const checkedCount = condition.roles.length
   checkAllRoles.value = checkedCount === roleInfo.length //全选时变更按钮为√
   isIndeterminateRole.value = checkedCount > 0 && checkedCount < roleInfo.length//未全选时变更按钮为 -
+  console.log(condition.roles)
 }
 
-const btnA = ref(false)
-const btnB = ref(false)
-const btnC = ref(false)
-const btnD = ref(false)
 
-//一键勾选分类角色
-function addRoles(val: string) {
+//全选或取消：阵营分类多选按钮，根据campInfo[]可以获取阵营名字
+const handleCheckTypeAChange = (val: boolean) => {
+  const newList = new Set(condition.roles)  //Set()不会保存重复值
+  //遍历角色列表
   roleInfo.forEach(item => {
-    if (item.camp === val) condition.roles.push(item.id)
+    //val=true代表全选按钮被勾选，再添加和删除Set()函数newList中的值
+    //Set()的has()判断是否存在该元素，add()添加不重复的元素，delete()直接删除该元素而不是数组下标
+    if (item.camp === campName.value) !!val ? newList.add(item.id) : newList.delete(item.id)
   })
+  //将新的角色id添加到勾选列表condition.roles
+  condition.roles.splice(0, condition.roles.length, ...newList)
   console.log(condition.roles)
 }
 
 //全选无角色时：全选按钮的状态改变
 const handleCheckNoRoleChange = (val: boolean) => {
-  if (val) condition.roles = [9999]
-  else condition.roles = []
+  const newList = new Set(condition.roles)  //Set()不会保存重复值
+  if (val) newList.add('1999') //没有角色的图存的角色id为1999
+  else newList.delete('1999')
+  condition.roles.splice(0, condition.roles.length, ...newList)
 }
 
 //重置角色选择
 function reset() {
   checkAllRoles.value = false
+  checkNoRole.value = false
   isIndeterminateRole.value = false
   condition.roles = []
-  btnA.value = false
-  btnB.value = false
-  btnC.value = false
-  btnD.value = false
+
+  //因为没绑定阵营多选框的值，通过DOM修改多选框的选中状态
+  const btns = document.querySelectorAll('.roleSort .is-checked')
+  btns.forEach(item => {
+    item.classList.remove('is-checked')
+    campName.value = item.textContent
+    handleCheckTypeAChange(false)
+  })
 }
 
 getVersion()
@@ -467,6 +477,13 @@ function getVersion() {
     versionInfo.splice(0, versionInfo.length, ...versionList)
     //更新角色列表
     roleInfo.splice(0, roleInfo.length, ...roleList)
+    //获取阵营列表
+    const list = new Set([])
+    roleInfo.forEach(item => {
+      list.add(item.camp)
+    })
+    list.delete('')   //删除空值
+    campInfo.splice(0, campInfo.length, ...list)
   }).catch(error => {
     console.log('发生错误：')
     console.log(error)
@@ -551,8 +568,7 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
     })
     menu.appendChild(downloadBtn)
     menu.appendChild(setBG)
-  } else {//进入多选状态
-    //根据id里面的数字获取是第几张图
+  } else {//进入多选状态,根据id里面的数字获取是第几张图
     const imgNum = target.id.match(/\d+/g)[0]
     const imgDiv = document.querySelector(`#imgDiv-${imgNum}`)
     const isChecked = imgDiv.classList.contains('checked')
@@ -630,25 +646,6 @@ function selectBtn() {
   }
 
 }
-
-//下载文件(下载网站代理的脚本)
-function downloadFile(url: string) {
-  //将下载链接替换为本地代理地址
-  fetch(url)
-      .then(response => response.blob())
-      .then(blob => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = '1999server.js' // 在这里指定下载的文件名
-        document.body.appendChild(a)
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      })
-      .catch(error => console.error('Error:', error));
-}
-
 
 //端口代理是否开启的标志
 const isOpenProxy = ref(false)
@@ -731,7 +728,7 @@ function autoCol() {
   console.log(screenWidth.value)
   console.log(Math.floor(screenWidth.value / 250))
   colNum.value = Number(Math.floor(screenWidth.value / 250))
-  if (previewImgList.length < 5 && isPC.value) colNum.value = previewImgList.length //PC版如果图片小于五张，则有几张就分几列
+  if (previewImgList.length <= 10 && isPC.value) colNum.value = (previewImgList.length / 2).toFixed(0) //PC端如果图片不大于10张，则有x张就分x/2列(去除小数)
 }
 
 
@@ -748,6 +745,13 @@ body {
   height: auto;
   padding-left: 0;
   padding-right: 0;
+}
+
+/**/
+.roleSort {
+  width: 100%;
+  text-align: left;
+  border-bottom: 1px deepskyblue dotted;
 }
 
 .links {
