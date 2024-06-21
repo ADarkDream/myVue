@@ -479,6 +479,6 @@ const deleteUrl = (index: number, id: number) => {
 .pageMenu {
   display: flex;
   justify-content: center;
-  padding-top: 10px;
+   padding: 10px 0;
 }
 </style>

@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AddRole: typeof import('./src/components/AddRole.vue')['default']
     AddUrl: typeof import('./src/components/AddUrl.vue')['default']
     Aside: typeof import('./src/components/Aside.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']

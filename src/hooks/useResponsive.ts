@@ -46,5 +46,5 @@ export default function () {
     }
 
     // 向外暴露
-    return {screen, screenWidth, screenHeight, isPC, isDark, isHome, isForum, dialogWidth, dialogWidth2,elSize}
+    return {screen, screenWidth, screenHeight, isPC, isDark, isHome, isForum, dialogWidth, dialogWidth2, elSize}
 }

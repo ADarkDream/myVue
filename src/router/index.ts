@@ -1,7 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import Home from "@/pages/Home.vue";
 import Forum from "@/pages/Forum.vue";
-import User from "@/pages/User.vue";
 import AdminLogin from "@/pages/AdminLogin.vue";
 import AdminCenter from "@/pages/AdminCenter.vue";
 import UserCenter from "@/pages/UserCenter.vue";
@@ -21,7 +20,8 @@ import AdminUrlsManagement from "@/pages/AdminUrlsManagement.vue";
 import AdminImagesManagement from "@/pages/AdminImagesManagement.vue";
 import AdminFeedbackManagement from "@/pages/AdminFeedbackManagement.vue";
 import AdminCommentsManagement from "@/pages/AdminCommentsManagement.vue";
-import Reverse1999 from "@/pages/Reverse1999.vue";
+import Download1999 from "@/pages/Download1999.vue";
+import Roles1999 from "@/pages/Roles1999.vue";
 
 const router = createRouter({
     history: createWebHistory(),//路由器工作模式，有web和hash两种，web上线后需要服务器配置，hash地址栏会出现#号
@@ -38,7 +38,11 @@ const router = createRouter({
         {
             path: '/forum',//论坛
             component: Forum,
-            children: [
+            children: [{
+                name: 'forum',
+                path: '',//重定向
+                redirect: {name: 'center'}
+            },
                 {
                     name: 'center',//大厅
                     path: 'center',
@@ -56,76 +60,93 @@ const router = createRouter({
             component: AdminLogin
         },
         {
-            name: 'adminCenter',
             path: '/admin',
             component: AdminCenter,
-            children: [
-                {
-                    name: 'adminUsersManagement',
-                    path: 'userManagement',
-                    component: AdminUsersManagement
-                }, {
-                    name: 'adminArticlesManagement',
-                    path: 'articlesManagement',
-                    component: AdminArticlesManagement
-                }, {
-                    name: 'adminCommentsManagement',
-                    path: 'commentsManagement',
-                    component: AdminCommentsManagement
-                }, {
-                    name: 'adminNoticesManagement',
-                    path: 'noticesManagement',
-                    component: AdminNoticesManagement
-                }, {
-                    name: 'adminUrlsManagement',
-                    path: 'urlsManagement',
-                    component: AdminUrlsManagement
-                }, {
-                    name: 'adminImagesManagement',
-                    path: 'imagesManagement',
-                    component: AdminImagesManagement
-                }, {
-                    name: 'adminFeedbackManagement',
-                    path: 'feedbackManagement',
-                    component: AdminFeedbackManagement
-                }
+            children: [{
+                name: 'adminCenter',
+                path: ' ',//重定向
+                redirect: {name: 'adminUsersManagement'}
+            }, {
+                name: 'adminUsersManagement',
+                path: 'userManagement',
+                component: AdminUsersManagement
+            }, {
+                name: 'adminArticlesManagement',
+                path: 'articlesManagement',
+                component: AdminArticlesManagement
+            }, {
+                name: 'adminCommentsManagement',
+                path: 'commentsManagement',
+                component: AdminCommentsManagement
+            }, {
+                name: 'adminNoticesManagement',
+                path: 'noticesManagement',
+                component: AdminNoticesManagement
+            }, {
+                name: 'adminUrlsManagement',
+                path: 'urlsManagement',
+                component: AdminUrlsManagement
+            }, {
+                name: 'adminImagesManagement',
+                path: 'imagesManagement',
+                component: AdminImagesManagement
+            }, {
+                name: 'adminFeedbackManagement',
+                path: 'feedbackManagement',
+                component: AdminFeedbackManagement
+            }
             ]
         },
         {
             path: '/user',//用户界面
             component: UserCenter,
-            children: [
-                {
-                    name: 'userInfo',//用户个人信息界面
-                    path: 'info',
-                    component: UserInfo
-                }, {//暂时没用
-                    name: 'userPreference',//用户偏好设置界面
-                    path: 'preference',
-                    component: UserPreference
-                }, {
-                    name: 'userHistory',
-                    path: 'history',
-                    component: UserHistory
-                }, {
-                    name: 'userManagement',//用户管理界面
-                    path: 'management',
-                    component: UserManagement
-                },
+            children: [{
+                name: 'userCenter',
+                path: ' ',//重定向
+                redirect: {name: 'userInfo'}
+            }, {
+                name: 'userInfo',//用户个人信息界面
+                path: 'info',
+                component: UserInfo
+            }, {//暂时没用
+                name: 'userPreference',//用户偏好设置界面
+                path: 'preference',
+                component: UserPreference
+            }, {
+                name: 'userHistory',
+                path: 'history',
+                component: UserHistory
+            }, {
+                name: 'userManagement',//用户管理界面
+                path: 'management',
+                component: UserManagement
+            },
                 {
                     name: 'userEdit',//发布文章界面
                     path: "edit",
                     component: UserEdit
                 }
             ]
-        },{
-        path:"/reverse1999",
-            name:"reverse1999",
-            component:Reverse1999
         },
         {
-            path: "/:pathMatch(.*)*",//匹配所有路由，找不到就显示404NotFound
+            path: "/reverse1999",
+            children: [{
+                name: 'reverse1999',
+                path: '',//重定向
+                redirect: {name: 'download'}
+            }, {
+                name: "download",
+                path: 'download',
+                component: Download1999
+            }, {
+                name: "roles",
+                path: 'roles',
+                component: Roles1999
+            }]
+        },
+        {
             name: "notFound",
+            path: "/:pathMatch(.*)*",//匹配所有路由，找不到就显示404NotFound
             component: NotFound,
         }
 

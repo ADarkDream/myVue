@@ -18,7 +18,7 @@
         </el-menu>
       </el-scrollbar>
     </el-aside>
-    <el-main style="width: 100%;height: 700px;">
+    <el-main :style="'height:'+ (screenHeight-70)+'px'">
       <el-scrollbar>
         <router-view/>
       </el-scrollbar>
@@ -33,7 +33,9 @@ import {useRouter} from "vue-router";
 import useUserInfo from "@/hooks/useUserInfo";
 import emitter from "@/utils/emitter";
 import {ElMessage} from "element-plus";
-
+import useResponsive from "@/hooks/useResponsive";
+//屏幕高度
+const {screenHeight} = useResponsive()
 const router = useRouter();
 const {isLogin} = useUserInfo()
 //用户登录判断

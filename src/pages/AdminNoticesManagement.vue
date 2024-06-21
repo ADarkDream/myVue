@@ -7,7 +7,7 @@
     <el-button @click="clearFilter">清空全部筛选</el-button>
   </div>
   <el-main style="padding-bottom:0;padding-top: 0 ">
-    <el-table ref="tableRef" :data="tableData" style="width: 100%" max-height="500" stripe border highlight-current-row
+    <el-table ref="tableRef" :data="tableData" style="width: 100%"  stripe border highlight-current-row
               table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }"
               @sort-change="handleSortChange">
       <el-table-column fixed prop="id" label="ID" width="70" sortable/>
