@@ -3,10 +3,10 @@
     <el-header class="header1">
       角色列表(仅供壁纸检索)
     </el-header>
-<!--    移动端筛选框-->
+    <!--    移动端筛选框-->
     <el-collapse style="margin: 0 5%" v-if="!isPC">
       <el-collapse-item title="筛选条件">
-        <el-row class="header2" >
+        <el-row class="header2">
           <el-col :md="3" v-if="isAdmin">
             <el-button type="primary" @click="dialogVisible=true" :size="elSize">添加新角色</el-button>
           </el-col>
@@ -38,15 +38,15 @@
         </el-row>
       </el-collapse-item>
     </el-collapse>
-<!--    PC筛选框-->
+    <!--    PC筛选框-->
     <el-row class="header2" v-else>
       <el-col :sm="3" v-if="isAdmin">
         <el-button type="primary" @click="dialogVisible=true" :size="elSize">添加新角色</el-button>
       </el-col>
-      <el-col :sm="4" >
+      <el-col :sm="4">
         <el-input v-model.trim="searchInfo.name" placeholder="角色名称" :size="elSize" clearable :prefix-icon="Search"/>
       </el-col>
-      <el-col :sm="4" >
+      <el-col :sm="4">
         <el-select v-model="searchInfo.camp" :size="elSize" default-first-option>
           <el-option label="全选阵营" value=""/>
           <el-option v-for="(item,index) in campInfo" :key="index" :label="item" :value="item"/>
@@ -62,19 +62,19 @@
         <el-input v-model.trim="searchInfo.otherTags" placeholder="其他标签" :size="elSize" clearable
                   :prefix-icon="Search"/>
       </el-col>
-      <el-col :sm="6" >
+      <el-col :sm="6">
         <el-button @click="filterChange" type="primary" :size="elSize">筛选查找</el-button>
         <el-button @click="clearFilter" :size="elSize">清空全部筛选</el-button>
       </el-col>
 
     </el-row>
     <el-main :style="isPC? '': 'padding:0' ">
-      <el-form class="search" :model="newInfo" label-position="left" label-width="auto">
-        <el-form-item label-width="auto">
+      <!--      <el-form class="search" :model="newInfo" label-position="left" label-width="auto">-->
+      <!--        <el-form-item label-width="auto">-->
 
-        </el-form-item>
-      </el-form>
-
+      <!--        </el-form-item>-->
+      <!--      </el-form>-->
+      <el-text type="primary">个人收集略有不足，如有错漏还请向我反馈。非常感谢！如有乐意帮忙的司辰也欢迎联系我！</el-text>
       <el-table ref="tableRef" :data="roleInfo" :height="screenHeight-220" stripe border highlight-current-row
                 table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }"
                 @sort-change="handleSortChange">

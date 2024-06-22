@@ -4,16 +4,23 @@
       <el-header>
         <el-card>
           <h1>1999国服官图(以影像之)下载</h1>
-          <template class="links">
-            <el-link type="primary" href="https://gitee.com/MuXi-Dream/download-reverse1999" target="_blank">本项目开源地址
-            </el-link>
-            <el-link type="primary" href="https://re.bluepoch.com/home/detail.html#wallpaper" target="_blank">官网下载地址
-            </el-link>
-            <el-link type="primary" href="https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999" target="_blank">
-              百度网盘下载地址
-            </el-link>
-          </template>
           <el-collapse v-model="activeIndex" accordion>
+            <el-collapse-item title="资源文档" name="0">
+              <template class="links">
+                <el-link type="primary" href="https://gitee.com/MuXi-Dream/download-reverse1999" target="_blank">本项目开源地址
+                </el-link>
+                <el-link type="primary" href="https://re.bluepoch.com/home/detail.html#wallpaper" target="_blank">官网下载地址
+                </el-link>
+                <el-link type="primary" href="https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999" target="_blank">
+                  百度网盘下载地址
+                </el-link>
+                <el-button link type="primary" target="_blank"
+                           @click="copyText('1224021291','我的联系方式(QQ)','https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
+                           title="点击前往API文档(需要密码请联系我)">
+                  API接口文档(无偿但不公开)
+                </el-button>
+              </template>
+            </el-collapse-item>
             <el-collapse-item title="筛选条件【所有条件不选则默认全选】" name="1">
               <el-form :label-position="isPC? 'left' : 'top' " :size="elSize">
                 <el-form-item label="选择版本：">
@@ -36,7 +43,11 @@
                 </el-form-item>
                 <el-form-item label="选择角色：">
                   <div class="roleSort">
-                    <el-text type="primary">是否包含角色：</el-text>
+                    <el-text type="primary">是否包含角色：</el-text>            <el-button-group size="small" type="primary" style="margin-bottom:5px">
+                      <el-button @click="reset">清空所有选择
+                      </el-button>
+                      <el-button @click="router.push({name:'roles'})">查看角色表</el-button>
+                    </el-button-group>
                     <el-checkbox
                         v-model="checkAllRoles"
                         :indeterminate="isIndeterminateRole"
@@ -47,13 +58,8 @@
                         v-model="checkNoRole"
                         :indeterminate="isIndeterminateNoRole"
                         @change="handleCheckNoRoleChange"
-                    >全选无角色(无角色或角色未命名)
-                    </el-checkbox>&ensp;&ensp;
-                    <el-button-group size="small" type="primary" style="margin-bottom:5px">
-                      <el-button @click="reset">清空所有选择
-                      </el-button>
-                      <el-button @click="router.push({name:'roles'})">查看角色表</el-button>
-                    </el-button-group>
+                    >全选无角色(或未命名角色)
+                    </el-checkbox>
                   </div>
                   <div class="roleSort">
                     <!--遍历阵营-->
@@ -86,7 +92,18 @@
                     <el-radio-button label="竖屏壁纸" :value="0"/>
                   </el-radio-group>
                 </el-form-item>
-
+                <el-form-item label="选择类型：">
+                  <el-radio-group v-model="condition.accurate">
+                    <el-radio-button label="模糊查询" :value="0"/>
+                    <el-radio-button label="精准查询" :value="1"/>
+                  </el-radio-group>
+                  <el-icon style="margin:0 5px" @click="isShowNotice=!isShowNotice">
+                    <InfoFilled/>
+                  </el-icon>
+                  <el-text v-show="isShowNotice">
+                    <el-text  type="primary">模糊查询会优先满足版本要求</el-text>，然后查询包含勾选的角色的图；<el-text  type="warning">精准查询</el-text>只查询 <el-text type="warning">同时满足所有条件</el-text>的结果
+                  </el-text>
+                </el-form-item>
                 <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
                 <el-button type="primary" :size="elSize" :icon="Warning" @click="showNotice = true" v-show="isShow">
                   下载须知
@@ -101,10 +118,6 @@
                 </el-button>
                 <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
                 </el-button>
-                <br>
-                <el-text size="large" type="info">
-                  批量下载功能bug已修复，目前提供了两种下载方案，请查看下载须知——24/06/20
-                </el-text>
                 <br>
                 <el-text type="danger">请注意流量消耗，所加载均为官网原图，根据每个版本的壁纸质量消耗有所不同。</el-text>
                 <br>
@@ -134,7 +147,8 @@
                 向我提出功能建议或BUG。
                 也欢迎来咱们九群玩
               </el-text>
-              <el-button link type="primary" target="_blank" @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')" title="点击前往QQ">
+              <el-button link type="primary" target="_blank"
+                         @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')" title="点击前往QQ">
                 点击加入群聊【金兔子特供部门🐰】
               </el-button>
               <br>
@@ -217,15 +231,20 @@
     <!--少量下载说明-->
     <el-collapse-transition v-show="isShowNum===1" style="text-align: left;">
       <el-card>默认情况下，你可以一次性批量下载最多5张图片。
-        <el-text type="warning">下载速度取决于你我之间网速最低的那个</el-text>
+        <el-text type="warning">本站巅峰下载速度才2MB/S</el-text>
+        <br>
+        <el-text class="text">1.如果你下载的数量不多，
+          <el-text type="primary">长按或右键</el-text>
+          保存更快。
+        </el-text>
         <br>
         <el-text class="text">
-          1.如果你要一次性下载更多图片，请查看
+          2.如果你要一次性下载更多图片，请查看
           <el-text type="primary">下载大量(仅限PC)</el-text>
           。
         </el-text>
         <br>
-        <el-text class="text">2.如果你想了解更多信息，请查看
+        <el-text class="text">3.如果你想了解更多信息，请查看
           <el-text type="primary">详细说明</el-text>
           。
         </el-text>
@@ -271,9 +290,13 @@
       <el-collapse style="text-align: left;" accordion>
         <el-collapse-item name="1" title="Q：为什么要作出限制？">
           <el-text class="text">
-            A：网站图片
-            <el-text type="primary">提供下载需要带宽</el-text>
-            ，而我的免费服务器带宽有限，如果
+            A：网站图片提供
+            <el-text type="primary">下载需要带宽</el-text>
+            ，而我的服务器
+            <el-text type="primary">带宽有限</el-text>
+            且
+            <el-text type="primary">网速较慢</el-text>
+            ，如果
             <el-text type="danger">带宽耗尽</el-text>
             我只能暂时
             <el-text type="danger">关闭网站</el-text>
@@ -315,6 +338,10 @@
           <el-text class="text">
             3.关于做这个的初衷：最开始是因为热爱(个人喜欢收集壁纸)，人力一张一张搜罗，然后上传网盘；后来是践行所学(为了偷懒)，写了脚本开始批量下载；至于现在嘛，都做了这么多了，何不一步做完呢？边学边做，边做边学，学以致用嘛。
           </el-text>
+          <br>
+          <el-text class="text">
+            4.如果你想使用我的壁纸列表接口或角色信息列表接口，无偿，但为了防止被滥用，请联系我。
+          </el-text>
         </el-collapse-item>
       </el-collapse>
     </el-collapse-transition>
@@ -328,7 +355,7 @@ import {reactive, ref, watch} from 'vue'
 import {
   Check, CloseBold,
   Download,
-  Edit,
+  Edit, InfoFilled,
   Picture as IconPicture,
   Search,
   Select, Warning,
@@ -350,6 +377,7 @@ const condition = reactive({
       version: [],
       roles: [],
       sort: 2,
+      accurate: 0
     }
 )
 
@@ -363,7 +391,7 @@ interface Role {
 }
 
 //筛选
-const activeIndex = ref(['1'])  //激活的折叠面板序号
+const activeIndex = reactive(['1'])  //激活的折叠面板序号
 const versionInfo = reactive([])    //存版本信息
 const roleInfo = reactive<Role[]>([]) //存角色信息
 const campInfo = reactive([]) //存阵营信息
@@ -383,7 +411,7 @@ const unCompleted = reactive([])
 
 const showNotice = ref(false)     //控制下载须知界面的显示
 const isShowNum = ref(1)      //控制下载公告须知的显示第几个页面
-
+const isShowNotice = ref(false)//控制模糊和精准搜索的说明是否显示
 const imgList = reactive([])  //展示列表，存的图片信息对象
 const previewImgList = reactive([]) //大图展示列表，存的图片链接
 const downloadList = reactive([])   //下载图片的列表
@@ -545,6 +573,8 @@ function getNotices() {
 
 //筛选图片
 function getImages() {
+  //如果全选版本，则直接全部清除
+  if (condition.version.length === versionInfo.length) condition.version.splice(0, condition.version.length)
   if (isChoose.value) selectBtn() //如果是选择状态，则退出
   axios({
     url: '/getWallpaper',
@@ -565,7 +595,7 @@ function getImages() {
       previewImgList.push(item.imgUrl)
     })
     autoCol()   //再次触发自动布局
-  }).catch(error => {
+    }).catch(error => {
     console.log('发生错误：')
     console.log(error)
   })
@@ -775,7 +805,11 @@ body {
   padding-right: 0;
 }
 
-/**/
+/*折叠面板标题栏样式*/
+:deep(.el-collapse-item__header:hover) {
+  color: var(--el-color-primary);
+}
+
 .roleSort {
   width: 100%;
   text-align: left;
@@ -785,8 +819,7 @@ body {
 .links {
   display: flex;
   justify-content: center;
-  height: 30px;
-
+  flex-wrap: wrap;
 }
 
 .links .el-link {
