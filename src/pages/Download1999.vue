@@ -36,14 +36,11 @@
                     <el-checkbox v-for="item in versionInfo" :key="item.version" :label="item.versionName"
                                  :value="item.version"/>
                   </el-checkbox-group>
-                  <!--              <el-select multiple filterable placeholder="不选则默认全选，可多选" v-model="condition.version">-->
-                  <!--                <el-option v-for="item in versionInfo" :key="item.version" :label="item.versionName"-->
-                  <!--                           :value="item.version"/>-->
-                  <!--              </el-select>-->
                 </el-form-item>
                 <el-form-item label="选择角色：">
                   <div class="roleSort">
-                    <el-text type="primary">是否包含角色：</el-text>            <el-button-group size="small" type="primary" style="margin-bottom:5px">
+                    <el-text type="primary">是否包含角色：</el-text>
+                    <el-button-group size="small" type="primary" style="margin:0 5px 5px 5px">
                       <el-button @click="reset">清空所有选择
                       </el-button>
                       <el-button @click="router.push({name:'roles'})">查看角色表</el-button>
@@ -100,58 +97,66 @@
                   <el-icon style="margin:0 5px" @click="isShowNotice=!isShowNotice">
                     <InfoFilled/>
                   </el-icon>
-                  <el-text v-show="isShowNotice">
-                    <el-text  type="primary">模糊查询会优先满足版本要求</el-text>，然后查询包含勾选的角色的图；<el-text  type="warning">精准查询</el-text>只查询 <el-text type="warning">同时满足所有条件</el-text>的结果
-                  </el-text>
+                  <Transition name="selectNotice">
+                    <el-text v-show="isShowNotice">
+                      <el-text type="primary">模糊查询会优先满足版本要求</el-text>
+                      ，然后查询包含勾选的角色的图；
+                      <el-text type="warning">精准查询</el-text>
+                      只查询
+                      <el-text type="warning">同时满足所有条件</el-text>
+                      的结果
+                    </el-text>
+                  </Transition>
                 </el-form-item>
-                <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
-                <el-button type="primary" :size="elSize" :icon="Warning" @click="showNotice = true" v-show="isShow">
-                  下载须知
-                </el-button>
-                <br v-if="!isPC">
-                <el-button :type="isChoose? 'danger':'warning' " :size="elSize" :icon="isChoose? CloseBold : Select"
-                           @click="selectBtn" v-show="isShow">
-                  <el-text
-                      v-if="isChoose">退出选择模式
-                  </el-text>
-                  <el-text v-else>选择下载项</el-text>
-                </el-button>
-                <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
-                </el-button>
+                <el-button-group>
+                  <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
+                  <el-button type="primary" :size="elSize" :icon="Warning" @click="showNotice = true" v-show="isShow">
+                    下载须知
+                  </el-button>
+                  <br v-if="!isPC">
+                  <el-button :type="isChoose? 'danger':'warning' " :size="elSize" :icon="isChoose? CloseBold : Select"
+                             @click="selectBtn" v-show="isShow">
+                    <el-text
+                        v-if="isChoose">退出选择模式
+                    </el-text>
+                    <el-text v-else>选择下载项</el-text>
+                  </el-button>
+                  <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
+                  </el-button>
+                </el-button-group>
                 <br>
-                <el-text type="danger">请注意流量消耗，所加载均为官网原图，根据每个版本的壁纸质量消耗有所不同。</el-text>
-                <br>
-                <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系我删除。</el-text>
+                <div class="statement">
+                  <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系我删除。</el-text>
+                </div>
               </el-form>
             </el-collapse-item>
             <el-collapse-item title="待完善功能" style="text-align: left" name="2">
-              <template v-for="item in  unCompleted.slice().reverse()">
+              <template v-for="(item,index) in  unCompleted.slice().reverse()" :key="index">
                 <el-icon>
                   <Edit/>
                 </el-icon>
                 <el-text>&ensp;{{ item.content }}</el-text>
                 <br></template>
-
             </el-collapse-item>
             <el-collapse-item title="已实现功能" style="text-align: left" name="3">
-              <template v-for="item in completed.slice().reverse()">
+              <template v-for="(item,index) in completed.slice().reverse()" :key="index">
                 <el-icon>
                   <Check/>
                 </el-icon>
                 <el-text>&ensp;{{ item.content }}</el-text>
                 <br></template>
             </el-collapse-item>
+
             <el-collapse-item title="其它" name="4">
               <el-text>欢迎通过
                 <el-text type="success">公告→其它→反馈</el-text>
                 向我提出功能建议或BUG。
                 也欢迎来咱们九群玩
+                <el-button link type="primary" target="_blank"
+                           @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')" title="点击前往QQ">
+                  点击加入群聊【金兔子特供部门🐰】
+                </el-button>
               </el-text>
-              <el-button link type="primary" target="_blank"
-                         @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')" title="点击前往QQ">
-                点击加入群聊【金兔子特供部门🐰】
-              </el-button>
-              <br>
             </el-collapse-item>
           </el-collapse>
         </el-card>
@@ -188,7 +193,8 @@
 
       <!--    第三方库，瀑布流标签-->
       <wc-flow-layout :gap="10" :cols="colNum">
-        <div v-for="item in imgList" @click="checkImage(item.imgUrl,item.imgName,$event)" class="preImg"
+        <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl,item.imgName,$event)"
+             class="preImg"
              :id="'imgDiv-'+item.imgIndex">
           <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-'+item.imgIndex"
                     :max-scale="7"
@@ -346,7 +352,9 @@
       </el-collapse>
     </el-collapse-transition>
     <br>
-    <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系我删除。</el-text>
+    <div class="statement">
+      <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系我删除。</el-text>
+    </div>
   </el-dialog>
 </template>
 
@@ -391,7 +399,7 @@ interface Role {
 }
 
 //筛选
-const activeIndex = reactive(['1'])  //激活的折叠面板序号
+const activeIndex = ref('1')  //激活的折叠面板序号
 const versionInfo = reactive([])    //存版本信息
 const roleInfo = reactive<Role[]>([]) //存角色信息
 const campInfo = reactive([]) //存阵营信息
@@ -451,10 +459,11 @@ const handleCheckAllRoleChange = (val: boolean) => {
   if (val) roleInfo.forEach(item => condition.roles.push(item.id))
   else condition.roles = []
   isIndeterminateRole.value = false  //取消全选按钮符号 -
+
   console.log(condition.roles)
 }
 //单选角色：全选按钮的状态改变
-const handleCheckedRolesChange = (value: string[]) => {
+const handleCheckedRolesChange = () => {
   const checkedCount = condition.roles.length
   checkAllRoles.value = checkedCount === roleInfo.length //全选时变更按钮为√
   isIndeterminateRole.value = checkedCount > 0 && checkedCount < roleInfo.length//未全选时变更按钮为 -
@@ -490,6 +499,7 @@ const handleCheckCampChange = (val: boolean) => {
   })
   //将新的角色id添加到勾选列表condition.roles
   condition.roles.splice(0, condition.roles.length, ...newList)
+  handleCheckedRolesChange()
   console.log(condition.roles)
 }
 
@@ -507,7 +517,6 @@ function reset() {
   checkNoRole.value = false
   isIndeterminateRole.value = false
   condition.roles = []
-
   //因为没绑定阵营多选框的值，通过DOM修改多选框的选中状态
   const btns = document.querySelectorAll('.roleSort .is-checked')
   btns.forEach(item => {
@@ -576,6 +585,14 @@ function getImages() {
   //如果全选版本，则直接全部清除
   if (condition.version.length === versionInfo.length) condition.version.splice(0, condition.version.length)
   if (isChoose.value) selectBtn() //如果是选择状态，则退出
+  //如果全选角色和无角色，则直接清除全部角色选择
+  if (condition.roles.length === roleInfo.length + 1) {
+    condition.roles.splice(0, condition.roles.length)
+    checkAllRoles.value = false
+    checkNoRole.value = false
+  }
+  isShow.value = true //显示布局按钮
+
   axios({
     url: '/getWallpaper',
     params: condition,
@@ -595,7 +612,7 @@ function getImages() {
       previewImgList.push(item.imgUrl)
     })
     autoCol()   //再次触发自动布局
-    }).catch(error => {
+  }).catch(error => {
     console.log('发生错误：')
     console.log(error)
   })
@@ -783,8 +800,8 @@ watch(screenWidth, (newVal, oldVal) => {
 //自动布局，计算图片列数
 function autoCol() {
   if (Number((screenWidth.value / 250).toFixed(0)) === colNum.value) return
-  console.log(screenWidth.value)
-  console.log(Math.floor(screenWidth.value / 250))
+  console.log('视口宽度', screenWidth.value)
+  console.log('计算的图片列数', Math.floor(screenWidth.value / 250))
   colNum.value = Number(Math.floor(screenWidth.value / 250))
   if (previewImgList.length <= 10 && isPC.value) colNum.value = Number((previewImgList.length / 2).toFixed(0)) //PC端如果图片不大于10张，则有x张就分x/2列(去除小数)
 }
@@ -859,5 +876,61 @@ body {
 
 .checked {
   border: 3px #6bfac3 dotted;
+}
+
+/*下面是CSS动画*/
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+
+.selectNotice-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.selectNotice-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.selectNotice-enter-from,
+.selectNotice-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.statement:hover {
+  animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform: translate3d(0, 0, 0);
+}
+
+.statement:hover .el-text {
+  color: var(--el-color-danger);
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
 }
 </style>

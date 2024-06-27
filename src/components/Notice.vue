@@ -21,10 +21,18 @@
           <el-card class="notice">
             <el-text>
               1.本页面为
-              <el-button link target="_blank" type="primary" @click="copyText('1005993749','QQ群号','https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V')" title="点击前往QQ">Resource sharing群</el-button>
+              <el-button link target="_blank" type="primary"
+                         @click="copyText('1005993749','QQ群号','https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V')"
+                         title="点击前往QQ">Resource sharing群
+              </el-button>
               群友
-              <el-button link target="_blank" type="primary"  style="margin-left: 0" @click="copyText('1224021291','QQ号','tencent://message/?uin=1224021291')" title="点击前往QQ">默默</el-button>
-              的个人网站,<el-text style="color: orangered">资源来自网络,侵权请联系删除</el-text>。
+              <el-button link target="_blank" type="primary" style="margin-left: 0"
+                         @click="copyText('1224021291','QQ号','tencent://message/?uin=1224021291')" title="点击前往QQ">
+                默默
+              </el-button>
+              的个人网站,
+              <el-text style="color: orangered">资源来自网络,侵权请联系删除</el-text>
+              。
             </el-text>
             <br>
             <el-text>
@@ -51,12 +59,19 @@
           </el-card>
         </el-collapse-item>
         <el-collapse-item title="友情链接" name="2">
-          <template style="display: flex;justify-content: left">
+          <template class="friendLinks">
             <el-link target="_blank"
                      href="https://letsgofishing5.github.io/lsgfish-resource-sharing/"
                      title="资源收藏与分享">
-              <el-button ><img src="@/assets/custom.png" alt="" style="width: 25px">&ensp;
+              <el-button><img src="@/assets/custom.png" alt="" style="width: 25px">&ensp;
                 lsgfish-resource-sharing
+              </el-button>
+            </el-link>
+            <el-link target="_blank" v-if="false"
+                     href="https://answer.lilemy.cn/"
+                     title="小新问答">
+              <el-button><img src="@/assets/logo.xiaoxin.png" alt="" style="width: 25px">&ensp;
+                小新问答
               </el-button>
             </el-link>
           </template>
@@ -118,7 +133,8 @@
                         placeholder="[选填]可在此填写联系方式"></el-input>
             </el-form-item>
             <el-form-item label="反馈内容：">
-              <el-input type="textarea" v-model.trim="content" minlength="5" maxlength="200" :autosize="true" show-word-limit
+              <el-input type="textarea" v-model.trim="content" minlength="5" maxlength="200" :autosize="true"
+                        show-word-limit
                         placeholder="[必填]可在此提交建议、bug反馈或其他内容"/>
             </el-form-item>
           </el-form>
@@ -191,7 +207,7 @@ getNotices()
 function getNotices() {
   axios({
     url: '/getNotices',
-    params:{sort:['updateNotes','noUpdated']}
+    params: {sort: ['updateNotes', 'noUpdated']}
   }).then(result => {
     // console.log(result)
     const {noticeList} = result.data
@@ -199,7 +215,7 @@ function getNotices() {
     updateNotes.splice(0, updateNotes.length)
     noUpdated.splice(0, noUpdated.length)
     noticeList.forEach((item: Notice) => {
-      if (item.created_time === item.updated_time) item.time = '发布时间：' +getDiffTime(item.created_time)
+      if (item.created_time === item.updated_time) item.time = '发布时间：' + getDiffTime(item.created_time)
       else item.time = '发布时间：' + getDiffTime(item.created_time) + '  上次修订于：' + getDiffTime(item.updated_time)
       if (item.sort === 'updateNotes') updateNotes.push(item)
       if (item.sort === 'noUpdated') noUpdated.push(item)
@@ -253,6 +269,20 @@ function submitFeedback() {
 <style scoped>
 .notice {
   text-align: left;
+}
+
+/*折叠面板标题栏样式*/
+:deep(.el-collapse-item__header:hover) {
+  color: var(--el-color-primary);
+}
+
+.friendLinks {
+  display: flex;
+  justify-content: left
+}
+
+.friendLinks .el-link{
+  margin: 0 10px;
 }
 
 @media (max-width: 980px) {

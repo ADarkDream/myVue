@@ -11,8 +11,8 @@ import compression from 'vite-plugin-compression';
 // https://vitejs.dev/config/
 
 export default defineConfig({
-    define: {//打开控制台插件
-        __VUE_PROD_DEVTOOLS__: true,
+    define: {
+        __VUE_PROD_DEVTOOLS__: true,//打开控制台插件
     },
     server: {
         host: "0.0.0.0",//开发模式开启调试的外网网址
@@ -64,20 +64,49 @@ export default defineConfig({
     },
     build: {
         chunkSizeWarningLimit: 1500,//配置文件大小提醒限制，默认500
-        // rollupOptions: {
-        //     output: {
-        //每个node_modules模块分成一个js文件
-        // manualChunks(id) {
-        //     if (id.includes('node_modules')) {
-        //         return id.toString().split('node_modules/')[1].split('/')[0].toString()
-        //     }
-        // },
-        // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容hash值
-        //         entryFileNames: 'assets/js/[name].[hash].js', // 用于命名代码拆分时创建的共享块的输出命名
-        //         chunkFileNames: 'assets/js/[name].[hash].js', // 用于输出静态资源的命名，[ext]表示文件扩展名
-        //         assetFileNames: 'assets/[ext]/[name].[hash].[ext]'
-        //     }
-        // }
+        rollupOptions: {
+            output: {
+                // 每个node_modules模块分成一个js文件
+                manualChunks: {
+                    'group-forum': [
+                        './src/pages/Forum.vue',
+                        './src/pages/Center.vue',
+                        './src/pages/Article.vue',
+                    ],
+                    'group-admin': [
+                        './src/pages/AdminLogin.vue',
+                        './src/pages/AdminCenter.vue',
+                        './src/pages/AdminUsersManagement.vue',
+                        './src/pages/AdminArticlesManagement.vue',
+                        './src/pages/AdminCommentsManagement.vue',
+                        './src/pages/AdminNoticesManagement.vue',
+                        './src/pages/AdminUrlsManagement.vue',
+                        './src/pages/AdminImagesManagement.vue',
+                        './src/pages/AdminFeedbackManagement.vue',
+                    ],
+                    'group-user': [
+                        './src/pages/UserCenter.vue',
+                        './src/pages/UserInfo.vue',
+                        './src/pages/UserCenter.vue',
+                        './src/pages/UserPreference.vue',
+                        './src/pages/UserManagement.vue',
+                    ],
+                    'group-reverse1999': [
+                        './src/pages/Download1999.vue',
+                        './src/pages/Roles1999.vue',
+                    ],
+                },
+                // manualChunks(id) {
+                // if (id.includes('node_modules')) {
+                //     return id.toString().split('node_modules/')[1].split('/')[0].toString()
+                // }
+                // },
+                //  // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容hash值
+                //         entryFileNames: 'assets/js/[name].[hash].js', // 用于命名代码拆分时创建的共享块的输出命名
+                //         chunkFileNames: 'assets/js/[name].[hash].js', // 用于输出静态资源的命名，[ext]表示文件扩展名
+                //         assetFileNames: 'assets/[ext]/[name].[hash].[ext]'
+            }
+        }
     },
     //部署在主路径使用base:“/”(默认状态)，部署在子路径则使用base:“/ProjectName/”
     //webHistory模式下不能使用相对路径base:“./”

@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+//    "types": ["vite/client"],
+//    "module": "esnext",
+//    "target": "exnext",
     "downlevelIteration": true,//允许 TS编译器在将代码编译为较旧版本的 JavaScript 时，正确地处理ES2015及以上版本中引入的迭代协议。
     "esModuleInterop": true,
     //允许默认导入CommonJS模块
@@ -18,8 +21,8 @@
     // }
   },
   //使用 import.meta.dev需要配置下面两排
-  "--module": "es2022",
-  "moduleResolution": "Node",
+//  "--module": "es2022",
+//  "moduleResolution": "Node",
   "include": [
     "types/index.d.ts",
     "src/**/*.ts",

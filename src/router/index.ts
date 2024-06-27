@@ -6,9 +6,8 @@ import AdminCenter from "@/pages/AdminCenter.vue";
 import UserCenter from "@/pages/UserCenter.vue";
 import NotFound from "@/pages/NotFound.vue";
 import UserInfo from "@/pages/UserInfo.vue";
-
 import UserPreference from "@/pages/UserPreference.vue";
-import UserHistory from "@/pages/AdminUsersManagement.vue";
+
 import UserEdit from "@/pages/UserEdit.vue";
 import UserManagement from "@/pages/UserManagement.vue";
 import Article from "@/pages/Article.vue";
@@ -22,6 +21,7 @@ import AdminFeedbackManagement from "@/pages/AdminFeedbackManagement.vue";
 import AdminCommentsManagement from "@/pages/AdminCommentsManagement.vue";
 import Download1999 from "@/pages/Download1999.vue";
 import Roles1999 from "@/pages/Roles1999.vue";
+import User from "@/pages/User.vue";
 
 const router = createRouter({
     history: createWebHistory(),//路由器工作模式，有web和hash两种，web上线后需要服务器配置，hash地址栏会出现#号
@@ -112,11 +112,7 @@ const router = createRouter({
                 name: 'userPreference',//用户偏好设置界面
                 path: 'preference',
                 component: UserPreference
-            }, {
-                name: 'userHistory',
-                path: 'history',
-                component: UserHistory
-            }, {
+            },  {
                 name: 'userManagement',//用户管理界面
                 path: 'management',
                 component: UserManagement
@@ -144,6 +140,11 @@ const router = createRouter({
                 component: Roles1999
             }]
         },
+        // {
+        //     path: '/test',
+        //     name: 'test',
+        //     component: User
+        // },
         {
             name: "notFound",
             path: "/:pathMatch(.*)*",//匹配所有路由，找不到就显示404NotFound

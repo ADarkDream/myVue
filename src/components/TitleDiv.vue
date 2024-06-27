@@ -222,7 +222,7 @@
              destroy-on-close>
     <template #header><span style="font-size: 24px">公告</span></template>
     <!--  Notice组件-->
-    <Notice/>
+    <Notice v-if="!isLogin||showNotice"/>
   </el-dialog>
 
 
@@ -355,7 +355,7 @@ function changeBG(number: number) {
   bgUrl.value = list[num]
   if (!isDark.value) body.style.backgroundImage = `url(${list[num]})`
   localStorage.setItem('bgUrl', list[num])
-  localStorage.setItem('useUserBGUrl','0') //取消用户个人信息的背景设置
+  localStorage.setItem('useUserBGUrl', '0') //取消用户个人信息的背景设置
 }
 
 //前往管理中心
