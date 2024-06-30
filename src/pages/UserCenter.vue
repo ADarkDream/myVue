@@ -106,7 +106,7 @@ emitter.on('pageRender', (Num?: number) => {
 /*子组件使用*/
 .header1 {
   font-size: 30px;
-  padding-top: 10px;
+  vertical-align: center;
 }
 
 .header2 {

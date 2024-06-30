@@ -1,12 +1,12 @@
 <template>
-  <el-header class="header1">
-    文章编辑
-  </el-header>
+  <div class="header1">
+    <span>文章编辑</span>
+  </div>
   <el-form :inline="true" class="form" :model="data">
     <el-form-item label="文章标题" required>
-      <el-input v-model="data.title" placeholder="填写文章标题" clearable />
+      <el-input v-model="data.title" placeholder="填写文章标题" clearable/>
     </el-form-item>
-    <el-form-item label="发布板块" required >
+    <el-form-item label="发布板块" required>
       <el-select
           v-model="data.area"
           placeholder="选择发布板块"
@@ -16,7 +16,7 @@
         <el-option label="教程" value="教程"/>
       </el-select>
     </el-form-item>
-    <el-form-item label="标签设置" required >
+    <el-form-item label="标签设置" required>
       <el-select
           v-model="data.tags"
           placeholder="选择文章标签"
@@ -30,12 +30,14 @@
       </el-select>
     </el-form-item>
     <Toolbar
+        style="margin: 0 10px; "
         :editor="editorRef"
         :defaultConfig="toolbarConfig"
         :mode="mode"
     />
     <Editor
-        style="height:400px; overflow-y: hidden;text-align: initial"
+        :style="{height:screenHeight-400+'px'}"
+        class="editor"
         v-model="valueHtml"
         :defaultConfig="editorConfig"
         :mode="mode"
@@ -53,14 +55,15 @@
 
 <script setup lang="ts">
 import {onBeforeUnmount, ref, reactive, shallowRef} from 'vue'
-import {ElMessage,ElLoading} from "element-plus";
+import {ElMessage, ElLoading} from "element-plus";
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import {Editor, Toolbar} from '@wangeditor/editor-for-vue'
 import axios from "axios";
 import {useRoute, useRouter} from "vue-router";
 import emitter from "@/utils/emitter";
+import useResponsive from "@/hooks/useResponsive";
 
-
+const {screenHeight} = useResponsive()
 //region 表单
 const data = reactive({
   id: '',
@@ -72,7 +75,7 @@ const data = reactive({
 
 function check(val: string) {
   // console.log(typeof val.trim().length)
-  if (val===undefined) {
+  if (val === undefined) {
     ElMessage.error('文章标题、发布板块、标签设置不能为空')
     return false
   } else if (val.trim().length < 2 || val.trim().length > 30) {
@@ -242,5 +245,11 @@ function addDraft() {
 
 .form .el-select {
   --el-select-width: 220px;
+}
+
+.editor {
+  margin: 0 10px;
+  overflow-y: hidden;
+  text-align: initial
 }
 </style>

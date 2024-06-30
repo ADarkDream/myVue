@@ -67,35 +67,47 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 // 每个node_modules模块分成一个js文件
-                manualChunks: {
-                    'group-forum': [
-                        './src/pages/Forum.vue',
-                        './src/pages/Center.vue',
-                        './src/pages/Article.vue',
-                    ],
-                    'group-admin': [
-                        './src/pages/AdminLogin.vue',
-                        './src/pages/AdminCenter.vue',
-                        './src/pages/AdminUsersManagement.vue',
-                        './src/pages/AdminArticlesManagement.vue',
-                        './src/pages/AdminCommentsManagement.vue',
-                        './src/pages/AdminNoticesManagement.vue',
-                        './src/pages/AdminUrlsManagement.vue',
-                        './src/pages/AdminImagesManagement.vue',
-                        './src/pages/AdminFeedbackManagement.vue',
-                    ],
-                    'group-user': [
-                        './src/pages/UserCenter.vue',
-                        './src/pages/UserInfo.vue',
-                        './src/pages/UserCenter.vue',
-                        './src/pages/UserPreference.vue',
-                        './src/pages/UserManagement.vue',
-                    ],
-                    'group-reverse1999': [
-                        './src/pages/Download1999.vue',
-                        './src/pages/Roles1999.vue',
-                    ],
-                },
+                // manualChunks: {
+                //     'group-home': [
+                //         './src/components/TitleDiv.vue',
+                //         './src/components/AddUrl.vue',
+                //         './src/components/Aside.vue',
+                //         './src/components/Main.vue',
+                //         './src/components/Notice.vue',
+                //         './src/components/TitleDiv.vue',
+                //         './src/components/UploadImage.vue',
+                //         './src/pages/Forum.vue',
+                //         './src/pages/Home.vue',
+                //         './src/pages/Content.vue',
+                //         './src/pages/Article.vue',
+                //         './src/pages/Center.vue',
+                //     ],
+                //     'group-management': [
+                //         './src/pages/AdminArticlesManagement.vue',
+                //         './src/pages/AdminCenter.vue',
+                //         './src/pages/AdminCommentsManagement.vue',
+                //         './src/pages/AdminFeedbackManagement.vue',
+                //         './src/pages/AdminImagesManagement.vue',
+                //         './src/pages/AdminLogin.vue',
+                //         './src/pages/AdminNoticesManagement.vue',
+                //         './src/pages/AdminUrlsManagement.vue',
+                //         './src/pages/AdminUsersManagement.vue',
+                //         './src/pages/UserCenter.vue',
+                //         './src/pages/UserEdit.vue',
+                //         './src/pages/UserInfo.vue',
+                //         './src/pages/UserManagement.vue',
+                //         './src/pages/UserPreference.vue',
+                //     ],
+                //     'group-others': [
+                //         './src/pages/Download1999.vue',
+                //         './src/pages/News.vue',
+                //         './src/pages/NewsContent.vue',
+                //         './src/pages/NotFound.vue',
+                //         './src/pages/Roles1999.vue',
+                //         './src/pages/user.vue',
+                //     ],
+                // },
+
                 // manualChunks(id) {
                 // if (id.includes('node_modules')) {
                 //     return id.toString().split('node_modules/')[1].split('/')[0].toString()

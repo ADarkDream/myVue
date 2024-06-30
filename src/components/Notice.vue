@@ -36,11 +36,11 @@
             </el-text>
             <br>
             <el-text>
-              2.当前界面勉强适配移动端。等我学废了再回来继续优化。
+              2.当前界面勉强适配移动端，持续优化中。
             </el-text>
             <br>
             <el-text>
-              3.若部分网站无法访问，请使用Chrome、Edge、Firefox等国外浏览器或使用VPN，也可能是因为网站暂时关闭。
+              3.若首页部分网站无法访问，请使用Chrome、Edge、Firefox等浏览器或尝试VPN，也可能是因为该网站维护中。
             </el-text>
             <br>
             <el-text>4.你也可以
@@ -76,29 +76,6 @@
             </el-link>
           </template>
         </el-collapse-item>
-        <br>
-        <el-space v-if="isPC" spacer="|">
-          <el-button link tag="a" type="info"
-                     @click="copyText('50011502001039','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
-            <img src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败">
-            &ensp;渝公网安备50011502001039
-          </el-button>
-
-          <el-button link tag="a" type="info" @click="copyText('渝ICP备2024030473号','http://beian.miit.gov.cn/')">
-            渝ICP备2024030473号
-          </el-button>
-        </el-space>
-        <div v-else>
-          <el-button link tag="a" type="info"
-                     @click="copyText('50011502001039','备案号','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
-            <img src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败">
-            &ensp;渝公网安备50011502001039
-          </el-button>
-          <el-button link tag="a" type="info"
-                     @click="copyText('渝ICP备2024030473号','备案号','http://beian.miit.gov.cn/')">
-            渝ICP备2024030473号
-          </el-button>
-        </div>
       </el-collapse>
     </el-collapse-transition>
 
@@ -117,7 +94,7 @@
 
     <!--其它-->
     <el-collapse-transition v-show="isShow===3">
-      <el-collapse v-model="activeName" accordion>
+      <el-collapse v-model="activeName" accordion style="border: none">
         <!--    待更新的功能-->
         <el-collapse-item title="待更新的功能" name="1">
           <template v-for="item in noUpdated" :key="item.id">
@@ -143,8 +120,19 @@
       </el-collapse>
     </el-collapse-transition>
 
-
-    <el-divider>已加载全部内容</el-divider>
+        <div style="margin-top: 10px" >
+          <el-button link tag="a" type="info"
+                     @click="copyText('50011502001039','备案号','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
+            <el-image src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败"/>
+            &ensp;渝公网安备50011502001039
+          </el-button>
+          <span v-if="isPC" style="margin: 0 10px">|</span>
+          <el-button link tag="a" type="info"
+                     @click="copyText('渝ICP备2024030473号','备案号','http://beian.miit.gov.cn/')">
+            渝ICP备2024030473号
+          </el-button>
+        </div>
+<!--    <el-divider>已加载全部内容</el-divider>-->
   </el-scrollbar>
 </template>
 

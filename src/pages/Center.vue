@@ -41,9 +41,8 @@
       <!--文章列表区-->
       <div class="card" v-for="item in articleList" @click="toArticle(item.id)">
         <div class="articleCover">
-          <el-image :src="item.coverUrl">
-            <!--          <el-image src="http://muxi-dream.oss-cn-chengdu.aliyuncs.com/bg/1717785767035_1717785800322.jpeg">-->
-            <template #error>
+          <el-image :src="item.coverUrl" fit="cover">
+             <template #error>
               <div class="image-slot">
                 <el-icon style="width: 50px">
                   <icon-picture/>
@@ -141,7 +140,7 @@ function getArticleList() {
   }).then(result => {
     // console.log(result)
     const {msg, list} = result.data
-    ElMessage.success(msg)
+    // ElMessage.success(msg)
     articleList.splice(0, articleList.length)
     Object.assign(articleList, list)
   }).catch(error => {

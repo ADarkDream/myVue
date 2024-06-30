@@ -22,6 +22,8 @@ import AdminCommentsManagement from "@/pages/AdminCommentsManagement.vue";
 import Download1999 from "@/pages/Download1999.vue";
 import Roles1999 from "@/pages/Roles1999.vue";
 import User from "@/pages/User.vue";
+import News from "@/pages/News.vue";
+import NewsContent from "@/pages/NewsContent.vue";
 
 const router = createRouter({
     history: createWebHistory(),//路由器工作模式，有web和hash两种，web上线后需要服务器配置，hash地址栏会出现#号
@@ -112,7 +114,7 @@ const router = createRouter({
                 name: 'userPreference',//用户偏好设置界面
                 path: 'preference',
                 component: UserPreference
-            },  {
+            }, {
                 name: 'userManagement',//用户管理界面
                 path: 'management',
                 component: UserManagement
@@ -149,18 +151,22 @@ const router = createRouter({
             name: "notFound",
             path: "/:pathMatch(.*)*",//匹配所有路由，找不到就显示404NotFound
             component: NotFound,
-        }
-
-        //  {
-        //     name: 'xinwen',
-        //     path: '/News',
-        //     component: News,
-        //     children: [{
-        //         name:'xiangqing',
-        //         path: 'Details',//子级路由不要斜杠
-        //         component: Details
-        //     }]
-        // },
+        }, {
+            path: '/News',
+            children: [{
+                name: 'news',
+                path: '',//重定向
+                redirect: {name: 'newsCenter'}
+            },{
+                name: 'newsCenter',
+                path: 'center',
+                component: News,
+            },{
+                name: 'newsContent',
+                path: 'newsContent',
+                component: NewsContent,
+            }]
+        },
     ]
 
 })

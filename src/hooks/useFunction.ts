@@ -38,6 +38,18 @@ export default function () {
         )
     }
 
+    //复制代码
+    function copyCode(code: string, msg: string) {
+        navigator.clipboard.writeText(code).then(
+            () => {
+                ElMessage.success(msg + '已复制到剪贴板')
+            },
+            () => {
+                alert(msg + '复制失败,请自行复制')
+            }
+        )
+    }
+
     // 向外暴露
-    return {copyWebsiteRecord,copyText}
+    return {copyWebsiteRecord, copyText, copyCode}
 }

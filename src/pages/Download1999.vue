@@ -62,18 +62,18 @@
                     <!--遍历阵营-->
                     <el-text type="primary">角色所属阵营：</el-text>
                     <el-checkbox v-for="(item,index) in campInfo" :key="index"
-                                 @click="roleTypeChange(campInfo[index],null)"
+                                 @click="roleTypeChange(item,null)"
                                  @change="handleCheckCampChange">
-                      {{ campInfo[index] }}
+                      {{ item }}
                     </el-checkbox>
                   </div>
                   <div class="roleSort">
                     <!--遍历种族-->
                     <el-text type="primary">角色所属种族：</el-text>
                     <el-checkbox v-for="(item,index) in raceInfo" :key="index"
-                                 @click="roleTypeChange(null,raceInfo[index])"
+                                 @click="roleTypeChange(null,item)"
                                  @change="handleCheckCampChange">
-                      {{ raceInfo[index] }}
+                      {{ item }}
                     </el-checkbox>
                   </div>
                   <el-checkbox-group v-model="condition.roles" style="text-align: left"
@@ -108,22 +108,21 @@
                     </el-text>
                   </Transition>
                 </el-form-item>
-                <el-button-group>
-                  <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
-                  <el-button type="primary" :size="elSize" :icon="Warning" @click="showNotice = true" v-show="isShow">
-                    下载须知
-                  </el-button>
-                  <br v-if="!isPC">
-                  <el-button :type="isChoose? 'danger':'warning' " :size="elSize" :icon="isChoose? CloseBold : Select"
-                             @click="selectBtn" v-show="isShow">
-                    <el-text
-                        v-if="isChoose">退出选择模式
-                    </el-text>
-                    <el-text v-else>选择下载项</el-text>
-                  </el-button>
-                  <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
-                  </el-button>
-                </el-button-group>
+                <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
+                <el-button type="warning" :size="elSize" :icon="Warning" @click="showNotice = true" v-show="isShow">
+                  下载须知
+                </el-button>
+                <br v-if="!isPC">
+                <el-button :type="isChoose!==0? 'danger':'success' " :size="elSize" :icon="isChoose!==0? CloseBold : Select"
+                           @click="selectBtn" v-show="isShow">
+                    <span
+                        v-if="isChoose===0">勾选
+                    </span>
+                  <span v-else-if="isChoose===1">取消全选</span>
+                  <span v-else>退出勾选</span>
+                </el-button>
+                <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
+                </el-button>
                 <br>
                 <div class="statement">
                   <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系我删除。</el-text>
@@ -199,7 +198,7 @@
           <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-'+item.imgIndex"
                     :max-scale="7"
                     :min-scale="0.2"
-                    :preview-src-list="isChoose? [] : previewImgList"
+                    :preview-src-list="isChoose!==0? [] : previewImgList"
                     :initial-index="item.imgIndex"
                     fit="scale-down"
                     lazy>
@@ -428,7 +427,7 @@ const isShow = ref(false)//显示布局按钮组
 const colNum = ref<number>(isPC.value ? 5 : 1)    //修改显示列数
 
 const autoFlag = ref(true)    //是否开启自动布局
-const isChoose = ref(false)   //是否是批量选择状态
+const isChoose = ref(0)   //是否是批量选择状态
 
 interface Notice {
   id: number,
@@ -579,6 +578,15 @@ function getNotices() {
   })
 }
 
+let oldInfo = reactive({
+  version: ['all'],
+  roles: [],
+  sort: 2,
+  accurate: 0
+})
+const isChange = (obj1, obj2) => {
+  return !(JSON.stringify(obj1) === JSON.stringify(obj2))
+};
 
 //筛选图片
 function getImages() {
@@ -591,13 +599,23 @@ function getImages() {
     checkAllRoles.value = false
     checkNoRole.value = false
   }
-  isShow.value = true //显示布局按钮
+
+//简单判断筛选条件是否改变，改变了顺序检测不出来，如roles:[1,2]→[2,1]
+  if (!isChange(condition, oldInfo)) return ElMessage.info('筛选条件未作改变，已取消查询')
+  else {
+    oldInfo.version = condition.version
+    oldInfo.roles = condition.roles
+    oldInfo.sort = condition.sort
+    oldInfo.accurate = condition.accurate
+  }
 
   axios({
     url: '/getWallpaper',
     params: condition,
   }).then(result => {
     console.log(result)
+    const {status} = result.data
+    if (status === 300) return//没有查询结果则不进行以下操作
     isShow.value = true //显示布局按钮
     imgList.splice(0, imgList.length, ...result.data.data)
     //imgIndex用于排序，但不连续
@@ -702,16 +720,24 @@ function setBackground(url: string, name: string) {
 //进入多选状态
 function selectBtn() {
   const preList = document.querySelectorAll('.preImg')
-  if (!isChoose.value) {
-    isChoose.value = true     //进入多选状态
+  if (isChoose.value===0) { //进入多选状态
+    isChoose.value = 1
     //将所有呈现的图片添加选中状态
     preList.forEach(item => {
       item.classList.add('checked')
     })
     //将所有呈现的图片加入下载列表
     downloadList.splice(0, downloadList.length, ...imgList)
-  } else {
-    isChoose.value = false     //退出多选状态
+  } else if (isChoose.value===1) {//取消全选
+    isChoose.value = 2
+    //给所有呈现的图片移除选中状态
+    preList.forEach(item => {
+      item.classList.remove('checked')
+    })
+    //清空下载列表
+    downloadList.splice(0, downloadList.length)
+  }else if (isChoose.value===2) {  //退出多选状态
+    isChoose.value = 0
     //给所有呈现的图片移除选中状态
     preList.forEach(item => {
       item.classList.remove('checked')
@@ -752,7 +778,7 @@ async function checkPort() {
 //批量下载壁纸
 async function downloadImages() {
   ElMessage.info('如有任何问题，请先查看下载须知')
-  if (downloadList.length === 0) return ElMessage.error('请先选中需要下载的图片！')
+  if (downloadList.length === 0) return ElMessage.error('请先勾选需要下载的图片！')
   else if (downloadList.length <= 5) {//下载数量不大于5
     ElMessage.success('当前下载数量不大于5，可以直接下载')
     console.log(downloadList)
