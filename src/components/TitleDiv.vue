@@ -8,9 +8,9 @@
       <!--首页-->
       <el-button @click="router.push({name:'home'})" plain :icon="HomeFilled" v-if="!isHome">首页</el-button>
       <!--更换壁纸-->
-      <el-button class="bgBtn" @click="changeBG(0)" v-if="isHome">更换壁纸</el-button>
+      <el-button :icon="Switch" class="bgBtn" @click="changeBG(0)" v-if="isHome">更换壁纸</el-button>
       <!--下载壁纸-->
-      <el-button class="bgBtn" @click="router.push({name:'download'})" v-if="isHome">
+      <el-button :icon="Download" class="bgBtn" @click="router.push({name:'download'})" v-if="isHome">
         下载壁纸
       </el-button>
       <!--日夜切换-->
@@ -48,8 +48,8 @@
     <el-col :lg="6" :md="7" :sm="8" class="title-right">
       <el-space>
         <!--登录按钮-->
-        <el-button @click="showLogin = true" v-if="!isLogin">登录
-          <svg type="primary" style="margin-left: 16px;height: 20px;width: 20px" viewBox="0 0 1024 1024">
+        <el-button @click="showLogin = true" v-if="!isLogin">
+          <svg class="headIcon" viewBox="0 0 1024 1024">
             <path
                 d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"
                 fill="CurrentColor"></path>
@@ -57,16 +57,17 @@
                 d="M512 220.223c-88.224 0-160 71.776-160 160s71.776 160 160 160c88.225 0 160-71.775 160-160s-71.775-160-160-160z m0 256c-52.935 0-96-43.065-96-96s43.065-96 96-96 96 43.065 96 96-43.065 96-96 96z"
                 fill="CurrentColor"></path>
           </svg>
+          &ensp;登录
         </el-button>
         <!--登陆后的按钮-->
-        <el-button class="username " type="primary" v-if="isLogin" @click="goCenter">{{ username }}
-          <el-image class="headIcon" :src="headImgUrl" alt="" :onerror="errorImage"/>
+        <el-button class="username " type="primary" v-if="isLogin" @click="goCenter">
+          <el-image class="userImg" :src="headImgUrl" alt="" :onerror="errorImage"/>
+          &ensp;{{ username }}
         </el-button>
         <!--论坛-->
         <el-button @click="router.push({name:'center'})" plain :icon="Comment" v-if="!isForum">论坛</el-button>
         <!--选项菜单-->
         <el-dropdown>
-
           <el-button class="option" :icon="Operation">
             选项
           </el-button>
@@ -83,6 +84,16 @@
               <!--退出登录-->
               <el-dropdown-item v-if="isLogin" @click="exit" :icon="SwitchButton">
                 退出登录
+              </el-dropdown-item>
+              <!--新闻-->
+              <el-dropdown-item @click="router.push({name:'news'})">
+                <svg t="1719772539751" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg" p-id="4292" width="200" height="200">
+                  <path
+                      d="M878.18 118.28l-732.3 0c-58.14 0-105.42 47.34-105.42 105.42l0 576.48c0 58.2 47.34 105.48 105.42 105.48l732.3 0c58.14 0 105.42-47.28 105.42-105.48l0-576.42c-0.06-58.14-47.34-105.48-105.42-105.48zM923.54 800.24c0 25.08-20.4 45.48-45.42 45.48l-732.24 0c-25.02 0-45.42-20.4-45.42-45.48l0-576.48c0-25.02 20.4-45.42 45.42-45.42l732.3 0c25.02 0 45.42 20.4 45.42 45.42l0 576.48zM181.04 264.08l661.86 0 0 61.86-661.86 0 0-61.86zM542 390.74l300.96 0 0 61.86-300.96 0 0-61.86zM542 516.08l300.96 0 0 88.74-300.96 0 0-88.74zM542 692l246.36 0 0 61.86-246.36 0 0-61.86zM181.04 391.64l285.96 0 0 362.16-285.96 0 0-362.16z"
+                      fill="CurrentColor" p-id="4293"></path>
+                </svg>
+                &ensp;新闻
               </el-dropdown-item>
               <!--公告-->
               <el-dropdown-item :icon="Comment" @click="showNotice=!showNotice">
@@ -126,13 +137,9 @@
     <!--右上角登录和选项-->
     <el-col :span="8" class="title-right">
       <el-space>
-        <el-button size="small" class="username " type="primary" v-if="isLogin" @click="goCenter">
-          <!--{{ username }}太窄了不够显示-->
-          <el-image class="headIcon" :src="headImgUrl" alt="" :onerror="errorImage"/>
-        </el-button>
         <!--登录按钮-->
         <el-button size="small" @click="showLoginDrawer" v-if="!isLogin">
-          <svg type="primary" style="width: 20px;height: 20px" viewBox="0 0 1024 1024">
+          <svg class="headIcon" viewBox="0 0 1024 1024">
             <path
                 d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"
                 fill="CurrentColor"></path>
@@ -141,11 +148,14 @@
                 fill="CurrentColor"></path>
           </svg>
         </el-button>
-
+        <el-button size="small" class="username " type="primary" v-else @click="goCenter">
+          <!--{{ username }}太窄了不够显示-->
+          <el-image class="headIcon" :src="headImgUrl" alt="" :onerror="errorImage"/>
+        </el-button>
         <!--论坛-->
         <el-button size="small" @click="router.push({name:'center'})" plain :icon="Comment" v-if="!isHome&&!isForum"/>
         <!--选项下拉菜单-->
-        <el-dropdown>
+        <el-dropdown size="small">
           <el-button size="small" class="option" :icon="Operation"/>
           <template #dropdown>
             <el-dropdown-menu>
@@ -162,12 +172,23 @@
                 退出登录
               </el-dropdown-item>
               <!--更换壁纸-->
-              <el-dropdown-item class="bgBtn" @click="changeBG(1)">更换壁纸</el-dropdown-item>
+              <el-dropdown-item :icon="Switch" class="bgBtn" @click="changeBG(1)">更换壁纸</el-dropdown-item>
               <!--下载壁纸-->
-              <el-dropdown-item class="bgBtn" @click="router.push({name:'download'})">下载壁纸</el-dropdown-item>
+              <el-dropdown-item :icon="Download" class="bgBtn" @click="router.push({name:'download'})">下载壁纸
+              </el-dropdown-item>
               <!--日夜切换-->
               <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日"
                          :inactive-action-icon="Sunny" :active-action-icon="Moon" class="isDarkBtn"/>
+              <!--新闻-->
+              <el-dropdown-item  @click="router.push({name:'news'})">
+                <svg t="1719772539751" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg" p-id="4292" width="200" height="200">
+                  <path
+                      d="M878.18 118.28l-732.3 0c-58.14 0-105.42 47.34-105.42 105.42l0 576.48c0 58.2 47.34 105.48 105.42 105.48l732.3 0c58.14 0 105.42-47.28 105.42-105.48l0-576.42c-0.06-58.14-47.34-105.48-105.42-105.48zM923.54 800.24c0 25.08-20.4 45.48-45.42 45.48l-732.24 0c-25.02 0-45.42-20.4-45.42-45.48l0-576.48c0-25.02 20.4-45.42 45.42-45.42l732.3 0c25.02 0 45.42 20.4 45.42 45.42l0 576.48zM181.04 264.08l661.86 0 0 61.86-661.86 0 0-61.86zM542 390.74l300.96 0 0 61.86-300.96 0 0-61.86zM542 516.08l300.96 0 0 88.74-300.96 0 0-88.74zM542 692l246.36 0 0 61.86-246.36 0 0-61.86zM181.04 391.64l285.96 0 0 362.16-285.96 0 0-362.16z"
+                      fill="CurrentColor" p-id="4293"></path>
+                </svg>
+                &ensp;新闻
+              </el-dropdown-item>
               <!--公告-->
               <el-dropdown-item :icon="Comment" @click="showNotice=!showNotice">
                 公告
@@ -246,7 +267,7 @@ import {onMounted, reactive, ref, watch} from 'vue'
 import Login from "@/pages/Login.vue";
 import {
   ArrowLeftBold, Avatar,
-  Comment,
+  Comment, Download,
   HomeFilled,
   Moon, Operation,
   Sunny, Switch, SwitchButton, SwitchFilled,
@@ -498,7 +519,7 @@ watch(router.currentRoute, (newValue, oldValue) => {
 
 
 .username {
-  padding-top: 9px;
+  padding-top: 10px;
   background-color: transparent;
   border: transparent;
   font: 20px bold, '华文行楷', serif;
@@ -513,13 +534,18 @@ watch(router.currentRoute, (newValue, oldValue) => {
 
 /*导航栏头像*/
 .headIcon {
-  margin-left: 10px;
-  width: 30px;
-  height: 30px;
-  border-radius: 15px;
+  width: 20px;
+  height: 20px;
 }
 
-/*登录界面的头像图片大小*/
+/*PC端登陆之后的头像*/
+.userImg {
+  border-radius: 15px;
+  width: 30px;
+  height: 30px
+}
+
+/*登录界面的头像矢量图大小*/
 .headImg {
   width: 200px;
 }
@@ -548,13 +574,6 @@ watch(router.currentRoute, (newValue, oldValue) => {
 
 
 @media (max-width: 980px) {
-
-  .headIcon {
-    margin-left: 0;
-    width: 24px;
-    height: 24px;
-  }
-
   .username {
     padding: 0;
   }

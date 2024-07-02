@@ -23,8 +23,10 @@
   //使用 import.meta.dev需要配置下面两排
 //  "--module": "es2022",
 //  "moduleResolution": "Node",
+
   "include": [
     "types/index.d.ts",
+    "src/types/reverseImgList.d.ts",
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",

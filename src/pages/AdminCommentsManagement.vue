@@ -188,8 +188,7 @@ function diffObj(newData: Comment, oldData: Comment) {
 
 
 //上传更新的评论信息
-function updateRow(data: Comment,oldData: Comment) {
-
+function updateRow(data: Comment,oldData: Comment){
   axios({
     url: '/updateComment',
     method: 'post',
@@ -201,7 +200,7 @@ function updateRow(data: Comment,oldData: Comment) {
     // console.log(result)
     const {msg} = result.data
     //更新修订时间为当前时间
-    data.updated_time = new Date().toISOString()
+    data.created_time = new Date().toISOString()
     //将修改后的信息显示出来
     Object.assign(oldData, data)
     //去除编辑标记

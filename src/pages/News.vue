@@ -116,7 +116,8 @@ function getNews(type:string) {
 
 <style scoped>
 .el-container {
-  background-color: rgba(176, 163, 149, 255)
+/*  background-color: rgba(176, 163, 149, 255)*/
+  background: var(--el-color-primary-light-9);
 }
 
 

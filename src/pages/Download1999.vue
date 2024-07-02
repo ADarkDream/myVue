@@ -3,15 +3,25 @@
     <el-container>
       <el-header>
         <el-card>
-          <h1>1999国服官图(以影像之)下载</h1>
+          <el-watermark
+              :width="66"
+              :height="26"
+              :gap="[40,0]"
+              :image="watermark"
+          >
+            <h1>1999国服官图(以影像之)下载</h1>
+          </el-watermark>
           <el-collapse v-model="activeIndex" accordion>
             <el-collapse-item title="资源文档" name="0">
               <template class="links">
-                <el-link type="primary" href="https://gitee.com/MuXi-Dream/download-reverse1999" target="_blank">本项目开源地址
+                <el-link type="primary" href="https://gitee.com/MuXi-Dream/download-reverse1999" target="_blank">
+                  本项目开源地址
                 </el-link>
-                <el-link type="primary" href="https://re.bluepoch.com/home/detail.html#wallpaper" target="_blank">官网下载地址
+                <el-link type="primary" href="https://re.bluepoch.com/home/detail.html#wallpaper" target="_blank">
+                  官网下载地址
                 </el-link>
-                <el-link type="primary" href="https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999" target="_blank">
+                <el-link type="primary" href="https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999"
+                         target="_blank">
                   百度网盘下载地址
                 </el-link>
                 <el-button link type="primary" target="_blank"
@@ -113,7 +123,8 @@
                   下载须知
                 </el-button>
                 <br v-if="!isPC">
-                <el-button :type="isChoose!==0? 'danger':'success' " :size="elSize" :icon="isChoose!==0? CloseBold : Select"
+                <el-button :type="isChoose!==0? 'danger':'success' " :size="elSize"
+                           :icon="isChoose!==0? CloseBold : Select"
                            @click="selectBtn" v-show="isShow">
                     <span
                         v-if="isChoose===0">勾选
@@ -125,6 +136,10 @@
                 </el-button>
                 <br>
                 <div class="statement">
+
+                  <el-text type="danger" v-show="isShow&&!isPC">
+                    注意：移动端浏览器可能无法批量下载，如尝试下载等待之后没有反应，请切换浏览器或长按图片保存。<br>
+                  </el-text>
                   <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系我删除。</el-text>
                 </div>
               </el-form>
@@ -152,7 +167,8 @@
                 向我提出功能建议或BUG。
                 也欢迎来咱们九群玩
                 <el-button link type="primary" target="_blank"
-                           @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')" title="点击前往QQ">
+                           @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')"
+                           title="点击前往QQ">
                   点击加入群聊【金兔子特供部门🐰】
                 </el-button>
               </el-text>
@@ -161,7 +177,7 @@
         </el-card>
       </el-header>
       <el-button-group class="btnGroup" type="info" :size="elSize" v-show="isShow">
-        <el-button @click="autoCol" type="primary">
+        <el-button @click="autoCol" :type="autoFlag ?'primary':'info' ">
           <svg t="1718341380597" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
                xmlns="http://www.w3.org/2000/svg" p-id="5304" width="200" height="200">
             <path
@@ -169,7 +185,7 @@
                 p-id="5305"></path>
           </svg>
           <span>自动</span></el-button>
-        <el-button @click="colNum=3 ">
+        <el-button @click="colNum=3;autoFlag=false " :type="autoFlag===false&&colNum===3 ?'primary':'info' ">
           <svg t="1718333094288" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
                xmlns="http://www.w3.org/2000/svg" p-id="2024" width="200" height="200">
             <path
@@ -178,7 +194,7 @@
           </svg>
           <span>3列</span>
         </el-button>
-        <el-button @click="colNum=5 ">
+        <el-button @click="colNum=5;autoFlag=false " :type="autoFlag===false&&colNum===5 ?'primary':'info' ">
           <svg t="1718332863471" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
                xmlns="http://www.w3.org/2000/svg" p-id="1704" width="200" height="200">
             <path
@@ -368,41 +384,40 @@ import {
   Select, Warning,
 } from "@element-plus/icons-vue";
 import axios from "axios";
-import {ElCollapseTransition, ElMessage} from "element-plus";
+import {ElCollapseTransition, ElMessage, ElMessageBox} from "element-plus";
 import useResponsive from "@/hooks/useResponsive";
 import useUserInfo from "@/hooks/useUserInfo";
 import {useRouter} from "vue-router";
 import useFunction from "@/hooks/useFunction";
+import watermark from '@/assets/logo_1999.png'
 
-const {copyText} = useFunction()
+const {copyText, deepEqual} = useFunction()
 const router = useRouter()
 const {isPC, elSize, screenWidth} = useResponsive()
 const {isLogin, updateLocalUserInfo} = useUserInfo()
 
-//用户选择项目
-const condition = reactive({
+//用户查询的参数
+const condition = reactive<ImgParams>({
       version: [],
       roles: [],
       sort: 2,
       accurate: 0
     }
 )
-
-interface Role {
-  id: number,
-  name: string,
-  camp: string,
-  race: string,
-  otherTags: string,
-  created_time: string,
-}
+//用户上一次查询的参数
+const oldCondition = reactive<ImgParams>({
+  version: ['all'],
+  roles: [],
+  sort: 2,
+  accurate: 0
+})
 
 //筛选
 const activeIndex = ref('1')  //激活的折叠面板序号
-const versionInfo = reactive([])    //存版本信息
+const versionInfo = reactive<versionInfo[]>([])    //存版本信息
 const roleInfo = reactive<Role[]>([]) //存角色信息
-const campInfo = reactive([]) //存阵营信息
-const raceInfo = reactive([]) //存种族信息
+const campInfo = reactive<string[]>([]) //存阵营信息
+const raceInfo = reactive<string[]>([]) //存种族信息
 
 const checkAllVersions = ref(false)   //全选版本
 const isIndeterminateVersion = ref(false)  //全选版本按钮状态
@@ -410,18 +425,18 @@ const checkAllRoles = ref(false)   //全选角色
 const checkNoRole = ref(false)   //全选无角色
 const isIndeterminateRole = ref(false)  //全选角色按钮状态
 const isIndeterminateNoRole = ref(false)  //全选无角色按钮状态
-const campName = ref('')      //阵营名称
-const raceName = ref('')      //种族名称
+const campName = ref<string>('')      //阵营名称
+const raceName = ref<string>('')      //种族名称
 
-const completed = reactive([])      //筛选下方的公告列表：完成和未完成的功能
-const unCompleted = reactive([])
+const completed = reactive<Notice[]>([])      //筛选下方的公告列表：完成和未完成的功能
+const unCompleted = reactive<Notice[]>([])
 
 const showNotice = ref(false)     //控制下载须知界面的显示
-const isShowNum = ref(1)      //控制下载公告须知的显示第几个页面
+const isShowNum = ref<number>(1)      //控制下载公告须知的显示第几个页面
 const isShowNotice = ref(false)//控制模糊和精准搜索的说明是否显示
-const imgList = reactive([])  //展示列表，存的图片信息对象
-const previewImgList = reactive([]) //大图展示列表，存的图片链接
-const downloadList = reactive([])   //下载图片的列表
+const imgList = reactive<ReverseImg[]>([])  //展示列表，存的图片信息对象
+const previewImgList = reactive<string[]>([]) //大图展示列表，存的图片链接
+const downloadList = reactive<ReverseImg[]>([])   //下载图片的列表
 
 const isShow = ref(false)//显示布局按钮组
 const colNum = ref<number>(isPC.value ? 5 : 1)    //修改显示列数
@@ -429,20 +444,10 @@ const colNum = ref<number>(isPC.value ? 5 : 1)    //修改显示列数
 const autoFlag = ref(true)    //是否开启自动布局
 const isChoose = ref(0)   //是否是批量选择状态
 
-interface Notice {
-  id: number,
-  title: string,
-  sort: string,
-  content: string,
-  created_time: string,
-  updated_time: string,
-  status: number,
-}
-
 
 //全选版本：单选按钮的状态改变
 const handleCheckAllVersionChange = (val: boolean) => {
-  if (val) versionInfo.forEach(item => condition.version.push(item.version))
+  if (val) versionInfo.forEach(item => condition.version.push(item.version.toString()))
   else condition.version = []
   isIndeterminateVersion.value = false  //取消全选按钮符号 -
 }
@@ -458,7 +463,6 @@ const handleCheckAllRoleChange = (val: boolean) => {
   if (val) roleInfo.forEach(item => condition.roles.push(item.id))
   else condition.roles = []
   isIndeterminateRole.value = false  //取消全选按钮符号 -
-
   console.log(condition.roles)
 }
 //单选角色：全选按钮的状态改变
@@ -505,8 +509,8 @@ const handleCheckCampChange = (val: boolean) => {
 //全选无角色时：全选按钮的状态改变
 const handleCheckNoRoleChange = (val: boolean) => {
   const newList = new Set(condition.roles)  //Set()不会保存重复值
-  if (val) newList.add('1999') //没有角色的图存的角色id为1999
-  else newList.delete('1999')
+  if (val) newList.add(1999) //没有角色的图存的角色id为1999
+  else newList.delete(1999)
   condition.roles.splice(0, condition.roles.length, ...newList)
 }
 
@@ -536,6 +540,7 @@ function getVersion() {
     const {versionList, roleList} = result.data.data
     //更新版本列表
     versionInfo.splice(0, versionInfo.length, ...versionList)
+    console.log('versionInfo', versionInfo)
     //更新角色列表
     roleInfo.splice(0, roleInfo.length, ...roleList)
     //获取阵营列表
@@ -578,15 +583,6 @@ function getNotices() {
   })
 }
 
-let oldInfo = reactive({
-  version: ['all'],
-  roles: [],
-  sort: 2,
-  accurate: 0
-})
-const isChange = (obj1, obj2) => {
-  return !(JSON.stringify(obj1) === JSON.stringify(obj2))
-};
 
 //筛选图片
 function getImages() {
@@ -600,13 +596,13 @@ function getImages() {
     checkNoRole.value = false
   }
 
-//简单判断筛选条件是否改变，改变了顺序检测不出来，如roles:[1,2]→[2,1]
-  if (!isChange(condition, oldInfo)) return ElMessage.info('筛选条件未作改变，已取消查询')
+//判断筛选条件是否改变
+  if (deepEqual(condition, oldCondition, true)) return ElMessage.info('筛选条件未作改变，已取消查询')
   else {
-    oldInfo.version = condition.version
-    oldInfo.roles = condition.roles
-    oldInfo.sort = condition.sort
-    oldInfo.accurate = condition.accurate
+    oldCondition.version = condition.version
+    oldCondition.roles = condition.roles
+    oldCondition.sort = condition.sort
+    oldCondition.accurate = condition.accurate
   }
 
   axios({
@@ -720,7 +716,7 @@ function setBackground(url: string, name: string) {
 //进入多选状态
 function selectBtn() {
   const preList = document.querySelectorAll('.preImg')
-  if (isChoose.value===0) { //进入多选状态
+  if (isChoose.value === 0) { //进入多选状态
     isChoose.value = 1
     //将所有呈现的图片添加选中状态
     preList.forEach(item => {
@@ -728,7 +724,7 @@ function selectBtn() {
     })
     //将所有呈现的图片加入下载列表
     downloadList.splice(0, downloadList.length, ...imgList)
-  } else if (isChoose.value===1) {//取消全选
+  } else if (isChoose.value === 1) {//取消全选
     isChoose.value = 2
     //给所有呈现的图片移除选中状态
     preList.forEach(item => {
@@ -736,7 +732,7 @@ function selectBtn() {
     })
     //清空下载列表
     downloadList.splice(0, downloadList.length)
-  }else if (isChoose.value===2) {  //退出多选状态
+  } else if (isChoose.value === 2) {  //退出多选状态
     isChoose.value = 0
     //给所有呈现的图片移除选中状态
     preList.forEach(item => {
@@ -775,12 +771,20 @@ async function checkPort() {
   })
 }
 
+
 //批量下载壁纸
 async function downloadImages() {
   ElMessage.info('如有任何问题，请先查看下载须知')
   if (downloadList.length === 0) return ElMessage.error('请先勾选需要下载的图片！')
   else if (downloadList.length <= 5) {//下载数量不大于5
-    ElMessage.success('当前下载数量不大于5，可以直接下载')
+    // ElMessage.success('当前下载数量不大于5，可以直接下载')
+    let flag = true
+    if (!isPC.value) await ElMessageBox.confirm('移动端浏览器可能无法批量下载，是否继续？', {
+      confirmButtonText: '继续下载',
+      cancelButtonText: '取消下载'
+    }).then(() => ElMessage.info('如等待之后没有下载，请切换浏览器或长按图片保存'))
+        .catch(() => flag = false)
+    if (!flag) return
     console.log(downloadList)
     downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName))
   } else {//下载数量大于5
@@ -825,6 +829,7 @@ watch(screenWidth, (newVal, oldVal) => {
 
 //自动布局，计算图片列数
 function autoCol() {
+  autoFlag.value=true
   if (Number((screenWidth.value / 250).toFixed(0)) === colNum.value) return
   console.log('视口宽度', screenWidth.value)
   console.log('计算的图片列数', Math.floor(screenWidth.value / 250))
