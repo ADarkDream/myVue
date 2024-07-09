@@ -16,7 +16,7 @@ import {createPinia} from 'pinia'
 
 import 'highlight.js/lib/common';//直接加载常用代码语言
 import hljsVuePlugin from "@highlightjs/vue-plugin";
-import "highlight.js/styles/github.css";// 选择你喜欢的主题样式
+import "highlight.js/styles/github-dark.css";// 选择你喜欢的主题样式
 // import highlightDirective from './utils/highlightDirective';//引入highlightDirective.ts
 
 /* 创建pinia */

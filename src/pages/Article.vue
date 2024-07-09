@@ -454,18 +454,10 @@ console.log(getTime((new Date()).toISOString()))
   margin: 0 auto;
 }
 
-.hljs-ln-numbers {
-  text-align: center;
-  color: #ccc;
-  border-right: 1px solid #CCC;
-  vertical-align: top;
-  padding-right: 5px !important;
-
-  /* your custom style here */
+@media (max-width: 980px) {
+  .articleTitle {
+  font-size: 20px ;
+}
 }
 
-/* for block of code */
-.hljs-ln-code {
-  padding-left: 5px !important;
-}
 </style>
