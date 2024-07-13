@@ -1,0 +1,31 @@
+{
+  "name": "默默的小站",
+  "short_name": "momo",
+  "start_url": ".",
+  "display": "fullscreen",
+  "lang":"zh-CN",
+  "background_color": "#fff",
+  "description": "此网站为默默的个人网站，用于分享一些软件或网站，侵权请联系删除。",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16",
+      "type": "image/x-icon"
+    },{
+      "src": "/favicon_42x42.ico",
+      "sizes": "42x42",
+      "type": "image/x-icon"
+    },{
+      "src": "/favicon_64x64.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },{
+      "src": "/favicon_128x128.ico",
+      "sizes": "128x128",
+      "type": "image/x-icon"
+    },{
+      "src": "/favicon_144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }]
+}

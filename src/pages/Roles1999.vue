@@ -1,10 +1,11 @@
 <template>
-  <el-container>
+<!--      <el-scrollbar :height="  ">-->
+   <el-container :style="'height:'+(screenHeight-40)+'px;overflow:hidden' ">
     <el-header class="header1">
       角色列表(仅供壁纸检索)
     </el-header>
     <!--    移动端筛选框-->
-    <el-collapse style="margin: 0 5%" v-if="!isPC">
+    <el-collapse  style="margin: 0 10px" v-if="!isPC">
       <el-collapse-item title="筛选条件">
         <el-row class="header2">
           <el-col :md="3" v-if="isAdmin">
@@ -68,14 +69,14 @@
       </el-col>
 
     </el-row>
-    <el-main :style="isPC? '': 'padding:0' ">
+    <el-main :style="isPC? 'overflow:hidden': 'padding:0 10px' ">
       <!--      <el-form class="search" :model="newInfo" label-position="left" label-width="auto">-->
       <!--        <el-form-item label-width="auto">-->
 
       <!--        </el-form-item>-->
       <!--      </el-form>-->
       <el-text type="primary">个人收集略有不足，如有错漏还请向我反馈。非常感谢！如有乐意帮忙的司辰也欢迎联系我！</el-text>
-      <el-table ref="tableRef" :data="roleInfo" :height="screenHeight-220" stripe border highlight-current-row
+      <el-table ref="tableRef" :data="roleInfo" :height="screenHeight-230" stripe border highlight-current-row
                 table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }"
                 @sort-change="handleSortChange">
         <!--              @filter-change="filterChange">-->
@@ -167,7 +168,7 @@
       <AddRole/>
     </el-dialog>
   </el-container>
-
+<!--    </el-scrollbar>-->
 </template>
 
 
@@ -466,7 +467,7 @@ const deleteRole = (index: number, id: number) => {
 
 .header1 {
   font-size: 25px;
-  padding-top: 10px;
+  line-height: 60px;
 }
 
 .header2 {

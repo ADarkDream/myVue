@@ -1,5 +1,6 @@
 <template>
-  <!--  侧边栏-->
+  <el-container>
+      <!--  侧边栏-->
   <el-aside direction="vertical">
     <Aside/>
   </el-aside>
@@ -14,7 +15,7 @@
       <el-space spacer="|">
         <el-button link tag="a" type="info"
                    @click="copyText('50011502001039','备案号','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
-          <img src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败">
+          <img src="https://beian.mps.gov.cn/favicon.ico" :style="isPC? 'width: 20px': 'width: 15px'" alt="图片加载失败">
           &ensp;渝公网安备50011502001039
         </el-button>
         <el-button link tag="a" type="info"
@@ -26,6 +27,7 @@
     </div>
 
   </el-footer>
+  </el-container>
 
 </template>
 
@@ -34,8 +36,9 @@ import Main from "@/components/Main.vue";
 import Aside from "@/components/Aside.vue";
 import useFunction from "@/hooks/useFunction";
 import {ref} from "vue";
+import useResponsive from "@/hooks/useResponsive";
 
-
+const {isPC}=useResponsive()
 const {copyText} = useFunction()
 const isSticky = ref(false)
 

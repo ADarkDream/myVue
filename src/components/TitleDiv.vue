@@ -180,7 +180,7 @@
               <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日"
                          :inactive-action-icon="Sunny" :active-action-icon="Moon" class="isDarkBtn"/>
               <!--新闻-->
-              <el-dropdown-item  @click="router.push({name:'news'})">
+              <el-dropdown-item @click="router.push({name:'news'})">
                 <svg t="1719772539751" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
                      xmlns="http://www.w3.org/2000/svg" p-id="4292" width="200" height="200">
                   <path
@@ -536,6 +536,7 @@ watch(router.currentRoute, (newValue, oldValue) => {
 .headIcon {
   width: 20px;
   height: 20px;
+  border-radius: 15px;
 }
 
 /*PC端登陆之后的头像*/

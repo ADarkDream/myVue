@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <!--    顶部导航栏-->
-    <el-header class="shade">
+    <el-header class="shade" :style="(isPC||route.path==='/')? '': 'background-color: var(--el-bg-color);opacity:0.75'  ">
       <TitleDiv/>
     </el-header>
     <!-- 主要呈现部分(Home / Forum)-->
@@ -16,9 +16,12 @@ import axios from "axios";
 import TitleDiv from "@/components/TitleDiv.vue";
 import {ElMessage} from "element-plus";
 import {jwtDecode} from "jwt-decode";
+import useResponsive from "@/hooks/useResponsive";
+import {useRoute} from "vue-router";
+const {isPC}=useResponsive()
 
-
-
+const route=useRoute()
+// console.log(route.path==='/')
 interface Token {
   value: {
     isAdmin?: string
@@ -57,10 +60,10 @@ axios.interceptors.response.use(function (response) {
   //从响应头里面获取最新token
   if (response.headers.authorization !== undefined) {
     const newToken = response.headers.authorization
-    if (newToken !== undefined) {
+    if (!!newToken) {
       const token = jwtDecode(newToken) as Token
-      console.log('isAdmin', token)
-      if (token.value.isAdmin !== undefined && token.value.isAdmin === '1') sessionStorage.setItem('token', newToken)
+      console.log('token', token)
+      if (token.value.isAdmin === '1') sessionStorage.setItem('token', newToken)
       else localStorage.setItem('token', newToken)
     }
   }
@@ -129,7 +132,8 @@ aside {
 
 @media (max-width: 980px) {
   .main {
-    padding-top: 40px
+    padding: 40px 0 0 0;
+    overflow-x: hidden;
   }
 
   .shade {

@@ -1,8 +1,10 @@
 <template>
   <!--显示网站图标-->
-  <el-card>
-    <img :src='src' alt="该地址无法获取默认图标" style="width: 40px;height: 40px"></el-card>
+<!--  <el-card>-->
+
+<!--  </el-card>-->
   <el-form :model="form" label-width="auto" style="max-width: 600px;margin: 0 auto">
+     <el-image :src='src' alt="该地址无法获取默认图标" style="width: 40px;height: 40px"/>
     <el-form-item label="站点名称">
       <el-input v-model="form.name" placeholder="必填"/>
     </el-form-item>

@@ -114,8 +114,8 @@ function render() {
 <style>
 /*子组件使用*/
 .header1 {
-  font-size: 30px;
-  padding-top: 10px;
+  font-size: 25px;
+  line-height: 60px;
 }
 
 .header2 {

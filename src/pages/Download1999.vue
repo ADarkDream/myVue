@@ -1,33 +1,50 @@
 <template>
-  <el-scrollbar height="700px">
-    <el-container>
-      <el-header>
+  <el-scrollbar :height="(isPC? screenHeight-80 : screenHeight-40)+'px'  ">
+    <el-container >
+      <el-header style="opacity: 0.85;">
         <el-card>
-          <el-watermark
-              :width="66"
-              :height="26"
-              :gap="[40,0]"
-              :image="watermark"
-          >
-            <h1>1999国服官图(以影像之)下载</h1>
-          </el-watermark>
+          <!--          <el-watermark-->
+          <!--              :width="66"-->
+          <!--              :height="26"-->
+          <!--              :gap="[40,0]"-->
+          <!--              :image="watermark"-->
+          <!--          >-->
+<!--          <div style="position: relative">-->
+               <el-image class="logo" :src="logo" v-if="isPC"/>
+          <h1>1999国服官图(以影像之)下载</h1>
+<!--          </div>-->
+
+          <!--          </el-watermark>-->
           <el-collapse v-model="activeIndex" accordion>
             <el-collapse-item title="资源文档" name="0">
               <template class="links">
-                <el-link type="primary" href="https://gitee.com/MuXi-Dream/download-reverse1999" target="_blank">
+                <el-link type="primary" title="Github 和 Gitee" @click="showUrl=!showUrl">
                   本项目开源地址
                 </el-link>
-                <el-link type="primary" href="https://re.bluepoch.com/home/detail.html#wallpaper" target="_blank">
+                <Transition name="transition1">
+                  <el-link v-if="showUrl" type="primary" href="https://gitee.com/MuXi-Dream/download-reverse1999"
+                           target="_blank">
+                    Gitee
+                  </el-link>
+                </Transition>
+                <Transition name="transition1">
+                  <el-link v-if="showUrl" type="primary" href="https://github.com/ADarkDream/Download-Reverse1999"
+                           target="_blank">
+                    Github
+                  </el-link>
+                </Transition>
+                <el-link type="primary" href="https://re.bluepoch.com/home/detail.html#wallpaper" target="_blank"
+                         title="点击前往重返未来1999官网">
                   官网下载地址
                 </el-link>
                 <el-link type="primary" href="https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999"
-                         target="_blank">
+                         target="_blank" title="点击前往百度网盘">
                   百度网盘下载地址
                 </el-link>
                 <el-button link type="primary" target="_blank"
                            @click="copyText('1224021291','我的联系方式(QQ)','https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
-                           title="点击前往API文档(需要密码请联系我)">
-                  API接口文档(无偿但不公开)
+                           title="点击前往API文档(无偿但不公开)">
+                  API接口文档(需要密码请联系我)
                 </el-button>
               </template>
             </el-collapse-item>
@@ -48,13 +65,13 @@
                   </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="选择角色：">
+                  <el-button-group size="small" type="primary" :style="isPC? 'margin:5px':'margin:5px auto' ">
+                    <el-button @click="reset">清空所有选择
+                    </el-button>
+                    <el-button @click="router.push({name:'roles'})">查看角色表</el-button>
+                  </el-button-group>
                   <div class="roleSort">
                     <el-text type="primary">是否包含角色：</el-text>
-                    <el-button-group size="small" type="primary" style="margin:0 5px 5px 5px">
-                      <el-button @click="reset">清空所有选择
-                      </el-button>
-                      <el-button @click="router.push({name:'roles'})">查看角色表</el-button>
-                    </el-button-group>
                     <el-checkbox
                         v-model="checkAllRoles"
                         :indeterminate="isIndeterminateRole"
@@ -92,14 +109,14 @@
                                  :value="item.id"/>
                   </el-checkbox-group>
                 </el-form-item>
-                <el-form-item label="选择类型：">
+                <el-form-item label="图片类型：">
                   <el-radio-group v-model="condition.sort">
                     <el-radio-button label="全选" :value="2"/>
                     <el-radio-button label="横屏壁纸" :value="1"/>
                     <el-radio-button label="竖屏壁纸" :value="0"/>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item label="选择类型：">
+                <el-form-item label="查询类型：">
                   <el-radio-group v-model="condition.accurate">
                     <el-radio-button label="模糊查询" :value="0"/>
                     <el-radio-button label="精准查询" :value="1"/>
@@ -107,7 +124,7 @@
                   <el-icon style="margin:0 5px" @click="isShowNotice=!isShowNotice">
                     <InfoFilled/>
                   </el-icon>
-                  <Transition name="selectNotice">
+                  <Transition name="transition1">
                     <el-text v-show="isShowNotice">
                       <el-text type="primary">模糊查询会优先满足版本要求</el-text>
                       ，然后查询包含勾选的角色的图；
@@ -207,6 +224,7 @@
 
 
       <!--    第三方库，瀑布流标签-->
+
       <wc-flow-layout :gap="10" :cols="colNum">
         <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl,item.imgName,$event)"
              class="preImg"
@@ -229,6 +247,7 @@
         </div>
       </wc-flow-layout>
     </el-container>
+
   </el-scrollbar>
 
   <!--  下载公告界面-->
@@ -390,10 +409,11 @@ import useUserInfo from "@/hooks/useUserInfo";
 import {useRouter} from "vue-router";
 import useFunction from "@/hooks/useFunction";
 import watermark from '@/assets/logo_1999.png'
+import logo from '@/assets/logo-small.png'
 
 const {copyText, deepEqual} = useFunction()
 const router = useRouter()
-const {isPC, elSize, screenWidth} = useResponsive()
+const {isPC, elSize, screenWidth,screenHeight} = useResponsive()
 const {isLogin, updateLocalUserInfo} = useUserInfo()
 
 //用户查询的参数
@@ -431,6 +451,7 @@ const raceName = ref<string>('')      //种族名称
 const completed = reactive<Notice[]>([])      //筛选下方的公告列表：完成和未完成的功能
 const unCompleted = reactive<Notice[]>([])
 
+const showUrl = ref(false)     //控制开源地址的显示
 const showNotice = ref(false)     //控制下载须知界面的显示
 const isShowNum = ref<number>(1)      //控制下载公告须知的显示第几个页面
 const isShowNotice = ref(false)//控制模糊和精准搜索的说明是否显示
@@ -829,7 +850,7 @@ watch(screenWidth, (newVal, oldVal) => {
 
 //自动布局，计算图片列数
 function autoCol() {
-  autoFlag.value=true
+  autoFlag.value = true
   if (Number((screenWidth.value / 250).toFixed(0)) === colNum.value) return
   console.log('视口宽度', screenWidth.value)
   console.log('计算的图片列数', Math.floor(screenWidth.value / 250))
@@ -843,9 +864,11 @@ function autoCol() {
 
 </script>
 <style scoped>
+/*
 body {
   overflow: visible;
 }
+*/
 
 .el-header {
   height: auto;
@@ -909,7 +932,28 @@ body {
   border: 3px #6bfac3 dotted;
 }
 
-/*下面是CSS动画*/
+.logo {
+  float: left;
+/*  position: absolute;
+  top: 10px;
+  left: 10px;*/
+  height: 40px;
+  border-radius: 5px;
+}
+
+.logo:hover {
+  box-shadow: none;
+  background: white;
+}
+
+@media (max-width: 980px) {
+  .el-checkbox { /*缩短选项框右边距*/
+    margin-right: 15px;
+  }
+}
+
+
+/*下面是Transition组件的CSS动画*/
 .list-enter-active,
 .list-leave-active {
   transition: all 0.5s ease;
@@ -922,16 +966,16 @@ body {
 }
 
 
-.selectNotice-enter-active {
+.transition1-enter-active {
   transition: all 0.3s ease-out;
 }
 
-.selectNotice-leave-active {
+.transition1-leave-active {
   transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
 }
 
-.selectNotice-enter-from,
-.selectNotice-leave-to {
+.transition1-enter-from,
+.transition1-leave-to {
   transform: translateX(20px);
   opacity: 0;
 }

@@ -168,6 +168,7 @@ el-main {
 .searchDiv {
   width: 100%;
   border-radius: 20px;
+  opacity: 0.8;
 }
 
 .el-form-item  {
@@ -188,11 +189,12 @@ el-main {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
+  overflow-x: hidden;
 }
 
 .card {
   margin: 10px auto 0;
-  padding: 10px;
+  padding: 5px;
   width: 30%;
   border-radius: 10px;
 background-color: var(--el-color-primary-light-9);
@@ -218,7 +220,7 @@ background-color: var(--el-color-primary-light-9);
   }
 
   .card {
-    width: 100%;
+    width: 90%;
     display: flex;
     justify-content: space-between;
   }

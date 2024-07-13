@@ -8,8 +8,10 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AddRole: typeof import('./src/components/AddRole.vue')['default']
+    AddSearchEngine: typeof import('./src/components/AddSearchEngine.vue')['default']
     AddUrl: typeof import('./src/components/AddUrl.vue')['default']
     Aside: typeof import('./src/components/Aside.vue')['default']
+    EditEngines: typeof import('./src/components/EditEngines.vue')['default']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']

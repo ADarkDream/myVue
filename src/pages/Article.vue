@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :style="'min-height:'+(isPC? screenHeight-80 : screenHeight-40)+'px; background-color: var(--el-color-primary-light-9);' ">
     <div class="articleBar" v-if="false">
       <el-button @click="router.back()">
         <el-icon>
@@ -15,7 +15,7 @@
     </div>
     <div class="mainContent">
       <!--文章区域-->
-      <el-container style="min-height: 400px">
+      <el-container :style="comments.length===0? 'min-height:'+(screenHeight-250)+'px': '' ">
         <el-header>
           <h1 class="articleTitle">{{ article.title }}
             <el-text v-if="article.status===0" type="primary">[待审核]</el-text>
@@ -75,7 +75,7 @@
                 <el-text type="success" v-if="item.uid===article.authorId">[作者]</el-text>
                 <el-text type="primary"> {{ item.observer }}</el-text>
               </el-space>
-              <el-space spacer="">
+              <el-space spacer="" style="margin-right: 10px">
                 <el-text>{{ getDiffTime(item.created_time) }}</el-text>
                 <el-text type="primary">{{ index + 1 }}楼</el-text>
                 <el-dropdown>
@@ -118,7 +118,7 @@ import useResponsive from "@/hooks/useResponsive";
 import hljs from 'highlight.js/lib/common';
 
 const {isLogin, isAdmin, uid, headImgUrl, errorImage} = useUserInfo()
-const {screenWidth} = useResponsive()
+const {isPC,screenHeight} = useResponsive()
 const router = useRouter()
 const route = useRoute() // 注意：接收参数的时候不带 ‘r’
 const isShow = ref(true)
@@ -370,10 +370,12 @@ onUnmounted(() => {
 })
 //endregion
 
-console.log(getTime((new Date()).toISOString()))
 </script>
 
 <style scoped>
+body {
+  overflow: visible;
+}
 .mainContent {
   position: relative;
   background-color: var(--el-color-primary-light-9);
