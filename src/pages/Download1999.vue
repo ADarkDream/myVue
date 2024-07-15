@@ -9,11 +9,8 @@
           <!--              :gap="[40,0]"-->
           <!--              :image="watermark"-->
           <!--          >-->
-<!--          <div style="position: relative">-->
                <el-image class="logo" :src="logo" v-if="isPC"/>
           <h1>1999国服官图(以影像之)下载</h1>
-<!--          </div>-->
-
           <!--          </el-watermark>-->
           <el-collapse v-model="activeIndex" accordion>
             <el-collapse-item title="资源文档" name="0">
@@ -393,7 +390,7 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref, watch} from 'vue'
+import {onMounted, reactive, ref, watch} from 'vue'
 import {
   Check, CloseBold,
   Download,
@@ -464,6 +461,12 @@ const colNum = ref<number>(isPC.value ? 5 : 1)    //修改显示列数
 
 const autoFlag = ref(true)    //是否开启自动布局
 const isChoose = ref(0)   //是否是批量选择状态
+
+onMounted(()=>{
+  getVersion()
+  getNotices()
+  ElMessage.warning('如果页面出错请刷新两下，刷新后还没有可能是网站在升级，请稍后访问')
+})
 
 
 //全选版本：单选按钮的状态改变
@@ -550,12 +553,13 @@ function reset() {
   })
 }
 
-getVersion()
+
 
 //获取版本列表并添加到菜单
 function getVersion() {
   axios({
     url: '/getVersion',
+    params:{role:'diff'}
   }).then(result => {
     console.log(result)
     const {versionList, roleList} = result.data.data
@@ -582,8 +586,6 @@ function getVersion() {
 }
 
 //获取已发布公告
-getNotices()
-
 function getNotices() {
   axios({
     url: '/getNotices',
@@ -670,7 +672,8 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
     downloadBtn.addEventListener('click', () => {
       //  if (isLogin.value) downloadImg(url, name)
       // else window.open(url)
-      window.open(url)
+      copyText(url,'图片链接',url)
+      // window.open(url)
     })
     //设置壁纸监听
     setBG.addEventListener('click', () => {

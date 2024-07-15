@@ -1,30 +1,30 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import Home from "@/pages/Home.vue";
-import Forum from "@/pages/Forum.vue";
-import AdminLogin from "@/pages/AdminLogin.vue";
-import AdminCenter from "@/pages/AdminCenter.vue";
-import UserCenter from "@/pages/UserCenter.vue";
-import NotFound from "@/pages/NotFound.vue";
-import UserInfo from "@/pages/UserInfo.vue";
-import UserPreference from "@/pages/UserPreference.vue";
+const Home=()=> import("@/pages/Home.vue");
+const Forum =()=> import( "@/pages/Forum.vue");
+const AdminLogin =()=> import( "@/pages/AdminLogin.vue");
+const AdminCenter =()=> import( "@/pages/AdminCenter.vue");
+const UserCenter =()=> import( "@/pages/UserCenter.vue");
+const NotFound =()=> import( "@/pages/NotFound.vue");
+const UserInfo =()=> import( "@/pages/UserInfo.vue");
+const UserPreference =()=> import( "@/pages/UserPreference.vue");
 
-import UserEdit from "@/pages/UserEdit.vue";
-import UserManagement from "@/pages/UserManagement.vue";
-import Article from "@/pages/Article.vue";
-import Center from "@/pages/Center.vue"
-import AdminArticlesManagement from "@/pages/AdminArticlesManagement.vue";
-import AdminUsersManagement from "@/pages/AdminUsersManagement.vue";
-import AdminNoticesManagement from "@/pages/AdminNoticesManagement.vue";
-import AdminUrlsManagement from "@/pages/AdminUrlsManagement.vue";
-import AdminImagesManagement from "@/pages/AdminImagesManagement.vue";
-import AdminFeedbackManagement from "@/pages/AdminFeedbackManagement.vue";
-import AdminCommentsManagement from "@/pages/AdminCommentsManagement.vue";
-import Download1999 from "@/pages/Download1999.vue";
-import Roles1999 from "@/pages/Roles1999.vue";
-import User from "@/pages/User.vue";
-import News from "@/pages/News.vue";
-import NewsContent from "@/pages/NewsContent.vue";
-
+const UserEdit =()=> import( "@/pages/UserEdit.vue");
+const UserManagement =()=> import( "@/pages/UserManagement.vue");
+const Article =()=> import( "@/pages/Article.vue");
+const Center =()=> import( "@/pages/Center.vue")
+const AdminArticlesManagement =()=> import( "@/pages/AdminArticlesManagement.vue");
+const AdminUsersManagement =()=> import( "@/pages/AdminUsersManagement.vue");
+const AdminNoticesManagement =()=> import( "@/pages/AdminNoticesManagement.vue");
+const AdminUrlsManagement =()=> import( "@/pages/AdminUrlsManagement.vue");
+const AdminImagesManagement =()=> import( "@/pages/AdminImagesManagement.vue");
+const AdminFeedbackManagement =()=> import( "@/pages/AdminFeedbackManagement.vue");
+const AdminCommentsManagement =()=> import( "@/pages/AdminCommentsManagement.vue");
+const Download1999 =()=> import( "@/pages/Download1999.vue");
+const Roles1999 =()=> import( "@/pages/Roles1999.vue");
+const User =()=> import( "@/pages/User.vue");
+const News =()=> import( "@/pages/News.vue");
+const NewsContent =()=> import( "@/pages/NewsContent.vue");
+const Admin1999ImagesManagement =()=>import("@/pages/Admin1999ImagesManagement.vue")
 const router = createRouter({
     history: createWebHistory(),//路由器工作模式，有web和hash两种，web上线后需要服务器配置，hash地址栏会出现#号
     routes: [
@@ -96,7 +96,11 @@ const router = createRouter({
                 name: 'adminFeedbackManagement',
                 path: 'feedbackManagement',
                 component: AdminFeedbackManagement
-            }
+            } ,{
+                name: 'admin1999ImagesManagement',
+                path: '1999ImagesManagement',
+                component: Admin1999ImagesManagement
+            },
             ]
         },
         {

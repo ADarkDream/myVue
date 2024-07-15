@@ -24,10 +24,13 @@
           <router-link :to="{name:'adminFeedbackManagement'}">
             <el-menu-item index="6" @click="change(6)">反馈管理</el-menu-item>
           </router-link>
+          <router-link :to="{name:'admin1999ImagesManagement'}">
+            <el-menu-item index="7" @click="change(7)">1999图片管理</el-menu-item>
+          </router-link>
         </el-menu>
       </el-scrollbar>
     </el-aside>
-    <el-main :style="'height:'+ (screenHeight-70)+'px'" >
+    <el-main :style="'height:'+ (screenHeight-70)+'px'">
       <el-scrollbar>
         <router-view></router-view>
       </el-scrollbar>

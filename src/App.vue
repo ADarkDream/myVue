@@ -1,7 +1,7 @@
 <template>
   <el-container>
     <!--    顶部导航栏-->
-    <el-header class="shade" :style="(isPC||route.path==='/')? '': 'background-color: var(--el-bg-color);opacity:0.75'  ">
+    <el-header class="shade">
       <TitleDiv/>
     </el-header>
     <!-- 主要呈现部分(Home / Forum)-->

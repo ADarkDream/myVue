@@ -197,7 +197,8 @@ el-main {
   padding: 5px;
   width: 30%;
   border-radius: 10px;
-background-color: var(--el-color-primary-light-9);
+background-color: var(--el-bg-color);
+  opacity: 0.9;
 }
 
 .image-slot {

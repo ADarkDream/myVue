@@ -111,7 +111,7 @@
   </el-row>
 
   <!--  移动端标题-->
-  <el-row class="title" v-if="!isPC">
+  <el-row class="title" v-if="!isPC"  :style="(isPC||route.path==='/')? '': 'background-color: rgba(0,0,0,0.4)'">
     <!--左上角-->
     <el-col :span="8" class="title-left">
       <el-space spacer="">
@@ -278,13 +278,14 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {useBGUrlStore} from '@/store/1999BG'
 import Notice from "@/components/Notice.vue";
 import useUserInfo from '@/hooks/useUserInfo'
-import {useRouter} from "vue-router";
+import {useRouter, useRoute} from "vue-router";
 import useResponsive from "@/hooks/useResponsive";
 import emitter from "@/utils/emitter";
 
 const {isDark, isPC, isHome, isForum} = useResponsive()
 
 const router = useRouter()
+const route = useRoute()
 
 const {isLogin, isAdmin, username, headImgUrl, bgUrl, errorImage} = useUserInfo()
 
@@ -496,6 +497,7 @@ watch(router.currentRoute, (newValue, oldValue) => {
 
 <style scoped>
 .title {
+  height:40px;
   padding: 5px 0;
   justify-content: space-between;
   background-color: -webkit-focus-ring-color;

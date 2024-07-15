@@ -56,7 +56,6 @@ declare module 'vue' {
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
-    ElWatermark: typeof import('element-plus/es')['ElWatermark']
     Main: typeof import('./src/components/Main.vue')['default']
     Notice: typeof import('./src/components/Notice.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
