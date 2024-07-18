@@ -1,6 +1,6 @@
 <template>
   <el-scrollbar :height="(isPC? screenHeight-80 : screenHeight-40)+'px'  ">
-    <el-container >
+    <el-container>
       <el-header style="opacity: 0.85;">
         <el-card>
           <!--          <el-watermark-->
@@ -9,7 +9,7 @@
           <!--              :gap="[40,0]"-->
           <!--              :image="watermark"-->
           <!--          >-->
-               <el-image class="logo" :src="logo" v-if="isPC"/>
+          <el-image class="logo" :src="logo" v-if="isPC"/>
           <h1>1999国服官图(以影像之)下载</h1>
           <!--          </el-watermark>-->
           <el-collapse v-model="activeIndex" accordion>
@@ -139,7 +139,7 @@
                 <br v-if="!isPC">
                 <el-button :type="isChoose!==0? 'danger':'success' " :size="elSize"
                            :icon="isChoose!==0? CloseBold : Select"
-                           @click="selectBtn" v-show="isShow">
+                           @click="selectBtn()" v-show="isShow">
                     <span
                         v-if="isChoose===0">勾选
                     </span>
@@ -410,7 +410,7 @@ import logo from '@/assets/logo-small.png'
 
 const {copyText, deepEqual} = useFunction()
 const router = useRouter()
-const {isPC, elSize, screenWidth,screenHeight} = useResponsive()
+const {isPC, elSize, screenWidth, screenHeight} = useResponsive()
 const {isLogin, updateLocalUserInfo} = useUserInfo()
 
 //用户查询的参数
@@ -431,7 +431,7 @@ const oldCondition = reactive<ImgParams>({
 
 //筛选
 const activeIndex = ref('1')  //激活的折叠面板序号
-const versionInfo = reactive<versionInfo[]>([])    //存版本信息
+const versionInfo = reactive<VersionInfo[]>([])    //存版本信息
 const roleInfo = reactive<Role[]>([]) //存角色信息
 const campInfo = reactive<string[]>([]) //存阵营信息
 const raceInfo = reactive<string[]>([]) //存种族信息
@@ -462,7 +462,7 @@ const colNum = ref<number>(isPC.value ? 5 : 1)    //修改显示列数
 const autoFlag = ref(true)    //是否开启自动布局
 const isChoose = ref(0)   //是否是批量选择状态
 
-onMounted(()=>{
+onMounted(() => {
   getVersion()
   getNotices()
   ElMessage.warning('如果页面出错请刷新两下，刷新后还没有可能是网站在升级，请稍后访问')
@@ -554,12 +554,11 @@ function reset() {
 }
 
 
-
 //获取版本列表并添加到菜单
 function getVersion() {
   axios({
     url: '/getVersion',
-    params:{role:'diff'}
+    params: {role: 'diff'}
   }).then(result => {
     console.log(result)
     const {versionList, roleList} = result.data.data
@@ -608,51 +607,54 @@ function getNotices() {
 
 
 //筛选图片
-function getImages() {
-  //如果全选版本，则直接全部清除
-  if (condition.version.length === versionInfo.length) condition.version.splice(0, condition.version.length)
-  if (isChoose.value) selectBtn() //如果是选择状态，则退出
-  //如果全选角色和无角色，则直接清除全部角色选择
-  if (condition.roles.length === roleInfo.length + 1) {
-    condition.roles.splice(0, condition.roles.length)
-    checkAllRoles.value = false
-    checkNoRole.value = false
-  }
+async function getImages() {
+  try {
+    if (!!isChoose.value) selectBtn(2) //如果是选择状态，则退出
+    //如果全选版本，则直接全部清除
+    if (condition.version.length === versionInfo.length) condition.version.splice(0, condition.version.length)
+    //如果全选角色和无角色，则直接清除全部角色选择
+    if (condition.roles.length === roleInfo.length + 1) {
+      condition.roles.splice(0, condition.roles.length)
+      checkAllRoles.value = false
+      checkNoRole.value = false
+    }
 
 //判断筛选条件是否改变
-  if (deepEqual(condition, oldCondition, true)) return ElMessage.info('筛选条件未作改变，已取消查询')
-  else {
-    oldCondition.version = condition.version
-    oldCondition.roles = condition.roles
-    oldCondition.sort = condition.sort
-    oldCondition.accurate = condition.accurate
-  }
+//判断筛选条件是否改变
+    if (deepEqual(condition, oldCondition, true)) return ElMessage.info('筛选条件未作改变，已取消查询')
+    else {
+// 将 a 的值同步到 b，包括空值
+      Object.keys(oldCondition).forEach(key => {
+        if (condition.hasOwnProperty(key)) {
+          oldCondition[key] = condition[key];
+        } else {
+          delete oldCondition[key];  // 删除 b 中 a 中不存在的属性
+        }
+      });
+    }
 
-  axios({
-    url: '/getWallpaper',
-    params: condition,
-  }).then(result => {
+    const result = await axios({
+      url: '/getWallpaper',
+      params: condition,
+    })
     console.log(result)
     const {status} = result.data
     if (status === 300) return//没有查询结果则不进行以下操作
     isShow.value = true //显示布局按钮
     imgList.splice(0, imgList.length, ...result.data.data)
-    //imgIndex用于排序，但不连续
-    let index = 0
-    imgList.forEach(item => {
-      item.imgIndex = index
-      index++
-    })
-    console.log(imgList)
     previewImgList.splice(0, previewImgList.length)
-    imgList.forEach(item => {
+
+    imgList.forEach((item, index) => {
+      item.imgIndex = index  //imgIndex用于排序，但不连续,所以要重排
       previewImgList.push(item.imgUrl)
     })
+    console.log(imgList)
+
     autoCol()   //再次触发自动布局
-  }).catch(error => {
+  } catch (error) {
     console.log('发生错误：')
     console.log(error)
-  })
+  }
 }
 
 
@@ -672,7 +674,7 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
     downloadBtn.addEventListener('click', () => {
       //  if (isLogin.value) downloadImg(url, name)
       // else window.open(url)
-      copyText(url,'图片链接',url)
+      copyText(url, '图片链接', url)
       // window.open(url)
     })
     //设置壁纸监听
@@ -737,9 +739,11 @@ function setBackground(url: string, name: string) {
 }
 
 
-//进入多选状态
-function selectBtn() {
+//进入和退出多选状态(num=0进入多选,1取消全选,2退出多选)
+function selectBtn(num?: number) {
   const preList = document.querySelectorAll('.preImg')
+  console.log(num)
+  if (!!num) isChoose.value = num
   if (isChoose.value === 0) { //进入多选状态
     isChoose.value = 1
     //将所有呈现的图片添加选中状态
@@ -806,17 +810,19 @@ async function downloadImages() {
     if (!isPC.value) await ElMessageBox.confirm('移动端浏览器可能无法批量下载，是否继续？', {
       confirmButtonText: '继续下载',
       cancelButtonText: '取消下载'
-    }).then(() => ElMessage.info('如等待之后没有下载，请切换浏览器或长按图片保存'))
+    }).then(() => ElMessage.info('如等待之后没有下载，请更换浏览器或长按图片保存'))
         .catch(() => flag = false)
     if (!flag) return
     console.log(downloadList)
     downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName))
+    selectBtn(2)
   } else {//下载数量大于5
     await checkPort()
     if (!!isOpenProxy.value) {
       ElMessage.success('正在通过代理端口进行下载，感谢您的耐心合作ღ( ´･ᴗ･` )')
       console.log(downloadList)
       downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName))
+      selectBtn(2) //取消多选
     } else return ElMessage.error('当前下载数量大于5且未开启代理，请先查看下载须知→下载大量')
   }
 }
@@ -937,9 +943,9 @@ body {
 
 .logo {
   float: left;
-/*  position: absolute;
-  top: 10px;
-  left: 10px;*/
+  /*  position: absolute;
+    top: 10px;
+    left: 10px;*/
   height: 40px;
   border-radius: 5px;
 }

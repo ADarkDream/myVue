@@ -205,12 +205,13 @@ getRoles()
 function getRoles() {
   axios({
     url: '/getVersion',
-    params: {flag: true}//只查询角色
+    params: {version:false,role: 'all'}//只查询角色
   }).then(result => {
     console.log(result)
     const {data} = result.data
+    console.log('data',data)
     //更新角色列表
-    roleInfo.splice(0, roleInfo.length, ...data)
+    roleInfo.splice(0, roleInfo.length, ...data.roleList)
     //获取阵营列表
     const campList2 = new Set([])
     const raceList2 = new Set([])

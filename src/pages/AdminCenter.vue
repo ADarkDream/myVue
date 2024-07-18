@@ -75,6 +75,7 @@ function render() {
   else if (params === 'urlsManagement') index.value = 4
   else if (params === 'imagesManagement') index.value = 5
   else if (params === 'feedbackManagement') index.value = 6
+  else if (params === '1999ImagesManagement') index.value = 7
   else index.value = 0
   sessionStorage.setItem('activeNumber', index.value.toString())
 }

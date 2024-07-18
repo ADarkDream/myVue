@@ -21,7 +21,7 @@ const AdminFeedbackManagement =()=> import( "@/pages/AdminFeedbackManagement.vue
 const AdminCommentsManagement =()=> import( "@/pages/AdminCommentsManagement.vue");
 const Download1999 =()=> import( "@/pages/Download1999.vue");
 const Roles1999 =()=> import( "@/pages/Roles1999.vue");
-const User =()=> import( "@/pages/User.vue");
+const Test =()=> import( "@/pages/Test.vue");
 const News =()=> import( "@/pages/News.vue");
 const NewsContent =()=> import( "@/pages/NewsContent.vue");
 const Admin1999ImagesManagement =()=>import("@/pages/Admin1999ImagesManagement.vue")
@@ -146,11 +146,11 @@ const router = createRouter({
                 component: Roles1999
             }]
         },
-        // {
-        //     path: '/test',
-        //     name: 'test',
-        //     component: User
-        // },
+        {
+            path: '/test',
+            name: 'test',
+            component: Test
+        },
         {
             name: "notFound",
             path: "/:pathMatch(.*)*",//匹配所有路由，找不到就显示404NotFound

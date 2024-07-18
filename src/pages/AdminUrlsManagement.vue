@@ -142,7 +142,7 @@
           v-model:current-page="currentPage"
           v-model:page-size="pageSize"
           :page-sizes="[10, 25, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
+          :layout="total/pageSize>10? 'total, sizes, prev, pager, next,jumper' :'total, sizes, prev, pager, next'"
           :total="total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -198,11 +198,9 @@ const clearFilter = () => {
   searchUrl.sort = ''
   // searchUrl.tags=''
   render()
-  total.value=totalData.length
+  total.value = totalData.length
   flag.value = true
 }
-
-
 
 
 //监听排序行为，并修改数组顺序,否则删除会出错
@@ -217,8 +215,9 @@ function handleSortChange({column, prop, order}) {
 }
 
 
- //筛选标记(false表示筛选过了)
+//筛选标记(false表示筛选过了)
 const flag = ref(true)
+
 //筛选方法
 function filterChange() {
   //预设筛选条件
@@ -247,7 +246,7 @@ const currentPage = ref(1)
 //每页显示多少条数据
 const pageSize = ref(25)
 const total = ref(totalData.length)
-watch(pageSize,(value, oldValue, onCleanup)=>{
+watch(pageSize, (value, oldValue, onCleanup) => {
   console.log(value)
 })
 
@@ -280,8 +279,6 @@ let searchUrl = reactive<Url>({
   status: 2,
   updated_time: '',
 })
-
-
 
 
 let newUrl = reactive<Url>({
@@ -479,6 +476,6 @@ const deleteUrl = (index: number, id: number) => {
 .pageMenu {
   display: flex;
   justify-content: center;
-   padding: 10px 0;
+  padding: 10px 0;
 }
 </style>

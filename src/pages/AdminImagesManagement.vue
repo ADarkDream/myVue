@@ -156,6 +156,7 @@ function handleSortChange({column, prop, order}) {
   })
 }
 
+//当前修改的图片信息
 let urlInfo = reactive<Image>({
   id: 0,
   uid: 0,
