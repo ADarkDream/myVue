@@ -21,6 +21,7 @@ const AdminFeedbackManagement =()=> import( "@/pages/AdminFeedbackManagement.vue
 const AdminCommentsManagement =()=> import( "@/pages/AdminCommentsManagement.vue");
 const Download1999 =()=> import( "@/pages/Download1999.vue");
 const Roles1999 =()=> import( "@/pages/Roles1999.vue");
+const Images1999 =()=> import( "@/pages/Images1999.vue");
 const Test =()=> import( "@/pages/Test.vue");
 const News =()=> import( "@/pages/News.vue");
 const NewsContent =()=> import( "@/pages/NewsContent.vue");
@@ -144,6 +145,10 @@ const router = createRouter({
                 name: "roles",
                 path: 'roles',
                 component: Roles1999
+            }, {
+                name: "images",
+                path: 'images',
+                component: Images1999
             }]
         },
         {

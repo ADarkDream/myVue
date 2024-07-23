@@ -2,16 +2,9 @@
   <el-scrollbar :height="(isPC? screenHeight-80 : screenHeight-40)+'px'  ">
     <el-container>
       <el-header style="opacity: 0.85;">
-        <el-card>
-          <!--          <el-watermark-->
-          <!--              :width="66"-->
-          <!--              :height="26"-->
-          <!--              :gap="[40,0]"-->
-          <!--              :image="watermark"-->
-          <!--          >-->
+        <el-card style="position: relative">
           <el-image class="logo" :src="logo" v-if="isPC"/>
-          <h1>1999国服官图(以影像之)下载</h1>
-          <!--          </el-watermark>-->
+          <h1>1999国服官图(以影像之)下载 </h1>
           <el-collapse v-model="activeIndex" accordion>
             <el-collapse-item title="资源文档" name="0">
               <template class="links">
@@ -39,9 +32,9 @@
                   百度网盘下载地址
                 </el-link>
                 <el-button link type="primary" target="_blank"
-                           @click="copyText('1224021291','我的联系方式(QQ)','https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
+                           @click="copyText('1224021291','默默的联系方式(QQ)','https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
                            title="点击前往API文档(无偿但不公开)">
-                  API接口文档(需要密码请联系我)
+                  API接口文档(需要密码请联系默默)
                 </el-button>
               </template>
             </el-collapse-item>
@@ -63,9 +56,9 @@
                 </el-form-item>
                 <el-form-item label="选择角色：">
                   <el-button-group size="small" type="primary" :style="isPC? 'margin:5px':'margin:5px auto' ">
-                    <el-button @click="reset">清空所有选择
-                    </el-button>
-                    <el-button @click="router.push({name:'roles'})">查看角色表</el-button>
+                    <el-button @click="reset">清空所有选择</el-button>
+                    <el-button @click="router.push({name:'images'})">图片信息表</el-button>
+                    <el-button @click="router.push({name:'roles'})">角色信息表</el-button>
                   </el-button-group>
                   <div class="roleSort">
                     <el-text type="primary">是否包含角色：</el-text>
@@ -154,7 +147,7 @@
                   <el-text type="danger" v-show="isShow&&!isPC">
                     注意：移动端浏览器可能无法批量下载，如尝试下载等待之后没有反应，请切换浏览器或长按图片保存。<br>
                   </el-text>
-                  <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系我删除。</el-text>
+                  <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系默默删除。</el-text>
                 </div>
               </el-form>
             </el-collapse-item>
@@ -168,24 +161,41 @@
             </el-collapse-item>
             <el-collapse-item title="已实现功能" style="text-align: left" name="3">
               <template v-for="(item,index) in completed.slice().reverse()" :key="index">
-                <el-icon>
+                <el-icon :color="index===0? 'var(--el-color-primary':''">
                   <Check/>
                 </el-icon>
-                <el-text>&ensp;{{ item.content }}</el-text>
+                <el-text :type="index===0? 'primary':'' " style="margin: 0 5px">{{ item.content }}</el-text>
+                <el-text type="danger" v-if="index===0">[new]</el-text>
                 <br></template>
             </el-collapse-item>
 
-            <el-collapse-item title="其它" name="4">
+            <el-collapse-item title="群聊和赞助" name="4">
+
               <el-text>欢迎通过
                 <el-text type="success">公告→其它→反馈</el-text>
-                向我提出功能建议或BUG。
-                也欢迎来咱们九群玩
+                向默默提出功能建议或BUG。
+                也欢迎来咱们九群玩（默默不是群主）
                 <el-button link type="primary" target="_blank"
                            @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')"
                            title="点击前往QQ">
                   点击加入群聊【金兔子特供部门🐰】
                 </el-button>
               </el-text>
+              <el-divider/>
+              <el-text>毕业俩月了还没找到工作，已经到了需要求赞助交网站网费的程度了QAQ</el-text>
+              <br>
+              <el-text>如果您觉得本站有用或有趣，总之只要您愿意，不论是五毛还是一块，默默感激不尽！！！</el-text>
+              <br>
+              <el-text type="warning">所有收入仅用于维持网站运营。</el-text>
+              <br>
+              <el-text>赞助者名单：</el-text>
+              <el-text type="info">(设计中)</el-text>&ensp;
+              <el-text>当前收到赞助：
+                <el-text type="primary">{{ fee }}</el-text>&ensp;元(手动录入会有延迟)
+              </el-text>
+              <br>
+              <el-button v-if="!showPayCode" @click="showPayCode=true" type="success">点击展示微信收款码</el-button>
+              <el-image v-else style="width: 200px" lazy src="https://qiniu.muxidream.cn/files/payCode.png"/>
             </el-collapse-item>
           </el-collapse>
         </el-card>
@@ -221,7 +231,6 @@
 
 
       <!--    第三方库，瀑布流标签-->
-
       <wc-flow-layout :gap="10" :cols="colNum">
         <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl,item.imgName,$event)"
              class="preImg"
@@ -267,12 +276,12 @@
 
     <!--少量下载说明-->
     <el-collapse-transition v-show="isShowNum===1" style="text-align: left;">
-      <el-card>默认情况下，你可以一次性批量下载最多5张图片。
-        <el-text type="warning">本站巅峰下载速度才2MB/S</el-text>
+      <el-card>默认情况下，你可以一次性批量下载最多10张图片。
+        <el-text type="warning">本站每月免费下载流量额度有限</el-text>
         <br>
         <el-text class="text">1.如果你下载的数量不多，
-          <el-text type="primary">长按或右键</el-text>
-          保存更快。
+          <el-text type="primary">长按或右键保存</el-text>
+          更快且不消耗本站流量。
         </el-text>
         <br>
         <el-text class="text">
@@ -290,10 +299,10 @@
 
     <!--大量下载说明-->
     <el-collapse-transition v-show="isShowNum===2" style="text-align: left;">
-      <el-card>如果你要一次性下载大于五张或更多图片，这里有两种方式(
+      <el-card>如果你要一次性下载大于10张或更多图片，这里有两种方式(
         <el-text type="primary">仅限Windows电脑端</el-text>
         )：
-        <el-text type="warning">下载速度完全取决于你的网速</el-text>
+
         <br>
         <el-text class="text">
           1.点击下载
@@ -317,9 +326,10 @@
           即可运行。
         </el-text>
         <br>
-        满足以上任一条件，再次点击
-        <el-text type="primary">开始下载</el-text>
-        即可进行正常下载。
+        <b class="text">
+          满足以上任一条件，再次点击
+          <el-text type="primary">开始下载</el-text>
+          即可进行正常下载。</b>
       </el-card>
     </el-collapse-transition>
     <!--详细说明-->
@@ -329,35 +339,39 @@
           <el-text class="text">
             A：网站图片提供
             <el-text type="primary">下载需要带宽</el-text>
-            ，而我的服务器
+            ，而默默的服务器
             <el-text type="primary">带宽有限</el-text>
-            且
-            <el-text type="primary">网速较慢</el-text>
             ，如果
-            <el-text type="danger">带宽耗尽</el-text>
-            我只能暂时
-            <el-text type="danger">关闭网站</el-text>
-            了。
+            <el-text type="danger">带宽耗尽便无法再直接下载</el-text>
+            ，届时只能通过
+            <el-text type="primary">下载大量(仅限PC)</el-text>
+            的方式进行下载。
           </el-text>
         </el-collapse-item>
         <el-collapse-item name="2" title="Q：两种下载方式有什么区别？">
           <el-text class="text">
             A：1.
             <el-text type="primary">少量下载</el-text>
-            ：通过本站从深蓝官网的服务器下载图片，然后我将图片发送到你的电脑，会消耗我双倍带宽(上传+下载)【因为网站跨域配置了代理】，但少量下载还在我的承受范围内；
+            ：本站已从深蓝官网下载并分类备份了全部以影像之图片，少量下载将
+            <el-text type="primary">从本站服务器</el-text>
+            下载图片到你的电脑，尚在默默的承受范围内；
           </el-text>
           <br>
           <el-text class="text">
             2.
             <el-text type="primary">大量下载</el-text>
-            ：通过我提供的脚本，在你的本地可以运行一个网站代理，再从本地直接从深蓝官网下载图片(简单来说就是，你直接从深蓝官网下载，不通过我的中转，不会额外消耗我的带宽)
+            ：通过默默提供的脚本，在你的本地运行一个网站代理，再从本地直接
+            <el-text type="primary">从深蓝官网</el-text>
+            下载图片(简单来说就是，你直接从深蓝官网下载，不通过默默的中转，不会额外消耗默默的带宽)
           </el-text>
         </el-collapse-item>
         <el-collapse-item name="3" title="Q：还有什么要狡辩的吗？">
           <el-text class="text">
-            A：1.技术有限，只能做到防君子不防小人(你可以每次刷新选五张下载然后再刷新)。本着为爱发颠为大家提供这个便利功能(虽然平时用不上)，如果带宽耗尽后续可能就不会提供
-            <el-text type="primary">少量下载</el-text>
-            服务了，仅提供
+            A：1.本着为爱发颠为大家提供这个便利功能(虽然平时用不上)，如果
+            <el-text type="warning">每月带宽耗尽</el-text>
+            ，后续网站
+            <el-text type="warning">便无法直接下载</el-text>
+            了，届时网站仅提供
             <el-text type="primary">分类查询</el-text>
             和
             <el-text type="primary">大量下载</el-text>
@@ -366,10 +380,23 @@
           <br>
           <el-text class="text">
             2.关于下载的脚本，可前往
-            <el-link style="margin: 0 3px" type="success" href="https://gitee.com/MuXi-Dream/download-reverse1999"
-                     target="_blank">开源地址
+            <el-link type="success" title="Github 和 Gitee" @click="showUrl=!showUrl">
+              本项目开源地址
             </el-link>
-            查看详细的说明(不过我最近没更新,里面还是批量下载功能的旧代码，没有代理服务器的部分)
+            <Transition name="transition1">
+              <el-link style="margin-left:6px" v-if="showUrl" type="primary"
+                       href="https://gitee.com/MuXi-Dream/download-reverse1999"
+                       target="_blank">
+                Gitee
+              </el-link>
+            </Transition>&ensp;
+            <Transition name="transition1">
+              <el-link v-if="showUrl" type="primary" href="https://github.com/ADarkDream/Download-Reverse1999"
+                       target="_blank">
+                Github
+              </el-link>
+            </Transition>
+            查看详细的说明(不过默默最近没更新,里面还是批量下载功能的旧代码，没有代理服务器的部分)
           </el-text>
           <br>
           <el-text class="text">
@@ -377,14 +404,20 @@
           </el-text>
           <br>
           <el-text class="text">
-            4.如果你想使用我的壁纸列表接口或角色信息列表接口，无偿，但为了防止被滥用，请联系我。
+            4.如果你想使用默默的壁纸列表接口或角色信息列表
+            <el-text type="primary">API文档，无偿提供，但为了防止被滥用，请联系默默</el-text>
+            。
           </el-text>
+          <br>
         </el-collapse-item>
       </el-collapse>
     </el-collapse-transition>
     <br>
     <div class="statement">
-      <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系我删除。</el-text>
+      <el-text type="warning">无业游民手头告急，快付不起网站流量费了，若有意可在本页底部
+        <el-text type="primary">群聊和赞助</el-text>
+        处提供援助，拜谢(≧*∀*≦)。
+      </el-text>
     </div>
   </el-dialog>
 </template>
@@ -397,7 +430,7 @@ import {
   Edit, InfoFilled,
   Picture as IconPicture,
   Search,
-  Select, Warning,
+  Select, StarFilled, Warning,
 } from "@element-plus/icons-vue";
 import axios from "axios";
 import {ElCollapseTransition, ElMessage, ElMessageBox} from "element-plus";
@@ -461,6 +494,8 @@ const colNum = ref<number>(isPC.value ? 5 : 1)    //修改显示列数
 
 const autoFlag = ref(true)    //是否开启自动布局
 const isChoose = ref(0)   //是否是批量选择状态
+const showPayCode = ref(false)//是否显示收款码
+const fee = ref(0)
 
 onMounted(() => {
   getVersion()
@@ -564,7 +599,7 @@ function getVersion() {
     const {versionList, roleList} = result.data.data
     //更新版本列表
     versionInfo.splice(0, versionInfo.length, ...versionList)
-    console.log('versionInfo', versionInfo)
+    // console.log('versionInfo', versionInfo)
     //更新角色列表
     roleInfo.splice(0, roleInfo.length, ...roleList)
     //获取阵营列表
@@ -588,7 +623,7 @@ function getVersion() {
 function getNotices() {
   axios({
     url: '/getNotices',
-    params: {sort: ['completed', 'unCompleted']}
+    params: {sort: ['completed', 'unCompleted', 'others']}
   }).then(result => {
     console.log(result)
     const {noticeList} = result.data
@@ -598,6 +633,7 @@ function getNotices() {
     noticeList.forEach((item: Notice) => {
       if (item.sort === 'completed') completed.push(item)
       if (item.sort === 'unCompleted') unCompleted.push(item)
+      if (item.sort === 'others') fee.value = Number(item.content)//赞助费
     })
   }).catch(error => {
     console.log('发生错误：')
@@ -742,7 +778,7 @@ function setBackground(url: string, name: string) {
 //进入和退出多选状态(num=0进入多选,1取消全选,2退出多选)
 function selectBtn(num?: number) {
   const preList = document.querySelectorAll('.preImg')
-  console.log(num)
+  console.log('selectBtn的num', num)
   if (!!num) isChoose.value = num
   if (isChoose.value === 0) { //进入多选状态
     isChoose.value = 1
@@ -804,8 +840,8 @@ async function checkPort() {
 async function downloadImages() {
   ElMessage.info('如有任何问题，请先查看下载须知')
   if (downloadList.length === 0) return ElMessage.error('请先勾选需要下载的图片！')
-  else if (downloadList.length <= 5) {//下载数量不大于5
-    // ElMessage.success('当前下载数量不大于5，可以直接下载')
+  else if (downloadList.length <= 10) {//下载数量不大于10
+    // ElMessage.success('当前下载数量不大于10，可以直接下载')
     let flag = true
     if (!isPC.value) await ElMessageBox.confirm('移动端浏览器可能无法批量下载，是否继续？', {
       confirmButtonText: '继续下载',
@@ -814,27 +850,32 @@ async function downloadImages() {
         .catch(() => flag = false)
     if (!flag) return
     console.log(downloadList)
-    downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName))
+    downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName, item.imgPath))
     selectBtn(2)
   } else {//下载数量大于5
     await checkPort()
     if (!!isOpenProxy.value) {
       ElMessage.success('正在通过代理端口进行下载，感谢您的耐心合作ღ( ´･ᴗ･` )')
       console.log(downloadList)
-      downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName))
+      downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName, item.imgPath))
       selectBtn(2) //取消多选
-    } else return ElMessage.error('当前下载数量大于5且未开启代理，请先查看下载须知→下载大量')
+    } else return ElMessage.error('当前下载数量大于10且未开启代理，请先查看下载须知→下载大量')
   }
 }
 
 //下载图片测试
 // downloadImg('https://gamecms-res.sl916.com/official_website_resource/50001/4/PICTURE/20240612/253%201440x2560_4f4a8ecb95334367ab4a83842926e1c6.jpg','123.jpg')
 //下载单张图片
-function downloadImg(url: string, imgName: string) {
-  //将下载链接替换为本地代理地址
-  const replacePort = isOpenProxy.value ? 'http://localhost:3000/download1999' : axios.defaults.baseURL + '/download1999'
-  const imageUrl = url.replace('https://gamecms-res.sl916.com', replacePort)
-  // const option={url,}
+function downloadImg(url: string, imgName: string, imgPath: string) {
+  let imageUrl = url
+  //将下载链接替换为可使用地址
+  if (isOpenProxy.value)   //如果有端口代理
+    imageUrl = url.replace('https://gamecms-res.sl916.com', 'http://localhost:3000/download1999')
+  else if (!!imageUrl) //没有端口代理
+    imageUrl = 'https://qiniu.muxidream.cn' + imgPath//七牛云备份
+  else//没有端口代理且服务器没有备份
+    imageUrl = url.replace(axios.defaults.baseURL + '/download1999', 'http://localhost:3000/download1999')
+
   fetch(imageUrl)
       .then(response => response.blob())
       .then(blob => {
@@ -943,9 +984,9 @@ body {
 
 .logo {
   float: left;
-  /*  position: absolute;
-    top: 10px;
-    left: 10px;*/
+  position: absolute;
+  top: 10px;
+  left: 10px;
   height: 40px;
   border-radius: 5px;
 }

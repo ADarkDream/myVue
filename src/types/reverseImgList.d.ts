@@ -3,6 +3,7 @@ type ReverseImg = {
     imgIndex: number,
     imgName: string,
     imgUrl: string,
+    imgPath?:string,
     time: number,
     version: number
 }
@@ -15,12 +16,14 @@ type ReverseImgInfo = {
     version: number,
     // versionName: string,
     tags: string,//角色ID,例如："3,93"
+    newTags?:string,
     roleNames?: string,
+    newRoleNames?:string,
     // index: number,
     sort: number,
     time: number,
     imgPath: string,
-    // created_time: string,
+    created_time?: string,
     imgIndex?: number//前端接收数据后重写的序号
 }
 
@@ -33,7 +36,7 @@ interface ImgParams {
     pageSize?: number,//查询每页条数
     currentPage?: number//当前页码
     orderBy?: string,//倒序查询的依据
-    isDesc?: boolean //true为倒序查询,与orderBy同时存在时生效
+    isDesc?: string //'desc'为倒序查询,与orderBy同时存在时生效
 }
 
 //图片分类

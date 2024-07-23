@@ -1,187 +1,216 @@
 <template>
-  <el-header class="header1">
-    以影像之图片管理
-  </el-header>
-  <div class="header2">
-    <el-col :span="3">
-      <el-button type="primary" @click="dialogVisible=true">上传图片</el-button>
-    </el-col>
-    <el-col :span="3">
-      <el-select placeholder="选择版本" v-model="condition.version" multiple :suffix-icon="Search">
-        <el-option v-for="item in versionInfo" :key="item.value" :label="item.text" :value="item.value"/>
-      </el-select>
-    </el-col>
-    <el-col :span="4">
-      <el-tree-select
-          placeholder="包含角色"
-          v-model="condition.roles"
-          :data="sourceData"
-          multiple
-          :render-after-expand="false"
-          :filter-node-method="filterNodeMethod"
-          @change="updateRoleNames(true)"
-          filterable
-          :suffix-icon="Search"
-      />
-    </el-col>
-    <el-col :span="2">
-      <el-select v-model.trim="condition.orderBy" placeholder="排序根据">
-        <el-option label="默认排序" value=""/>
-        <el-option label="根据id" value="id"/>
-        <el-option label="创建时间" value="created_time"/>
-      </el-select>
-    </el-col>
-    <el-col :span="2">
-      <el-select :disabled="!condition.orderBy" v-model.trim="condition.isDesc" placeholder="排序方向">
-        <el-option label="正序" value=""/>
-        <el-option label="倒序" value="desc"/>
-      </el-select>
-    </el-col>
-    <el-col :span="2">
-      <el-select v-model.trim="condition.accurate" placeholder="是否精确查找">
-        <el-option label="精准查询" :value="1"/>
-        <el-option label="模糊查询" :value="0"/>
-      </el-select>
-    </el-col>
-    <el-col :span="2">
-      <el-select v-model.trim="condition.sort" placeholder="图片类型">
-        <el-option label="全选" :value="2"/>
-        <el-option label="横屏" :value="1"/>
-        <el-option label="竖屏" :value="0"/>
-      </el-select>
-    </el-col>
-    <el-col :span="6">
-      <el-button @click="render" type="primary">筛选查找</el-button>
-      <el-button @click="clearFilter">清空全部筛选</el-button>
-    </el-col>
-  </div>
-  <el-main style="padding-bottom:0;padding-top: 0 ">
-    <el-table ref="tableRef" :data="tableData" style="width: 100%" :max-height="screenHeight-260" stripe border
-              highlight-current-row
-              table-layout="auto" type="type" :default-sort="{ prop: 'imgIndex', order: 'custom' }"
-              @sort-change="handleSortChange">
-      <el-table-column fixed prop="imgIndex" label="本页序号" width="100" align="center" sortable/>
-      <el-table-column prop="id" label="ID" width="50" align="center" sortable/>
-      <el-table-column prop="version" label="版本" width="100" align="center">
-        <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-select placeholder="选择版本" v-model="imgInfo.version">
-              <el-option v-for="item in versionInfo" :key="item.value" :label="item.text" :value="item.value"/>
+  <el-container>
+    <el-header class="header1">
+      以影像之图片管理
+    </el-header>
+        <!--    移动端筛选框-->
+    <el-collapse  style="margin: 0 10px" v-if="!isPC">
+      <el-collapse-item title="筛选条件">
+        <el-row class="header2">
+          <el-col :md="3" v-if="isAdmin">
+            <el-button type="primary" @click="dialogVisible=true" :size="elSize">添加新图片</el-button>
+          </el-col>
+          <el-col :md="3" :sm="4">
+            <el-input v-model.trim="searchInfo.name" placeholder="角色名称" :size="elSize" clearable
+                      :prefix-icon="Search"/>
+          </el-col>
+          <el-col :md="3" :sm="4">
+            <el-select v-model="searchInfo.camp" :size="elSize" default-first-option>
+              <el-option label="全选阵营" value=""/>
+              <el-option v-for="(item,index) in campInfo" :key="index" :label="item" :value="item"/>
             </el-select>
-          </div>
-          <template v-else v-for="item in versionInfo" :key="item.value">
-            <el-text v-if="item.value===scope.row.version">
-              {{ item.text }}
-            </el-text>
-          </template>
-        </template>
-      </el-table-column>
-      <el-table-column prop="imgUrl" sum-text :label="isEditRow===-1?'图片':'链接' " width="130" align="center">
-        <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input type="textarea" v-model="imgInfo.imgUrl" placeholder="请输入图片链接"/>
-          </div>
-          <!--preview-teleported解决图片显示不全的问题-->
-          <div v-else @click="checkImage(scope.row.imgUrl,scope.row.imgName,$event)"
-               class="preImg"
-               :id="'imgDiv-'+imgInfo.imgIndex">
-            <el-image :src="scope.row.imgUrl" :zoom-rate="1.2" :id="'img-'+scope.row.imgIndex"
-                      :max-scale="7"
-                      :min-scale="0.2"
-                      :preview-src-list="isChoose!==0? [] : previewImgList"
-                      :initial-index="scope.row.imgIndex"
-                      fit="scale-down" lazy
-                      :preview-teleported="true"
-            >
-              <template #error>
-                <div class="image-slot">
-                  <el-icon style="width: 50px">
-                    <icon-picture/>
-                  </el-icon>
-                </div>
-              </template>
-            </el-image>
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="roleNames" label="包含角色" width="200" align="center">
-        <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-tree-select
-                v-model="roleIDList"
-                :data="sourceData"
-                multiple
-                :render-after-expand="false"
-                :filter-node-method="filterNodeMethod"
-                @change="updateRoleNames"
-                filterable
-            />
-          </div>
-          <el-text v-else type="primary">{{ scope.row.roleNames }}</el-text>
-        </template>
-      </el-table-column>
-      <el-table-column prop="newName" label="图片名" width="150" align="center">
-        <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input type="textarea" v-model="imgInfo.newName" placeholder="请输入图片名称"/>
-          </div>
-          <div v-else>
-            {{ scope.row.newName }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="oldName" label="官方原名" width="150" align="center">
-        <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input type="textarea" v-model="imgInfo.oldName" placeholder="请输入图片名称"/>
-          </div>
-          <div v-else>
-            {{ scope.row.oldName }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column prop="imgPath" sum-text label="服务器存储路径" width="100" align="center"/>
-      <el-table-column prop="time" label="官方上传时间" width="120">
-        <template #default="scope">{{ scope.row.time }}</template>
-      </el-table-column>
-      <el-table-column prop="created_time" label="整理时间" width="150">
-        <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
-      </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100">
-        <template #default="scope">
-          <div v-if="isEditRow!==scope.$index">
-            <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row)">
-              删除
-            </el-button>
-          </div>
-          <div v-else>
-            <el-button link type="primary" size="small" @click="handleCancel">取消
-            </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(imgInfo,scope.row)">
-              更新
-            </el-button>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="pageMenu">
-      <el-pagination
-          v-model:current-page="condition.currentPage"
-          v-model:page-size="condition.pageSize"
-          :page-sizes="[10, 25, 50, 100]"
-          :layout="total/condition.pageSize>10? 'total, sizes, prev, pager, next,jumper' :'total, sizes, prev, pager, next'"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-      />
-    </div>
-  </el-main>
+          </el-col>
+          <el-col :md="3" :sm="4">
+            <el-select v-model="searchInfo.race" :size="elSize" default-first-option>
+              <el-option label="全选种族" value=""/>
+              <el-option v-for="(item,index) in raceInfo" :key="index" :label="item" :value="item"/>
+            </el-select>
+          </el-col>
+          <el-col :md="3" :sm="4">
+            <el-input v-model.trim="searchInfo.otherTags" placeholder="其他标签" :size="elSize" clearable
+                      :prefix-icon="Search"/>
+          </el-col>
+          <el-col :md="6" :sm="7">
+            <el-button @click="filterChange" type="primary" :size="elSize">筛选查找</el-button>
+            <el-button @click="clearFilter" :size="elSize">清空全部筛选</el-button>
+            <el-button :size="elSize" type="primary" @click="router.push({name:'images'})" >点击前往图片表</el-button>
+          </el-col>
 
-  <!--图片上传框-->
-  <el-dialog v-model="dialogVisible" :show-close="false" title="上传图片">
-    <el-text>暂不支持</el-text>
-  </el-dialog>
+        </el-row>
+      </el-collapse-item>
+    </el-collapse>
+    <div v-else class="header2">
+      <el-col :span="3">
+        <el-button :size="elSize" type="primary" @click="router.push({name:'roles'})" >点击前往角色表</el-button>
+      </el-col>
+      <el-col :span="3">
+        <el-select placeholder="选择版本" v-model="condition.version" multiple :suffix-icon="Search">
+          <el-option v-for="item in versionInfo" :key="item.value" :label="item.text" :value="item.value"/>
+        </el-select>
+      </el-col>
+      <el-col :span="4">
+        <el-tree-select
+            placeholder="包含角色"
+            v-model="condition.roles"
+            :data="sourceData"
+            multiple
+            :render-after-expand="false"
+            :filter-node-method="filterNodeMethod"
+            @change="updateRoleNames(true)"
+            filterable
+            :suffix-icon="Search"
+        />
+      </el-col>
+      <!--    <el-col :span="2">-->
+      <!--      <el-select v-model.trim="condition." placeholder="未标记">-->
+      <!--        <el-option label="网站状态(全选)" :value="2"/>-->
+      <!--        <el-option label="正在使用" :value="1"/>-->
+      <!--        <el-option label="待审核" :value="0"/>-->
+      <!--      </el-select>-->
+      <!--    </el-col>-->
+      <el-col :span="2">
+        <el-select v-model.trim="condition.orderBy" placeholder="排序根据">
+          <el-option label="默认排序" value=""/>
+          <el-option label="根据id" value="id"/>
+          <el-option label="创建时间" value="created_time"/>
+        </el-select>
+      </el-col>
+      <el-col :span="2">
+        <el-select :disabled="!condition.orderBy" v-model.trim="condition.isDesc" placeholder="排序方向">
+          <el-option label="正序" value=""/>
+          <el-option label="倒序" value="desc"/>
+        </el-select>
+      </el-col>
+      <el-col :span="2">
+        <el-select v-model.trim="condition.accurate" placeholder="是否精确查找">
+          <el-option label="精准查询" :value="1"/>
+          <el-option label="模糊查询" :value="0"/>
+        </el-select>
+      </el-col>
+      <el-col :span="2">
+        <el-select v-model.trim="condition.sort" placeholder="图片类型">
+          <el-option label="全选" :value="2"/>
+          <el-option label="横屏" :value="1"/>
+          <el-option label="竖屏" :value="0"/>
+        </el-select>
+      </el-col>
+      <el-col :span="6">
+        <el-button @click="render" type="primary">筛选查找</el-button>
+        <el-button @click="clearFilter">清空全部筛选</el-button>
+      </el-col>
+    </div>
+    <el-main style="padding-bottom:0;padding-top: 0 ">
+      <el-text type="primary" style="margin: 5px auto">
+        个人收集略有不足，如有错漏还请向我反馈。非常感谢！如有乐意帮忙的司辰也欢迎点击右侧编辑按钮进行修改(非管理员仅能修改角色)！
+      </el-text><br> <el-text type="danger">本页面暂未适配移动端</el-text>
+      <el-table ref="tableRef" :data="tableData" style="width: 100%" :max-height="screenHeight-260" stripe border
+                highlight-current-row
+                table-layout="auto" type="type" :default-sort="{ prop: 'imgIndex', order: 'custom' }"
+                @sort-change="handleSortChange">
+        <el-table-column fixed prop="imgIndex" label="本页序号" width="100" align="center" sortable/>
+        <el-table-column prop="id" label="ID" width="50" align="center" sortable/>
+        <el-table-column prop="version" label="版本" width="100" align="center">
+          <template #default="scope">
+            <template v-for="item in versionInfo" :key="item.value">
+              <el-text v-if="item.value===scope.row.version">
+                {{ item.text }}
+              </el-text>
+            </template>
+          </template>
+        </el-table-column>
+        <el-table-column prop="imgUrl" sum-text :label="isEditRow===-1?'图片':'链接'  " width="200" align="center">
+          <template #default="scope">
+            <div v-if="isEditRow===scope.$index">
+              <el-text type="primary" @click="copyText(scope.row.imgUrl,'图片链接'+scope.row.newName,scope.row.imgUrl)">
+                {{ scope.row.imgUrl }}
+              </el-text>
+            </div>
+            <!--preview-teleported解决图片显示不全的问题-->
+            <div v-else @click="checkImage(scope.row.imgUrl,scope.row.imgName,$event)"
+                 class="preImg"
+                 :id="'imgDiv-'+imgInfo.imgIndex">
+              <el-image :src="scope.row.imgUrl" :zoom-rate="1.2" :id="'img-'+scope.row.imgIndex"
+                        :max-scale="7"
+                        :min-scale="0.2"
+                        :preview-src-list="isChoose!==0? [] : previewImgList"
+                        :initial-index="scope.row.imgIndex"
+                        fit="scale-down" lazy
+                        :preview-teleported="true"
+              >
+                <template #error>
+                  <div class="image-slot">
+                    <el-icon style="width: 50px">
+                      <icon-picture/>
+                    </el-icon>
+                  </div>
+                </template>
+              </el-image>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="roleNames" label="包含角色" width="100" align="center">
+          <template #default="scope"><el-text type="primary">{{ scope.row.roleNames }}</el-text></template>
+        </el-table-column>
+        <el-table-column prop="newRoleNames" label="包含角色修改为" width="200" align="center">
+          <template #default="scope">
+            <div v-if="isEditRow===scope.$index">
+              <el-tree-select
+                  placeholder="选择或搜索"
+                  v-model="roleIDList"
+                  :data="sourceData"
+                  multiple
+                  :render-after-expand="false"
+                  :filter-node-method="filterNodeMethod"
+                  @change="updateRoleNames()"
+                  filterable
+              />
+            </div>
+            <el-text v-else type="warning">{{ scope.row.newRoleNames }}</el-text>
+          </template>
+        </el-table-column>
+        <el-table-column prop="newName" label="图片名" width="150" align="center"/>
+        <el-table-column prop="oldName" label="官方原名" width="150" align="center"/>
+        <!--      <el-table-column prop="imgPath"  sum-text label="服务器存储路径" width="100" align="center"/>-->
+        <el-table-column prop="time" label="官方上传时间" width="120"/>
+        <el-table-column prop="created_time" label="整理时间" width="150">
+          <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" width="100">
+          <template #default="scope">
+            <div v-if="isEditRow!==scope.$index">
+              <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-button disabled link type="danger" size="small" @click="deleteRow(scope.$index,scope.row)">
+                删除
+              </el-button>
+            </div>
+            <div v-else>
+              <el-button link type="primary" size="small" @click="handleCancel">取消
+              </el-button>
+              <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(imgInfo,scope.row)">
+                更新
+              </el-button>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="pageMenu">
+        <el-pagination
+            v-model:current-page="condition.currentPage"
+            v-model:page-size="condition.pageSize"
+            :page-sizes="[10, 25, 50, 100]"
+            :layout="total/condition.pageSize>10? 'total, sizes, prev, pager, next,jumper' :'total, sizes, prev, pager, next'"
+            :total="total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+        />
+      </div>
+    </el-main>
+
+    <!--图片上传框-->
+    <el-dialog v-model="dialogVisible" :show-close="false" title="上传图片">
+      <el-text>暂不支持</el-text>
+    </el-dialog>
+  </el-container>
 </template>
 
 
@@ -213,8 +242,7 @@ import useResponsive from "@/hooks/useResponsive";
 
 const {copyText, deepEqual} = useFunction()
 const {isAdmin} = useUserInfo()
-const {screenHeight} = useResponsive()
-if (!isAdmin.value) router.replace({name: 'home'})
+const {screenHeight,elSize,isPC} = useResponsive()
 
 
 //region  树状选择框
@@ -226,9 +254,11 @@ let sourceData = reactive([])
 const filterNodeMethod = (roleID, sourceData) => sourceData.label.includes(roleID)
 //角色树状选择框的筛选(修改时)
 const updateRoleNames = (isSearch = false) => {
+  console.log(isSearch)
   if (!isSearch) {//表格中修改图片数据
-    imgInfo.tags = roleIDList.value.join(',')//返回角色ID字符串
-    imgInfo.roleNames = roleIDList.value.map(roleId => roles.value[roleId]).join(',')//返回角色名字字符串
+    imgInfo.newTags = roleIDList.value.join(',')//返回角色ID字符串
+    imgInfo.newRoleNames = roleIDList.value.map(roleId => roles.value[roleId]).join(',')//返回角色名字字符串
+    console.log(imgInfo)
   }//isSearch=true代表顶部搜索框的角色筛选
 }
 //endregion
@@ -247,24 +277,16 @@ const condition = reactive<ImgParams>({
     }
 )
 //用户上一次查询的参数
-// const oldCondition = reactive<ImgParams>({
-//   version: ['all'],
-//   roles: [],
-//   sort: 2,
-//   accurate: 0,
-//   pageSize: 25,
-//   currentPage: 1
-// })
 const oldCondition = reactive<ImgParams>({
-  version: null,
-  roles: null,
-  sort: null,
-  accurate: null,
-  pageSize: null,
-  currentPage: null,
-  orderBy: null,
-  isDesc: null
-})
+      version: [],
+      roles: [],
+      sort: 2,
+      accurate: 0,
+      pageSize: 25,
+      currentPage: 0,
+      orderBy: '',
+      isDesc: ''
+    })
 
 //当前修改的图片信息
 let imgInfo = reactive<ReverseImgInfo>({
@@ -273,7 +295,9 @@ let imgInfo = reactive<ReverseImgInfo>({
   newName: '',
   imgUrl: '',
   tags: '',//角色ID,例如："3,93"
+  newTags:'',
   roleNames: '',
+  newRoleNames:'',
   sort: 2,
   imgPath: '',
   time: 20230325,
@@ -416,6 +440,14 @@ async function render() {
       item.roleNames = outputArray.join(',')// 输出: 角色A,角色B,角色C
       // console.log(idList, outputArray)
     }
+        if (!!item.newTags) {
+      const idList = item.newTags.split(',')
+
+      // 将字符串按逗号分割并替换为角色名称
+      let outputArray = idList.map(x => roles.value[x]) //roles[x] 通过  对象["键名"]  的格式取值
+      item.newRoleNames = outputArray.join(',')// 输出: 角色A,角色B,角色C
+      // console.log(idList, outputArray)
+    }
   })
 }
 
@@ -454,8 +486,8 @@ async function getImages() {
     }
 
     const result = await axios({
-      url: '/getAllWallpaper',
-      params: condition
+      url: '/getWallpaper',
+      params: {...condition, isManagement: '1'}
     })
     console.log('getImages', result)
     const {status, totalNum} = result.data
@@ -468,9 +500,7 @@ async function getImages() {
       item.imgIndex = index
       previewImgList.push(item.imgUrl)
     })
-    console.log(tableData)
-
-
+    console.log('tableData',tableData)
   } catch (error) {
     console.log('发生错误：')
     console.log(error)
@@ -518,9 +548,10 @@ const isEditRow = ref<number>(-1)//编辑标记
 
 //编辑图片信息(修改编辑标记)
 const handleEdit = (index: number, row: ReverseImgInfo) => {
+  Object.assign(imgInfo,row)
   isEditRow.value = index //编辑的行
-  roleIDList.value = row.tags.split(',')//角色id数组
-  imgInfo = Object.assign(imgInfo, row)
+  row.newTags=row.tags//角色id数组添加到当前位置
+  roleIDList.value=row.tags.split(',')
 }
 
 //还原编辑标记
@@ -573,10 +604,10 @@ function checkUpdateRow(newData: ReverseImgInfo, oldData: ReverseImgInfo) {
 
 //上传更新的图片信息
 function updateRow(data: ReverseImgInfo, oldData: ReverseImgInfo) {
-  const {roleNames, ...newData} = data //通过解构赋值去除roleNames
+  const {roleNames,newRoleNames, ...newData} = data //通过解构赋值去除roleNames和newRoleNames
   console.log('newData', newData)
   axios({
-    url: '/updateAllWallPaper',
+    url: '/updateWallPaper',
     method: 'post',
     data: {
       data: newData,
@@ -584,7 +615,8 @@ function updateRow(data: ReverseImgInfo, oldData: ReverseImgInfo) {
     }
   }).then(result => {
     // console.log(result)
-    const {msg, newPath} = result.data
+    const {msg, status,newPath} = result.data
+    if (status===300) return
     //判断是否修改文件路径
     // if (newPath !== undefined) data.imgPath = newPath
     //将修改后的信息显示出来
@@ -652,6 +684,21 @@ const deleteImage = (index: number, data: ReverseImgInfo) => {
 
 
 <style scoped>
+.el-container {
+  background-color: var(--el-color-primary-light-9);
+}
+
+.header1 {
+  font-size: 25px;
+  line-height: 60px;
+}
+
+.header2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .demo-pagination-block + .demo-pagination-block {
   margin-top: 10px;
 }

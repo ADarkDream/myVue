@@ -2,7 +2,7 @@
 <!--      <el-scrollbar :height="  ">-->
    <el-container :style="'height:'+(screenHeight-40)+'px;overflow:hidden' ">
     <el-header class="header1">
-      角色列表(仅供壁纸检索)
+      角色表
     </el-header>
     <!--    移动端筛选框-->
     <el-collapse  style="margin: 0 10px" v-if="!isPC">
@@ -34,6 +34,7 @@
           <el-col :md="6" :sm="7">
             <el-button @click="filterChange" type="primary" :size="elSize">筛选查找</el-button>
             <el-button @click="clearFilter" :size="elSize">清空全部筛选</el-button>
+            <el-button :size="elSize" type="primary" @click="router.push({name:'images'})" >点击前往图片表</el-button>
           </el-col>
 
         </el-row>
@@ -41,8 +42,9 @@
     </el-collapse>
     <!--    PC筛选框-->
     <el-row class="header2" v-else>
-      <el-col :sm="3" v-if="isAdmin">
-        <el-button type="primary" @click="dialogVisible=true" :size="elSize">添加新角色</el-button>
+      <el-col :sm="3">
+<!--        <el-button type="primary" @click="dialogVisible=true" :size="elSize">添加新角色</el-button>-->
+             <el-button :size="elSize" type="primary" @click="router.push({name:'images'})" >点击前往图片表</el-button>
       </el-col>
       <el-col :sm="4">
         <el-input v-model.trim="searchInfo.name" placeholder="角色名称" :size="elSize" clearable :prefix-icon="Search"/>
