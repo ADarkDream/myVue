@@ -4,7 +4,7 @@
   <!--搜索框区域-->
   <div class="searchDiv">
     <!-- 当前的搜索引擎-->
-    <img class="searchEngine thisSearchEngine" :src="searchImg" :alt="engineName">&ensp;
+    <img class="searchEngine thisSearchEngine" :src="searchImg" :alt="engineName" @click="showEngines = !showEngines">&ensp;
     <!--    默认的搜索引擎列表-->
     <template class="engines" v-for="item in searchEngines" v-if="showEngines" :key="item.id">
       <el-button class="engine" v-show="Number(engineId)!==item.id && item.isShow">
@@ -31,7 +31,7 @@
 
 
   <!--内容区域-->
-  <el-collapse-transition v-show="isShow" class="content" >
+  <el-collapse-transition v-show="isShow" class="content">
     <Content :showContent="showContent" :changeFlag="changeFlag"/>
   </el-collapse-transition>
 
@@ -64,7 +64,7 @@ import {onBeforeRouteLeave} from "vue-router";
 
 import {engineData} from "@/types/url";
 
-const {isPC, dialogWidth} = useResponsive()
+const {isScroll, isPC, dialogWidth} = useResponsive()
 const {isLogin} = useUserInfo()
 const {searchEngines} = reactive(useLocalEnginesStore())
 
@@ -126,16 +126,14 @@ emitter.on('showContent', () => {
 
 //显示下方内容区,isShow.value=false不显示
 function showContent() {
-  // console.log('是否显示内容区')
-  // console.log('isShow' + isShow.value)
+  console.log('是否显示内容区,isShow：' , isShow.value)
   isShow.value = !isShow.value
   if (isShow.value && isPC.value) {
     timeClass.value = 'timeUp'
   } else timeClass.value = 'time'
-  if (!isPC){
-
+  if (!isPC.value) {
+    isShow.value? isScroll(true) :isScroll(true)
   }
-    // if (isShow.value && !isPC.value)
 }
 
 //endregion

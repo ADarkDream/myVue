@@ -134,7 +134,7 @@
                            :icon="isChoose!==0? CloseBold : Select"
                            @click="selectBtn()" v-show="isShow">
                     <span
-                        v-if="isChoose===0">勾选
+                        v-if="isChoose===0">多选
                     </span>
                   <span v-else-if="isChoose===1">取消全选</span>
                   <span v-else>退出勾选</span>

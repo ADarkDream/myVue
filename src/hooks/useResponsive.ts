@@ -45,6 +45,22 @@ export default function () {
         }
     }
 
+    //是否允许页面纵向滚动,仅限PC端,true为允许，false溢出隐藏，null清除样式
+    function isScroll(flag?) {
+        const bodyStyle=document.querySelector('body').style
+        if (flag) {  /*全局样式，当前页面及子页面在PC端禁止滚动*/
+            bodyStyle.overflowY = 'visible'
+            // bodyStyle.overflowX = 'hidden'
+        } else if(flag===null) {
+            bodyStyle.overflowY = ''
+            // bodyStyle.overflowX = ''
+        }
+        else {//false溢出隐藏
+            bodyStyle.overflowY = 'hidden'
+            // bodyStyle.overflowX = 'hidden'
+        }
+    }
+
     // 向外暴露
-    return {screen, screenWidth, screenHeight, isPC, isDark, isHome, isForum, dialogWidth, dialogWidth2, elSize}
+    return {screen,isScroll, screenWidth, screenHeight, isPC, isDark, isHome, isForum, dialogWidth, dialogWidth2, elSize}
 }

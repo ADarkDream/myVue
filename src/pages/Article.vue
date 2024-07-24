@@ -1,5 +1,6 @@
 <template>
-  <div :style="'min-height:'+(isPC? screenHeight-80 : screenHeight-40)+'px; background-color: var(--el-color-primary-light-9);' ">
+  <div
+      :style="'min-height:'+(isPC? screenHeight-80 : screenHeight-40)+'px; background-color: var(--el-color-primary-light-9);' ">
     <div class="articleBar" v-if="false">
       <el-button @click="router.back()">
         <el-icon>
@@ -61,45 +62,44 @@
             </el-col>
           </el-row>
         </div>
-        <el-divider>评论区</el-divider>
-        <div v-if="comments.length===0">暂无评论</div>
-        <el-row v-else v-for="(item,index) in comments" :key="index" class="comments" :gutter="10">
-          <el-col :sm="2" :xs="4">
-            <el-button text type="primary" style="padding: 0;margin: 10px 0;" size="small">
-              <el-avatar :src="item.headImgUrl" style="width: 40px;" @error="errorImage"/>
-            </el-button>
-          </el-col>
-          <el-col :sm="22" :xs="20">
-            <div style="width: 100%;height: 20px;margin-bottom: 5px;display: flex;justify-content: space-between">
-              <el-space spacer="" style="text-align: left;">
-                <el-text type="success" v-if="item.uid===article.authorId">[作者]</el-text>
-                <el-text type="primary"> {{ item.observer }}</el-text>
-              </el-space>
-              <el-space spacer="" style="margin-right: 10px">
-                <el-text>{{ getDiffTime(item.created_time) }}</el-text>
-                <el-text type="primary">{{ index + 1 }}楼</el-text>
-                <el-dropdown>
-                  <el-icon class="el-icon--right">
-                    <MoreFilled/>
-                  </el-icon>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item command="a" :icon="WarnTriangleFilled">举报</el-dropdown-item>
-                      <el-dropdown-item command="b" :icon="Delete"
-                                        v-if="isAdmin||article.authorId===uid || item.uid===uid"
-                                        @click="deleteRow(item.id)">删除
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </el-space>
-            </div>
-            <div style="width: 100%;text-align: left">
-              <el-text> {{ item.comment }}</el-text>
-
-            </div>
-          </el-col>
-        </el-row>
+        <div style="margin-bottom: 30px">
+          <el-divider>评论区</el-divider>
+          <div v-if="comments.length===0">暂无评论</div>
+          <el-row v-else v-for="(item,index) in comments" :key="index" class="comments" :gutter="10">
+            <el-col :sm="2" :xs="4" style="align-items: flex-start;"><!--左边头像-->
+              <div class="commentsAvatarDiv">
+                <el-avatar :src="item.headImgUrl" @error="errorImage"/>
+              </div>
+            </el-col>
+            <el-col :sm="22" :xs="20" style="display:flex;flex-wrap: wrap"><!--右边评论区-->
+              <div class="commentsBar">
+                <el-space spacer="" style="text-align: left;">
+                  <el-text type="success" v-if="item.uid===article.authorId">[作者]</el-text>
+                  <el-text type="primary"> {{ item.observer }}</el-text>
+                </el-space>
+                <el-space spacer="" style="margin-right: 10px">
+                  <el-text>{{ getDiffTime(item.created_time) }}</el-text>
+                  <el-text type="primary">{{ index + 1 }}楼</el-text>
+                  <el-dropdown>
+                    <el-icon class="el-icon--right">
+                      <MoreFilled/>
+                    </el-icon>
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item command="a" :icon="WarnTriangleFilled">举报</el-dropdown-item>
+                        <el-dropdown-item command="b" :icon="Delete"
+                                          v-if="isAdmin||article.authorId===uid || item.uid===uid"
+                                          @click="deleteRow(item.id)">删除
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
+                </el-space>
+              </div><!--评论区顶部菜单-->
+              <el-text class="commentsContent">&ensp; &ensp; {{ item.comment }}</el-text><!--评论内容-->
+            </el-col>
+          </el-row>
+        </div>
       </div>
     </div>
   </div>
@@ -118,7 +118,7 @@ import useResponsive from "@/hooks/useResponsive";
 import hljs from 'highlight.js/lib/common';
 
 const {isLogin, isAdmin, uid, headImgUrl, errorImage} = useUserInfo()
-const {isPC,screenHeight} = useResponsive()
+const {isPC, screenHeight} = useResponsive()
 const router = useRouter()
 const route = useRoute() // 注意：接收参数的时候不带 ‘r’
 const isShow = ref(true)
@@ -164,10 +164,10 @@ const article = reactive({}) as Article
 let comments: Comment[] = reactive([])
 
 //region刷新，获取文章
-function getArticle() {
+async function getArticle() {
   let url = '/getArticle'
   if (isLogin.value) url = '/getTheArticle'
-  axios({
+  await axios({
     url,
     params: {
       //用路由跳转传来的文章id再次向服务器请求文章数据
@@ -177,11 +177,11 @@ function getArticle() {
   }).then(async (result) => {
     console.log(result)
     const {msg, comments: commentsData} = result.data
-    console.log(msg)
+    console.log(!!comments)
     // ElMessage.success(msg)
     Object.assign(article, result.data.article)
     //判断返回的数据中是否有评论
-    if (commentsData !== undefined) {
+    if (!!commentsData && commentsData !== []) {
       comments.splice(0, comments.length)
       commentsData.forEach((item: Comment) => {
         comments.push(item);
@@ -200,7 +200,10 @@ function getArticle() {
 //给代码块添加高亮
 // 复制功能
 import useFunction from "@/hooks/useFunction";
+import emitter from "@/utils/emitter";
+
 const {copyCode} = useFunction()
+
 function addCodeHighLight() {
   const codeBlocks = document.querySelectorAll('[class*="language-"]')
   codeBlocks.forEach((item: HTMLElement) => {
@@ -237,7 +240,7 @@ function fixImageWidth() {
   const images = document.querySelectorAll('.articleContent p img');
   images.forEach((img: HTMLElement) => {
     // 移除内联样式中的宽度
-    img.style.width = 200 + 'px';
+    img.style.width = '100%'// 200 + 'px';
   })
 }
 
@@ -348,34 +351,27 @@ const deleteComment = (id: number) => {
 //region评论框动态变化
 const commentBox = ref(null)
 const isFixed = ref(false)
+//输入评论框距离页面顶部的距离,默认设置1000
+const commentsBoxOffsetTop = ref(1000)
 
-const handleScroll = () => {
-  const scrollTop = window.scrollY//页面滚动的总高度
-  const commentsBoxOffsetTop = commentBox.value.offsetTop//评论框与页面顶部的距离
-  isFixed.value = scrollTop >= commentsBoxOffsetTop
-  console.log(scrollTop)
-}
-// 组件挂载时添加滚动事件监听器
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-  getArticle()
-  fixImageWidth()
-  console.log('开始监听页面滚动')
-})
-// 组件卸载时移除滚动事件监听器
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-  // clearTimeout(timer.value)//移除处理文章图片的计时器
-  console.log('移除页面滚动监听')
+emitter.on('comments-move', (scrollTop) =>
+  isFixed.value = scrollTop >= commentsBoxOffsetTop.value
+)
+// 组件挂载时
+onMounted(async () => {
+  await getArticle()//获取文章和评论
+  await nextTick(() => {//页面渲染完毕才计算高度
+    fixImageWidth()//修改图片宽度
+    if (comments !== []) {//获取输入评论框距离页面顶部的距离
+      commentsBoxOffsetTop.value = commentBox.value.offsetTop
+    } else console.log('没有评论')
+  })
 })
 //endregion
 
 </script>
 
 <style scoped>
-body {
-  overflow: visible;
-}
 .mainContent {
   position: relative;
   background-color: var(--el-color-primary-light-9);
@@ -426,13 +422,35 @@ body {
 .comments {
   display: flex;
   justify-content: space-between;
-  margin: 10px 10px 30px 10px;
+  margin: 5px 10px;
+  padding: 5px 0;
   font-size: 12px;
+  background-color: var(--el-bg-color);
   /*
     text-align: initial;
   */
 }
 
+/*评论头像框的div'*/
+.commentsAvatarDiv {
+  padding: 0;
+  margin: 0 auto;
+}
+
+/*评论上半部分菜单栏*/
+.commentsBar {
+  width: 100%;
+  height: 20px;
+  margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between
+}
+
+.commentsContent {
+  width: 100%;
+  text-align: left;
+  font-size: 16px
+}
 
 .fixed {
   position: fixed; /*  使评论框根据滚动条固定位置 */
@@ -445,10 +463,16 @@ body {
   background-color: var(--el-color-primary-light-9);
 }
 
+.addCommentDiv {
+  padding-top: 10px;
+  background-color: var(--el-color-primary-light-9);
+}
+
 
 .addComment {
   display: flex;
   justify-content: center;
+
 }
 
 .input {
@@ -458,8 +482,13 @@ body {
 
 @media (max-width: 980px) {
   .articleTitle {
-  font-size: 20px ;
-}
+    font-size: 20px;
+  }
+
+  .addCommentDiv {
+    width: 100%;
+    left: 0;
+  }
 }
 
 </style>

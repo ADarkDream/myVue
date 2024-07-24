@@ -113,7 +113,7 @@
                 multiple
                 :render-after-expand="false"
                 :filter-node-method="filterNodeMethod"
-                @change="updateRoleNames"
+                @change="updateRoleNames()"
                 filterable
             />
           </div>
@@ -226,10 +226,13 @@ let sourceData = reactive([])
 const filterNodeMethod = (roleID, sourceData) => sourceData.label.includes(roleID)
 //角色树状选择框的筛选(修改时)
 const updateRoleNames = (isSearch = false) => {
+  console.log(imgInfo.tags, roleIDList.value, !isSearch)
   if (!isSearch) {//表格中修改图片数据
-    imgInfo.tags = roleIDList.value.join(',')//返回角色ID字符串
+    if (roleIDList.value.length === 0) imgInfo.tags = null
+    else imgInfo.tags = roleIDList.value.join(',')//返回角色ID字符串
     imgInfo.roleNames = roleIDList.value.map(roleId => roles.value[roleId]).join(',')//返回角色名字字符串
   }//isSearch=true代表顶部搜索框的角色筛选
+  // console.log(imgInfo)
 }
 //endregion
 
@@ -468,7 +471,7 @@ async function getImages() {
       item.imgIndex = index
       previewImgList.push(item.imgUrl)
     })
-    console.log(tableData)
+    // console.log(tableData)
 
 
   } catch (error) {
@@ -519,8 +522,9 @@ const isEditRow = ref<number>(-1)//编辑标记
 //编辑图片信息(修改编辑标记)
 const handleEdit = (index: number, row: ReverseImgInfo) => {
   isEditRow.value = index //编辑的行
-  roleIDList.value = row.tags.split(',')//角色id数组
-  imgInfo = Object.assign(imgInfo, row)
+  if (!!row.tags) roleIDList.value = row.tags.split(',')//角色id数组
+  else roleIDList.value = []
+  imgInfo = Object.assign(imgInfo, row)//点击编辑时，将当前行数据添加到当前编辑的信息imgInfo
 }
 
 //还原编辑标记
@@ -574,7 +578,7 @@ function checkUpdateRow(newData: ReverseImgInfo, oldData: ReverseImgInfo) {
 //上传更新的图片信息
 function updateRow(data: ReverseImgInfo, oldData: ReverseImgInfo) {
   const {roleNames, ...newData} = data //通过解构赋值去除roleNames
-  console.log('newData', newData)
+  if (!newData || JSON.stringify(newData) === '{}') return ElMessage.warning('修改不能为空')
   axios({
     url: '/updateAllWallPaper',
     method: 'post',

@@ -1,32 +1,34 @@
 <template>
   <el-container>
-      <!--  侧边栏-->
-  <el-aside direction="vertical">
-    <Aside/>
-  </el-aside>
+    <!--  侧边栏-->
+    <el-aside direction="vertical">
+      <Aside/>
+    </el-aside>
 
-  <Main :showRecord="showRecord"/>
+    <Main :showRecord="showRecord"/>
 
-  <el-footer>
-    <el-button :class="{'footer':true,'sticky':isSticky}" type="primary" link id="jinrishici-sentence">命里有时终须有，命里无时梦里有。
-    </el-button>
-    <div :class="{'footer':true,'sticky':isSticky}">
+    <el-footer>
+      <el-button :class="{'footer':true,'sticky':isSticky}" type="primary" link id="jinrishici-sentence">
+        命里有时终须有，命里无时梦里有。
+      </el-button>
+      <div :class="{'footer':true,'sticky':isSticky}">
 
-      <el-space spacer="|">
-        <el-button link tag="a" type="info"
-                   @click="copyText('50011502001039','备案号','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
-          <img src="https://beian.mps.gov.cn/favicon.ico" :style="isPC? 'width: 20px': 'width: 15px'" alt="图片加载失败">
-          &ensp;渝公网安备50011502001039
-        </el-button>
-        <el-button link tag="a" type="info"
-                   @click="copyText('渝ICP备2024030473号','备案号','http://beian.miit.gov.cn/')">
-          渝ICP备2024030473号
-        </el-button>
-      </el-space>
+        <el-space spacer="|">
+          <el-button link tag="a" type="info"
+                     @click="copyText('50011502001039','备案号','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
+            <img src="https://beian.mps.gov.cn/favicon.ico" :style="isPC? 'width: 20px': 'width: 15px'"
+                 alt="图片加载失败">
+            &ensp;渝公网安备50011502001039
+          </el-button>
+          <el-button link tag="a" type="info"
+                     @click="copyText('渝ICP备2024030473号','备案号','http://beian.miit.gov.cn/')">
+            渝ICP备2024030473号
+          </el-button>
+        </el-space>
 
-    </div>
+      </div>
 
-  </el-footer>
+    </el-footer>
   </el-container>
 
 </template>
@@ -38,7 +40,7 @@ import useFunction from "@/hooks/useFunction";
 import {ref} from "vue";
 import useResponsive from "@/hooks/useResponsive";
 
-const {isPC}=useResponsive()
+const {isScroll, isPC} = useResponsive()
 const {copyText} = useFunction()
 const isSticky = ref(false)
 
@@ -49,11 +51,10 @@ function showRecord(flag: boolean) {
   }, 200)
 }
 
-
+isPC.value ? isScroll(false) : isScroll()
 </script>
 
 <style scoped>
-
 Aside {
   position: absolute;
   bottom: 0;
@@ -121,7 +122,7 @@ Main {
     height: 10%;
   }
 */
-  Aside{
+  Aside {
     width: 0;
   }
 }

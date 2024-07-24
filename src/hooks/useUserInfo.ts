@@ -84,14 +84,21 @@ export default function () {
         }
     }
 
-    //头像加载错误(被删除之后)
+    const errorFlag = ref(false)//头像错误标志
+
+    //头像加载错误(链接不对或被屏蔽)
     function errorImage(e: Event) {
         e.preventDefault(); // 阻止默认的图片错误行为
         e.stopPropagation(); // 阻止事件冒泡
         headImgUrl.value = imageSrc; // 替换图片源为备用图片
         console.log('errorImg', imageSrc)
-        ElMessage.error('头像无法加载，已替换为默认头像。请尝试刷新或更换头像')
-        ElMessage.info('原因：服务器错误；或已被管理员删除')
+        if (!errorFlag.value) {//防止多个报错
+            ElMessage.error('头像无法加载，已替换为默认头像。请尝试刷新或更换头像')
+            ElMessage.info('原因：服务器错误；或已被管理员删除')
+            errorFlag.value=true
+            setTimeout(()=> errorFlag.value=false,1000)
+        }
+
     }
 
     // 向外暴露

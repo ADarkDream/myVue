@@ -13,14 +13,17 @@
 
 <script setup lang="ts">
 import axios from "axios";
+import {ref} from "vue"
 import TitleDiv from "@/components/TitleDiv.vue";
 import {ElMessage} from "element-plus";
 import {jwtDecode} from "jwt-decode";
 import useResponsive from "@/hooks/useResponsive";
 import {useRoute} from "vue-router";
-const {isPC}=useResponsive()
 
-const route=useRoute()
+const {isPC} = useResponsive()
+
+const route = useRoute()
+
 // console.log(route.path==='/')
 interface Token {
   value: {
@@ -48,7 +51,7 @@ axios.interceptors.request.use(function (config) {
 });
 
 // 响应拦截器标志位，判断同一时间是否有多个相同错误，默认为false
-let isErrorPrinted = false;
+const isErrorPrinted = ref(false)
 
 // 添加响应拦截器，对响应数据做点什么
 axios.interceptors.response.use(function (response) {
@@ -76,14 +79,14 @@ axios.interceptors.response.use(function (response) {
   else if (result.status > 299 && result.status < 400) {
     ElMessage.info(result.msg)
     return response.data
-  } else if (result.status === 400 && isErrorPrinted === false) {
-    //更改标志，使下一个相同的报错不显示提醒
-    isErrorPrinted = true
-    setTimeout(() => {
-      isErrorPrinted = false
-    }, 2000)
-    ElMessage.error(result.msg)
-    Promise.reject(result)
+  } else if (result.status === 400) {
+    if (!isErrorPrinted.value) {
+      ElMessage.error(result.msg)
+      //更改标志，使下一个相同的报错不显示提醒
+      isErrorPrinted.value = true
+      setTimeout(() => isErrorPrinted.value = false, 1000)
+      Promise.reject(result)
+    }
   } else if (result.status === 401 || result.status === 402) {//token过期或者未登录
     localStorage.removeItem('token')
     sessionStorage.clear()
@@ -96,15 +99,14 @@ axios.interceptors.response.use(function (response) {
   console.dir(error)
   if (error.code === 'ERR_NETWORK' && isErrorPrinted === false) {
     //更改标志，使下一个相同的报错不显示提醒
-    isErrorPrinted = true
-    setTimeout(() => {
-      isErrorPrinted = false
-    }, 2000)
-    ElMessage.error('抱歉，暂时无法连接服务器。')
+    if (!isErrorPrinted.value) {
+        ElMessage.error('抱歉，暂时无法连接服务器。')
+      isErrorPrinted.value = true
+      setTimeout(() => isErrorPrinted.value = false, 1000)
+    }
   }
-
   return Promise.reject(error)
-});
+})
 
 </script>
 
