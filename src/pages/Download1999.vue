@@ -5,8 +5,8 @@
         <el-card style="position: relative">
           <el-image class="logo" :src="logo" v-if="isPC"/>
           <h1>1999国服官图(以影像之)下载 </h1>
-          <el-collapse v-model="activeIndex" accordion>
-            <el-collapse-item title="资源文档" name="0">
+          <el-collapse v-model="activeIndex" accordion >
+            <el-collapse-item title="资源文档" name="1">
               <template class="links">
                 <el-link type="primary" title="Github 和 Gitee" @click="showUrl=!showUrl">
                   本项目开源地址
@@ -25,20 +25,20 @@
                 </Transition>
                 <el-link type="primary" href="https://re.bluepoch.com/home/detail.html#wallpaper" target="_blank"
                          title="点击前往重返未来1999官网">
-                  官网下载地址
+                  重返未来官网下载地址
                 </el-link>
                 <el-link type="primary" href="https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999"
                          target="_blank" title="点击前往百度网盘">
                   百度网盘下载地址
                 </el-link>
                 <el-button link type="primary" target="_blank"
-                           @click="copyText('1224021291','默默的联系方式(QQ)','https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
+                           @click="showNotice('3','1');copyText('1224021291','默默的联系方式(QQ)','https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
                            title="点击前往API文档(无偿但不公开)">
                   API接口文档(需要密码请联系默默)
                 </el-button>
               </template>
             </el-collapse-item>
-            <el-collapse-item title="筛选条件【所有条件不选则默认全选】" name="1">
+            <el-collapse-item title="筛选条件【所有条件不选则默认全选】" name="2">
               <el-form :label-position="isPC? 'left' : 'top' " :size="elSize">
                 <el-form-item label="选择版本：">
                   <el-checkbox
@@ -126,7 +126,8 @@
                   </Transition>
                 </el-form-item>
                 <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
-                <el-button type="warning" :size="elSize" :icon="Warning" @click="showNotice = true" v-show="isShow">
+                <el-button type="warning" :size="elSize" :icon="Warning" @click="showDownloadNotice()"
+                           v-show="isShow">
                   下载须知
                 </el-button>
                 <br v-if="!isPC">
@@ -147,19 +148,22 @@
                   <el-text type="danger" v-show="isShow&&!isPC">
                     注意：移动端浏览器可能无法批量下载，如尝试下载等待之后没有反应，请切换浏览器或长按图片保存。<br>
                   </el-text>
-                  <el-text type="success">本站仅供技术学习和交流分享，如果涉及侵权请联系默默删除。</el-text>
+                  <el-text type="success" @click="showNotice('3','1')">本站仅供技术学习和交流分享，如果涉及侵权请
+                    <el-text type="primary">联系默默</el-text>
+                    删除。
+                  </el-text>
                 </div>
               </el-form>
             </el-collapse-item>
-            <el-collapse-item title="待完善功能" style="text-align: left" name="2">
-              <template v-for="(item,index) in  unCompleted.slice().reverse()" :key="index">
+            <el-collapse-item title="待完善功能" style="text-align: left" name="3">
+              <template v-for="item in  unCompleted.slice().reverse()" :key="item.id">
                 <el-icon>
                   <Edit/>
                 </el-icon>
                 <el-text>&ensp;{{ item.content }}</el-text>
                 <br></template>
             </el-collapse-item>
-            <el-collapse-item title="已实现功能" style="text-align: left" name="3">
+            <el-collapse-item title="已实现功能" style="text-align: left" name="4">
               <template v-for="(item,index) in completed.slice().reverse()" :key="index">
                 <el-icon :color="index===0? 'var(--el-color-primary':''">
                   <Check/>
@@ -168,11 +172,10 @@
                 <el-text type="danger" v-if="index===0">[new]</el-text>
                 <br></template>
             </el-collapse-item>
-
-            <el-collapse-item title="群聊和赞助" name="4">
-
+            <el-collapse-item title="群聊和赞助" name="5">
               <el-text>欢迎通过
-                <el-text type="success">公告→其它→反馈</el-text>
+                <el-text @click="showNotice()" type="success" title="点击反馈">反馈
+                </el-text>
                 向默默提出功能建议或BUG。
                 也欢迎来咱们九群玩（默默不是群主）
                 <el-button link type="primary" target="_blank"
@@ -256,190 +259,37 @@
 
   </el-scrollbar>
 
-  <!--  下载公告界面-->
-  <el-dialog v-model="showNotice" :width="isPC? '60%':'90%' " :show-close="!isPC"
-             style="z-index: 500"
+  <!--  下载须知公告界面-->
+  <el-dialog v-model="isShowDownloadNotice" :width="isPC? '60%':'90%' " :show-close="!isPC"
+             style="z-index: 100"
              destroy-on-close>
     <template #header><span style="font-size: 24px">下载须知</span></template>
-    <!--    导航栏-->
-    <el-menu mode="horizontal" default-active="1">
-      <el-menu-item index="1" @click="isShowNum=1">
-        少量下载
-      </el-menu-item>
-      <el-menu-item index="2" @click="isShowNum=2">
-        下载大量(仅限PC)
-      </el-menu-item>
-      <el-menu-item index="3" @click="isShowNum=3">
-        详细说明
-      </el-menu-item>
-    </el-menu>
-
-    <!--少量下载说明-->
-    <el-collapse-transition v-show="isShowNum===1" style="text-align: left;">
-      <el-card>默认情况下，你可以一次性批量下载最多10张图片。
-        <el-text type="warning">本站每月免费下载流量额度有限</el-text>
-        <br>
-        <el-text class="text">1.如果你下载的数量不多，
-          <el-text type="primary">长按或右键保存</el-text>
-          更快且不消耗本站流量。
-        </el-text>
-        <br>
-        <el-text class="text">
-          2.如果你要一次性下载更多图片，请查看
-          <el-text type="primary">下载大量(仅限PC)</el-text>
-          。
-        </el-text>
-        <br>
-        <el-text class="text">3.如果你想了解更多信息，请查看
-          <el-text type="primary">详细说明</el-text>
-          。
-        </el-text>
-      </el-card>
-    </el-collapse-transition>
-
-    <!--大量下载说明-->
-    <el-collapse-transition v-show="isShowNum===2" style="text-align: left;">
-      <el-card>如果你要一次性下载大于10张或更多图片，这里有两种方式(
-        <el-text type="primary">仅限Windows电脑端</el-text>
-        )：
-
-        <br>
-        <el-text class="text">
-          1.点击下载
-          <el-link href="https://wwo.lanzout.com/ifh7w228mjod" target="_blank" type="success">
-            EXE格式(38.5MB)[密码:1999]
-          </el-link>
-          ，双击运行，允许联网即可。
-        </el-text>
-        <br>
-        <el-text class="text">
-          2.点击下载
-          <el-link href="https://wwo.lanzout.com/i7vSy2298l5i" target="_blank"
-                   type="success">JS脚本压缩包(11KB)
-          </el-link>
-          。使用方式：电脑配有
-          <el-text type="primary">Node.js环境</el-text>
-          ，在脚本所在目录的CMD窗口输入命令
-          <el-text type="primary"> node i</el-text>
-          安装依赖，然后输入
-          <el-text type="primary">node 1999server.js</el-text>
-          即可运行。
-        </el-text>
-        <br>
-        <b class="text">
-          满足以上任一条件，再次点击
-          <el-text type="primary">开始下载</el-text>
-          即可进行正常下载。</b>
-      </el-card>
-    </el-collapse-transition>
-    <!--详细说明-->
-    <el-collapse-transition v-show="isShowNum===3">
-      <el-collapse style="text-align: left;" accordion>
-        <el-collapse-item name="1" title="Q：为什么要作出限制？">
-          <el-text class="text">
-            A：网站图片提供
-            <el-text type="primary">下载需要带宽</el-text>
-            ，而默默的服务器
-            <el-text type="primary">带宽有限</el-text>
-            ，如果
-            <el-text type="danger">带宽耗尽便无法再直接下载</el-text>
-            ，届时只能通过
-            <el-text type="primary">下载大量(仅限PC)</el-text>
-            的方式进行下载。
-          </el-text>
-        </el-collapse-item>
-        <el-collapse-item name="2" title="Q：两种下载方式有什么区别？">
-          <el-text class="text">
-            A：1.
-            <el-text type="primary">少量下载</el-text>
-            ：本站已从深蓝官网下载并分类备份了全部以影像之图片，少量下载将
-            <el-text type="primary">从本站服务器</el-text>
-            下载图片到你的电脑，尚在默默的承受范围内；
-          </el-text>
-          <br>
-          <el-text class="text">
-            2.
-            <el-text type="primary">大量下载</el-text>
-            ：通过默默提供的脚本，在你的本地运行一个网站代理，再从本地直接
-            <el-text type="primary">从深蓝官网</el-text>
-            下载图片(简单来说就是，你直接从深蓝官网下载，不通过默默的中转，不会额外消耗默默的带宽)
-          </el-text>
-        </el-collapse-item>
-        <el-collapse-item name="3" title="Q：还有什么要狡辩的吗？">
-          <el-text class="text">
-            A：1.本着为爱发颠为大家提供这个便利功能(虽然平时用不上)，如果
-            <el-text type="warning">每月带宽耗尽</el-text>
-            ，后续网站
-            <el-text type="warning">便无法直接下载</el-text>
-            了，届时网站仅提供
-            <el-text type="primary">分类查询</el-text>
-            和
-            <el-text type="primary">大量下载</el-text>
-            (自己动手丰衣足食)。
-          </el-text>
-          <br>
-          <el-text class="text">
-            2.关于下载的脚本，可前往
-            <el-link type="success" title="Github 和 Gitee" @click="showUrl=!showUrl">
-              本项目开源地址
-            </el-link>
-            <Transition name="transition1">
-              <el-link style="margin-left:6px" v-if="showUrl" type="primary"
-                       href="https://gitee.com/MuXi-Dream/download-reverse1999"
-                       target="_blank">
-                Gitee
-              </el-link>
-            </Transition>&ensp;
-            <Transition name="transition1">
-              <el-link v-if="showUrl" type="primary" href="https://github.com/ADarkDream/Download-Reverse1999"
-                       target="_blank">
-                Github
-              </el-link>
-            </Transition>
-            查看详细的说明(不过默默最近没更新,里面还是批量下载功能的旧代码，没有代理服务器的部分)
-          </el-text>
-          <br>
-          <el-text class="text">
-            3.关于做这个的初衷：最开始是因为热爱(个人喜欢收集壁纸)，人力一张一张搜罗，然后上传网盘；后来是践行所学(为了偷懒)，写了脚本开始批量下载；至于现在嘛，都做了这么多了，何不一步做完呢？边学边做，边做边学，学以致用嘛。
-          </el-text>
-          <br>
-          <el-text class="text">
-            4.如果你想使用默默的壁纸列表接口或角色信息列表
-            <el-text type="primary">API文档，无偿提供，但为了防止被滥用，请联系默默</el-text>
-            。
-          </el-text>
-          <br>
-        </el-collapse-item>
-      </el-collapse>
-    </el-collapse-transition>
-    <br>
-    <div class="statement">
-      <el-text type="warning">无业游民手头告急，快付不起网站流量费了，若有意可在本页底部
-        <el-text type="primary">群聊和赞助</el-text>
-        处提供援助，拜谢(≧*∀*≦)。
-      </el-text>
-    </div>
+    <DownloadNotice :showFlag="showFlag" :showPayCodePanel="showPayCodePanel"/>
   </el-dialog>
 </template>
 
 <script lang="ts" setup>
 import {onMounted, reactive, ref, watch} from 'vue'
 import {
-  Check, CloseBold,
+  Check,
+  CloseBold,
   Download,
-  Edit, InfoFilled,
+  Edit,
+  InfoFilled,
   Picture as IconPicture,
   Search,
-  Select, StarFilled, Warning,
+  Select,
+  Warning,
 } from "@element-plus/icons-vue";
 import axios from "axios";
-import {ElCollapseTransition, ElMessage, ElMessageBox} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import useResponsive from "@/hooks/useResponsive";
 import useUserInfo from "@/hooks/useUserInfo";
 import {useRouter} from "vue-router";
 import useFunction from "@/hooks/useFunction";
-import watermark from '@/assets/logo_1999.png'
 import logo from '@/assets/logo-small.png'
+import emitter from "@/utils/emitter";
+import DownloadNotice from "@/components/DownloadNotice.vue";
 
 const {copyText, deepEqual} = useFunction()
 const router = useRouter()
@@ -463,7 +313,7 @@ const oldCondition = reactive<ImgParams>({
 })
 
 //筛选
-const activeIndex = ref('1')  //激活的折叠面板序号
+const activeIndex = ref('2')  //激活的折叠面板序号
 const versionInfo = reactive<VersionInfo[]>([])    //存版本信息
 const roleInfo = reactive<Role[]>([]) //存角色信息
 const campInfo = reactive<string[]>([]) //存阵营信息
@@ -482,8 +332,7 @@ const completed = reactive<Notice[]>([])      //筛选下方的公告列表：�
 const unCompleted = reactive<Notice[]>([])
 
 const showUrl = ref(false)     //控制开源地址的显示
-const showNotice = ref(false)     //控制下载须知界面的显示
-const isShowNum = ref<number>(1)      //控制下载公告须知的显示第几个页面
+const isShowDownloadNotice = ref(false)     //控制下载须知界面的显示
 const isShowNotice = ref(false)//控制模糊和精准搜索的说明是否显示
 const imgList = reactive<ReverseImg[]>([])  //展示列表，存的图片信息对象
 const previewImgList = reactive<string[]>([]) //大图展示列表，存的图片链接
@@ -620,11 +469,12 @@ function getVersion() {
 }
 
 //获取已发布公告
-function getNotices() {
-  axios({
-    url: '/getNotices',
-    params: {sort: ['completed', 'unCompleted', 'others']}
-  }).then(result => {
+const getNotices = async () => {
+  try {
+    const result = await axios({
+      url: '/getNotices',
+      params: {sort: ['completed', 'unCompleted', 'others']}
+    })
     console.log(result)
     const {noticeList} = result.data
     // ElMessage.success( result.data.msg)
@@ -635,40 +485,38 @@ function getNotices() {
       if (item.sort === 'unCompleted') unCompleted.push(item)
       if (item.sort === 'others') fee.value = Number(item.content)//赞助费
     })
-  }).catch(error => {
+  } catch (error) {
     console.log('发生错误：')
     console.dir(error)
-  })
+  }
 }
 
 
 //筛选图片
-async function getImages() {
-  try {
-    if (!!isChoose.value) selectBtn(2) //如果是选择状态，则退出
-    //如果全选版本，则直接全部清除
-    if (condition.version.length === versionInfo.length) condition.version.splice(0, condition.version.length)
-    //如果全选角色和无角色，则直接清除全部角色选择
-    if (condition.roles.length === roleInfo.length + 1) {
-      condition.roles.splice(0, condition.roles.length)
-      checkAllRoles.value = false
-      checkNoRole.value = false
-    }
+const getImages = async () => {
+  if (!!isChoose.value) selectBtn(2) //如果是选择状态，则退出
+  //如果全选版本，则直接全部清除
+  if (condition.version.length === versionInfo.length) condition.version.splice(0, condition.version.length)
+  //如果全选角色和无角色，则直接清除全部角色选择
+  if (condition.roles.length === roleInfo.length + 1) {
+    condition.roles.splice(0, condition.roles.length)
+    checkAllRoles.value = false
+    checkNoRole.value = false
+  }
 
 //判断筛选条件是否改变
-//判断筛选条件是否改变
-    if (deepEqual(condition, oldCondition, true)) return ElMessage.info('筛选条件未作改变，已取消查询')
-    else {
+  if (deepEqual(condition, oldCondition, true)) return ElMessage.info('筛选条件未作改变，已取消查询')
+  else {
 // 将 a 的值同步到 b，包括空值
-      Object.keys(oldCondition).forEach(key => {
-        if (condition.hasOwnProperty(key)) {
-          oldCondition[key] = condition[key];
-        } else {
-          delete oldCondition[key];  // 删除 b 中 a 中不存在的属性
-        }
-      });
-    }
-
+    Object.keys(oldCondition).forEach(key => {
+      if (condition.hasOwnProperty(key)) {
+        oldCondition[key] = condition[key];
+      } else {
+        delete oldCondition[key];  // 删除 b 中 a 中不存在的属性
+      }
+    });
+  }
+  try {
     const result = await axios({
       url: '/getWallpaper',
       params: condition,
@@ -687,6 +535,7 @@ async function getImages() {
     console.log(imgList)
 
     autoCol()   //再次触发自动布局
+    activeIndex.value=undefined
   } catch (error) {
     console.log('发生错误：')
     console.log(error)
@@ -741,24 +590,25 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
 }
 
 //设置背景图
-function setBackground(url: string, name: string) {
+const setBackground = async (url: string, name: string) => {
   localStorage.setItem('bgUrl', url)
   // bgUrl.value = url
   const body = (document.querySelector('body') as HTMLElement)
   body.style.backgroundImage = `url(${url})`
   ElMessage.success('设置本地背景图成功')
   //如果是登录用户则设置到账户信息中
-  if (isLogin.value) axios({
-    url: '/updateImgUrl',
-    method: 'post',
-    data: {
-      isUrl: true,
-      imgUrl: url,
-      imgName: name,
-      sort: 'bg',
-      md5: ''
-    }
-  }).then(result => {
+  if (isLogin.value) try {
+    const result = await axios({
+      url: '/updateImgUrl',
+      method: 'post',
+      data: {
+        isUrl: true,
+        imgUrl: url,
+        imgName: name,
+        sort: 'bg',
+        md5: ''
+      }
+    })
     console.log(result)
     const {status, msg} = result.data
     if (status === 200) {
@@ -768,10 +618,11 @@ function setBackground(url: string, name: string) {
       body.style.backgroundImage = `url(${url})`
       localStorage.setItem('useUserBGUrl', '1')
     }
-  }).catch(error => {
+  } catch (error) {
     console.log('发生错误：')
     console.log(error)
-  })
+  }
+
 }
 
 
@@ -880,12 +731,12 @@ function downloadImg(url: string, imgName: string, imgPath: string) {
       .then(response => response.blob())
       .then(blob => {
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = imgName // 在这里指定下载的文件名
-        document.body.appendChild(a)
-        a.click();
-        a.remove();
+        const linkA = document.createElement('a');
+        linkA.href = url;
+        linkA.download = imgName // 在这里指定下载的文件名
+        document.body.appendChild(linkA)
+        linkA.click();
+        linkA.remove();
         URL.revokeObjectURL(url);
       })
       .catch(error => console.error('Error:', error));
@@ -910,16 +761,29 @@ function autoCol() {
 
 
 //endregion
+//呼出公告面板
+const showNotice = (showNum = '3', activeNum = '2') => emitter.emit('showNotice', {showNum, activeNum})
 
+
+//下载须知面板序号
+const showFlag = reactive<NoticeActiveNum>({
+  showNum: '1',
+  activeNum: '1'
+})
+//呼出下载须知面板
+const showDownloadNotice = (item: NoticeActiveNum) => {
+  isShowDownloadNotice.value = true
+  Object.assign(showFlag, item)
+}
+
+//呼出赞助界面
+const showPayCodePanel = () => {
+  isShowDownloadNotice.value = false
+  activeIndex.value = '5'
+}
 
 </script>
 <style scoped>
-/*
-body {
-  overflow: visible;
-}
-*/
-
 .el-header {
   height: auto;
   padding-left: 0;

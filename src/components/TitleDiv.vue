@@ -111,7 +111,7 @@
   </el-row>
 
   <!--  移动端标题-->
-  <el-row class="title" v-if="!isPC"  :style="(isPC||route.path==='/')? '': 'background-color: rgba(0,0,0,0.4)'">
+  <el-row class="title" v-if="!isPC" :style="(isPC||route.path==='/')? '': 'background-color: rgba(0,0,0,0.4)'">
     <!--左上角-->
     <el-col :span="8" class="title-left">
       <el-space spacer="">
@@ -243,7 +243,7 @@
              destroy-on-close>
     <template #header><span style="font-size: 24px">公告</span></template>
     <!--  Notice组件-->
-    <Notice v-if="!isLogin||showNotice"/>
+    <Notice v-if="!isLogin||showNotice" :showFlag="showFlag"/>
   </el-dialog>
 
 
@@ -425,14 +425,12 @@ const isClose = (done: Function) => {
     confirmButtonText: '关闭',
     cancelButtonText: '取消',
     showClose: false,
-  })
-      .then(() => {
-        setTimeout(() => {
-          emitter.emit('showAsideBtn', 1)//移动端的Aside按钮会挡住左上角
-          done()
-          // 动画关闭需要一定的时间
-        }, 200)
-      })
+  }).then(() => setTimeout(() => {
+        emitter.emit('showAsideBtn', 1)//移动端的Aside按钮会挡住左上角
+        done()
+        // 动画关闭需要一定的时间
+      }, 200)
+  )
   // .catch(msg => {
   //   //什么都不选
   //   console.log(msg)
@@ -459,9 +457,11 @@ function toSubmit() {
 function closeNotice() {
   ElMessage.info('公告可在右上角查看。登录后将不会默认加载')
   showNotice.value = false
+  showFlag.showNum = '1'
+  showFlag.activeNum = '1'
 }
 
-//判断当前页面
+//判断当前页面,改变导航栏的按钮显隐
 // checkRoute(router.currentRoute.value.path)
 
 function checkRoute(path: string) {
@@ -486,18 +486,24 @@ watch(router.currentRoute, (newValue, oldValue) => {
   if (newValue === oldValue) return
   checkRoute(newValue.path)
 })
-// setInterval(() => {
-//   // console.log(router.currentRoute.value.path,router.currentRoute.value.path==='/',isHome.value)
-//   // if (!isHome.value) console.log(router.currentRoute.value.path)
-//   if (isHome.value) console.log('是主页')
-//   else console.log('不是主页')
-// }, 1000)
+
+//公告列表面板序号
+const showFlag = reactive<NoticeActiveNum>({
+  showNum: '1',
+  activeNum: '1'
+})
+
+//打开公告列表
+emitter.on('showNotice', (item: NoticeActiveNum) => {
+  showNotice.value = true
+  Object.assign(showFlag, item)
+})
 
 </script>
 
 <style scoped>
 .title {
-  height:40px;
+  height: 40px;
   padding: 5px 0;
   justify-content: space-between;
   background-color: -webkit-focus-ring-color;

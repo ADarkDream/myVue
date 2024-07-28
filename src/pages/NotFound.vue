@@ -1,13 +1,16 @@
 <template>
-
   <el-card class="msg" shadow="hover">
     <h1>404 NOT FOUND</h1>
-    <el-text>对不起，您访问的页面不存在。</el-text><br>
- <el-text>Sorry, the page you visited does not exist.</el-text>
+    <el-text>对不起，您访问的页面不存在。</el-text>
+    <br>
+    <el-text>Sorry, the page you visited does not exist.</el-text>
     <template #footer>
-      <el-text type="primary">{{ time }}</el-text>
-      <el-button text>秒后自动<el-link @click="router.replace({name: 'home'})">返回首页</el-link></el-button>
-<el-link href="tencent://message/?uin=1224021291">联系站长</el-link>
+      <el-text text type="primary">{{ time }}</el-text>
+      <el-space>
+        <el-text type="info">秒后自动</el-text>
+        <el-link type="primary" @click="router.replace({name: 'home'})">返回首页</el-link>
+        <el-link type="primary" href="tencent://message/?uin=1224021291">联系站长</el-link>
+      </el-space>
     </template>
   </el-card>
 </template>
@@ -19,19 +22,19 @@ import {ref} from "vue";
 const router = useRouter()
 
 const time = ref(10)
-const timer1=ref(null)
-const timer2=ref(null)
+const timer1 = ref(null)
+const timer2 = ref(null)
 
-timer1.value= setTimeout(() => {
+timer1.value = setTimeout(() => {
   router.replace({name: 'home'})
 }, 11000)
 
-timer2.value= setInterval(() => {
+timer2.value = setInterval(() => {
   time.value--
   console.log(111)
 }, 1000)
 
-onBeforeRouteLeave(()=>{
+onBeforeRouteLeave(() => {
   console.log('计时器和倒计时已清除')
   clearTimeout(timer1.value)
   clearInterval(timer2.value)
@@ -39,7 +42,7 @@ onBeforeRouteLeave(()=>{
 </script>
 
 <style scoped>
-.msg{
+.msg {
   border: transparent;
   width: 50%;
   margin: 10% auto;
@@ -49,6 +52,4 @@ h1 {
   color: gray;
   font-size: 30px;
 }
-
-
 </style>

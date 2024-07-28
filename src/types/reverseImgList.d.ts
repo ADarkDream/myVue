@@ -3,7 +3,7 @@ type ReverseImg = {
     imgIndex: number,
     imgName: string,
     imgUrl: string,
-    imgPath?:string,
+    imgPath?: string,
     time: number,
     version: number
 }
@@ -16,9 +16,9 @@ type ReverseImgInfo = {
     version: number,
     // versionName: string,
     tags: string,//角色ID,例如："3,93"
-    newTags?:string,
+    newTags?: string,
     roleNames?: string,
-    newRoleNames?:string,
+    newRoleNames?: string,
     // index: number,
     sort: number,
     time: number,
@@ -79,6 +79,12 @@ interface Notice {
     updated_time: string,
     status: number,
     time?: string
+}
+
+//打开公告列表的序号
+type NoticeActiveNum = {
+    showNum?: string,
+    activeNum?: string
 }
 
 //el-table筛选的类型声明

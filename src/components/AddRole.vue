@@ -82,14 +82,14 @@ const src = ref(ico_custom)
 
 //展示网址图片
 function checkIco() {
-  if (form.url.trim() !== '') src.value = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
+  if (!form.url.trim()) src.value = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
   else src.value = ico_custom
 }
 
 //上传新的导航网址
 function addUrl(data: Url) {
-  if (data.name === '' || data.sort === '' || data.url === '') return ElMessage.error('导航站点名、分类、网址均不能为空！')
-  if (data.img.trim() === '' || data.img.trim() === undefined) data.img = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
+  if (!data.name || !data.sort || !data.url) return ElMessage.error('导航站点名、分类、网址均不能为空！')
+  if (!data.img.trim()) data.img = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
   axios({
     url: '/addUrl',
     method: 'post',

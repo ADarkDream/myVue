@@ -1,10 +1,10 @@
 <template>
   <!--显示网站图标-->
-<!--  <el-card>-->
+  <!--  <el-card>-->
 
-<!--  </el-card>-->
+  <!--  </el-card>-->
   <el-form :model="form" label-width="auto" style="max-width: 600px;margin: 0 auto">
-     <el-image :src='src' alt="该地址无法获取默认图标" style="width: 40px;height: 40px"/>
+    <el-image :src='src' alt="该地址无法获取默认图标" style="width: 40px;height: 40px"/>
     <el-form-item label="站点名称">
       <el-input v-model="form.name" placeholder="必填"/>
     </el-form-item>
@@ -90,8 +90,8 @@ function checkIco() {
 
 //上传新的导航网址
 function addUrl(data: Url) {
-  if (data.name === '' || data.sort === '' || data.url === '') return ElMessage.error('导航站点名、分类、网址均不能为空！')
-  if (data.img.trim() === '' || data.img.trim() === undefined) data.img = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
+  if (!data.name || !data.sort || !data.url) return ElMessage.error('导航站点名、分类、网址均不能为空！')
+  if (!data.img.trim()) data.img = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
   axios({
     url: '/addUrl',
     method: 'post',

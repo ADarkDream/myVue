@@ -109,7 +109,7 @@
 import axios from "axios";
 import useTimeStamp from '@/hooks/useTimestamp'
 import {ElMessage, ElMessageBox, ElLoading} from "element-plus";
-import {nextTick, onMounted, onUnmounted, reactive} from "vue";
+import {nextTick, onMounted,  reactive} from "vue";
 import {ref} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {ArrowLeftBold, Refresh, Comment, Delete, MoreFilled, WarnTriangleFilled} from "@element-plus/icons-vue";
@@ -133,7 +133,7 @@ function go(author: string, area: string, tags: string) {
 
 
 //时间戳转换
-let {getTime, getDiffTime} = useTimeStamp()
+let { getDiffTime} = useTimeStamp()
 
 //文章类型声明
 interface Article {
@@ -176,12 +176,12 @@ async function getArticle() {
     }
   }).then(async (result) => {
     console.log(result)
-    const {msg, comments: commentsData} = result.data
+    const { comments: commentsData} = result.data
     console.log(!!comments)
     // ElMessage.success(msg)
     Object.assign(article, result.data.article)
     //判断返回的数据中是否有评论
-    if (!!commentsData && commentsData !== []) {
+    if (!!commentsData && commentsData.length !== 0) {
       comments.splice(0, comments.length)
       commentsData.forEach((item: Comment) => {
         comments.push(item);
@@ -355,16 +355,17 @@ const isFixed = ref(false)
 const commentsBoxOffsetTop = ref(1000)
 
 emitter.on('comments-move', (scrollTop) =>
-  isFixed.value = scrollTop >= commentsBoxOffsetTop.value
+    isFixed.value = scrollTop >= commentsBoxOffsetTop.value
 )
 // 组件挂载时
 onMounted(async () => {
   await getArticle()//获取文章和评论
   await nextTick(() => {//页面渲染完毕才计算高度
     fixImageWidth()//修改图片宽度
-    if (comments !== []) {//获取输入评论框距离页面顶部的距离
+    if (comments.length === 0) console.log('没有评论')
+    else {//有评论时获取输入评论框距离页面顶部的距离
       commentsBoxOffsetTop.value = commentBox.value.offsetTop
-    } else console.log('没有评论')
+    }
   })
 })
 //endregion

@@ -1,31 +1,32 @@
 import {createRouter, createWebHistory} from 'vue-router'
-const Home=()=> import("@/pages/Home.vue");
-const Forum =()=> import( "@/pages/Forum.vue");
-const AdminLogin =()=> import( "@/pages/AdminLogin.vue");
-const AdminCenter =()=> import( "@/pages/AdminCenter.vue");
-const UserCenter =()=> import( "@/pages/UserCenter.vue");
-const NotFound =()=> import( "@/pages/NotFound.vue");
-const UserInfo =()=> import( "@/pages/UserInfo.vue");
-const UserPreference =()=> import( "@/pages/UserPreference.vue");
+import Home from "@/pages/Home.vue"//常用，不异步加载
 
-const UserEdit =()=> import( "@/pages/UserEdit.vue");
-const UserManagement =()=> import( "@/pages/UserManagement.vue");
-const Article =()=> import( "@/pages/Article.vue");
-const Center =()=> import( "@/pages/Center.vue")
-const AdminArticlesManagement =()=> import( "@/pages/AdminArticlesManagement.vue");
-const AdminUsersManagement =()=> import( "@/pages/AdminUsersManagement.vue");
-const AdminNoticesManagement =()=> import( "@/pages/AdminNoticesManagement.vue");
-const AdminUrlsManagement =()=> import( "@/pages/AdminUrlsManagement.vue");
-const AdminImagesManagement =()=> import( "@/pages/AdminImagesManagement.vue");
-const AdminFeedbackManagement =()=> import( "@/pages/AdminFeedbackManagement.vue");
-const AdminCommentsManagement =()=> import( "@/pages/AdminCommentsManagement.vue");
-const Download1999 =()=> import( "@/pages/Download1999.vue");
-const Roles1999 =()=> import( "@/pages/Roles1999.vue");
-const Images1999 =()=> import( "@/pages/Images1999.vue");
-const Test =()=> import( "@/pages/Test.vue");
-const News =()=> import( "@/pages/News.vue");
-const NewsContent =()=> import( "@/pages/NewsContent.vue");
-const Admin1999ImagesManagement =()=>import("@/pages/Admin1999ImagesManagement.vue")
+const Forum = () => import( "@/pages/Forum.vue");
+const AdminLogin = () => import( "@/pages/AdminLogin.vue");
+const AdminCenter = () => import( "@/pages/AdminCenter.vue");
+const UserCenter = () => import( "@/pages/UserCenter.vue");
+const NotFound = () => import( "@/pages/NotFound.vue");
+const UserInfo = () => import( "@/pages/UserInfo.vue");
+const UserPreference = () => import( "@/pages/UserPreference.vue");
+
+const UserEdit = () => import( "@/pages/UserEdit.vue");
+const UserManagement = () => import( "@/pages/UserManagement.vue");
+const Article = () => import( "@/pages/Article.vue");
+const Center = () => import( "@/pages/Center.vue")
+const AdminArticlesManagement = () => import( "@/pages/AdminArticlesManagement.vue");
+const AdminUsersManagement = () => import( "@/pages/AdminUsersManagement.vue");
+const AdminNoticesManagement = () => import( "@/pages/AdminNoticesManagement.vue");
+const AdminUrlsManagement = () => import( "@/pages/AdminUrlsManagement.vue");
+const AdminImagesManagement = () => import( "@/pages/AdminImagesManagement.vue");
+const AdminFeedbackManagement = () => import( "@/pages/AdminFeedbackManagement.vue");
+const AdminCommentsManagement = () => import( "@/pages/AdminCommentsManagement.vue");
+import Download1999 from "@/pages/Download1999.vue";//常用，不异步加载
+const Roles1999 = () => import( "@/pages/Roles1999.vue");
+const Images1999 = () => import( "@/pages/Images1999.vue");
+const Test = () => import( "@/pages/Test.vue");
+const News = () => import( "@/pages/News.vue");
+const NewsContent = () => import( "@/pages/NewsContent.vue");
+const Admin1999ImagesManagement = () => import("@/pages/Admin1999ImagesManagement.vue")
 const router = createRouter({
     history: createWebHistory(),//路由器工作模式，有web和hash两种，web上线后需要服务器配置，hash地址栏会出现#号
     routes: [
@@ -97,7 +98,7 @@ const router = createRouter({
                 name: 'adminFeedbackManagement',
                 path: 'feedbackManagement',
                 component: AdminFeedbackManagement
-            } ,{
+            }, {
                 name: 'admin1999ImagesManagement',
                 path: '1999ImagesManagement',
                 component: Admin1999ImagesManagement
@@ -166,11 +167,11 @@ const router = createRouter({
                 name: 'news',
                 path: '',//重定向
                 redirect: {name: 'newsCenter'}
-            },{
+            }, {
                 name: 'newsCenter',
                 path: 'center',
                 component: News,
-            },{
+            }, {
                 name: 'newsContent',
                 path: 'newsContent',
                 component: NewsContent,

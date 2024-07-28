@@ -48,7 +48,7 @@ export default defineConfig({
         compression({
             algorithm: 'gzip',
             ext: '.gz', // 输出文件的扩展名
-            threshold: 10240, // 只压缩大于 10KB 的文件
+            threshold: 1024, // 只压缩大于 1KB 的文件
             deleteOriginFile: false, // 是否删除源文件
         })
 

@@ -97,7 +97,7 @@ axios.interceptors.response.use(function (response) {
 }, function (error) {
   // 对响应错误做点什么
   console.dir(error)
-  if (error.code === 'ERR_NETWORK' && isErrorPrinted === false) {
+  if (error.code === 'ERR_NETWORK' && isErrorPrinted.value === false) {
     //更改标志，使下一个相同的报错不显示提醒
     if (!isErrorPrinted.value) {
         ElMessage.error('抱歉，暂时无法连接服务器。')
