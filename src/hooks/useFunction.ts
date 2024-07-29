@@ -1,5 +1,6 @@
 import {ref} from "vue";
 import {ElMessage} from "element-plus";
+import axios from "axios";
 
 
 export default function () {
@@ -21,6 +22,7 @@ export default function () {
         )
     }
 
+    //复制文本
     function copyText(text: string, msg: string, url?: string) {
         navigator.clipboard.writeText(text).then(
             () => {
@@ -135,7 +137,23 @@ export default function () {
 //     return true;
 // }
 
-
+    const getBG = async (sort?: number, limitNum?: number) => {
+        try {
+            const result = await axios({
+                url: '/getRandomWallpaper',
+                params: {sort, limitNum},
+            })
+            console.log(result)
+            const {status, msg, data} = result.data
+            if (status === 300) ElMessage.warning(msg)
+            console.log(111)
+            console.log('data',data)
+            return data
+        } catch (error) {
+            console.log('发生错误：')
+            console.dir(error)
+        }
+    }
     // 向外暴露
-    return {copyWebsiteRecord, copyText, copyCode, deepEqual}
+    return {copyWebsiteRecord, copyText, copyCode, deepEqual, getBG}
 }

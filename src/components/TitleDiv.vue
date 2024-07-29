@@ -8,7 +8,7 @@
       <!--首页-->
       <el-button @click="router.push({name:'home'})" plain :icon="HomeFilled" v-if="!isHome">首页</el-button>
       <!--更换壁纸-->
-      <el-button :icon="Switch" class="bgBtn" @click="changeBG(0)" v-if="isHome">更换壁纸</el-button>
+      <el-button :icon="Switch" class="bgBtn" @click="changeBG(1)" v-if="isHome">更换壁纸</el-button>
       <!--下载壁纸-->
       <el-button :icon="Download" class="bgBtn" @click="router.push({name:'download'})" v-if="isHome">
         下载壁纸
@@ -172,7 +172,7 @@
                 退出登录
               </el-dropdown-item>
               <!--更换壁纸-->
-              <el-dropdown-item :icon="Switch" class="bgBtn" @click="changeBG(1)">更换壁纸</el-dropdown-item>
+              <el-dropdown-item :icon="Switch" class="bgBtn" @click="changeBG(0)">更换壁纸</el-dropdown-item>
               <!--下载壁纸-->
               <el-dropdown-item :icon="Download" class="bgBtn" @click="router.push({name:'download'})">下载壁纸
               </el-dropdown-item>
@@ -270,24 +270,24 @@ import {
   Comment, Download,
   HomeFilled,
   Moon, Operation,
-  Sunny, Switch, SwitchButton, SwitchFilled,
+  Sunny, Switch, SwitchButton,
   Tools,
   UserFilled
 } from "@element-plus/icons-vue";
 import {ElMessage, ElMessageBox} from "element-plus";
-import {useBGUrlStore} from '@/store/1999BG'
 import Notice from "@/components/Notice.vue";
 import useUserInfo from '@/hooks/useUserInfo'
 import {useRouter, useRoute} from "vue-router";
 import useResponsive from "@/hooks/useResponsive";
+import useFunction from "@/hooks/useFunction";
 import emitter from "@/utils/emitter";
 
+const {isLogin, isAdmin, username, headImgUrl, bgUrl, errorImage} = useUserInfo()
 const {isDark, isPC, isHome, isForum} = useResponsive()
-
+const {getBG} = useFunction()
 const router = useRouter()
 const route = useRoute()
 
-const {isLogin, isAdmin, username, headImgUrl, bgUrl, errorImage} = useUserInfo()
 
 // //获取背景图,有用户的且选择使用则使用用户的图，没有则使用默认图
 if (localStorage.getItem('useUserBGUrl') !== '1') bgUrl.value = ''
@@ -311,9 +311,6 @@ let title = ref('登录/注册')
 let flag = ref(true)
 //登录相关，控制页面多个组件的显示与隐藏
 let isShow = ref(false)
-//本地默认存的背景图地址
-const {pcBGList, phoneBGList} = reactive(useBGUrlStore())
-const bgList = [pcBGList, phoneBGList]
 
 const html = (document.querySelector('html') as HTMLElement)
 const body = (document.querySelector('body') as HTMLElement)
@@ -321,10 +318,9 @@ const body = (document.querySelector('body') as HTMLElement)
 //网页初次渲染函数
 onMounted(() => {
   //如果本地壁纸为空
-  if (bgUrl.value === null || bgUrl.value === '') {
-    //响应式布局,判断是手机则用手机背景图
-    if (!isPC.value) changeBG(1)
-    else changeBG(0)
+  if (!bgUrl.value) {//如果背景图不存在
+    //响应式布局,判断是电脑则用横屏背景图
+    changeBG(isPC.value ? 1 : 0)
   } else {
     body.style.backgroundImage = `url(${bgUrl.value})`
     console.log('当前背景图片地址是：' + bgUrl.value)
@@ -367,18 +363,16 @@ watch(isDark, (newValue, oldValue) => {
 })
 
 
-//更换壁纸
-function changeBG(number: number) {
-  //bgList[0]是横屏壁纸，bgList[1]是竖屏壁纸
-  const list = bgList[number]
-  const num = Number((Math.random() * list.length).toFixed())
-  console.log(`一共有${list.length}张图。现在是第${num}张图`)
-  console.log('当前背景图片地址是：' + list[num] + '\r\n如需更多壁纸请前往重返未来1999官网：' + 'https://re.bluepoch.com/home/detail.html#wallpaper')
-  bgUrl.value = list[num]
-  if (!isDark.value) body.style.backgroundImage = `url(${list[num]})`
-  localStorage.setItem('bgUrl', list[num])
+//更换壁纸,1为横屏，0为竖屏
+async function changeBG(number: number) {
+  const resImgList = await getBG(number)
+  bgUrl.value = resImgList[0].imgUrl
+  console.log('当前背景图片地址是：' + bgUrl.value + '\r\n如需更多壁纸请前往重返未来1999官网：' + 'https://re.bluepoch.com/home/detail.html#wallpaper')
+  if (!isDark.value) body.style.backgroundImage = `url(${bgUrl.value})`
+  localStorage.setItem('bgUrl', bgUrl.value)
   localStorage.setItem('useUserBGUrl', '0') //取消用户个人信息的背景设置
 }
+
 
 //前往管理中心
 function goCenter() {

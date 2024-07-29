@@ -20,7 +20,7 @@ const AdminUrlsManagement = () => import( "@/pages/AdminUrlsManagement.vue");
 const AdminImagesManagement = () => import( "@/pages/AdminImagesManagement.vue");
 const AdminFeedbackManagement = () => import( "@/pages/AdminFeedbackManagement.vue");
 const AdminCommentsManagement = () => import( "@/pages/AdminCommentsManagement.vue");
-import Download1999 from "@/pages/Download1999.vue";//常用，不异步加载
+const Download1999 = () => import( "@/pages/Download1999.vue");//常用，不异步加载
 const Roles1999 = () => import( "@/pages/Roles1999.vue");
 const Images1999 = () => import( "@/pages/Images1999.vue");
 const Test = () => import( "@/pages/Test.vue");

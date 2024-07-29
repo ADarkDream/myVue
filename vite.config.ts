@@ -46,12 +46,12 @@ export default defineConfig({
         }),
         //压缩成gzip，减少传输的资源大小，提高网站资源加载速度
         compression({
+            filter:/.(js|mjs|json|css|html)$/i,
             algorithm: 'gzip',
             ext: '.gz', // 输出文件的扩展名
-            threshold: 1024, // 只压缩大于 1KB 的文件
+            threshold: 10240, // 只压缩大于 1KB 的文件
             deleteOriginFile: false, // 是否删除源文件
         })
-
     ],
     resolve: {
         alias: {
