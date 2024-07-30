@@ -41,20 +41,17 @@
 </template>
 
 <script lang="ts" setup>
-import {ref} from 'vue'
-
+import {onMounted, ref} from 'vue'
 import {useRouter} from "vue-router";
 import useUserInfo from "@/hooks/useUserInfo";
 import useResponsive from "@/hooks/useResponsive";
-//屏幕高度
-const {screenHeight} = useResponsive()
 
+const {screenHeight} = useResponsive()
 const router = useRouter();
 const {isAdmin} = useUserInfo()
-//管理员登录判断
-if (!isAdmin.value) router.push({name: 'home'})
 
 
+//侧边栏激活菜单
 let index = ref(Number(sessionStorage.getItem('activeNumber')) || 0)
 
 function change(num: number) {
@@ -63,23 +60,28 @@ function change(num: number) {
 }
 
 
-render()
-
 //初始获取进入的页面的页码
 function render() {
   const params = window.location.pathname.split('/').pop()
-
-  if (params === 'articlesManagement') index.value = 1
-  else if (params === 'commentsManagement') index.value = 2
-  else if (params === 'noticesManagement') index.value = 3
-  else if (params === 'urlsManagement') index.value = 4
-  else if (params === 'imagesManagement') index.value = 5
-  else if (params === 'feedbackManagement') index.value = 6
-  else if (params === '1999ImagesManagement') index.value = 7
+  if (params === 'articles') index.value = 1
+  else if (params === 'comments') index.value = 2
+  else if (params === 'notices') index.value = 3
+  else if (params === 'urls') index.value = 4
+  else if (params === 'images') index.value = 5
+  else if (params === 'feedback') index.value = 6
+  else if (params === '1999Images') index.value = 7
   else index.value = 0
   sessionStorage.setItem('activeNumber', index.value.toString())
 }
 
+onMounted(() => {
+  //管理员登录判断
+  if (!isAdmin.value) {
+    if (document.referrer.includes('muxidream')) return router.back()
+    return router.push({name: 'home'})
+  }
+  render()
+})
 </script>
 
 <style scoped>

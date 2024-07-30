@@ -285,7 +285,7 @@ let imgInfo = reactive<ReverseImgInfo>({
 const total = ref(25) //总数有多少张图
 //筛选
 const activeIndex = ref('1')  //激活的折叠面板序号
-const versionInfo = reactive<tableFilterItem<number>[]>([])    //存版本信息
+const versionInfo = reactive<TableFilterItem<number>[]>([])    //存版本信息
 const roleInfo = reactive<Role[]>([]) //存角色信息
 const roles = ref({})  //存角色信息{"1": "维尔汀","2": "十四行诗","3": "APPLe"}
 const campInfo = reactive<string[]>([]) //存阵营信息

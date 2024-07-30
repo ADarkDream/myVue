@@ -33,7 +33,7 @@ import {useLocalEnginesStore} from "@/store/localEngines";
 import {Delete} from "@element-plus/icons-vue";
 import {reactive, ref} from "vue";
 import AddSearchEngine from "@/components/AddSearchEngine.vue";
-import {engineData} from "@/types/url";
+import {EngineData} from "@/types/url";
 import axios from "axios";
 import {ElMessage} from "element-plus";
 import useUserInfo from "@/hooks/useUserInfo";
@@ -75,9 +75,9 @@ function deleteEngine(id: number) {
     }).then(result => {
       // console.log(result)
       const {msg} = result.data
-      const newEngines = userEngines.filter((item: engineData) => item.id !== id)
+      const newEngines = userEngines.filter((item: EngineData) => item.id !== id)
       userEngines.splice(0, userEngines.length)
-      newEngines.forEach((item: engineData) => {
+      newEngines.forEach((item: EngineData) => {
         userEngines.push(item)//将新的数据加入进去
       })
       localStorage.setItem('userEngines', JSON.stringify(userEngines))
@@ -92,19 +92,19 @@ function deleteEngine(id: number) {
     //如果未登录，就删除本地存储的搜索引擎
     let engineList = JSON.parse(localStorage.getItem('localEngines')) || []
     //过滤掉要删除的搜索引擎
-    engineList = engineList.filter((item: engineData) => item.id !== id)
+    engineList = engineList.filter((item: EngineData) => item.id !== id)
     //将过滤(删除)结果存储到engineList
     localStorage.setItem('localEngines', JSON.stringify(engineList))
     //清空自定义搜索引擎列表userEngines
     userEngines.splice(0, userEngines.length)
     //如果本地自定义列表不为空，则更新自定义搜索引擎列表userEngines
-    if (engineList.length !== 0) engineList.forEach((item: engineData) => userEngines.push(item))
+    if (engineList.length !== 0) engineList.forEach((item: EngineData) => userEngines.push(item))
   }
 }
 
 
 //隐藏默认搜索引擎
-function hideEngine(engine: engineData) {
+function hideEngine(engine: EngineData) {
   hideList[engine.index] = {id: engine.id, isShow: engine.isShow}
   localStorage.setItem('hideList', JSON.stringify(hideList))
 }

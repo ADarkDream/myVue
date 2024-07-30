@@ -54,7 +54,7 @@ import {ElMessage, type FormInstance} from "element-plus";
 import axios from "axios";
 import ico_custom from "@/assets/custom.png";
 import useUserInfo from "@/hooks/useUserInfo";
-import {engineData} from '@/types/url'
+import {EngineData} from '@/types/url'
 
 const {isLogin} = useUserInfo()
 
@@ -98,7 +98,7 @@ const submit = (val: FormInstance | undefined) => {
 
 //添加搜索引擎
 function addEngine() {
-  const data = <engineData>{
+  const data = <EngineData>{
     index: userEngines.length,
     name: addEngineForm.name,
     baseUrl: addEngineForm.protocol + addEngineForm.baseUrl,

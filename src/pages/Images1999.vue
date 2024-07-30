@@ -224,9 +224,9 @@
             :page-sizes="[10, 25, 50, 100]"
             :layout="options"
             :total="total"
-             :small="!isPC"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
+            :small="!isPC"
+            @size-change="render()"
+            @current-change="render()"
         />
       </div>
     </el-main>
@@ -243,18 +243,11 @@
 import {useRouter} from 'vue-router'
 import axios from "axios";
 import {ElMessage, ElMessageBox, ElTreeSelect} from "element-plus";
-import type {TableColumnCtx, TableInstance} from "element-plus";
+import type {TableInstance} from "element-plus";
 import {onMounted, reactive, ref} from 'vue'
 import UploadImage from "@/components/UploadImage.vue";
 import useTimeStamp from "@/hooks/useTimestamp";
-import {
-  Check, CloseBold,
-  Download,
-  Edit, InfoFilled,
-  Picture as IconPicture,
-  Search,
-  Select, Warning,
-} from "@element-plus/icons-vue";
+import {Picture as IconPicture, Search} from "@element-plus/icons-vue";
 
 const {getTime} = useTimeStamp()
 
@@ -331,7 +324,7 @@ let imgInfo = reactive<ReverseImgInfo>({
 const total = ref(25) //总数有多少张图
 //筛选
 const activeIndex = ref('1')  //激活的折叠面板序号
-const versionInfo = reactive<tableFilterItem<number>[]>([])    //存版本信息
+const versionInfo = reactive<TableFilterItem<number>[]>([])    //存版本信息
 const roleInfo = reactive<Role[]>([]) //存角色信息
 const roles = ref({})  //存角色信息{"1": "维尔汀","2": "十四行诗","3": "APPLe"}
 const campInfo = reactive<string[]>([]) //存阵营信息
@@ -361,12 +354,12 @@ const isChoose = ref(0)   //是否是批量选择状态
 let dialogVisible = ref(false)
 
 const tableRef = ref<TableInstance>()
-const options=ref('total, prev, pager, next')
+const options = ref('total, prev, pager, next')
 
-function setOptions(){
-  if(isPC.value)
-  total.value/condition.pageSize>10?options.value= 'total, sizes, prev, pager, next,jumper' :options.value='total, sizes, prev, pager, next'
-else options.value='total, prev, pager, next'
+function setOptions() {
+  if (isPC.value)
+    total.value / condition.pageSize > 10 ? options.value = 'total, sizes, prev, pager, next,jumper' : options.value = 'total, sizes, prev, pager, next'
+  else options.value = 'total, prev, pager, next'
 }
 
 //清空全部筛选条件
@@ -409,7 +402,6 @@ async function getVersion() {
     })
     console.log('getVersion', result)
     const {versionList, roleList}: { versionList: VersionInfo[], roleList: Role[] } = result.data.data
-    // const versionList=
     //更新版本列表
     versionList.forEach((item) => {
       versionInfo.push({text: item.versionName, value: item.version})
@@ -483,14 +475,6 @@ async function render() {
   })
   setOptions()
 }
-
-const handleSizeChange = (val: number) => {
-  render()
-}
-const handleCurrentChange = (val: number) => {
-  render()
-}
-
 
 //获取图片
 async function getImages() {
@@ -714,8 +698,6 @@ const deleteImage = (index: number, data: ReverseImgInfo) => {
   })
 }
 </script>
-
-
 <style scoped>
 .el-container {
   background-color: var(--el-color-primary-light-9);

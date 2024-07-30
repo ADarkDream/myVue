@@ -771,7 +771,7 @@ const showFlag = reactive<NoticeActiveNum>({
   activeNum: '1'
 })
 //呼出下载须知面板
-const showDownloadNotice = (item: NoticeActiveNum) => {
+const showDownloadNotice = (item?: NoticeActiveNum) => {
   isShowDownloadNotice.value = true
   Object.assign(showFlag, item)
 }

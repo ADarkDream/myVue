@@ -88,7 +88,7 @@ type NoticeActiveNum = {
 }
 
 //el-table筛选的类型声明
-type tableFilterItem<T> = {
+type TableFilterItem<T> = {
     text: string,
     value: T
 }

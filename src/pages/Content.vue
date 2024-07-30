@@ -1,16 +1,14 @@
 <template>
   <el-card class="content">
     <div class="title">
-      <el-tooltip content="推荐导航网站" placement="right" >
-        <el-button class="refresh" type="success" circle @click="changeFlag" :icon="UploadFilled"/>
+      <el-tooltip content="推荐导航网站" placement="bottom">
+        <el-button type="success" circle @click="changeFlag" :icon="UploadFilled"/>
       </el-tooltip>
-      <el-text type="primary"  size="large" style="font-size: 20px">
-        {{ nameList[num] }}[{{ listType }}]
-      </el-text>
-      <el-button v-if="false" @click="addAllUrl(localList[num],targetList[num])">批量上传 {{ nameList[num] }}
-        网址到数据库
-      </el-button>
-      <el-tooltip content="隐藏，精简模式" placement="right">
+      <el-text type="primary" style="font-size: 20px">{{ sortName }}</el-text>
+      <!--      <el-button v-if="false" @click="addAllUrl(localList[num],targetList[num])">批量上传 {{ nameList[num] }}-->
+      <!--        网址到数据库-->
+      <!--      </el-button>-->
+      <el-tooltip content="隐藏，精简模式" placement="bottom">
         <el-button type="danger" circle @click="showContent" :icon="CloseBold"/>
       </el-tooltip>
     </div>
@@ -19,163 +17,148 @@
       <!--网址显示区域-->
       <el-card class="cards" shadow="hover" v-for="item in resultList">
         <el-button plain link><img class="urlImg" :src="item.img" alt="">
-<!--          <el-text type="primary" @click="location.href=item.url" truncated>{{ item.name }}</el-text>-->
           <el-link :href="item.url" type="primary" :underline="false" target="_blank"> {{ item.name }}</el-link>
         </el-button>
         <template #footer>{{ item.detail }}</template>
       </el-card>
     </div>
-
   </el-card>
 </template>
 
 <script setup lang="ts">
-import useServerUrl from "@/hooks/useServerUrlData";
-import {reactive, ref} from "vue";
-import {CloseBold, Refresh, UploadFilled} from "@element-plus/icons-vue";
-import {useUrlStore} from "@/store/localUrlData";
-
 import axios from "axios";
 import {ElMessage} from "element-plus";
+import {onBeforeUnmount, onMounted, reactive, ref} from "vue";
+import {CloseBold, UploadFilled} from "@element-plus/icons-vue";
 import emitter from "@/utils/emitter";
+import {NavigationObj, Navigation, WebsiteInfoItem} from "@/types/url"
 
-// import {useRoute} from "vue-router";
 
 defineProps(['showContent', 'changeFlag'])
-// const route = useRoute()
 
 
-// type item = {
-//     id: number;
-//     url: string;
-//     img: string;
-// };
-//
-// const props = defineProps({
-//     testMsg: {
-//         type: Array as unknown as PropType<item[]>,
-//         default: () => [{ id: 1, url: "there is title", img: "there is description" }],
-//     },
-// });
-
-//   defineComponent({
-//   data() {
-//     return {
-//       items: [{ id: 1, img: 'img1' ,url:'url1',name:'name1',detail:'detail1'}, { id: 2, img: 'img2' ,url:'url2',name:'name2',detail:'detail2'}], // 假设这是一个items数组
-//     };
-//   },
-// });
-//region云端数据切换逻辑
-//通过useServerUrlData.ts中的getImgUrl()方法请求的服务器数据：urlList就是服务器返回的网页列表
-let {getImgUrl, urlList} = useServerUrl()
-let allUrl = reactive(urlList)
-//endregion
-
-//罗列可以请求的服务器数据库名称
-const targetList = reactive(['tool', 'onlineTool', 'robot', 'html', 'video', 'book', 'tutorial', 'vm', 'other', 'webGame'])
-const nameList = reactive(['软件下载', '在线工具', '机器人', 'HTML', '观影', '电子书', '教程', '虚拟机', '杂项', '娱乐'])
-
-//本地数据，先从localUrlData.ts中调取出来，再存入localList中
-let {
-  tool,
-  onlineTool,
-  robot,
-  html,
-  video,
-  book,
-  tutorial,
-  vm,
-  other,
-  webGame
-} = reactive(useUrlStore())
-let localList = [tool, onlineTool, robot, html, video, book, tutorial, vm, other, webGame]
-
-//region页面初次渲染时加载的数据——因为会失去响应式的原因，3个allUrl和listType获取值和赋值的顺序不要更换！！！
-Object.assign(allUrl, localList[0])
-let listType = ref('本地')
-//endregion
+const activeIndex = ref<number>(0)//导航分类的序号
+const sortName = ref<string>('')//导航分类标题
+//查询到的数据存储到本地
+const localListObj = reactive<NavigationObj>(JSON.parse(localStorage.getItem('localListObj')) || {}) //从本地获取
+//查询到的数据存储到本地
+const localList = reactive<WebsiteInfoItem[]>(JSON.parse(localStorage.getItem('localList')) || []) //从本地获取
+const cloudList = reactive<WebsiteInfoItem[]>(JSON.parse(sessionStorage.getItem('cloudList')) || [])//云端最新的列表
+//底部当前呈现的网址数据
+const resultList = reactive<Navigation[]>([])
 
 
-// let resultList = reactive(bookList)
-let resultList = reactive(allUrl)
+//region本地数据切换逻辑
 
-
-//region,本地数据切换逻辑
-//用emitter得到Aside组件里面的点击事件传来的值，用于更改请求列表
-let num = ref<number>(0)
-emitter.on('getListNum', (Num?: number) => {
-  if (typeof Num === "number") {
-    //调用方法，获取云端列表,失败则使用本地数据
-    num.value = Num
-    listType.value = '云端'
-    getImgUrl(targetList[Num]).catch((error) => {
-      console.error('调用getImgUrl函数时捕获到错误:', error);
-      ElMessage.error('云端数据获取失败，将使用本地数据')
-      listType.value = '本地'
-      resultList.splice(0, resultList.length, ...localList[Num])
+//获取导航分类信息
+const getUrlListInfo = async () => {
+  try {
+    const result = await axios<ResultData<WebsiteInfoItem[]>>({
+      url: '/getUrlListInfo',
     })
-
-
-    // console.log(Num)
-    // console.log(`当前请求的是本地列表`)
-    //优先调用本地列表,先清空allUrl，再用Object.assign()合并数组
-
-    // resultList.splice(0, allUrl.length)
-    // Object.assign(resultList, localList[Num])
-    // //修改num值，如果用户点刷新，就调用服务器刷新
-    // num.value = Num
-    // listType.value = '本地'
+    console.log(result.data)
+    const {data} = result.data
+    cloudList.splice(0, cloudList.length, ...data)
+    sessionStorage.setItem('cloudList', JSON.stringify(cloudList))
+    let isChangeFlag = localList.length === 0//如果不存在本地列表，则直接修改
+    console.log('localList', localList)
+    if (!isChangeFlag)//本地列表存在，则检查是否是最新数据
+        //遍历本地导航信息是否为最新，不为最新则删除localListObj中对应的键
+      localList.forEach(item => {
+        // 在cloudList中查找匹配的infoItem,返回的是数组
+        const thisItem = cloudList.filter(infoItem => item.sort === infoItem.sort && item.updated_time === infoItem.updated_time)//类型一致但时间相等，不修改
+        if (item.sort === 'tool') console.log(item, thisItem)
+        if (thisItem.length === 0) {// thisItem中无结果，则表示未找到或找不到一致的,删除localListObj中对应的键(导航分类)
+          delete localListObj[item.sort]
+          console.log('导航分类已更新', item.sort)
+          isChangeFlag = true
+        }
+      })
+    //本地列表不存在或被修改，更新本地列表
+    if (isChangeFlag) {
+      localStorage.setItem('localListObj', JSON.stringify(localListObj))
+      localStorage.setItem('localList', JSON.stringify(cloudList))
+      console.log('本地导航列表已更新')
+    }
+  } catch (error) {
+    console.log('发生错误：')
+    console.dir(error)
   }
+}
 
+//获取新一页分类的导航数据
+const getNewList = async (sort: string) => {
+  try {
+    //如果本地localListObj有对应的导航信息，则直接加载
+    if (!!localListObj[sort]) {
+      sortName.value = localList[activeIndex.value].name //修改分类的标题名
+      console.log('正在使用本地缓存的导航数据', sort)
+      return resultList.splice(0, resultList.length, ...localListObj[sort])
+    }
+    const result = await axios<ResultData<Navigation[]>>({url: '/getUrlList', params: {className: sort}})
+    const {data} = result.data
+    console.log('查询到的云端数据如下：')
+    console.log('result', data)
+    resultList.splice(0, resultList.length, ...data)//显示在页面上
+    localListObj[sort] = data//将本分类导航加入到localListObj
+    localList[activeIndex.value] = cloudList[activeIndex.value]//将本分类导航的信息加入到localList
+    sortName.value = localList[activeIndex.value].name //修改分类的标题名
+    //存入本地
+    localStorage.setItem('localList', JSON.stringify(localList))
+    localStorage.setItem('localListObj', JSON.stringify(localListObj))
+  } catch (error) {
+    console.log('调用getNewList函数时捕获到错误:')
+    console.error(error)
+    ElMessage.error('云端数据获取失败')
+  }
+}
+
+//用emitter得到Aside组件里面的点击事件传来的值，用于更改导航列表
+const handleGetNewList = async (Num?: number) => {
+  activeIndex.value = Num
+  await getNewList(cloudList[activeIndex.value].sort)
+}
+//endregion
+
+//注册切换导航列表的事件
+emitter.on('getListNum', handleGetNewList)
+
+
+onMounted(async () => {
+  if (cloudList.length === 0 || localList.length === 0) await getUrlListInfo()
+  await getNewList(cloudList[activeIndex.value].sort)
 })
 
-//endregion
-
-
-function refresh() {
-  //调用方法，获取云端列表
-  listType.value = '云端'
-  getImgUrl(targetList[num.value]).catch((error) => {
-    console.error('调用getImgUrl函数时捕获到错误:', error);
-    ElMessage.error('云端数据获取失败，将使用本地数据')
-    listType.value = '本地'
-    resultList.splice(0, resultList.length, ...localList[num.value])
-  })
-  //修改文字
-}
+onBeforeUnmount(() => {
+  emitter.off('getListNum', handleGetNewList)
+  console.log('注销了getListNum的emitter监听')
+})
 
 
 //region 批量上传网址到数据库
-function addAllUrl(urlList, tableName) {
-  urlList.forEach(item => {
-    addUrl(item, tableName)
-  })
-}
+// function addAllUrl(urlList, tableName) {
+//   urlList.forEach(item => {
+//     addUrl(item, tableName)
+//   })
+// }
 
 //上传一条网址数据到数据库
-function addUrl(urlInfo, table) {
-  //import axios from "axios";
-  //import {ElMessage} from "element-plus";
-  axios({
-    url: '/addUrl',
-    method: 'post',
-    data: {
-      urlInfo,
-      table
-    }
-  }).then(result => {
-    console.log(result)
-    ElMessage.success(result.data.msg)
-  }).catch(error => {
-    console.dir('发生错误：' + error)
-  })
-}
-
+// const addUrl = async (urlInfo, table) => {
+//   try {
+//     const result = await axios({
+//       url: '/addUrl',
+//       method: 'post',
+//       data: {urlInfo, table}
+//     })
+//     console.log(result)
+//     ElMessage.success(result.data.msg)
+//   } catch (error) {
+//     console.log('发生错误：')
+//     console.dir(error)
+//   }
+// }
 //endregion
-
-
 </script>
-
 <style scoped>
 .content {
   padding: 0;
@@ -187,14 +170,10 @@ function addUrl(urlInfo, table) {
   margin: 0 auto
 }
 
-.refresh {
-  border: none;
-}
 
 .mainContent {
   display: flex;
   justify-content: space-evenly;
-  /*flex-flow: wrap;*/
   flex-direction: row;
   align-content: flex-start;
 
@@ -219,19 +198,7 @@ function addUrl(urlInfo, table) {
   width: 15px;
 }
 
-.hide {
-  display: none;
-}
-
 @media (max-width: 980px) {
-  .show {
-    display: none;
-  }
-
-  .hide {
-    display: block;
-  }
-
   .mainContent {
     display: block;
     justify-content: space-between;
@@ -252,7 +219,6 @@ function addUrl(urlInfo, table) {
     font-size: 12px;
     width: 90%;
     transition: initial 0.5s;
-
   }
 }
 </style>

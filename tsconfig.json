@@ -23,7 +23,7 @@
   //使用 import.meta.dev需要配置下面两排
 //  "--module": "es2022",
 //  "moduleResolution": "Node",
-
+// "typeRoots": ["./node_modules/@types", "./src/types"],
   "include": [
     "types/index.d.ts",
     "src/types/reverseImgList.d.ts",

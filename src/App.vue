@@ -20,6 +20,7 @@ import {jwtDecode} from "jwt-decode";
 import useResponsive from "@/hooks/useResponsive";
 import {useRoute} from "vue-router";
 
+
 const {isPC} = useResponsive()
 
 const route = useRoute()
@@ -54,7 +55,7 @@ axios.interceptors.request.use(function (config) {
 const isErrorPrinted = ref(false)
 
 // 添加响应拦截器，对响应数据做点什么
-axios.interceptors.response.use(function (response) {
+axios.interceptors.response.use(    (response)=>{
   // 2xx 范围内的状态码都会触发该函数。
 
   // console.log('App组件打印的response数据如下：')
@@ -72,7 +73,8 @@ axios.interceptors.response.use(function (response) {
   }
 
 
-  const result = response.data.data
+  const result= response.data.data
+
   if (result.status === 200) return response.data
       // 超出 2xx 范围的状态码都会触发该函数。
   // 对响应错误做点什么，例如：统一对 401 身份验证失败情况做出处理
@@ -88,10 +90,13 @@ axios.interceptors.response.use(function (response) {
       Promise.reject(result)
     }
   } else if (result.status === 401 || result.status === 402) {//token过期或者未登录
+    //更改标志，使下一个相同的报错不显示提醒
+    // isErrorPrinted.value = true
+    // setTimeout(() => isErrorPrinted.value = false, 1000)
     localStorage.removeItem('token')
     sessionStorage.clear()
     alert(result.msg)
-    location.href = '/'
+    // location.href = '/'
   }
   return Promise.reject(result);//抛出返回的其他错误信息
 }, function (error) {
@@ -100,7 +105,7 @@ axios.interceptors.response.use(function (response) {
   if (error.code === 'ERR_NETWORK' && isErrorPrinted.value === false) {
     //更改标志，使下一个相同的报错不显示提醒
     if (!isErrorPrinted.value) {
-        ElMessage.error('抱歉，暂时无法连接服务器。')
+      ElMessage.error('抱歉，暂时无法连接服务器。')
       isErrorPrinted.value = true
       setTimeout(() => isErrorPrinted.value = false, 1000)
     }

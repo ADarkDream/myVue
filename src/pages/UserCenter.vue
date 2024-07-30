@@ -28,18 +28,15 @@
 </template>
 
 <script lang="ts" setup>
-import {ref} from 'vue'
+import {onBeforeUnmount, onMounted, ref} from 'vue'
 import {useRouter} from "vue-router";
 import useUserInfo from "@/hooks/useUserInfo";
 import emitter from "@/utils/emitter";
-import {ElMessage} from "element-plus";
 import useResponsive from "@/hooks/useResponsive";
 //屏幕高度
 const {screenHeight} = useResponsive()
 const router = useRouter();
 const {isLogin} = useUserInfo()
-//用户登录判断
-if (!isLogin.value) router.push({name: 'home'})
 
 
 let index = ref(Number(sessionStorage.getItem('activeNumber')) || 0)
@@ -49,23 +46,39 @@ function change(num: number) {
   sessionStorage.setItem('activeNumber', num.toString())
 }
 
-pageRender()
 
-//初始获取进入的页面的页码
-function pageRender(number?) {
-  const params = window.location.pathname.split('/').pop()
-  if (params === 'userPreference') index.value = 1
-  else if (params === 'userManagement') index.value = 2
-  else if (params === 'userEdit') index.value = 3
-  else index.value = 0
-  if (number!==undefined) index.value=number
+//初始获取进入的页面的页码,侧边栏激活
+const pageRender = (number?: number) => {
+  if (!!number) index.value = number//有参数就直接修改
+  else {//没有参数就查地址
+    const params = window.location.pathname.split('/').pop()
+    if (params === 'preference') index.value = 1
+    else if (params === 'management') index.value = 2
+    else if (params === 'edit') index.value = 3
+    else index.value = 0
+  }
   sessionStorage.setItem('activeNumber', index.value.toString())
 }
 
-emitter.on('pageRender', (Num?: number) => {
-  pageRender(Num)
-  console.log(index.value)
+
+onMounted(() => {
+  //用户登录判断
+  if (!isLogin.value) {
+    if (document.referrer.includes('muxidream')) return router.back()
+    return router.push({name: 'home'})
+  }
+  pageRender()
+  emitter.on('pageRender', pageRender)
+  console.log('开启了pageRender的emitter监听')
 })
+
+
+onBeforeUnmount(() => {
+  emitter.off('pageRender', pageRender)
+  console.log('注销了pageRender的emitter监听')
+})
+
+
 </script>
 
 <style scoped>

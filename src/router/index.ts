@@ -72,35 +72,35 @@ const router = createRouter({
                 redirect: {name: 'adminUsersManagement'}
             }, {
                 name: 'adminUsersManagement',
-                path: 'userManagement',
+                path: 'user',
                 component: AdminUsersManagement
             }, {
                 name: 'adminArticlesManagement',
-                path: 'articlesManagement',
+                path: 'articles',
                 component: AdminArticlesManagement
             }, {
                 name: 'adminCommentsManagement',
-                path: 'commentsManagement',
+                path: 'comments',
                 component: AdminCommentsManagement
             }, {
                 name: 'adminNoticesManagement',
-                path: 'noticesManagement',
+                path: 'notices',
                 component: AdminNoticesManagement
             }, {
                 name: 'adminUrlsManagement',
-                path: 'urlsManagement',
+                path: 'urls',
                 component: AdminUrlsManagement
             }, {
                 name: 'adminImagesManagement',
-                path: 'imagesManagement',
+                path: 'images',
                 component: AdminImagesManagement
             }, {
                 name: 'adminFeedbackManagement',
-                path: 'feedbackManagement',
+                path: 'feedback',
                 component: AdminFeedbackManagement
             }, {
                 name: 'admin1999ImagesManagement',
-                path: '1999ImagesManagement',
+                path: '1999Images',
                 component: Admin1999ImagesManagement
             },
             ]

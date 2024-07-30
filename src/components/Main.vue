@@ -62,7 +62,7 @@ import useResponsive from "@/hooks/useResponsive";
 import {useLocalEnginesStore} from "@/store/localEngines";
 import {onBeforeRouteLeave} from "vue-router";
 
-import {engineData} from "@/types/url";
+import {EngineData} from "@/types/url";
 
 const {isScroll, isPC, dialogWidth} = useResponsive()
 const {isLogin} = useUserInfo()
@@ -168,7 +168,7 @@ function search() {
 }
 
 //切换搜索引擎
-function changeEngine(item: engineData) {
+function changeEngine(item: EngineData) {
   //当前引擎的信息
   const engine = {
     engineId: item.id.toString(),
@@ -188,7 +188,7 @@ function changeEngine(item: engineData) {
 }
 
 //隐藏用户自定义搜索引擎
-function hideUserEngine(engine: engineData) {
+function hideUserEngine(engine: EngineData) {
   if (isLogin.value) {
     hideUserList[engine.index] = {id: engine.id, isShow: engine.isShow}
     localStorage.setItem('hideUserList', JSON.stringify(hideUserList))
@@ -208,21 +208,21 @@ const closeEngineOption = () => {
 onMounted(async () => {
   await getEngineList()//获取搜索引擎列表
 
-  hideList.forEach((item: engineData) => {//网页加载，隐藏默认搜索引擎
+  hideList.forEach((item: EngineData) => {//网页加载，隐藏默认搜索引擎
     if (item !== null) searchEngines.forEach(engine => {
       if (engine.id === item.id) engine.isShow = item.isShow
     })
   })
 
   if (isLogin.value && hideUserList.length !== 0) {//网页加载，隐藏用户自定义的搜索引擎
-    hideUserList.forEach((item: engineData) => {//遍历用户自定义的隐藏列表,将它的id和show状态同步到userEngines列表
-      if (item !== null) userEngines.forEach((engine: engineData) => {
+    hideUserList.forEach((item: EngineData) => {//遍历用户自定义的隐藏列表,将它的id和show状态同步到userEngines列表
+      if (item !== null) userEngines.forEach((engine: EngineData) => {
         if (engine.id === item.id) engine.isShow = item.isShow
       })
     })
   } else {//未登录
-    hideLocalList.forEach((item: engineData) => {
-      if (!!item) userEngines.forEach((engine: engineData) => {
+    hideLocalList.forEach((item: EngineData) => {
+      if (!!item) userEngines.forEach((engine: EngineData) => {
         if (engine.id === item.id) engine.isShow = item.isShow
       })
     })
@@ -240,7 +240,7 @@ async function getEngineList() {
       // console.log(result)
       let {engineList} = result.data
       userEngines.splice(0, userEngines.length)
-      engineList = engineList.map((item: engineData) => {
+      engineList = engineList.map((item: EngineData) => {
         item.isShow = true
         userEngines.push(item)//将新的数据加入进去
         return item
@@ -257,7 +257,7 @@ async function getEngineList() {
     const engineList = JSON.parse(localStorage.getItem('localEngines')) || []
 
     userEngines.splice(0, userEngines.length)
-    engineList.forEach((item: engineData) => {
+    engineList.forEach((item: EngineData) => {
       userEngines.push(item)//将新的数据加入进去
     })
   }

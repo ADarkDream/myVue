@@ -13,7 +13,7 @@
       />
       <el-button @click="clearFilter">清空全部筛选</el-button>
     </div>
-    <el-main  style="padding-bottom:0;padding-top: 0 ">
+    <el-main style="padding-bottom:0;padding-top: 0 ">
       <!--      用户-->
       <el-table v-show="!tableVisible" ref="tableRef" :data="tableData" style="width: 100%" max-height="500" stripe
                 border
@@ -221,11 +221,11 @@
 </template>
 
 <script setup lang="ts">
-import {useRouter} from 'vue-router'
 import axios from "axios";
 import {ElMessage, ElMessageBox, TableColumnCtx, type TableInstance} from "element-plus";
 import {reactive, ref} from 'vue'
 import useTimeStamp from "@/hooks/useTimestamp";
+import {UserInfo} from "@/types/user"
 
 const {getTime} = useTimeStamp()
 
@@ -233,7 +233,7 @@ const {getTime} = useTimeStamp()
 let tableVisible = ref(false)
 //判断是否是超级管理员
 const adminInfo = JSON.parse(sessionStorage.getItem('userInfo'))
-const isSuperAdmin = ref(adminInfo.isSuperAdmin === 1)
+const isSuperAdmin = ref((adminInfo?.isSuperAdmin === 1))
 console.log('超级管理员', isSuperAdmin.value)
 
 
@@ -248,8 +248,8 @@ const clearFilter = () => {
 //筛选器
 const filterHandler = (
     value: string,
-    row: userInfo,
-    column: TableColumnCtx<userInfo>
+    row: UserInfo,
+    column: TableColumnCtx<UserInfo>
 ) => {
   const property = column['property']
   return row[property] === value
@@ -271,36 +271,19 @@ function handleSortChange({column, prop, order}) {
 }
 
 
-const router = useRouter()
-
 getAllUsers()
 
-interface userInfo {
-  uid: number,
-  username?: string,
-  email?: string,
-  password?: string,
-  headImgId?: number,
-  headImgUrl?: string,
-  headImgStatus?: number,
-  bgUrl?: string,
-  bgId?: any,
-  bgStatus?: any,
-  signature?: string,
-  isSuperAdmin?: number,
-  created_time?: string,
-  updated_time?: string,
-}
 
 function getAllUsers() {
   axios({
     url: '/getAllUsers',
   }).then(result => {
     console.log(result)
+
     const {msg, userList} = result.data
     ElMessage.success(msg)
     tableData.splice(0, tableData.length)
-    userList.forEach((item: userInfo) => {
+    userList.forEach((item: UserInfo) => {
       tableData.push(item)
     })
   }).catch(error => {
@@ -318,7 +301,7 @@ function getAllAdmins() {
     const {msg, userList} = result.data
     ElMessage.success(msg)
     tableData2.splice(0, tableData2.length)
-    userList.forEach((item: userInfo) => {
+    userList.forEach((item: UserInfo) => {
       tableData2.push(item)
     })
   }).catch(error => {
@@ -328,7 +311,7 @@ function getAllAdmins() {
 }
 
 // const now = new Date()
-let newUserInfo = reactive<userInfo>({
+let newUserInfo = reactive<UserInfo>({
   uid: 0,
   username: '',
   email: '',
@@ -345,14 +328,14 @@ let newUserInfo = reactive<userInfo>({
   updated_time: '',
 })
 
-let tableData: userInfo[] = reactive([])
-let tableData2: userInfo[] = reactive([])
+let tableData: UserInfo[] = reactive([])
+let tableData2: UserInfo[] = reactive([])
 //编辑标记
 let isEditRow = ref<number>(-1)
 
 
 //编辑用户信息(修改编辑标记)
-const handleEdit = (index: number, row: userInfo) => {
+const handleEdit = (index: number, row: UserInfo) => {
   isEditRow.value = index
   newUserInfo = Object.assign(newUserInfo, row)
 }
@@ -364,8 +347,8 @@ function handleCancel() {
 }
 
 //对上传的数据进行格式检查
-function checkUpdateRow(newData: userInfo, oldData: userInfo, isAdmin: boolean) {
-  const data = <userInfo>diffObj(newData, oldData)
+function checkUpdateRow(newData: UserInfo, oldData: UserInfo, isAdmin: boolean) {
+  const data = <UserInfo>diffObj(newData, oldData)
   //判断用户信息是否修改
   if (Object.keys(data).length === 0) return ElMessage.info('用户信息未修改，已取消上传。')
   else {
@@ -393,7 +376,7 @@ function checkUpdateRow(newData: userInfo, oldData: userInfo, isAdmin: boolean) 
 
 
 //清除未修改的数据,如果未修改返回{}
-function diffObj(newData: userInfo, oldData: userInfo) {
+function diffObj(newData: UserInfo, oldData: UserInfo) {
   return Object.keys(newData).concat(Object.keys(oldData))
       .filter(key => newData[key] !== oldData[key])
       .reduce((result, key) => {
@@ -403,7 +386,7 @@ function diffObj(newData: userInfo, oldData: userInfo) {
 }
 
 //上传新的用户信息
-function updateRow(data: userInfo, uid: number, oldData: userInfo, isAdmin: boolean) {
+function updateRow(data: UserInfo, uid: number, oldData: UserInfo, isAdmin: boolean) {
   let url = '/updateUserInfo'
   if (isAdmin) url = '/updateAdminInfo'
   axios({
@@ -433,7 +416,7 @@ function updateRow(data: userInfo, uid: number, oldData: userInfo, isAdmin: bool
 
 
 //添加管理员
-function addAdmin(uid) {
+function addAdmin(uid:number) {
   console.log(uid)
   if (!isSuperAdmin.value) return
   axios({

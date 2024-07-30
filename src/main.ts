@@ -19,6 +19,8 @@ import hljsVuePlugin from "@highlightjs/vue-plugin";
 import "highlight.js/styles/github-dark.css";// 选择你喜欢的主题样式
 // import highlightDirective from './utils/highlightDirective';//引入highlightDirective.ts
 
+import  "./types/global.d.ts"//自定义的全局类型声明文件
+
 /* 创建pinia */
 const pinia = createPinia()
 
