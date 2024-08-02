@@ -24,7 +24,7 @@
     <el-form-item prop="emailCode" v-if="!flag">
       <el-input v-model.lazy.trim="ruleForm.emailCode" style="width:75%;" autocomplete="off"
                 placeholder="输入邮箱验证码，注意大小写"/>
-      <el-button type="primary" :disabled="isDisabled" @click="getEmailCode" style="width: 25%;">{{ getStr }}
+      <el-button type="primary" :disabled="isDisabled" @click="getEmailCode()" style="width: 25%;">{{ getStr }}
       </el-button>
     </el-form-item>
     <div class="btn">
@@ -166,7 +166,7 @@ let t = ref(61)
 const timer1 = ref(null)
 const timer2 = ref(null)
 
-function getEmailCode() {
+const getEmailCode = async () => {
   let reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+(([.\-])[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/i;
   if (!reg.test(ruleForm.email)) return ElMessage.error('邮箱格式不正确，请重新输入！')
 
@@ -184,22 +184,18 @@ function getEmailCode() {
     getStr.value = '获取'
   }, 61000)
 
-  onBeforeRouteLeave(() => {
-    clearInterval(timer1.value)
-    clearTimeout(timer2.value)
-    console.log('计时器和倒计时已清除')
-  })
-  axios({
-    url: '/getEmailCode',
-    method: 'POST',
-    data: {email: ruleForm.email}
-  }).then(result => {
+  try {
+    const result = await axios({
+      url: '/getEmailCode',
+      method: 'POST',
+      data: {email: ruleForm.email}
+    })
     ElMessage.success(result.data.msg)
-  }).catch(error => {
+  } catch (error) {
     console.log('发生错误：')
-    console.log(error)
-    //ElMessage.error('发生错误：' + error.message)
-  })
+    console.error(error)
+    ElMessage.error('发生错误')
+  }
 }
 
 
@@ -239,36 +235,36 @@ defineExpose({resetForm})
 
 
 //region//提交注册信息
-function register() {
-  // console.log('register')
-
-  const {username, email, password} = ruleForm
-  axios({
-    url: '/register',
-    method: 'post',
-    data: {
-      username,
-      email: email.toLowerCase(),
-      password,
-      code: ruleForm.emailCode
-    }
-  }).then(result => {
+const register = async () => {
+  try {
+    // console.log('register')
+    const {username, email, password} = ruleForm
+    const result = await axios({
+      url: '/register',
+      method: 'post',
+      data: {
+        username,
+        email: email.toLowerCase(),
+        password,
+        code: ruleForm.emailCode
+      }
+    })
     console.log(result)
     const {msg} = result.data
     //成功提示信息
     ElMessage.success(msg)
     sessionStorage.setItem('email', email)
     setTimeout(() => {
-      location.href = '/'
+      location.reload()
     }, 2000)
     // resetForm()//清除表单
     //还有bug
     // toLogin()//切换到登录界面,用父组件传递函数来修改flag
     // checkFlag()
-  }).catch(error => {
-    console.log(error)
-    // ElMessage.error(error.msg)
-  })
+  } catch (error) {
+    console.error(error)
+    ElMessage.error('出现错误', error.message)
+  }
 }
 
 //endregion
@@ -296,13 +292,18 @@ function login() {
       // router.replace({name:"home"})
     }, 1000)
   }).catch(error => {
-    console.log(error)
+    console.error(error)
     // ElMessage.error(error.msg)
   })
 }
 
 //endregion
 
+onBeforeRouteLeave(() => {
+  clearInterval(timer1.value)
+  clearTimeout(timer2.value)
+  console.log('计时器和倒计时已清除')
+})
 
 </script>
 

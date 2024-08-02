@@ -35,7 +35,7 @@ import emitter from "@/utils/emitter";
 import useResponsive from "@/hooks/useResponsive";
 //屏幕高度
 const {screenHeight} = useResponsive()
-const router = useRouter();
+const router = useRouter()
 const {isLogin} = useUserInfo()
 
 
