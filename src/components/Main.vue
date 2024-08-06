@@ -59,14 +59,14 @@ import axios from "axios";
 import {ElCollapseTransition} from 'element-plus'
 import useUserInfo from "@/hooks/useUserInfo";
 import useResponsive from "@/hooks/useResponsive";
-import {useLocalEnginesStore} from "@/store/localEngines";
+import {useLocalEnginesStore} from "@/store/useLocalEnginesStore";
 import {onBeforeRouteLeave} from "vue-router";
 
 import {EngineData} from "@/types/url";
 
 const {isScroll, isPC, dialogWidth} = useResponsive()
 const {isLogin} = useUserInfo()
-const {searchEngines} = reactive(useLocalEnginesStore())
+const {searchEngines} = useLocalEnginesStore()
 
 //上传导航网站面板的显示与隐藏
 let dialogVisible = ref(false)
@@ -139,7 +139,7 @@ function showContent() {
 //endregion
 
 
-const userEngines = reactive(JSON.parse(localStorage.getItem('userEngines')) || [])
+const userEngines = reactive<EngineData[]>(JSON.parse(localStorage.getItem('userEngines')) || [])
 
 //当前显示的搜索引擎的信息
 const thisEngine = reactive(JSON.parse(localStorage.getItem('thisEngine')) || searchEngines[0])
@@ -255,11 +255,11 @@ async function getEngineList() {
   } else {
     //如果未登录，就获取本地存储的搜索引擎
     const engineList = JSON.parse(localStorage.getItem('localEngines')) || []
-
-    userEngines.splice(0, userEngines.length)
-    engineList.forEach((item: EngineData) => {
-      userEngines.push(item)//将新的数据加入进去
-    })
+    console.log('userEngines',userEngines)
+    userEngines.splice(0, userEngines.length,...engineList)
+    // engineList.forEach((item: EngineData) => {
+    //   userEngines.push(item)//将新的数据加入进去
+    // })
   }
 }
 

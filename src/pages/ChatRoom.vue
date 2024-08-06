@@ -2,8 +2,7 @@
   <el-container>
     <el-header>
       <h1>聊天室</h1>
-      <!--      <el-input placeholder="请输入房间号" v-model.trim="roomNum"/>-->
-      <!--      <el-input placeholder="请输入昵称" v-model.trim="playerName"/>-->
+      <!--      <h1>聊天室-{{roomName}}</h1>-->
     </el-header>
     <el-main>
 
@@ -14,26 +13,29 @@
             <template #header>
               <el-text type="primary">发送的信息</el-text>
             </template>
-            <el-input placeholder="输入要发送的信息" v-model="msg2" type="textarea"></el-input>
+            <el-input placeholder="输入要发送的信息" v-model.trim="msg2" type="textarea"></el-input>
             <br>
             <template #footer>
               <el-button-group>
-                <el-button type="success" @click="enterTheRoom()">加入房间</el-button>
+                <!--                <el-button type="success" @click="enterTheRoom()">加入房间</el-button>-->
                 <el-button type="primary" @click="sendMsg2()">发送</el-button>
+                <el-button type="primary" @click="addMsg()">重连</el-button>
                 <el-button type="danger" @click="closeConnection2()">关闭连接</el-button>
                 <el-button type="danger" @click="">断开连接</el-button>
               </el-button-group>
             </template>
           </el-card>
+
           <el-card style="width: 50%">
             <template #header>
               <el-text type="primary">socket.io 收到的信息</el-text>
             </template>
-            <el-text type="warning" v-if="list2.length===0">暂无返回的消息</el-text>
-            <div v-else v-for="(item,index) in list2" :key="index">
-              <el-text type="success">第{{ index }}条</el-text>
-              ：{{ item }}
+            <el-text type="warning" v-if="roomMsg.length===0">暂无返回的消息</el-text>
+            <div v-for="(item,index) in roomMsg" :key="index">
+              <el-text type="success">第{{ index }}条{{ item.roomID===playerInfo.roomID? '真的':[item.roomID,playerInfo.roomID ]  }}</el-text>
+              ：{{ item.message }}
             </div>
+
           </el-card>
         </div>
       </div>
@@ -43,13 +45,18 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, onUnmounted, reactive, ref} from 'vue'
+import {nextTick, onMounted, onUnmounted, reactive, ref, watch} from 'vue'
 import type {FormInstance} from 'element-plus'
 import {ElMessage} from 'element-plus'
 import {useRouter, useRoute} from "vue-router";
 import useUserInfo from "@/hooks/useUserInfo";
 import useTimestamp from "@/hooks/useTimestamp";
-import {io} from "socket.io-client";
+import {useChatInfoStore} from "@/store/useChatInfoStore";
+import {useChatMsgStore} from '@/store/useChatMsgStore'
+
+const {playerInfo, socket} = useChatInfoStore()//本地用户信息
+const {roomMsg} = useChatMsgStore()//本地的聊天信息
+import {ChatMsg} from '@/types/chat'
 
 const router = useRouter();
 const route = useRoute()
@@ -57,13 +64,38 @@ const {isAdmin} = useUserInfo()
 const {getTime} = useTimestamp()
 const roomID = ref<string>(route.query.roomID as string || '')//房间ID
 const playerName = ref<string>(sessionStorage.getItem('playerName') || '')//玩家昵称
+const chatMsgInfo = JSON.parse(localStorage.getItem('chatMsgInfo'))
+
 
 onMounted(() => {
   // ElMessage.success(route.path)
-  console.log('roomID：', roomID.value)
-  console.log('playerName：', playerName.value)
-  console.log(route.query.from!=='hall')
-  if(route.query.from!=='hall') enterTheRoom() //如果不是从大厅来的，则重新加入房间
+  // console.log('roomID：', roomID.value)
+  // console.log('playerName：', playerName.value)
+
+
+  if (!playerInfo.playerName) {//昵称为空，返回主页
+    ElMessage.error('请先填写昵称')
+    return router.push({name: 'chat', query: {roomID: route.query.roomID}})
+  }
+
+  if (!playerInfo.roomID) {//房间号为空，设置为当前房间号
+    playerInfo.roomID = route.query.roomID as string
+  }
+  console.log('roomMsg',roomMsg)
+  // if (chatMsgInfo) {//pinia刷新之后不能获取复杂数据类型，bug? 手动获取
+  //   console.log(chatMsgInfo)
+  //   // roomMsg.splice(0, roomMsg.length, chatMsgInfo.roomMsg) //恢复聊天信息
+  //   chatMsgInfo.roomMsg.forEach((item:ChatMsg)=>{
+  //     console.log(item.roomID===playerInfo.roomID)
+  //     roomMsg.push(item)
+  //   })
+  // }
+
+
+  // if (playerInfo.roomID !== ROOMID) roomMsg.splice(0, roomMsg.length)//如果聊天信息不是当前房间的，则清除
+
+
+  // if (route.query.from !== 'hall') enterTheRoom() //如果不是从大厅来的，则重新加入房间
 
   //管理员登录判断
   // if (!isAdmin.value) {
@@ -76,52 +108,31 @@ onMounted(() => {
 let token = sessionStorage.getItem('token') || localStorage.getItem('token')
 const baseUrl = 'ws://localhost:9999'
 
-
+// setInterval(()=>{
+//     console.log('roomMsg',roomMsg)
+// },1000)
 //region Socket.io
-const socket = io('http://192.168.1.194:9999')
+// const socket = io('http://127.0.0.1:9999')
 //信息内部全部可改
 const msg2 = ref<string>('')
 //收到的信息
-const list2 = reactive<string[]>([])
+// const roomMessage = reactive<string[]>([])
 
 //开启链接，首次发送信息
-const enterTheRoom = () => {
-  if (roomID.value && playerName.value) {
-    socket.emit('room-join', {roomID: roomID.value, playerName: playerName.value})
-  } else router.push({name: 'hall'})
+// const enterTheRoom = () => {
+// }
+const addMsg = () => {
+  //尝试重连
+  socket.emit('re-link')
 }
-
 
 //发送信息
 const sendMsg2 = () => {
   if (msg2.value) {
-    socket.emit('room-message', msg2.value)
+    socket.emit('room-message', {message: msg2.value})
     msg2.value = ''
   }
 }
-
-
-socket.on('room-message', res => {
-  console.log('socket.io收到消息：', res)
-  const {status, msg, data} = res
-  list2.push(data.message)
-  sessionStorage.setItem(roomID.value, JSON.stringify(list2))
-})
-
-//监听加入房间的信息
-socket.on('room-join', res => {
-  console.log('room-join收到消息：', res)
-  const {status, msg, data} = res
-  ElMessage.info(msg)
-
-})
-
-
-//监听离开房间的信息
-socket.on('room-leave', msg => {
-  console.log('socket.io收到消息：', msg)
-  list2.push(msg)
-})
 
 
 //关闭连接
@@ -131,14 +142,25 @@ const closeConnection2 = () => {
   // }
 }
 
+//阻止用户直接关闭当前标签页
+const listener = (event) => {
+  event.preventDefault(); // 阻止默认的关闭行为
+  event.returnValue = ''; // 设置警告消息为空字符串，以触发浏览器显示默认的关闭提示
+}
+window.addEventListener('beforeunload', listener)
+
+
 //退出,删除全部监听
 onUnmounted(() => {
-  console.log('已移除room页面全部socket监听')
-  socket.removeAllListeners()
+  socket.emit('room-leave', {reason: '离开房间的原因'})
+  removeEventListener('beforeunload', listener)
+  console.log('已退出chatRoom')
+  // socket.removeAllListeners()
 })
 
 
 //endregion
+
 
 </script>
 <style scoped>

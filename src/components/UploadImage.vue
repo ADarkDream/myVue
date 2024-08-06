@@ -4,7 +4,7 @@
              v-model="avatarFile"
              @change="fileChange"
              :limit="1"
-             :accept="'.img,.png,.jpg,.jpeg'">
+             accept="image/img,image/png,image/jpg,image/jpeg">
     <el-image style="width: 50%" title="上传图像" :src="nullImgUrl"/>
   </el-upload>
   <br>

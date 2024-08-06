@@ -1,6 +1,6 @@
 import {ref} from "vue";
 import {ElMessage, UploadFile} from "element-plus";
-import * as SparkMD5 from "spark-md5";
+import * as SparkMD5 from "spark-md5";//ts中这么导入
 import axios from "axios";
 
 export default function () {

@@ -9,7 +9,7 @@
       class="demo-ruleForm"
       label-position="top"
   >
-    <el-form-item prop="username" v-if="!flag">
+    <el-form-item prop="username" v-if="!loginFlag">
       <el-input v-model.lazy.trim="ruleForm.username" placeholder="输入昵称"/>
     </el-form-item>
     <el-form-item prop="email">
@@ -18,10 +18,10 @@
     <el-form-item prop="password">
       <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码"/>
     </el-form-item>
-    <el-form-item prop="checkPassword" v-if="!flag">
+    <el-form-item prop="checkPassword" v-if="!loginFlag">
       <el-input v-model.lazy.trim="ruleForm.checkPassword" type="password" autocomplete="off" placeholder="确认密码"/>
     </el-form-item>
-    <el-form-item prop="emailCode" v-if="!flag">
+    <el-form-item prop="emailCode" v-if="!loginFlag">
       <el-input v-model.lazy.trim="ruleForm.emailCode" style="width:75%;" autocomplete="off"
                 placeholder="输入邮箱验证码，注意大小写"/>
       <el-button type="primary" :disabled="isDisabled" @click="getEmailCode()" style="width: 25%;">{{ getStr }}
@@ -29,23 +29,18 @@
     </el-form-item>
     <div class="btn">
       <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-      <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="loading">{{ str }}</el-button>
+      <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="loading" v-if="loginFlag">登录</el-button>
+      <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="loading" v-else>注册</el-button>
+      <el-button type="primary" @click="toRegister()" v-if="loginFlag&&noAccount">前往注册</el-button>
     </div>
   </el-form>
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref} from 'vue'
+import {onMounted, onUnmounted, reactive, ref} from 'vue'
 import {ElMessage, type FormInstance, type FormRules} from 'element-plus'
 import axios from "axios";
-import {onBeforeRouteLeave, useRouter} from "vue-router";
-import useUserInfo from "@/hooks/useUserInfo";
 
-const {email} = useUserInfo()
-const router = useRouter()
-
-//按键的字
-let str = ref('')
 
 //表单数据
 const ruleForm = reactive({
@@ -130,21 +125,29 @@ let Rules = reactive<FormRules<typeof ruleForm>>({})
 
 
 //region接收信号(flag)，选择注册(false)或登录(true)
-let {flag} = defineProps(['flag'])
+const {flag, setTitle} = defineProps(['flag', 'setTitle'])
+const loginFlag = ref<boolean>(flag || false) //当前是否是登录页
+const noAccount = ref(false)
+const toRegister = () => {
+  resetForm(ruleFormRef.value)//清除表单
+  loginFlag.value = false
+  checkFlag()
+  noAccount.value=false
+}
 
-function checkFlag() {
 
-  if (flag === true) {
+const checkFlag = () => {
+  if (loginFlag.value) {
+    setTitle('登录')
     //自动填入email地址
     ruleForm.email = sessionStorage.getItem('email') || ''
-    str.value = '登录'
     //更改表单验证规则
     Rules = {
       email: [{validator: checkEmail, trigger: 'blur'}],
       password: [{validator: validatePassword, trigger: 'blur'}],
     }
   } else {
-    str.value = '注册'
+    setTitle('注册')
     Rules = {
       username: [{validator: checkUserName, trigger: 'blur'}],
       email: [{validator: checkEmail, trigger: 'blur'}],
@@ -155,36 +158,34 @@ function checkFlag() {
   }
 }
 
-checkFlag()
-
 
 //endregion
 // 获取邮箱验证码
-let isDisabled = ref(false)
-let getStr = ref('获取')
-let t = ref(61)
+const isDisabled = ref(false)
+const getStr = ref('获取')
+const t = ref(61)
 const timer1 = ref(null)
 const timer2 = ref(null)
 
 const getEmailCode = async () => {
-  let reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+(([.\-])[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/i;
-  if (!reg.test(ruleForm.email)) return ElMessage.error('邮箱格式不正确，请重新输入！')
-
-  timer1.value = setInterval(() => {
-    t.value--
-    isDisabled.value = true
-    getStr.value = `${t.value}秒后获取`
-    console.log('定时器', t.value)
-  }, 1000)
-
-  timer2.value = setTimeout(() => {
-    t.value = 61
-    isDisabled.value = false
-    clearInterval(timer1.value)
-    getStr.value = '获取'
-  }, 61000)
-
   try {
+    const reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+(([.\-])[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/i;
+    if (!reg.test(ruleForm.email)) return ElMessage.error('邮箱格式不正确，请重新输入！')
+
+    timer1.value = setInterval(() => {
+      t.value--
+      isDisabled.value = true
+      getStr.value = `${t.value}秒后获取`
+      console.log('定时器', t.value)
+    }, 1000)
+
+    timer2.value = setTimeout(() => {
+      t.value = 61
+      isDisabled.value = false
+      clearInterval(timer1.value)
+      getStr.value = '获取'
+    }, 61000)
+
     const result = await axios({
       url: '/getEmailCode',
       method: 'POST',
@@ -194,14 +195,14 @@ const getEmailCode = async () => {
   } catch (error) {
     console.log('发生错误：')
     console.error(error)
-    ElMessage.error('发生错误')
+    // ElMessage.error('发生错误')
   }
 }
 
 
 //region 提交表单,登录或注册
 //再次通过formEL的值判断表单验证是否通过
-let loading = ref(false)
+const loading = ref(false)
 const submitForm = (formEL: FormInstance | undefined) => {
   //设置按钮两秒禁用
   loading.value = true
@@ -211,9 +212,8 @@ const submitForm = (formEL: FormInstance | undefined) => {
   if (!formEL) return
   formEL.validate((res) => {
     if (res) {
-
       //此处调用axios上传
-      flag ? login() : register()
+      loginFlag.value ? login() : register()
     } else {
       // ElMessage.error('操作失败')
       return false
@@ -234,10 +234,9 @@ defineExpose({resetForm})
 //endregion
 
 
-//region//提交注册信息
+//region提交注册信息
 const register = async () => {
   try {
-    // console.log('register')
     const {username, email, password} = ruleForm
     const result = await axios({
       url: '/register',
@@ -254,34 +253,33 @@ const register = async () => {
     //成功提示信息
     ElMessage.success(msg)
     sessionStorage.setItem('email', email)
-    setTimeout(() => {
-      location.reload()
-    }, 2000)
-    // resetForm()//清除表单
-    //还有bug
-    // toLogin()//切换到登录界面,用父组件传递函数来修改flag
-    // checkFlag()
+    // setTimeout(() => {
+    //   location.reload()
+    // }, 2000)
+    resetForm(ruleFormRef.value)//清除表单
+    loginFlag.value = true
+    checkFlag()
   } catch (error) {
     console.error(error)
-    ElMessage.error('出现错误', error.message)
+    // ElMessage.error('出现错误', error.message)
   }
 }
 
 //endregion
 
 //region登录账号
-function login() {
-  // console.log('login')
-  const {email, password} = ruleForm
-  axios({
-    url: '/login',
-    method: 'post',
-    data: {
-      email: email.toLowerCase(),
-      password
-    }
-  }).then((result) => {
-    // console.log(result)
+const login = async () => {
+  try {
+    const {email, password} = ruleForm
+    const result = await axios({
+      url: '/login',
+      method: 'post',
+      data: {
+        email: email.toLowerCase(),
+        password
+      }
+    })
+    console.log(result)
     const {userInfo} = result.data
     localStorage.setItem('userInfo', JSON.stringify(userInfo))
     //成功提示信息
@@ -291,15 +289,20 @@ function login() {
       location.reload()
       // router.replace({name:"home"})
     }, 1000)
-  }).catch(error => {
+  } catch (error) {
     console.error(error)
+    noAccount.value = true
     // ElMessage.error(error.msg)
-  })
+  }
 }
 
 //endregion
 
-onBeforeRouteLeave(() => {
+onMounted(() => {
+  checkFlag()
+})
+
+onUnmounted(() => {
   clearInterval(timer1.value)
   clearTimeout(timer2.value)
   console.log('计时器和倒计时已清除')

@@ -37,7 +37,7 @@
     <!--      <el-button @click="resetForm(formRef)">Reset</el-button>-->
     <!--    </el-form-item>-->
     <!--  </el-form>-->
-    <el-header>
+    <el-header >
       多选树状测试
       <el-tree-select
           v-model="value"
@@ -54,7 +54,7 @@
       <el-input placeholder="请输入房间号" v-model.trim="roomNum"/>
       <el-input placeholder="请输入昵称" v-model.trim="playerName"/>
     </el-header>
-    <el-main style="padding-top: 50px">
+    <el-main v-if="false" style="padding-top: 50px">
       <div v-if="false">
         <h2>websocket测试</h2>
         <div style="display: flex;justify-content:space-between;width: 95%;min-height: 300px; ">
@@ -115,6 +115,13 @@
         </div>
       </div>
     </el-main>
+    <el-footer style="margin-top: 300px">
+      {{testArr1}}<br>{{testArr2}}<br>{{testArr3}}<br>
+
+      <el-button @click="add1">添加1</el-button>
+      <el-button @click="add2">添加2</el-button>
+      <el-button @click="add3">添加3</el-button>
+    </el-footer>
 
   </el-container>
 </template>
@@ -126,6 +133,22 @@ import {ElMessage} from 'element-plus'
 import {useRouter,useRoute} from "vue-router";
 import useUserInfo from "@/hooks/useUserInfo";
 import {io} from "socket.io-client";
+
+
+import {useTestStore} from "@/store/useTestStore";
+const {testArr1,testArr2,testArr3,playerInfo} =useTestStore()
+console.log(testArr1)
+const add1=()=>{
+  testArr1.push({key:123,value:123})
+}
+
+const add2=()=>{
+  testArr2.push({key:123,value:123})
+}
+const add3=()=>{
+  testArr3.push({key:123,value:123})
+}
+
 
 const router = useRouter();
 const route=useRoute()
@@ -192,7 +215,7 @@ const closeConnection = () => {
 
 
 //region Socket.io
-const socket = io('http://192.168.1.194:9999')
+// const socket = io('http://192.168.1.194:9999')
 //信息内部全部可改
 const msg2 = ref<string>('')
 //收到的信息
@@ -201,7 +224,7 @@ const list2 = reactive<string[]>([])
 //开启链接，首次发送信息
 const enterTheRoom = () => {
   if (roomNum.value && playerName.value) {
-    socket.emit('room-join', {roomNum: roomNum.value, playerName: playerName.value})
+    // socket.emit('room-join', {roomNum: roomNum.value, playerName: playerName.value})
     // playerName.value = ''
     // roomNum.value = ''
   }
@@ -213,34 +236,34 @@ const enterTheRoom = () => {
 //发送信息
 const sendMsg2 = () => {
   if (msg2.value) {
-    socket.emit('room-message', msg2.value)
+    // socket.emit('room-message', msg2.value)
     msg2.value = ''
   }
 }
 
 
-socket.on('room-message', msg => {
-  console.log('socket.io收到消息：', msg)
-  list2.push(msg)
-})
+// socket.on('room-message', msg => {
+//   console.log('socket.io收到消息：', msg)
+//   list2.push(msg)
+// })
 
-//监听加入房间的信息
-socket.on('room-join', res => {
-  console.log('room-join收到消息：', res)
-  const {status, msg,data} = res
-  ElMessage.info(msg)
-  list2.push(msg)
-  history.pushState(null,'房间',route.path+'/room='+data.roomNum)//要保留的当前页面的参数,标题栏名,新的网址
-  console.log('route.path',route.path)
-})
-
-
-//监听离开房间的信息
-socket.on('room-leave', msg => {
-  console.log('socket.io收到消息：', msg)
-  list2.push(msg)
-})
-
+// //监听加入房间的信息
+// socket.on('room-join', res => {
+//   console.log('room-join收到消息：', res)
+//   const {status, msg,data} = res
+//   ElMessage.info(msg)
+//   list2.push(msg)
+//   history.pushState(null,'房间',route.path+'/room='+data.roomNum)//要保留的当前页面的参数,标题栏名,新的网址
+//   console.log('route.path',route.path)
+// })
+//
+//
+// //监听离开房间的信息
+// socket.on('room-leave', msg => {
+//   console.log('socket.io收到消息：', msg)
+//   list2.push(msg)
+// })
+//
 
 //关闭连接
 const closeConnection2 = () => {
@@ -251,7 +274,7 @@ const closeConnection2 = () => {
 
 //退出,删除全部监听
 onUnmounted(() => {
-  socket.removeAllListeners()
+  // socket.removeAllListeners()
 })
 
 

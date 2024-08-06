@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import {useLocalEnginesStore} from "@/store/localEngines";
+import {useLocalEnginesStore} from "@/store/useLocalEnginesStore";
 import {Delete} from "@element-plus/icons-vue";
 import {reactive, ref} from "vue";
 import AddSearchEngine from "@/components/AddSearchEngine.vue";
@@ -52,7 +52,7 @@ const {
   closeEngineOption
 } = defineProps(['userEngines', 'engineId', 'getEngineList', 'hideList', 'hideUserEngine', 'closeEngineOption'])
 
-const {searchEngines} = reactive(useLocalEnginesStore())
+const {searchEngines} = useLocalEnginesStore()
 
 const searchFlag = ref(localStorage.getItem('searchFlag') !== '0')//控制搜索结果是否在新窗口打开
 const changeSearchFlag = () => {

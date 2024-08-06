@@ -209,15 +209,12 @@
   <el-drawer v-model="showLogin" :before-close="isClose" :size="isPC? '30%':'100%' " :show-close="!isPC"
              destroy-on-close="destroy-on-close">
     <template #header="{titleClass }">
-      <el-button v-show="isShow" @click="isShow=!isShow" class="backBtn" :icon="ArrowLeftBold">
+      <el-button v-show="isShowLoginPage" @click="backBtn" class="backBtn" :icon="ArrowLeftBold">
         返回
       </el-button>
-
       <h4 :class="titleClass">{{ title }}</h4>
-
       <div/>
     </template>
-
     <div>
       <el-image class="headImg" :src="headImgUrl" v-if="showHeadImg" alt="" :onerror="errorImage"/>
       <svg class="headImg" v-if="!showHeadImg" viewBox="0 0 1024 1024">
@@ -228,9 +225,8 @@
             d="M512 220.223c-88.224 0-160 71.776-160 160s71.776 160 160 160c88.225 0 160-71.775 160-160s-71.775-160-160-160z m0 256c-52.935 0-96-43.065-96-96s43.065-96 96-96 96 43.065 96 96-43.065 96-96 96z"
             fill="CurrentColor"></path>
       </svg>
-      <Login v-if="isShow" :flag="flag" :toLogin="toLogin"/>
-      <br>
-      <div v-show="!isShow">
+      <Login v-if="isShowLoginPage" :flag="flag" :setTitle="setTitle"/>
+      <div v-else>
         <el-button class="bt2" @click="toLogin">登录</el-button>
         <el-button class="bt2" @click="toSubmit">注册</el-button>
       </div>
@@ -306,11 +302,11 @@ let showSetting = ref(false)
 //登录和注册界面的判断
 const showLogin = ref(false)
 //登录和注册界面的标题——————待修改，需要响应式
-let title = ref('登录/注册')
+const title = ref('登录/注册')
 //登录和注册按钮的显示和隐藏
-let flag = ref(true)
-//登录相关，控制页面多个组件的显示与隐藏
-let isShow = ref(false)
+const flag = ref(true)
+//登录相关的多个组件的显示与隐藏
+const isShowLoginPage = ref(false)
 
 const html = (document.querySelector('html') as HTMLElement)
 const body = (document.querySelector('body') as HTMLElement)
@@ -432,17 +428,25 @@ const isClose = (done: Function) => {
   // })
 }
 
+const setTitle = (value: string) => {
+  title.value = value
+}
+
+const backBtn = () => {
+  isShowLoginPage.value =false
+  title.value = '登录/注册'
+}
 
 //点击登录按钮
 function toLogin() {
-  isShow.value = true
+  isShowLoginPage.value = true
   flag.value = true
   console.log(flag.value)
 }
 
 //点击注册按钮
 function toSubmit() {
-  isShow.value = true
+  isShowLoginPage.value = true
   flag.value = false
   console.log(flag.value)
 }

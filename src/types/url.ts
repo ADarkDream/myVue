@@ -1,11 +1,26 @@
 //定义搜索引擎接口
 interface EngineData {
+    index?: number,
+    id?: number,
+    engineId?: number,
+    name?: string,
+    baseUrl?: string,
+    searchUrl?: string,
+    src?: string,
+    searchImg?: string,
+    isShow?: boolean,
+}
+
+
+type ThisEngine= {
     index: number,
     id?: number,
+    engineId?: number,
     name: string,
     baseUrl: string,
     searchUrl: string,
     src: string,
+    searchImg?: string,
     isShow?: boolean,
 }
 
@@ -37,6 +52,5 @@ interface WebsiteInfoItem {
 }
 
 
-
-export {EngineData, Navigation, NavigationObj,WebsiteInfoItem}
+export {EngineData, ThisEngine, Navigation, NavigationObj, WebsiteInfoItem}
 

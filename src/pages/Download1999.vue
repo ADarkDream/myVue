@@ -5,7 +5,7 @@
         <el-card style="position: relative">
           <el-image class="logo" :src="logo" v-if="isPC"/>
           <h1>1999国服官图(以影像之)下载 </h1>
-          <el-collapse v-model="activeIndex" accordion >
+          <el-collapse v-model="activeIndex" accordion>
             <el-collapse-item title="资源文档" name="1">
               <template class="links">
                 <el-link type="primary" title="Github 和 Gitee" @click="showUrl=!showUrl">
@@ -198,7 +198,7 @@
               </el-text>
               <br>
               <el-button v-if="!showPayCode" @click="showPayCode=true" type="success">点击展示微信收款码</el-button>
-              <el-image v-else style="width: 200px" lazy src="https://qiniu.muxidream.cn/files/payCode.png"/>
+              <el-image v-else style="width: 200px" lazy :src="baseUrl.qiniuBaseUrl+ '/files/payCode.png'"/>
             </el-collapse-item>
           </el-collapse>
         </el-card>
@@ -287,6 +287,7 @@ import useResponsive from "@/hooks/useResponsive";
 import useUserInfo from "@/hooks/useUserInfo";
 import {useRouter} from "vue-router";
 import useFunction from "@/hooks/useFunction";
+import {useBaseUrlStore} from '@/store/useBaseUrlStore'
 import logo from '@/assets/logo-small.png'
 import emitter from "@/utils/emitter";
 import DownloadNotice from "@/components/DownloadNotice.vue";
@@ -295,6 +296,8 @@ const {copyText, deepEqual} = useFunction()
 const router = useRouter()
 const {isPC, elSize, screenWidth, screenHeight} = useResponsive()
 const {isLogin, updateLocalUserInfo} = useUserInfo()
+const baseUrl = useBaseUrlStore()
+
 
 //用户查询的参数
 const condition = reactive<ImgParams>({
@@ -535,7 +538,7 @@ const getImages = async () => {
     console.log(imgList)
 
     autoCol()   //再次触发自动布局
-    activeIndex.value=undefined
+    activeIndex.value = undefined
   } catch (error) {
     console.log('发生错误：')
     console.log(error)
@@ -722,8 +725,8 @@ function downloadImg(url: string, imgName: string, imgPath: string) {
   //将下载链接替换为可使用地址
   if (isOpenProxy.value)   //如果有端口代理
     imageUrl = url.replace('https://gamecms-res.sl916.com', 'http://localhost:3000/download1999')
-  else if (!!imageUrl) //没有端口代理
-    imageUrl = 'https://qiniu.muxidream.cn' + imgPath//七牛云备份
+  else if (!!imgPath) //没有端口代理
+    imageUrl = baseUrl.qiniuBaseUrl+ imgPath.replace(/^\./, '')//七牛云备份,去掉路径中第一个点
   else//没有端口代理且服务器没有备份
     imageUrl = url.replace(axios.defaults.baseURL + '/download1999', 'http://localhost:3000/download1999')
 

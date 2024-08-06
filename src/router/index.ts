@@ -27,8 +27,10 @@ const Test = () => import( "@/pages/Test.vue");
 const News = () => import( "@/pages/News.vue");
 const NewsContent = () => import( "@/pages/NewsContent.vue");
 const Admin1999ImagesManagement = () => import("@/pages/Admin1999ImagesManagement.vue")
+const ChatCenter = () => import("@/pages/ChatCenter.vue")
 const ChatHall = () => import("@/pages/ChatHall.vue")
 const Chatroom = () => import("@/pages/ChatRoom.vue")
+const Talk = () => import("@/pages/Talk.vue")
 const router = createRouter({
     history: createWebHistory(),//路由器工作模式，有web和hash两种，web上线后需要服务器配置，hash地址栏会出现#号
     routes: [
@@ -61,15 +63,22 @@ const router = createRouter({
                 }]
         },
         {//聊天大厅
-            path: '/hall',
+            name:'chat',
+            path: '/Chat',
+            component: ChatCenter,
+            redirect: {name: 'hall'},
             children: [{
                 name: 'hall',
-                path: '',
+                path: 'hall',
                 component: ChatHall,
             }, {//聊天室
                 name: 'room',
                 path: 'room',
                 component: Chatroom,
+            }, {//双人聊天室
+                name: 'talk',
+                path: 'talk',
+                component: Talk,
             }]
         },
         {

@@ -1,10 +1,12 @@
 import {reactive, ref} from "vue";
 import {jwtDecode} from "jwt-decode";
 import {ElMessage} from "element-plus";
+import {useBaseUrlStore} from '@/store/useBaseUrlStore'
 
 export default function () {
+    const baseUrl = useBaseUrlStore()
     //获取本地存储的用户信息userInfo中的数据
-    const imageSrc = 'https://qiniu.muxidream.cn/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png'
+    const imageSrc = baseUrl.qiniuBaseUrl + '/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png'
     let userInfo = reactive(getLocalUserInfo('userInfo'))
     if (userInfo.headImgUrl === '') userInfo.headImgUrl = imageSrc
     let uid = ref(userInfo.uid)
@@ -95,8 +97,8 @@ export default function () {
         if (!errorFlag.value) {//防止多个报错
             ElMessage.error('头像无法加载，已替换为默认头像。请尝试刷新或更换头像')
             ElMessage.info('原因：服务器错误；或已被管理员删除')
-            errorFlag.value=true
-            setTimeout(()=> errorFlag.value=false,1000)
+            errorFlag.value = true
+            setTimeout(() => errorFlag.value = false, 1000)
         }
 
     }
