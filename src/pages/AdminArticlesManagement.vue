@@ -170,49 +170,38 @@
 <script setup lang="ts">
 import axios from "axios";
 import {ElMessage, ElMessageBox, type TableColumnCtx, type TableInstance} from "element-plus";
-import {reactive, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import useTimeStamp from '@/hooks/useTimestamp'
-import {useRouter} from "vue-router";
-
+import {useRouter} from "vue-router"
+import {Article} from "@/types/articles"
 
 const router = useRouter()
 const goArticle = (item: Article, isEdit: number) => {
-  const {id, title, area, tags, text} = item
-  router.push({path: '/forum/article', query: {id, isEdit}})
+  // const {id, title, area, tags, text} = item
+  router.push({path: '/forum/article', query: {id: item.id, isEdit}})
 }
 
 //时间戳转换
-let {getTime} = useTimeStamp()
+const {getTime} = useTimeStamp()
 
-let allArticleList = reactive([])//所有列表
+const allArticleList: Article[] = reactive([])//所有列表
 
-let noSubmitArticleList = reactive([])//待审核
-let failedArticleList = reactive([])//审核未通过
-let articleList = reactive([])//已发表
-
-
-//文章类型声明
-interface Article {
-  id: number,
-  title: string,
-  status: number,
-  author: string,
-  text: string,
-  area: string,
-  tags: string,
-  created_time: number,
-  updated_time: number
-}
+const noSubmitArticleList: Article[] = reactive([])//待审核
+const failedArticleList: Article[] = reactive([])//审核未通过
+const articleList: Article[] = reactive([])//已发表
 
 
 //管理员
-getAllArticleList()
+onMounted(async () => {
+  await getAllArticleList()
+})
 
 //region获取所有文章
-function getAllArticleList() {
-  axios({
-    url: '/getAllUserArticleList',
-  }).then(result => {
+const getAllArticleList = async () => {
+  try {
+    const result = await axios({
+      url: '/getAllUserArticleList',
+    })
     console.log(result)
     const {msg, list} = result.data
     ElMessage.success(msg)
@@ -228,10 +217,10 @@ function getAllArticleList() {
       else if (Number(item.status) === 1) articleList.push(item)//审核通过的
       else if (Number(item.status) === 2) failedArticleList.push(item)//审核未通过的
     })
-  }).catch(error => {
+  } catch (error) {
     console.log('发生错误：')
     console.log(error)
-  })
+  }
 }
 
 //endregion
@@ -258,26 +247,28 @@ const deleteRow = (id: number) => {
 }
 
 //删除文章
-function deleteArticle(id: number) {
-  axios({
-    url: '/deleteArticle',
-    method: 'delete',
-    params: {id}
-  }).then(result => {
+const deleteArticle = async (id: number) => {
+  try {
+    const result = await axios({
+      url: '/deleteArticle',
+      method: 'delete',
+      params: {id}
+    })
     // console.log(result)
     const {msg} = result.data
     ElMessage.success(msg)
     //删除之后刷新列表
 
-    getAllArticleList()
-  }).catch(error => {
-    console.dir('发生错误：' + error)
-  })
+   await getAllArticleList()
+  } catch (error) {
+    console.log('发生错误：')
+    console.error(error)
+  }
 }
 
 
 //下面是表格模式
-let tableVisible = ref(true)
+const tableVisible = ref(true)
 const tableRef = ref<TableInstance>()
 
 //清空全部筛选条件
@@ -291,7 +282,7 @@ const filterHandler = (
     row: Article,
     column: TableColumnCtx<Article>
 ) => {
-  const property = column['property']
+  const property = column['property'] as keyof Article //断言property是Article中的键名
   return row[property] === value
 }
 

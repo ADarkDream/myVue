@@ -225,16 +225,16 @@ import axios from "axios";
 import {ElMessage, ElMessageBox, TableColumnCtx, type TableInstance} from "element-plus";
 import {reactive, ref} from 'vue'
 import useTimeStamp from "@/hooks/useTimestamp";
+import useFunction from "@/hooks/useFunction";
 import {UserInfo} from "@/types/user"
 
 const {getTime} = useTimeStamp()
-
+const {diffObj} = useFunction()
 //控制用户列表和管理员列表
-let tableVisible = ref(false)
+const tableVisible = ref(false)
 //判断是否是超级管理员
-const adminInfo = JSON.parse(sessionStorage.getItem('userInfo'))
+const adminInfo = JSON.parse(sessionStorage.getItem('userInfo') || '')
 const isSuperAdmin = ref((adminInfo?.isSuperAdmin === 1))
-console.log('超级管理员', isSuperAdmin.value)
 
 
 const tableRef = ref<TableInstance>()
@@ -251,12 +251,12 @@ const filterHandler = (
     row: UserInfo,
     column: TableColumnCtx<UserInfo>
 ) => {
-  const property = column['property']
+  const property = column['property'] as keyof UserInfo
   return row[property] === value
 }
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({column, prop, order}) {
+function handleSortChange({prop, order}: Sort) {
   // 根据 column 和 order 对 this.tableData 进行排序
   tableData.sort((a, b) => {
     if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
@@ -311,7 +311,7 @@ function getAllAdmins() {
 }
 
 // const now = new Date()
-let newUserInfo = reactive<UserInfo>({
+const newUserInfo: UserInfo = reactive({
   uid: 0,
   username: '',
   email: '',
@@ -337,7 +337,7 @@ let isEditRow = ref<number>(-1)
 //编辑用户信息(修改编辑标记)
 const handleEdit = (index: number, row: UserInfo) => {
   isEditRow.value = index
-  newUserInfo = Object.assign(newUserInfo, row)
+  Object.assign(newUserInfo, row)
 }
 
 
@@ -375,16 +375,6 @@ function checkUpdateRow(newData: UserInfo, oldData: UserInfo, isAdmin: boolean) 
 }
 
 
-//清除未修改的数据,如果未修改返回{}
-function diffObj(newData: UserInfo, oldData: UserInfo) {
-  return Object.keys(newData).concat(Object.keys(oldData))
-      .filter(key => newData[key] !== oldData[key])
-      .reduce((result, key) => {
-        result[key] = newData[key]; // 返回newData对象的属性
-        return result;
-      }, {});
-}
-
 //上传新的用户信息
 function updateRow(data: UserInfo, uid: number, oldData: UserInfo, isAdmin: boolean) {
   let url = '/updateUserInfo'
@@ -416,7 +406,7 @@ function updateRow(data: UserInfo, uid: number, oldData: UserInfo, isAdmin: bool
 
 
 //添加管理员
-function addAdmin(uid:number) {
+function addAdmin(uid: number) {
   console.log(uid)
   if (!isSuperAdmin.value) return
   axios({

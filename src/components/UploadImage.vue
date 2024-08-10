@@ -38,16 +38,13 @@
 </template>
 
 <script setup lang="ts">
-
-import {Delete} from "@element-plus/icons-vue";
-
 import {reactive, ref} from "vue";
 import {ElMessage, UploadFile,ElLoading} from "element-plus";
 import * as SparkMD5 from "spark-md5";
 import axios from "axios";
 import useUserInfo from "@/hooks/useUserInfo";
 
-const {updateLocalUserInfo, headImgUrl} = useUserInfo()
+const {updateLocalUserInfo} = useUserInfo()
 const {isAdmin} = useUserInfo()
 
 //计算图片的MD5值
@@ -75,11 +72,11 @@ function fileChange(file: UploadFile) {
   changeHeadImgBtnFlag.value = true
   let fileReader = new FileReader()
   let Spark = new SparkMD5.ArrayBuffer()
-  fileReader.readAsArrayBuffer(file.raw)
+  fileReader.readAsArrayBuffer(file.raw!)
   fileReader.onload = function (e: ProgressEvent<FileReader>) {
     // //将用户上传的图片转换成url赋值给头像
-    nullImgUrl.value = URL.createObjectURL(file.raw)
-    Spark.append(e.target.result as ArrayBuffer)
+    nullImgUrl.value = URL.createObjectURL(file.raw!)
+    Spark.append(e.target!.result as ArrayBuffer)
     md5.value = Spark.end()
     // console.log(md5.value)
   }

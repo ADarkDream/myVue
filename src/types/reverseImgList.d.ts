@@ -3,7 +3,7 @@ type ReverseImg = {
     imgIndex: number,
     imgName: string,
     imgUrl: string,
-    imgPath?: string,
+    imgPath: string,
     time: number,
     version: number
 }
@@ -27,12 +27,19 @@ type ReverseImgInfo = {
     imgIndex?: number//前端接收数据后重写的序号
 }
 
+//角色阵营的树状选择框
+interface SourceData {
+    label: string,
+    value: number,
+    children?: SourceData[]
+}
+
 //图片查询的参数
 interface ImgParams {
-    version?: string[],
-    roles?: number[],
-    sort?: Sort,
-    accurate?: Accurate,//0是模糊查询
+    version: string[],
+    roles: number[],
+    sort: ImgSort,
+    accurate: Accurate,//0是模糊查询
     pageSize?: number,//查询每页条数
     currentPage?: number//当前页码
     orderBy?: string,//倒序查询的依据
@@ -40,7 +47,7 @@ interface ImgParams {
 }
 
 //图片分类
-enum Sort {
+enum ImgSort {
     Tall = 0,//竖屏图
     Wide = 1,//横屏图
     All = 2//全选
@@ -69,26 +76,20 @@ interface VersionInfo {
     versionName: string
 }
 
-//公告
-interface Notice {
-    id: number,
-    title: string,
-    sort: string,
-    content: string,
-    created_time: string,
-    updated_time: string,
-    status: number,
-    time?: string
+
+interface Image {
+  id: number,
+  uid: number,
+  sort: string,
+  status: number,
+  imgUrl: string,
+  imgPath: string,
+  imgMD5: string,
+  imgName: string;
+  created_time: string,
+  updated_time: string,
 }
 
-//打开公告列表的序号
-type NoticeActiveNum = {
-    showNum?: string,
-    activeNum?: string
-}
 
-//el-table筛选的类型声明
-type TableFilterItem<T> = {
-    text: string,
-    value: T
-}
+
+

@@ -6,8 +6,7 @@ interface ChatMsg {
     type: string,
     status: number,
     time: number
-  }
+}
 
 
-
-  export {ChatMsg}
+export {ChatMsg}

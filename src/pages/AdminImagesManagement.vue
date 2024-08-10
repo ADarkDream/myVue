@@ -114,9 +114,10 @@ import type {TableColumnCtx, TableInstance} from "element-plus";
 import {reactive, ref} from 'vue'
 import UploadImage from "@/components/UploadImage.vue";
 import useTimeStamp from "@/hooks/useTimestamp";
+import useFunction from "@/hooks/useFunction";
 
 const {getTime} = useTimeStamp()
-
+const {diffObj}=useFunction()
 const router = useRouter()
 
 //管理员登录判断
@@ -142,22 +143,24 @@ const filterHandler = (
     row: Image,
     column: TableColumnCtx<Image>
 ) => {
-  const property = column['property']
+  const property = column['property'] as keyof Image
   return row[property] === value
 }
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({column, prop, order}) {
+function handleSortChange({prop, order}: Sort) {
   // 根据 column 和 order 对 this.tableData 进行排序
   tableData.sort((a, b) => {
-    if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
-    if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
-    return 0;
+    const propA = a[prop as keyof typeof a]
+    const propB = b[prop as keyof typeof b]
+    if (propA < propB) return order === 'ascending' ? -1 : 1;
+    if (propA > propB) return order === 'ascending' ? 1 : -1;
+    return 0
   })
 }
 
 //当前修改的图片信息
-let urlInfo = reactive<Image>({
+let urlInfo:Image = reactive({
   id: 0,
   uid: 0,
   sort: '',
@@ -170,18 +173,7 @@ let urlInfo = reactive<Image>({
   updated_time: '',
 })
 
-interface Image {
-  id?: number,
-  uid?: number,
-  sort?: string,
-  status?: number,
-  imgUrl?: string,
-  imgPath?: string,
-  imgMD5?: string,
-  imgName?: string;
-  created_time?: string,
-  updated_time?: string,
-}
+
 
 //获取全部图片
 getImages()
@@ -204,9 +196,9 @@ function getImages() {
 }
 
 
-let tableData = reactive([])
+const tableData:Image[] = reactive([])
 //编辑标记
-let isEditRow = ref<number>(-1)
+const isEditRow = ref<number>(-1)
 
 //编辑图片信息(修改编辑标记)
 const handleEdit = (index: number, row: Image) => {
@@ -263,16 +255,6 @@ function updateRow(data: Image, id: number, oldData: Image) {
   })
 }
 
-
-//清除未修改的数据,如果未修改返回{}
-function diffObj(newData: Image, oldData: Image) {
-  return Object.keys(newData).concat(Object.keys(oldData))
-      .filter(key => newData[key] !== oldData[key])
-      .reduce((result, key) => {
-        result[key] = newData[key]; // 返回newData对象的属性
-        return result;
-      }, {});
-}
 
 //图片删除确认
 const deleteRow = (index: number, info: Image) => {

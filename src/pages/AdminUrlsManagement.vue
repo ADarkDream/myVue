@@ -165,12 +165,13 @@ import AddUrl from "@/components/AddUrl.vue";
 import {useRouter} from 'vue-router'
 import axios from "axios";
 import {ElMessage, ElMessageBox} from "element-plus";
-import type {TableColumnCtx, TableInstance} from "element-plus";
+import type {TableInstance} from "element-plus";
 import {reactive, ref, watch} from 'vue'
 import useTimeStamp from "@/hooks/useTimestamp";
+import useFunction from "@/hooks/useFunction";
 
 const {getTime} = useTimeStamp()
-
+const {diffObj} = useFunction()
 const router = useRouter()
 
 //管理员登录判断
@@ -408,16 +409,6 @@ function updateRow(data: Url, id: number, oldData: Url) {
   })
 }
 
-
-//清除未修改的数据,如果未修改返回{}
-function diffObj(newData: Url, oldData: Url) {
-  return Object.keys(newData).concat(Object.keys(oldData))
-      .filter(key => newData[key] !== oldData[key])
-      .reduce((result, key) => {
-        result[key] = newData[key]; // 返回newData对象的属性
-        return result;
-      }, {});
-}
 
 const deleteRow = (index: number, id: number) => {
   ElMessageBox.confirm(

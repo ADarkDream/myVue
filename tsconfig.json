@@ -1,10 +1,31 @@
 {
   "compilerOptions": {
-//    "types": ["vite/client"],
-//    "module": "esnext",
-//    "target": "exnext",
-    "downlevelIteration": true,//允许 TS编译器在将代码编译为较旧版本的 JavaScript 时，正确地处理ES2015及以上版本中引入的迭代协议。
+    //    "types": ["vite/client"],
+    //    "module": "esnext",
+    //    "target": "exnext",
+    //允许 TS编译器在将代码编译为较旧版本的 JavaScript 时，正确地处理ES2015及以上版本中引入的迭代协议。
+    "downlevelIteration": true,
+    //用于支持 CommonJS 模块的按需导入
     "esModuleInterop": true,
+    //严格模式
+    "strict": true,
+    //是否允许隐式的 any 类型
+    "noImplicitAny": true,
+    //非空检查
+    "strictNullChecks": true,
+    //函数类型检查
+    "strictFunctionChecks": true,
+    //属性初始化检查
+    "strictPropertyInitialization": true,
+    //未使用变量检查
+    "noUnusedLocals": true,
+    //未使用参数检查
+    "noUnusedParameters": true,
+    //编译器查找 type definition 文件的根路径列表
+    "typeRoots": [
+      "node_modules/@types",
+      "@/types"
+    ],
     //允许默认导入CommonJS模块
     "baseUrl": "./",
     // 这里需要配置
@@ -21,12 +42,9 @@
     // }
   },
   //使用 import.meta.dev需要配置下面两排
-//  "--module": "es2022",
-//  "moduleResolution": "Node",
-// "typeRoots": ["./node_modules/@types", "./src/types"],
+  //  "--module": "es2022",
+  //  "moduleResolution": "Node",
   "include": [
-    "types/index.d.ts",
-    "src/types/reverseImgList.d.ts",
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",

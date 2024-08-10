@@ -7,11 +7,12 @@ import ico_bing from '@/assets/bing.png';
 import ico_google from '@/assets/google.png';
 import ico_360 from '@/assets/360.png';
 import ico_custom from '@/assets/custom.png';
+import {EngineData} from "@/types/url";
 
 
 // 定义并暴露一个store
-export const useLocalEnginesStore = defineStore('localEngines', () => {
-    const searchEngines = reactive([
+export const useLocalEnginesStore = defineStore('searchEngines', () => {
+    const searchEngines = reactive<EngineData[]>([
         {
             id: 0,
             name: '百度',
@@ -60,6 +61,4 @@ export const useLocalEnginesStore = defineStore('localEngines', () => {
     ])
 
     return {searchEngines}
-}, {
-    persist: true//开启持久化   【持久化只支持基本数据类型，数组和对象可以修改，但不能自动持久化】
 })

@@ -179,21 +179,22 @@ import AddRole from "@/components/AddRole.vue";
 import {useRouter} from 'vue-router'
 import axios from "axios";
 import {ElMessage, ElMessageBox} from "element-plus";
-import type {TableColumnCtx, TableInstance} from "element-plus";
+import type { TableInstance} from "element-plus";
 import {Search} from "@element-plus/icons-vue";
 import {reactive, ref, watch} from 'vue'
 import useTimeStamp from "@/hooks/useTimestamp";
+import useFunction from "@/hooks/useFunction";
+import useUserInfo from "@/hooks/useUserInfo";
+import useResponsive from "@/hooks/useResponsive";
 
 const {getDiffTime, getTime} = useTimeStamp()
-
+const {diffObj}=useFunction()
 const router = useRouter()
 
 //登录判断
-import useUserInfo from "@/hooks/useUserInfo";
-import useResponsive from "@/hooks/useResponsive";
+
 //屏幕高度
 const {screenHeight, elSize, isPC} = useResponsive()
-
 const {isAdmin} = useUserInfo()
 
 
@@ -408,15 +409,7 @@ function updateRow(data: Role, id: number, oldData: Role) {
 }
 
 
-//清除未修改的数据,如果未修改返回{}
-function diffObj(newData: Role, oldData: Role) {
-  return Object.keys(newData).concat(Object.keys(oldData))
-      .filter(key => newData[key] !== oldData[key])
-      .reduce((result, key) => {
-        result[key] = newData[key]; // 返回newData对象的属性
-        return result;
-      }, {});
-}
+
 
 const deleteRow = (index: number, id: number) => {
   ElMessageBox.confirm(

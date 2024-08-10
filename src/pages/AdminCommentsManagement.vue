@@ -13,7 +13,7 @@
       <el-table-column fixed prop="id" label="ID" width="100" sortable/>
       <el-table-column prop="articleId" label="文章ID" width="100">
         <template #default="scope">
-          <el-button text type="primary" @click="goArticle(scope.row.articleId)">{{scope.row.articleId}}</el-button>
+          <el-button text type="primary" @click="goArticle(scope.row.articleId)">{{ scope.row.articleId }}</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="uid" label="用户ID" width="100"/>
@@ -69,14 +69,15 @@ import {useRouter} from 'vue-router'
 import axios from "axios";
 import {ElMessage, ElMessageBox} from "element-plus";
 import type {TableColumnCtx, TableInstance} from "element-plus";
-import {reactive, ref} from 'vue'
+import {onMounted, reactive, ref} from 'vue'
 import useTimeStamp from "@/hooks/useTimestamp";
-
+import {Comment} from "@/types/articles"
+import useFunction from "@/hooks/useFunction";
 const {getTime} = useTimeStamp()
-
+const {diffObj}=useFunction()
 const router = useRouter()
-const goArticle = (id:number) => {
-  router.push({path: '/forum/article', query: {id, isEdit:1}})
+const goArticle = (id: number) => {
+  router.push({path: '/forum/article', query: {id, isEdit: 1}})
 }
 
 //管理员登录判断
@@ -86,7 +87,7 @@ const {isAdmin} = useUserInfo()
 if (!isAdmin.value) router.replace({name: 'home'})
 
 const tableRef = ref<TableInstance>()
-let tableData = reactive([])
+let tableData: Comment[] = reactive([])
 
 //清空全部筛选条件
 const clearFilter = () => {
@@ -99,31 +100,24 @@ const filterHandler = (
     row: Comment,
     column: TableColumnCtx<Comment>
 ) => {
-  const property = column['property']
+  const property = column['property'] as keyof Comment //断言property是Comment中的键名
   return row[property] === value
 }
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({column, prop, order}) {
+function handleSortChange({prop, order}: Sort) {
   // 根据 column 和 order 对 this.tableData 进行排序
   tableData.sort((a, b) => {
-    if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
-    if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
-    return 0;
+    const propA = a[prop as keyof typeof a]
+    const propB = b[prop as keyof typeof b]
+    if (propA < propB) return order === 'ascending' ? -1 : 1;
+    if (propA > propB) return order === 'ascending' ? 1 : -1;
+    return 0
   })
 }
 
 
-interface Comment {
-  id: number,
-  uid: number,
-  articleId: number,
-  comment: string,
-  status: number,
-  created_time: string,
-}
-
-let newComment = reactive<Comment>({
+const newComment = reactive<Comment>({
       id: 0,
       uid: 0,
       articleId: 0,
@@ -134,12 +128,14 @@ let newComment = reactive<Comment>({
 )
 
 //获取全部评论
-getComment()
+onMounted(async () => {
+  await getComment()
+})
 
-function getComment() {
-  axios({
-    url: '/getComments',
-  }).then(result => {
+
+const getComment = async () => {
+  try {
+    const result = await axios({url: '/getComments',})
     console.log(result)
     const {msg, data} = result.data
     ElMessage.success(msg)
@@ -147,20 +143,20 @@ function getComment() {
     data.forEach((item: Comment) => {
       tableData.push(item)
     })
-  }).catch(error => {
+  } catch (error) {
     console.log('发生错误：')
     console.dir(error)
-  })
+  }
 }
 
 
 //编辑标记
-let isEditRow = ref<number>(-1)
+const isEditRow = ref<number>(-1)
 
 //编辑评论信息(修改编辑标记)
 const handleEdit = (index: number, row: Comment) => {
   isEditRow.value = index
-  newComment = Object.assign(newComment, row)
+  Object.assign(newComment, row)
 }
 
 //对上传的数据进行格式检查
@@ -176,25 +172,16 @@ function checkUpdateRow(newData: Comment, oldData: Comment) {
   }
 }
 
-//清除未修改的数据,如果未修改返回{}
-function diffObj(newData: Comment, oldData: Comment) {
-  return Object.keys(newData).concat(Object.keys(oldData))
-      .filter(key => newData[key] !== oldData[key])
-      .reduce((result, key) => {
-        result[key] = newData[key]; // 返回newData对象的属性
-        return result;
-      }, {});
-}
 
 
 //上传更新的评论信息
-function updateRow(data: Comment,oldData: Comment){
+function updateRow(data: Comment, oldData: Comment) {
   axios({
     url: '/updateComment',
     method: 'post',
-    data:{
+    data: {
       data,
-      id:oldData.id    //id被洗掉了，手动添加
+      id: oldData.id    //id被洗掉了，手动添加
     }
   }).then(result => {
     // console.log(result)

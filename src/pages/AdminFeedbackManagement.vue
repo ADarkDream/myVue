@@ -6,7 +6,7 @@
     <span></span>
     <el-button @click="clearFilter">清空全部筛选</el-button>
   </div>
-     <el-main  style="padding-bottom:0;padding-top: 0 ">
+  <el-main style="padding-bottom:0;padding-top: 0 ">
     <el-table ref="tableRef" :data="tableData" style="width: 100%" max-height="500" stripe border highlight-current-row
               table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }"
               @sort-change="handleSortChange">
@@ -25,13 +25,14 @@
       <el-table-column prop="created_time" label="创建时间" width="150">
         <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
       </el-table-column>
-           <el-table-column prop="updated_time" label="标记时间" width="150">
+      <el-table-column prop="updated_time" label="标记时间" width="150">
         <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="120" align="center">
         <template #default="scope">
 
-          <el-button link type="primary" size="small" @click="updateFeedback(scope.$index, scope.row)"><span v-if="scope.row.status===0">标记</span><span v-else>取消标记</span></el-button>
+          <el-button link type="primary" size="small" @click="updateFeedback(scope.$index, scope.row)"><span
+              v-if="scope.row.status===0">标记</span><span v-else>取消标记</span></el-button>
           <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row.id)">
             删除
           </el-button>
@@ -61,7 +62,7 @@ const {isAdmin} = useUserInfo()
 if (!isAdmin.value) router.replace({name: 'home'})
 
 const tableRef = ref<TableInstance>()
-let tableData = reactive([])
+const tableData: Feedback[] = reactive([])
 
 //清空全部筛选条件
 const clearFilter = () => {
@@ -74,12 +75,12 @@ const filterHandler = (
     row: Feedback,
     column: TableColumnCtx<Feedback>
 ) => {
-  const property = column['property']
+  const property = column['property'] as keyof Feedback
   return row[property] === value
 }
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({column, prop, order}) {
+function handleSortChange({prop, order}: Sort) {
   // 根据 column 和 order 对 this.tableData 进行排序
   tableData.sort((a, b) => {
     if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
@@ -90,6 +91,7 @@ function handleSortChange({column, prop, order}) {
 
 
 interface Feedback {
+  [key: string]: any,
   id: number,
   contact?: string,
   content: string,
@@ -120,15 +122,15 @@ function getFeedback() {
 
 //上传更新的反馈信息(标记)
 function updateFeedback(index: number, oldData: Feedback) {
-  let status=oldData.status
-  if (status===1) status=0
-  else status=1
+  let status = oldData.status
+  if (status === 1) status = 0
+  else status = 1
   axios({
     url: '/updateFeedback',
     method: 'post',
     data: {
       status,
-      id:oldData.id
+      id: oldData.id
     }
   }).then(result => {
     // console.log(result)
@@ -136,7 +138,7 @@ function updateFeedback(index: number, oldData: Feedback) {
     //更新修订时间为当前时间
     const updated_time = new Date().toISOString()
     //将修改后的信息显示出来
-    Object.assign(oldData, {status,updated_time})
+    Object.assign(oldData, {status, updated_time})
     ElMessage.success(msg)
   }).catch(error => {
     console.log('发生错误：')

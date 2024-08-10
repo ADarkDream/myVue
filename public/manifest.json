@@ -1,11 +1,11 @@
 {
   "name": "默默的小站",
   "short_name": "momo",
-  "start_url": ".",
+  "start_url": "/index.html",
   "display": "fullscreen",
   "lang":"zh-CN",
-  "background_color": "#fff",
-  "description": "此网站为默默的个人网站，用于分享一些软件或网站，侵权请联系删除。",
+  "background_color": "#000",
+  "description": "此网站为默默的个人网站，用于分享软件或网站，侵权请联系删除。",
   "icons": [
     {
       "src": "/favicon.ico",

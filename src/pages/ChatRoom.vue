@@ -32,7 +32,10 @@
             </template>
             <el-text type="warning" v-if="roomMsg.length===0">暂无返回的消息</el-text>
             <div v-for="(item,index) in roomMsg" :key="index">
-              <el-text type="success">第{{ index }}条{{ item.roomID===playerInfo.roomID? '真的':[item.roomID,playerInfo.roomID ]  }}</el-text>
+              <el-text type="success">第{{
+                  index
+                }}条{{ item.roomID === playerInfo.roomID ? '真的' : [item.roomID, playerInfo.roomID] }}
+              </el-text>
               ：{{ item.message }}
             </div>
 
@@ -81,7 +84,7 @@ onMounted(() => {
   if (!playerInfo.roomID) {//房间号为空，设置为当前房间号
     playerInfo.roomID = route.query.roomID as string
   }
-  console.log('roomMsg',roomMsg)
+  console.log('roomMsg', roomMsg)
   // if (chatMsgInfo) {//pinia刷新之后不能获取复杂数据类型，bug? 手动获取
   //   console.log(chatMsgInfo)
   //   // roomMsg.splice(0, roomMsg.length, chatMsgInfo.roomMsg) //恢复聊天信息

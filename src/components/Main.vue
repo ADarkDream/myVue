@@ -88,11 +88,12 @@ const timeClass = ref('time')
 
 const {showRecord} = defineProps(['showRecord'])
 if (!isPC.value) watch(isShow, (newValue, oldValue) => {
-  showRecord(isShow.value)
+  if (newValue !== oldValue) showRecord(isShow.value)
 })
 
 const time = ref()
-const timer = ref(null)
+//每秒倒计时，刷新时间
+const timer = setInterval(() => changeTime(), 1000)
 changeTime()
 
 
@@ -108,12 +109,10 @@ function changeTime() {
   // time.value = `${hours}:${minutes}:${seconds}`
 }
 
-//每秒倒计时，刷新时间
-timer.value = setInterval(() => changeTime(), 1000)
 
 onBeforeRouteLeave(() => {
   console.log('首页时钟定时器已清除')
-  clearInterval(timer.value)
+  clearInterval(timer)
 })
 //endregion
 
@@ -126,32 +125,33 @@ emitter.on('showContent', () => {
 
 //显示下方内容区,isShow.value=false不显示
 function showContent() {
-  console.log('是否显示内容区,isShow：' , isShow.value)
+  console.log('是否显示内容区,isShow：', isShow.value)
   isShow.value = !isShow.value
   if (isShow.value && isPC.value) {
     timeClass.value = 'timeUp'
   } else timeClass.value = 'time'
   if (!isPC.value) {
-    isShow.value? isScroll(true) :isScroll(true)
+    isShow.value ? isScroll(true) : isScroll(true)
   }
 }
 
 //endregion
 
 
-const userEngines = reactive<EngineData[]>(JSON.parse(localStorage.getItem('userEngines')) || [])
+const userEngines = reactive<EngineData[]>(JSON.parse(localStorage.getItem('userEngines') || '[]'))
 
 //当前显示的搜索引擎的信息
-const thisEngine = reactive(JSON.parse(localStorage.getItem('thisEngine')) || searchEngines[0])
+const localThisEngine =localStorage.getItem('thisEngine') || '{}'
+const thisEngine = reactive<EngineData>(localThisEngine !==' {}' ? JSON.parse(localThisEngine) : searchEngines[0])
 const engineId = ref(Number(thisEngine.engineId) || 0)
 const engineName = ref(thisEngine.name || searchEngines[engineId.value].name)
 const baseUrl = ref<string>(thisEngine.baseUrl || searchEngines[engineId.value].baseUrl)//搜索引擎的主地址
-const searchUrl = ref<string>(baseUrl.value + thisEngine.searchUrl || searchEngines[engineId.value].searchUrl)//搜索引擎的搜索字段
+const searchUrl = ref<string>(baseUrl.value + thisEngine.searchUrl || searchEngines[engineId.value].searchUrl!)//搜索引擎的搜索字段
 const searchImg = ref(thisEngine.searchImg || searchEngines[engineId.value].src)//搜索引擎的图片
 const keyword = ref<string>('')//搜索框输入的内容
-const hideList = reactive(JSON.parse(localStorage.getItem('hideList')) || [])
-const hideUserList = reactive(JSON.parse(localStorage.getItem('hideUserList')) || [])//登录用户使用
-const hideLocalList = reactive(JSON.parse(localStorage.getItem('hideLocalList')) || [])//未用户使用
+const hideList = reactive(JSON.parse(localStorage.getItem('hideList') || '[]'))
+const hideUserList = reactive(JSON.parse(localStorage.getItem('hideUserList') || '[]'))//登录用户使用
+const hideLocalList = reactive(JSON.parse(localStorage.getItem('hideLocalList') || '[]'))//未用户使用
 
 //搜索框搜索功能
 function search() {
@@ -171,7 +171,7 @@ function search() {
 function changeEngine(item: EngineData) {
   //当前引擎的信息
   const engine = {
-    engineId: item.id.toString(),
+    engineId: item.id,
     name: item.name,
     baseUrl: item.baseUrl,
     searchUrl: item.searchUrl,
@@ -190,10 +190,10 @@ function changeEngine(item: EngineData) {
 //隐藏用户自定义搜索引擎
 function hideUserEngine(engine: EngineData) {
   if (isLogin.value) {
-    hideUserList[engine.index] = {id: engine.id, isShow: engine.isShow}
+    hideUserList[engine.index!] = {id: engine.id, isShow: engine.isShow}
     localStorage.setItem('hideUserList', JSON.stringify(hideUserList))
   } else {
-    hideLocalList[engine.index] = {id: engine.id, isShow: engine.isShow}
+    hideLocalList[engine.index!] = {id: engine.id, isShow: engine.isShow}
     localStorage.setItem('hideLocalList', JSON.stringify(hideLocalList))
   }
 
@@ -254,9 +254,9 @@ async function getEngineList() {
     })
   } else {
     //如果未登录，就获取本地存储的搜索引擎
-    const engineList = JSON.parse(localStorage.getItem('localEngines')) || []
-    console.log('userEngines',userEngines)
-    userEngines.splice(0, userEngines.length,...engineList)
+    const engineList = JSON.parse(localStorage.getItem('localEngines') || '[]')
+    console.log('userEngines', userEngines)
+    userEngines.splice(0, userEngines.length, ...engineList)
     // engineList.forEach((item: EngineData) => {
     //   userEngines.push(item)//将新的数据加入进去
     // })

@@ -4,20 +4,22 @@
     <meta charset="UTF-8">
     <link rel="manifest" href="/manifest.json"/>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <!--    删掉之后移动端会丢失响应式-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="baidu-site-verification" content="codeva-A4yk8FKcSI"/>
-    <link rel="apple-touch-icon-precomposed" href="/favicon_144x144.png">
+    <!--    <link rel="apple-touch-icon-precomposed" href="/favicon_144x144.png">-->
     <meta content="默默" name="author"/>
     <meta content="此网站为默默的个人网站，用于分享一些软件或网站，侵权请联系删除。" name="description"/>
     <title>默默的小站</title>
     <style>
         body {
-            //background: no-repeat  center / cover fixed;
+            /*            background: no-repeat  center / cover fixed;*/
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
             overflow-x: hidden;
+            background-color: #000; /*预设黑色背景*/
         }
 
         /*夜间模式*/
@@ -55,9 +57,6 @@
             text-decoration: none;
         }
 
-        /*
-
-        */
         @media (max-width: 980px) {
             body {
                 overflow-Y: visible;
@@ -71,104 +70,84 @@
             top: 0;
             height: 100%;
             width: 100%;
-            background: #fff;
             user-select: none;
             z-index: 9999;
             overflow: hidden
         }
 
-        .loading-wrapper {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -100%)
+
+        svg {
+            height: 30%;
+            width: 100%;
+            margin: 20% 0;
+            overflow: hidden;
         }
 
-        .loading-dot {
-            animation: antRotate 1.2s infinite linear;
-            transform: rotate(45deg);
-            position: relative;
-            display: inline-block;
-            font-size: 64px;
-            width: 64px;
-            height: 64px;
-            box-sizing: border-box
+        svg text {
+            text-anchor: middle;
+            dominant-baseline: middle;
+            text-transform: uppercase;
+            animation: stroke 2s infinite alternate;
+            letter-spacing: 10px;
+            font-size: 150px;
         }
 
-        .loading-dot i {
-            width: 22px;
-            height: 22px;
-            position: absolute;
-            display: block;
-            background-color: #1890ff;
-            border-radius: 100%;
-            transform: scale(.75);
-            transform-origin: 50% 50%;
-            opacity: .3;
-            animation: antSpinMove 1s infinite linear alternate
-        }
-
-        .loading-dot i:nth-child(1) {
-            top: 0;
-            left: 0
-        }
-
-        .loading-dot i:nth-child(2) {
-            top: 0;
-            right: 0;
-            -webkit-animation-delay: .4s;
-            animation-delay: .4s
-        }
-
-        .loading-dot i:nth-child(3) {
-            right: 0;
-            bottom: 0;
-            -webkit-animation-delay: .8s;
-            animation-delay: .8s
-        }
-
-        .loading-dot i:nth-child(4) {
-            bottom: 0;
-            left: 0;
-            -webkit-animation-delay: 1.2s;
-            animation-delay: 1.2s
-        }
-
-        @keyframes antRotate {
-            to {
-                transform: rotate(405deg)
+        @keyframes stroke {
+            0% {
+                fill: rgba(72, 138, 20, 0);
+                stroke: rgba(54, 95, 160, 1);
+                stroke-dashoffset: 25%;
+                stroke-dasharray: 0 50%;
+                stroke-width: 0.8;
+            }
+            50% {
+                fill: rgba(72, 138, 20, 0);
+                stroke: rgba(54, 95, 160, 1);
+                stroke-width: 1.2;
+            }
+            70% {
+                fill: rgba(72, 138, 20, 0);
+                stroke: rgba(54, 95, 160, 1);
+                stroke-width: 1.5;
+            }
+            90%,
+            100% {
+                fill: rgba(72, 138, 204, 1);
+                stroke: rgba(54, 95, 160, 0);
+                stroke-dashoffset: -25%;
+                stroke-dasharray: 50% 0;
+                stroke-width: 0;
             }
         }
 
-        @-webkit-keyframes antRotate {
-            to {
-                transform: rotate(405deg)
-            }
-        }
-
-        @keyframes antSpinMove {
-            to {
-                opacity: 1
-            }
-        }
-
-        @-webkit-keyframes antSpinMove {
-            to {
-                opacity: 1
+        @media (max-width: 980px) {
+            svg text {
+                font-size: 75px;
             }
         }
 
         /*endregion*/
-
     </style>
+    <script type="text/javascript">
+        (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () {
+                (c[a].q = c[a].q || []).push(arguments)
+            };
+            t = l.createElement(r);
+            t.async = 1;
+            t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0];
+            y.parentNode.insertBefore(t, y);
+        })(window, document, "clarity", "script", "nl63h6oui7");
+    </script>
 </head>
 <body>
 <div id="app">
     <!--    以下是网站加载动画的样式-->
     <div id="loading-mask">
-        <div class="loading-wrapper">
-            <span class="loading-dot loading-dot-spin"><i></i><i></i><i></i><i></i></span>
-        </div>
+        <svg viewBox="0 0 400 200">
+            <text x="200" y="100">MOMO</text>
+        </svg>
     </div>
 </div>
 <script type="module" src="./src/main.ts"></script>

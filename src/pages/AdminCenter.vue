@@ -36,8 +36,6 @@
       </el-scrollbar>
     </el-main>
   </el-container>
-
-
 </template>
 
 <script lang="ts" setup>

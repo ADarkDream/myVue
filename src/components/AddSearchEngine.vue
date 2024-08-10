@@ -67,12 +67,12 @@ const addEngineForm = reactive({
 })
 
 //region 添加搜索引擎
-const {closeDialog,getEngineList} = defineProps(['closeDialog','getEngineList'])
+const {closeDialog, getEngineList} = defineProps(['closeDialog', 'getEngineList'])
 
 //新加搜索引擎的图标
 const src = ref(ico_custom)
 //自定义搜索引擎列表
-const userEngines = reactive(JSON.parse(localStorage.getItem('userEngines')) || [])
+const userEngines = reactive(JSON.parse(localStorage.getItem('userEngines') || '[]'))
 
 //展示网址图片
 function checkIco() {
@@ -123,7 +123,8 @@ function addEngine() {
       //ElMessage.error('发生错误：' + error.message)
     })
   } else {
-    let localEngines = JSON.parse(localStorage.getItem('localEngines')) || []
+    const localEngines = JSON.parse(localStorage.getItem('localEngines') || '[]')
+    console.log('localEngines',localEngines)
     data.isShow = true
     data.id = Date.now()
     localEngines.push(data)

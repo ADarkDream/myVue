@@ -262,7 +262,7 @@ import {ref} from 'vue'
 import {Switch} from '@element-plus/icons-vue'
 import emitter from "@/utils/emitter";
 import useResponsive from "@/hooks/useResponsive";
-import {ElMessage} from "element-plus";
+
 
 const {isPC} = useResponsive()
 
@@ -279,11 +279,16 @@ function toContent(num: Number) {
 }
 
 const showBtn = ref(true)
-emitter.on('showAsideBtn', (flag: number) => {
+const handler=(flag: number) => {
   if (flag === 0) showBtn.value = false
   else if (flag === 1) showBtn.value = true
   else if (flag === 2) showAside.value = true
-})
+}
+
+
+//展示侧边栏
+emitter.on('showAsideBtn', handler )
+
 
 
 </script>

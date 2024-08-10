@@ -37,22 +37,10 @@ import {reactive, ref} from 'vue'
 import {ElMessage} from "element-plus";
 import axios from "axios";
 import ico_custom from "@/assets/custom.png";
+import {Navigation} from '@/types/url'
 
 
-interface Url {
-  id?: number,
-  img?: string,
-  name?: string,
-  detail?: string,
-  url?: string,
-  sort?: string,
-  tags?: string,
-  status?: number,
-  updated_time?: string,
-}
-
-
-const form = reactive<Url>({
+const form: Navigation = reactive({
   img: '',
   name: '',
   detail: '',
@@ -61,12 +49,8 @@ const form = reactive<Url>({
   tags: '',
 })
 
-interface Sort {
-  text: string,
-  value: string
-}
 
-let sort = reactive<Sort[]>([
+const sort: TableFilterItem<string>[] = reactive([
   {text: '软件下载', value: 'tool'},
   {text: '在线工具', value: 'onlineTool'},
   {text: '机器人', value: 'robot'},
@@ -83,36 +67,34 @@ let sort = reactive<Sort[]>([
 const src = ref(ico_custom)
 
 //展示网址图片
-function checkIco() {
+const checkIco = () => {
   if (form.url.trim() !== '') src.value = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
   else src.value = ico_custom
 }
 
 //上传新的导航网址
-function addUrl(data: Url) {
+const addUrl = async (data: Navigation) => {
   if (!data.name || !data.sort || !data.url) return ElMessage.error('导航站点名、分类、网址均不能为空！')
   if (!data.img.trim()) data.img = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
-  axios({
-    url: '/addUrl',
-    method: 'post',
-    data
-  }).then(result => {
-    // console.log(result)
+  try {
+    const result = await axios({
+      url: '/addUrl',
+      method: 'post',
+      data
+    })
+    console.log(result)
     const {msg} = result.data
     ElMessage.success(msg)
     setTimeout(() => {
       location.reload()
     }, 2000)
-  }).catch(error => {
+  } catch (error) {
     console.log('发生错误：')
-    console.log(error)
-    //ElMessage.error('发生错误：' + error.message)
-  })
+    console.dir(error)
+  }
 }
 
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -1,4 +1,3 @@
-import {ref} from "vue";
 import {ElMessage} from "element-plus";
 import axios from "axios";
 
@@ -147,13 +146,25 @@ export default function () {
             const {status, msg, data} = result.data
             if (status === 300) ElMessage.warning(msg)
             console.log(111)
-            console.log('data',data)
+            console.log('data', data)
             return data
         } catch (error) {
             console.log('发生错误：')
             console.dir(error)
         }
     }
+
+    //清除未修改的数据,如果未修改返回{}
+    function diffObj<T>(newData: T, oldData: T) {
+        return Object.keys(newData).concat(Object.keys(oldData))
+            .filter(key => newData[key as keyof T] !== oldData[key as keyof T])
+            .reduce((result: Record<string, any>, key) => {
+                result[key] = newData[key as keyof T] // 返回newData对象的属性
+                return result //最后返回的结果属于ReverseImgInfo的一部分
+            }, {})
+    }
+
+
     // 向外暴露
-    return {copyWebsiteRecord, copyText, copyCode, deepEqual, getBG}
+    return {copyWebsiteRecord, copyText, copyCode, deepEqual, getBG, diffObj}
 }

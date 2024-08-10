@@ -1,3 +1,5 @@
+上传1999角色
+
 <template>
   <!--显示网站图标-->
   <el-card>
@@ -37,20 +39,20 @@ import axios from "axios";
 import ico_custom from "@/assets/custom.png";
 
 
-interface Url {
+interface websiteInfo {
   id?: number,
-  img?: string,
-  name?: string,
-  detail?: string,
-  url?: string,
-  sort?: string,
-  tags?: string,
+  img: string,
+  name: string,
+  detail: string,
+  url: string,
+  sort: string,
+  tags: string,
   status?: number,
   updated_time?: string,
 }
 
 
-const form = reactive<Url>({
+const form = reactive<websiteInfo>({
   img: '',
   name: '',
   detail: '',
@@ -87,7 +89,7 @@ function checkIco() {
 }
 
 //上传新的导航网址
-function addUrl(data: Url) {
+function addUrl(data: websiteInfo) {
   if (!data.name || !data.sort || !data.url) return ElMessage.error('导航站点名、分类、网址均不能为空！')
   if (!data.img.trim()) data.img = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
   axios({

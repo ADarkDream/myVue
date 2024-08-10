@@ -245,7 +245,6 @@ import axios from "axios";
 import {ElMessage, ElMessageBox, ElTreeSelect} from "element-plus";
 import type {TableInstance} from "element-plus";
 import {onMounted, reactive, ref} from 'vue'
-import UploadImage from "@/components/UploadImage.vue";
 import useTimeStamp from "@/hooks/useTimestamp";
 import {Picture as IconPicture, Search} from "@element-plus/icons-vue";
 
@@ -258,7 +257,7 @@ import useUserInfo from "@/hooks/useUserInfo";
 import useFunction from "@/hooks/useFunction";
 import useResponsive from "@/hooks/useResponsive";
 
-const {copyText, deepEqual} = useFunction()
+const {copyText, deepEqual,diffObj} = useFunction()
 const {isAdmin} = useUserInfo()
 const {screenHeight, elSize, isPC} = useResponsive()
 
@@ -648,16 +647,6 @@ function updateRow(data: ReverseImgInfo, oldData: ReverseImgInfo) {
   })
 }
 
-
-//清除未修改的数据,如果未修改返回{}
-function diffObj(newData: ReverseImgInfo, oldData: ReverseImgInfo) {
-  return Object.keys(newData).concat(Object.keys(oldData))
-      .filter(key => newData[key] !== oldData[key])
-      .reduce((result, key) => {
-        result[key] = newData[key]; // 返回newData对象的属性
-        return result;
-      }, {});
-}
 
 //图片删除确认
 const deleteRow = (index: number, info: ReverseImgInfo) => {

@@ -1,6 +1,6 @@
 <template>
   <el-scrollbar height="400">
-    <el-switch v-model="searchFlag" @click="changeSearchFlag()"  active-text="在新窗口打开搜索结果"
+    <el-switch v-model="searchFlag" @click="changeSearchFlag()" active-text="在新窗口打开搜索结果"
                inactive-text="在当前页打开搜索结果"/>
     <el-divider>默认搜索引擎</el-divider>
     <el-card v-for="item in searchEngines" v-show="item.id!==engineId" :key="item.id" class="engineOption">
@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import {useLocalEnginesStore} from "@/store/useLocalEnginesStore";
 import {Delete} from "@element-plus/icons-vue";
-import {reactive, ref} from "vue";
+import {ref} from "vue";
 import AddSearchEngine from "@/components/AddSearchEngine.vue";
 import {EngineData} from "@/types/url";
 import axios from "axios";
@@ -57,8 +57,8 @@ const {searchEngines} = useLocalEnginesStore()
 const searchFlag = ref(localStorage.getItem('searchFlag') !== '0')//控制搜索结果是否在新窗口打开
 const changeSearchFlag = () => {
   // searchFlag.value = !searchFlag.value
-  const value=searchFlag.value ? '1' : '0'
-   console.log(searchFlag.value,value)
+  const value = searchFlag.value ? '1' : '0'
+  console.log(searchFlag.value, value)
   localStorage.setItem('searchFlag', value)
 }
 
@@ -90,7 +90,7 @@ function deleteEngine(id: number) {
     })
   } else {
     //如果未登录，就删除本地存储的搜索引擎
-    let engineList = JSON.parse(localStorage.getItem('localEngines')) || []
+    let engineList = JSON.parse(localStorage.getItem('localEngines') || '[]')
     //过滤掉要删除的搜索引擎
     engineList = engineList.filter((item: EngineData) => item.id !== id)
     //将过滤(删除)结果存储到engineList
@@ -105,7 +105,8 @@ function deleteEngine(id: number) {
 
 //隐藏默认搜索引擎
 function hideEngine(engine: EngineData) {
-  hideList[engine.index] = {id: engine.id, isShow: engine.isShow}
+  hideList[engine.index!] = {id: engine.id, isShow: engine.isShow}
+  console.log(hideList)
   localStorage.setItem('hideList', JSON.stringify(hideList))
 }
 

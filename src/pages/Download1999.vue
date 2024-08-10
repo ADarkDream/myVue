@@ -79,7 +79,7 @@
                     <!--遍历阵营-->
                     <el-text type="primary">角色所属阵营：</el-text>
                     <el-checkbox v-for="(item,index) in campInfo" :key="index"
-                                 @click="roleTypeChange(item,null)"
+                                 @click="roleTypeChange(item,'')"
                                  @change="handleCheckCampChange">
                       {{ item }}
                     </el-checkbox>
@@ -88,7 +88,7 @@
                     <!--遍历种族-->
                     <el-text type="primary">角色所属种族：</el-text>
                     <el-checkbox v-for="(item,index) in raceInfo" :key="index"
-                                 @click="roleTypeChange(null,item)"
+                                 @click="roleTypeChange('',item)"
                                  @change="handleCheckCampChange">
                       {{ item }}
                     </el-checkbox>
@@ -198,7 +198,7 @@
               </el-text>
               <br>
               <el-button v-if="!showPayCode" @click="showPayCode=true" type="success">点击展示微信收款码</el-button>
-              <el-image v-else style="width: 200px" lazy :src="baseUrl.qiniuBaseUrl+ '/files/payCode.png'"/>
+              <el-image v-else style="width: 200px" lazy :src="baseUrl.qiniuHttpsUrl+ '/files/payCode.png'"/>
             </el-collapse-item>
           </el-collapse>
         </el-card>
@@ -316,7 +316,7 @@ const oldCondition = reactive<ImgParams>({
 })
 
 //筛选
-const activeIndex = ref('2')  //激活的折叠面板序号
+const activeIndex = ref<string | undefined>('2')  //激活的折叠面板序号
 const versionInfo = reactive<VersionInfo[]>([])    //存版本信息
 const roleInfo = reactive<Role[]>([]) //存角色信息
 const campInfo = reactive<string[]>([]) //存阵营信息
@@ -435,7 +435,7 @@ function reset() {
   const btns = document.querySelectorAll('.roleSort .is-checked')
   btns.forEach(item => {
     item.classList.remove('is-checked')
-    campName.value = item.textContent
+    campName.value = item.textContent!
     handleCheckCampChange(false)
   })
 }
@@ -455,8 +455,8 @@ function getVersion() {
     //更新角色列表
     roleInfo.splice(0, roleInfo.length, ...roleList)
     //获取阵营列表
-    const campList = new Set([])
-    const raceList = new Set([])
+    const campList = new Set<string>()
+    const raceList = new Set<string>()
     roleInfo.forEach(item => {
       campList.add(item.camp)
       raceList.add(item.race)
@@ -512,12 +512,12 @@ const getImages = async () => {
   else {
 // 将 a 的值同步到 b，包括空值
     Object.keys(oldCondition).forEach(key => {
+
       if (condition.hasOwnProperty(key)) {
-        oldCondition[key] = condition[key];
-      } else {
-        delete oldCondition[key];  // 删除 b 中 a 中不存在的属性
-      }
-    });
+        oldCondition[key] = condition[key]
+      } else delete oldCondition[key];  // 删除 b 中 a 中不存在的属性
+
+    })
   }
   try {
     const result = await axios({
@@ -569,23 +569,23 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
     setBG.addEventListener('click', () => {
       setBackground(url, name)
     })
-    menu.appendChild(downloadBtn)
-    menu.appendChild(setBG)
+    menu!.appendChild(downloadBtn)
+    menu!.appendChild(setBG)
   } else {//进入多选状态,根据id里面的数字获取是第几张图
-    const imgNum = target.id.match(/\d+/g)[0]
+    const imgNum = target.id.match(/\d+/g)![0]
     const imgDiv = document.querySelector(`#imgDiv-${imgNum}`)
-    const isChecked = imgDiv.classList.contains('checked')
+    const isChecked = imgDiv!.classList.contains('checked')
     if (isChecked) {
       //取消选中样式
-      imgDiv.classList.remove('checked')
+      imgDiv!.classList.remove('checked')
       //遍历下载列表，删除取消选中的图片链接
       for (let i = downloadList.length - 1; i >= 0; i--) {
         if (downloadList[i].imgName === name) downloadList.splice(i, 1)
       }
     } else {
       //添加选中样式及下载链接
-      imgDiv.classList.add('checked')
-      downloadList.push(imgList[imgNum])
+      imgDiv!.classList.add('checked')
+      downloadList.push(imgList[Number(imgNum)])
     }
     //console.log(downloadList)
     console.log('isChecked', !isChecked)
@@ -666,10 +666,11 @@ function selectBtn(num?: number) {
 const isOpenProxy = ref(false)
 
 //检查代理端口是否打开
-async function checkPort() {
-  await axios({
-    url: 'http://127.0.0.1:3000/',
-  }).then(result => {
+const checkPort = async () => {
+  try {
+    const result = await axios({
+      url: 'http://127.0.0.1:3000/',
+    })
     console.log(result)
     const {status, msg} = result.data
     if (status === 200) {
@@ -681,17 +682,17 @@ async function checkPort() {
       ElMessage.error('代理端口未正确运行，请检查错误原因')
       // return false
     }
-  }).catch(error => {
+  } catch (error) {
     console.log('发生错误：')
     console.log(error)
     ElMessage.error('代理端口检查发生错误')
     isOpenProxy.value = false
-  })
+  }
 }
 
 
 //批量下载壁纸
-async function downloadImages() {
+const downloadImages = async () => {
   ElMessage.info('如有任何问题，请先查看下载须知')
   if (downloadList.length === 0) return ElMessage.error('请先勾选需要下载的图片！')
   else if (downloadList.length <= 10) {//下载数量不大于10
@@ -720,29 +721,30 @@ async function downloadImages() {
 //下载图片测试
 // downloadImg('https://gamecms-res.sl916.com/official_website_resource/50001/4/PICTURE/20240612/253%201440x2560_4f4a8ecb95334367ab4a83842926e1c6.jpg','123.jpg')
 //下载单张图片
-function downloadImg(url: string, imgName: string, imgPath: string) {
+const downloadImg = async (url: string, imgName: string, imgPath: string) => {
   let imageUrl = url
   //将下载链接替换为可使用地址
   if (isOpenProxy.value)   //如果有端口代理
     imageUrl = url.replace('https://gamecms-res.sl916.com', 'http://localhost:3000/download1999')
   else if (!!imgPath) //没有端口代理
-    imageUrl = baseUrl.qiniuBaseUrl+ imgPath.replace(/^\./, '')//七牛云备份,去掉路径中第一个点
+    imageUrl = baseUrl.qiniuHttpUrl + imgPath.replace(/^\./, '')//七牛云备份,去掉路径中第一个点
   else//没有端口代理且服务器没有备份
     imageUrl = url.replace(axios.defaults.baseURL + '/download1999', 'http://localhost:3000/download1999')
-
-  fetch(imageUrl)
-      .then(response => response.blob())
-      .then(blob => {
-        const url = URL.createObjectURL(blob);
-        const linkA = document.createElement('a');
-        linkA.href = url;
-        linkA.download = imgName // 在这里指定下载的文件名
-        document.body.appendChild(linkA)
-        linkA.click();
-        linkA.remove();
-        URL.revokeObjectURL(url);
-      })
-      .catch(error => console.error('Error:', error));
+  try {
+    const response = await fetch(imageUrl)
+    const blob = await response.blob()
+    const url = URL.createObjectURL(blob)
+    const linkA = document.createElement('a');
+    linkA.href = url;
+    linkA.download = imgName // 在这里指定下载的文件名
+    document.body.appendChild(linkA)
+    linkA.click()
+    linkA.remove()
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('下载图片出错:')
+    console.error(error)
+  }
 }
 
 
@@ -784,7 +786,7 @@ const showPayCodePanel = () => {
   isShowDownloadNotice.value = false
   activeIndex.value = '5'
 }
-
+console.log('isPC',isPC.value)
 </script>
 <style scoped>
 .el-header {

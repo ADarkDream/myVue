@@ -3,16 +3,16 @@ import {useRouter} from "vue-router";
 
 export default function () {
     const router = useRouter()
-    const screenWidth = ref(document.body.clientWidth)
-    const screenHeight = ref(window.innerHeight)
-    const isPC = ref(screenWidth.value > 980)
-    const isDark = ref(sessionStorage.getItem('isDark') === '1' || false)
-    const isHome = ref(router.currentRoute.value.path === '/')
-    const isForum = ref(!!router.currentRoute.value.path.concat('/forum'))
+    const screenWidth = ref<number>(document.body.clientWidth)
+    const screenHeight = ref<number>(window.innerHeight)
+    const isPC = ref<boolean>(screenWidth.value > 980)
+    const isDark = ref<boolean>(sessionStorage.getItem('isDark') === '1' || false)
+    const isHome = ref<boolean>(router.currentRoute.value.path === '/')
+    const isForum = ref<boolean>(!!router.currentRoute.value.path.concat('/forum'))
     //控制PC和手机的dialog宽度
-    const dialogWidth = ref(isPC.value ? '50%' : '90%')
-    const dialogWidth2 = ref(isPC.value ? '40%' : '80%')
-    const elSize = ref(isPC.value ? 'default' : 'small')
+    const dialogWidth = ref<string>(isPC.value ? '50%' : '90%')
+    const dialogWidth2 = ref<string>(isPC.value ? '40%' : '80%')
+    const elSize = ref<string>(isPC.value ? 'default' : 'small')
     // if (!isPC.value) {
     //     dialogWidth.value = '90%'
     //     dialogWidth2.value = '80%'

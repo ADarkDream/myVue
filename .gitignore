@@ -28,3 +28,5 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+/sitemap.xml
+/sitemap.xml.gz

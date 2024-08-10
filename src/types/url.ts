@@ -1,10 +1,10 @@
 //定义搜索引擎接口
 interface EngineData {
     index?: number,
-    id?: number,
+    id: number,
     engineId?: number,
     name?: string,
-    baseUrl?: string,
+    baseUrl: string,
     searchUrl?: string,
     src?: string,
     searchImg?: string,
@@ -32,14 +32,14 @@ interface NavigationObj {
 //首页导航的信息
 interface Navigation {
     detail: string,
-    id: number,
+    id?: number,
     img: string,
     name: string,
     sort: string,
-    status: number,
-    tags: null
-    uid: number,
-    updated_time: string,
+    status?: number,
+    tags: string,
+    uid?: number,
+    updated_time?: string,
     url: string,
 }
 
@@ -51,6 +51,11 @@ interface WebsiteInfoItem {
     updated_time: string
 }
 
+//表格筛选分类的元素
+interface Sort {
+  text: string,
+  value: string
+}
 
 export {EngineData, ThisEngine, Navigation, NavigationObj, WebsiteInfoItem}
 

@@ -20,42 +20,44 @@
         <el-collapse-item title="网站介绍" name="1">
           <el-card class="notice">
             <el-text>
-              1.本页面为
-              <el-button link target="_blank" type="primary"
-                         @click="copyText('1005993749','QQ群号','https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V')"
-                         title="点击前往QQ">Resource sharing群
-              </el-button>
-              群友
-              <el-button link target="_blank" type="primary" style="margin-left: 0"
-                         @click="copyText('1224021291','QQ号','tencent://message/?uin=1224021291')" title="点击前往QQ">
-                默默
-              </el-button>
-              的个人网站,
+              1.本站为社交化导航网站，提供<el-button-group type="primary"><el-button link title="首页导航" @click="router.push({name:'home'})">站点导航、</el-button><el-button link title="论坛文章" target="_blank" @click="router.push({name:'forum'})">论坛交流、</el-button><el-button link title="重返未来相关界面" @click="router.push({name:'reverse1999'})">重返未来官图筛选和下载</el-button></el-button-group>等功能。<br>
+              2.
+              <el-button-group  target="_blank" type="primary">
+                <el-button link
+                    @click="copyText('1005993749','QQ群号','https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V')"
+                    title="点击前往QQ">工具资源群：Resource sharing群、
+                </el-button>
+                <el-button link
+                    @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')"
+                    title="点击前往QQ">
+                  重返未来群：金兔子特供部门🐰
+                </el-button>
+              </el-button-group>
+              ,
               <el-text style="color: orangered">资源来自网络,侵权请联系删除</el-text>
               。
             </el-text>
             <br>
             <el-text>
-              2.当前界面勉强适配移动端，持续优化中。
+              3.若首页导航网站无法访问，请使用Chrome、Edge、Firefox等浏览器或尝试VPN，也可能是因为该网站维护中。
             </el-text>
             <br>
-            <el-text>
-              3.若首页部分网站无法访问，请使用Chrome、Edge、Firefox等浏览器或尝试VPN，也可能是因为该网站维护中。
-            </el-text>
-            <br>
-            <el-text>4.你也可以
-              <el-link target="_blank" type="primary"
+            <el-text>4.你可以
+              <el-link target="_blank" type="success"
                        href="https://mp-00526be3-cd12-41bd-84f7-bfbce63bb7d0.cdn.bspapp.com/test1/BookMarks_2023_8_15_2.zip"
-                       title="下载书签">点击此处
+                       title="下载书签">下载
               </el-link>
-              下载，解压出HTML文件，导入到自己的浏览器收藏夹。导入步骤可参考相关教程视频：
+              并解压出HTML文件，导入到自己的浏览器收藏夹。导入步骤可参考相关教程视频：
               <el-link target="_blank" type="primary"
                        href="https://www.bilibili.com/video/BV1rr4y1S79J/"
                        title="B站教程视频">点击此处
               </el-link>
               。
             </el-text>
-            <br>
+              <br>
+            <el-text>
+              5.本站正在持续适配移动端，如部分界面错位可尝试PC访问或<el-button link title="前往反馈" type="primary" @click="changePage('3','2')">留言反馈</el-button>。
+            </el-text>
           </el-card>
         </el-collapse-item>
         <el-collapse-item title="友情链接" name="2">
@@ -160,10 +162,14 @@ import {ElCollapseTransition, ElMessage} from 'element-plus'
 import useTimeStamp from "@/hooks/useTimestamp";
 import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
+import {useRouter} from "vue-router";
+
 
 const {copyText} = useFunction()
 const {getDiffTime} = useTimeStamp()
 const {isPC} = useResponsive()
+const router=useRouter()
+
 const {showFlag} = defineProps(['showFlag'])//切换页面的参数
 
 const updateNotes = reactive<Notice[]>([])//已更新的公告

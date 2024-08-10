@@ -1,7 +1,12 @@
 <template>
   <div class="chat-area">
     <div class="chat-area-header">
-      <el-text type="primary" style="    font-size: 22px;">聊天室Demo</el-text>
+      <el-text type="primary" style="font-size: 22px;">{{isLogin? '':'临时'}}聊天室[Demo]</el-text>
+      <el-button type="primary"
+                 @click="copyText('https:muxidream.cn/Chat/hall?roomID='+playerInfo.roomID+'&playerName=这里填昵称','房间号')"
+                 title="点击复制当前房间号" size="small">复制房间地址
+      </el-button>
+      <el-button @click="reLink" size="small" type="warning" plain>重连</el-button>
       <!--          <div class="chat-area-group">
                   <img class="chat-area-profile"
                        src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%283%29+%281%29.png" alt=""/>
@@ -15,11 +20,11 @@
     <el-scrollbar>
       <div class="chat-area-main">
 
-        <template v-for="(item,index) in roomMsg" :key="index">
-          <div :class="['chat-msg',item.playerID===item.roomID?'owner':'guest']">
+        <template v-for="item in roomMsg" :key="item.time">
+          <div :class="['chat-msg',item.playerID===playerInfo.playerID?'owner':'guest']">
             <div class="chat-msg-profile">
               <img class="chat-msg-img"
-                   :src="headImgUrl" alt=""/>
+                   :src="imageSrc" alt=""/>
               <el-text class="chat-msg-date">{{ getDiffTime(item.time) }}</el-text>
             </div>
             <div class="chat-msg-content">
@@ -52,7 +57,7 @@
         <path
             d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
       </svg>
-      <input type="text" v-model="msg2" @keyup.enter="sendMsg2" placeholder="Type something here..."/>
+      <input type="text" v-model="msg" @keyup.enter="sendMsg" placeholder="Type something here..."/>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile">
         <circle cx="12" cy="12" r="10"/>
@@ -68,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, onUnmounted, reactive, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {ElMessage} from "element-plus";
 import {useRouter, useRoute} from "vue-router";
 import useUserInfo from "@/hooks/useUserInfo";
@@ -76,54 +81,34 @@ import useTimestamp from "@/hooks/useTimestamp";
 import {useChatInfoStore} from "@/store/useChatInfoStore";
 import {useChatMsgStore} from '@/store/useChatMsgStore'
 
+
 const {playerInfo, socket} = useChatInfoStore()//本地用户信息
 const {roomMsg} = useChatMsgStore()//本地的聊天信息
-import {ChatMsg} from '@/types/chat'
+// import {ChatMsg} from '@/types/chat'
+import useFunction from "@/hooks/useFunction";
 
 const router = useRouter();
 const route = useRoute()
-const {isAdmin,headImgUrl} = useUserInfo()
-const {getTime,getDiffTime} = useTimestamp()
-const roomID = ref<string>(route.query.roomID as string || '')//房间ID
-const playerName = ref<string>(sessionStorage.getItem('playerName') || '')//玩家昵称
-const chatMsgInfo = JSON.parse(localStorage.getItem('chatMsgInfo'))
-
-
-
-const userID = ref(1)
-
-const messageInfo = reactive([
-  {
-    id: 1,
-    name: '',
-    src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%281%29.png',
-    content: 'Luctus et ultrices posuere cubilia curae.',
-    time: 'Message seen 1.22pm'
-  }, {
-    id: 2,
-    name: '',
-    src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%282%29.png',
-    content: 'Luctus et ultrices posuere cubilia curae.',
-    time: 'Message seen 1.22pm'
-  }, {
-    id: 3,
-    name: '',
-    src: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%282%29.png',
-    content: 'Luctus et ultrices posuere cubilia curae.',
-    time: 'Message seen 1.22pm'
-  }
-])
+const {copyText} = useFunction()
+const {isLogin, imageSrc} = useUserInfo()
+const {getDiffTime} = useTimestamp()
 
 
 
 onMounted(() => {
+  if (route.query.roomID && route.query.playerName) {
+    playerInfo.roomID = route.query.roomID as string
+    playerInfo.playerName = route.query.playerName as string
+    router.push({name: 'talk'})
+  }
   if (!playerInfo.playerName) {//昵称为空，返回主页
     ElMessage.error('请先填写昵称')
     return router.push({name: 'chat', query: {roomID: route.query.roomID}})
   }
 
   if (!playerInfo.roomID) {//房间号为空，设置为当前房间号
-    playerInfo.roomID = route.query.roomID as string
+    if (route.query.roomID) playerInfo.roomID = route.query.roomID as string
+    else return router.push({name: 'chat'})
   }
   console.log('roomMsg', roomMsg)
   reLink()
@@ -138,10 +123,10 @@ onMounted(() => {
 })
 
 
-let token = sessionStorage.getItem('token') || localStorage.getItem('token')
-const baseUrl = 'ws://localhost:9999'
+// let token = sessionStorage.getItem('token') || localStorage.getItem('token')
 
-const msg2 = ref<string>('')
+
+const msg = ref<string>('')
 //收到的信息
 
 //尝试重连
@@ -150,25 +135,25 @@ const reLink = () => {
 }
 
 //发送信息
-const sendMsg2 = () => {
-  if (msg2.value) {
-    socket.emit('room-message', {message: msg2.value})
-    msg2.value = ''
+const sendMsg = () => {
+  if (msg.value) {
+    socket.emit('room-message', {message: msg.value})
+    msg.value = ''
   }
 }
 
 
 //关闭连接
-const closeConnection2 = () => {
+// const closeConnection2 = () => {
   // if (server.readyState === WebSocket.OPEN) {
   //   server.close(1000, '关掉了')
   // }
-}
+// }
 
 //阻止用户直接关闭当前标签页
-const listener = (event) => {
+const listener = (event :Event) => {
   event.preventDefault(); // 阻止默认的关闭行为
-  event.returnValue = ''; // 设置警告消息为空字符串，以触发浏览器显示默认的关闭提示
+ // event.returnValue = ''; // 设置警告消息为空字符串，以触发浏览器显示默认的关闭提示
 }
 window.addEventListener('beforeunload', listener)
 

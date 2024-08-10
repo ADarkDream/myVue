@@ -5,18 +5,18 @@ import axios from "axios";
 
 export default function () {
 //计算图片的MD5值
-    let md5 = ref(sessionStorage.getItem('md5') || '')
+    const md5 = ref(sessionStorage.getItem('md5') || '')
     //显示的图片文件
-    let imgUrl=ref()
+    const imgUrl=ref()
 
 //用户上传的头像文件
-    let avatarFile = ref()
+    const avatarFile = ref()
 //上传到服务器的头像文件
-    let avatar = ref()
+    const avatar = ref()
 //控制头像上传按钮是否显示
-    let changeHeadImgBtnFlag = ref(false)
+    const changeHeadImgBtnFlag = ref(false)
 
-let headImgDialogVisible=ref(false)
+const headImgDialogVisible=ref(false)
 
 //当用户选择图片之后开始解析图片和计算md5
     function fileChange(file: UploadFile) {

@@ -82,9 +82,7 @@
             <el-input type="textarea" v-model="imgInfo.imgUrl" placeholder="请输入图片链接"/>
           </div>
           <!--preview-teleported解决图片显示不全的问题-->
-          <div v-else @click="checkImage(scope.row.imgUrl,scope.row.imgName,$event)"
-               class="preImg"
-               :id="'imgDiv-'+imgInfo.imgIndex">
+          <div v-else class="preImg" :id="'imgDiv-'+imgInfo.imgIndex">
             <el-image :src="scope.row.imgUrl" :zoom-rate="1.2" :id="'img-'+scope.row.imgIndex"
                       :max-scale="7"
                       :min-scale="0.2"
@@ -170,10 +168,10 @@
           v-model:current-page="condition.currentPage"
           v-model:page-size="condition.pageSize"
           :page-sizes="[10, 25, 50, 100]"
-          :layout="total/condition.pageSize>10? 'total, sizes, prev, pager, next,jumper' :'total, sizes, prev, pager, next'"
+          :layout="total/condition.pageSize!>10? 'total, sizes, prev, pager, next,jumper' :'total, sizes, prev, pager, next'"
           :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+          @size-change="render"
+          @current-change="render"
       />
     </div>
   </el-main>
@@ -189,48 +187,38 @@
 import {useRouter} from 'vue-router'
 import axios from "axios";
 import {ElMessage, ElMessageBox, ElTreeSelect} from "element-plus";
-import type {TableColumnCtx, TableInstance} from "element-plus";
+import type {TableInstance} from "element-plus";
 import {onMounted, reactive, ref} from 'vue'
-import UploadImage from "@/components/UploadImage.vue";
 import useTimeStamp from "@/hooks/useTimestamp";
-import {
-  Check, CloseBold,
-  Download,
-  Edit, InfoFilled,
-  Picture as IconPicture,
-  Search,
-  Select, Warning,
-} from "@element-plus/icons-vue";
-
-const {getTime} = useTimeStamp()
-
-const router = useRouter()
-
-//管理员登录判断
+import {Picture as IconPicture, Search} from "@element-plus/icons-vue";
 import useUserInfo from "@/hooks/useUserInfo";
 import useFunction from "@/hooks/useFunction";
 import useResponsive from "@/hooks/useResponsive";
 
-const {copyText, deepEqual} = useFunction()
+const router = useRouter()
+const {getTime} = useTimeStamp()
+const {deepEqual,diffObj} = useFunction()
 const {isAdmin} = useUserInfo()
 const {screenHeight} = useResponsive()
+//管理员登录判断
 if (!isAdmin.value) router.replace({name: 'home'})
 
 
 //region  树状选择框
-const roleIDList = ref([])//树状选择框当前的值(是角色ID字符串数组)
+const roleIDList = ref<string[]>([])//树状选择框当前的值(是角色ID字符串数组)
 
 //树状选择框的选项
-let sourceData = reactive([])
-//角色树状选择框的筛选(搜索时)
-const filterNodeMethod = (roleID, sourceData) => sourceData.label.includes(roleID)
+const sourceData: SourceData[] = reactive([])
+//角色树状选择框的筛选(搜索输入时触发)
+const filterNodeMethod = (roleName: string, sourceDataItem: SourceData) => sourceDataItem.label.includes(roleName)
+
 //角色树状选择框的筛选(修改时)
 const updateRoleNames = (isSearch = false) => {
   console.log(imgInfo.tags, roleIDList.value, !isSearch)
   if (!isSearch) {//表格中修改图片数据
-    if (roleIDList.value.length === 0) imgInfo.tags = null
+    if (roleIDList.value.length === 0) imgInfo.tags = ''
     else imgInfo.tags = roleIDList.value.join(',')//返回角色ID字符串
-    imgInfo.roleNames = roleIDList.value.map(roleId => roles.value[roleId]).join(',')//返回角色名字字符串
+    imgInfo.roleNames = roleIDList.value.map(roleId => roles.value[roleId]).join(',')//返回角色名字字符串,roleId是对象的键名
   }//isSearch=true代表顶部搜索框的角色筛选
   // console.log(imgInfo)
 }
@@ -238,7 +226,7 @@ const updateRoleNames = (isSearch = false) => {
 
 
 //用户查询的参数
-const condition = reactive<ImgParams>({
+const condition: ImgParams = reactive({
       version: [],
       roles: [],
       sort: 2,
@@ -250,27 +238,19 @@ const condition = reactive<ImgParams>({
     }
 )
 //用户上一次查询的参数
-// const oldCondition = reactive<ImgParams>({
-//   version: ['all'],
-//   roles: [],
-//   sort: 2,
-//   accurate: 0,
-//   pageSize: 25,
-//   currentPage: 1
-// })
-const oldCondition = reactive<ImgParams>({
-  version: null,
-  roles: null,
-  sort: null,
-  accurate: null,
-  pageSize: null,
-  currentPage: null,
-  orderBy: null,
-  isDesc: null
+const oldCondition: ImgParams = reactive({
+  version: [],
+  roles: [],
+  sort: 2,
+  accurate: 0,
+  pageSize: 50,
+  currentPage: 1,
+  orderBy: '',
+  isDesc: ''
 })
 
 //当前修改的图片信息
-let imgInfo = reactive<ReverseImgInfo>({
+const imgInfo:ReverseImgInfo = reactive({
   id: 0,
   oldName: '',
   newName: '',
@@ -284,35 +264,18 @@ let imgInfo = reactive<ReverseImgInfo>({
 })
 const total = ref(25) //总数有多少张图
 //筛选
-const activeIndex = ref('1')  //激活的折叠面板序号
-const versionInfo = reactive<TableFilterItem<number>[]>([])    //存版本信息
-const roleInfo = reactive<Role[]>([]) //存角色信息
-const roles = ref({})  //存角色信息{"1": "维尔汀","2": "十四行诗","3": "APPLe"}
-const campInfo = reactive<string[]>([]) //存阵营信息
-const raceInfo = reactive<string[]>([]) //存种族信息
-
-const checkAllVersions = ref(false)   //全选版本
-const isIndeterminateVersion = ref(false)  //全选版本按钮状态
+const versionInfo: TableFilterItem<number>[] = reactive([])    //存版本信息
+const roleInfo: Role[] = reactive([]) //存角色信息
+const roles = ref<Record<string, string>>({})  //存角色信息{"1": "维尔汀","2": "十四行诗","3": "APPLe"}
+const campInfo: string[] = reactive([]) //存阵营信息
+const raceInfo: string[] = reactive([]) //存种族信息
 const checkAllRoles = ref(false)   //全选角色
 const checkNoRole = ref(false)   //全选无角色
-const isIndeterminateRole = ref(false)  //全选角色按钮状态
-const isIndeterminateNoRole = ref(false)  //全选无角色按钮状态
-const campName = ref<string>('')      //阵营名称
-const raceName = ref<string>('')      //种族名称
-
-const completed = reactive<Notice[]>([])      //筛选下方的公告列表：完成和未完成的功能
-const unCompleted = reactive<Notice[]>([])
-
-const showUrl = ref(false)     //控制开源地址的显示
-const showNotice = ref(false)     //控制下载须知界面的显示
-const isShowNum = ref<number>(1)      //控制下载公告须知的显示第几个页面
-const isShowNotice = ref(false)//控制模糊和精准搜索的说明是否显示
-// const tableData = reactive<ReverseImgInfo[]>([])  //展示列表，存的图片信息对象
-const previewImgList = reactive<string[]>([]) //大图展示列表，存的图片链接
+const previewImgList: string[] = reactive([]) //大图展示列表，存的图片链接
 const isChoose = ref(0)   //是否是批量选择状态
 
 //上传图片面板的显示与隐藏
-let dialogVisible = ref(false)
+const dialogVisible = ref(false)
 
 const tableRef = ref<TableInstance>()
 
@@ -324,20 +287,22 @@ const clearFilter = () => {
 
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({column, prop, order}) {
-  console.log(column, prop, order)
+function handleSortChange({prop, order}: Sort) {
+  //  {column,prop, order}
+  console.log(prop, order)
   if (prop === 'id') {//根据排序整个列表
     condition.orderBy = prop
     order === 'descending' ? condition.isDesc = 'desc' : condition.isDesc = ''
     render()
   } else tableData.sort((a, b) => {  // 根据 column 和 order 对 this.tableData 进行排序,只排序本页
-    if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;//
-    else if (a[prop] > b[prop]) {
+    const propA = a[prop as keyof typeof a]!
+    const propB = b[prop as keyof typeof b]!
+    if (propA < propB) return order === 'ascending' ? -1 : 1;//
+    else if (propA > propB) {
       console.log('正序')
       return order === 'ascending' ? 1 : -1;
     } else return 0;
   })
-
 }
 
 
@@ -348,7 +313,7 @@ onMounted(async () => {
 })
 
 //获取版本列表并添加到菜单
-async function getVersion() {
+const getVersion = async () => {
   try {
     const result = await axios({
       url: '/getVersion',
@@ -358,15 +323,13 @@ async function getVersion() {
     const {versionList, roleList}: { versionList: VersionInfo[], roleList: Role[] } = result.data.data
     // const versionList=
     //更新版本列表
-    versionList.forEach((item) => {
-      versionInfo.push({text: item.versionName, value: item.version})
-    })
+    versionList.forEach((item) => versionInfo.push({text: item.versionName, value: item.version}))
 
     //更新角色列表
     roleInfo.splice(0, roleInfo.length, ...roleList)
     //获取阵营列表
-    const campList = new Set([])
-    const raceList = new Set([])
+    const campList = new Set<string>()
+    const raceList = new Set<string>()
     roleInfo.forEach(item => {
       campList.add(item.camp)
       raceList.add(item.race)
@@ -376,9 +339,9 @@ async function getVersion() {
     raceInfo.splice(0, campInfo.length, ...raceList)
     console.log('campList', campList)
     console.log('campInfo', campInfo)
-    const newSourceData = campInfo.map((item, index) => {
+    const newSourceData = <SourceData[]>campInfo.map((item, index) => {
       const children = roleList.map(role => {
-        if (role.camp === item) return {label: role.name, value: role.id.toString()}
+        if (role.camp === item) return {label: role.name, value: role.id}
       }).filter(item => item !== undefined)//过滤掉空值
       return {label: item, value: index, children}
     })
@@ -386,20 +349,22 @@ async function getVersion() {
     sourceData.splice(0, sourceData.length, ...newSourceData)
     console.log('sourceData', sourceData)
     // 构建id到name的映射
-    roles.value = roleInfo.reduce((map, role) => {
+    roles.value = roleInfo.reduce((map: Record<string, string>, role) => {
       map[role.id] = role.name  //创建对象的值，id作为key，name作为value
       return map
     }, {})
   } catch (error) {
     console.log('发生错误：')
-    console.log(error)
-    ElMessage.error('发生错误：' + error.message)
+    if (error instanceof Error) {
+      console.log(error)
+      ElMessage.error('发生错误：' + error.message)
+    }
   }
 }
 
 
 //渲染函数(还未解决index排序问题)
-async function render() {
+const render = async () => {
   //清空表格显示的数据
   // tableData.splice(0, tableData.length)
   //根据当前页码计算出应显示的数据
@@ -415,23 +380,15 @@ async function render() {
       const idList = item.tags.split(',')
 
       // 将字符串按逗号分割并替换为角色名称
-      let outputArray = idList.map(x => roles.value[x]) //roles[x] 通过  对象["键名"]  的格式取值
+      let outputArray = idList.map((x) => roles.value[x]) //roles[x] 通过  对象["键名"]  的格式取值
       item.roleNames = outputArray.join(',')// 输出: 角色A,角色B,角色C
       // console.log(idList, outputArray)
     }
   })
 }
 
-const handleSizeChange = (val: number) => {
-  render()
-}
-const handleCurrentChange = (val: number) => {
-  render()
-}
-
-
 //获取图片
-async function getImages() {
+const getImages = async () => {
   try {
     if (!!isChoose.value) selectBtn(2) //如果是选择状态，则退出
     //如果全选版本，则直接全部清除
@@ -447,11 +404,12 @@ async function getImages() {
     if (deepEqual(condition, oldCondition, true)) return ElMessage.info('筛选条件未作改变，已取消查询')
     else {
       // 将 a 的值同步到 b，包括空值
-      Object.keys(oldCondition).forEach(key => {
-        if (condition.hasOwnProperty(key)) {
-          oldCondition[key] = condition[key];
+      const keys = Object.keys(oldCondition) as Array<keyof ImgParams>//类型断言keys中是ImgParams的键名
+      keys.forEach(key => {
+        if (key in condition) {
+          oldCondition[key] = condition[key]  //类型断言condition[key]与oldCondition[key]类型相同
         } else {
-          delete oldCondition[key];  // 删除 b 中 a 中不存在的属性
+          delete oldCondition[key]  // 删除 b 中 a 中不存在的属性
         }
       });
     }
@@ -471,9 +429,6 @@ async function getImages() {
       item.imgIndex = index
       previewImgList.push(item.imgUrl)
     })
-    // console.log(tableData)
-
-
   } catch (error) {
     console.log('发生错误：')
     console.log(error)
@@ -515,7 +470,7 @@ function selectBtn(num?: number) {
 }
 
 
-const tableData = reactive<ReverseImgInfo[]>([])//展示列表，存的图片信息对象
+const tableData: ReverseImgInfo[] = reactive([])//展示列表，存的图片信息对象
 
 const isEditRow = ref<number>(-1)//编辑标记
 
@@ -524,40 +479,12 @@ const handleEdit = (index: number, row: ReverseImgInfo) => {
   isEditRow.value = index //编辑的行
   if (!!row.tags) roleIDList.value = row.tags.split(',')//角色id数组
   else roleIDList.value = []
-  imgInfo = Object.assign(imgInfo, row)//点击编辑时，将当前行数据添加到当前编辑的信息imgInfo
+  Object.assign(imgInfo, row)//点击编辑时，将当前行数据添加到当前编辑的信息imgInfo
 }
 
 //还原编辑标记
 function handleCancel() {
   isEditRow.value = -1
-}
-
-// 点击图片事件
-function checkImage(url: string, name: string, e: Event) {//这个事件要绑定el-image父级盒子上
-  const target = e.target as HTMLInputElement
-  if (!isChoose.value) {//没有进入多选状态，此时点击是全屏浏览图片，添加底部菜单
-    if (target.tagName !== 'IMG' || target.classList.contains('el-image-viewer__img')) return  //如果点击的不是图片元素则终止函数,以防重复添加
-
-
-  } else {//进入多选状态,根据id里面的数字获取是第几张图
-    const imgNum = target.id.match(/\d+/g)[0]
-    const imgDiv = document.querySelector(`#imgDiv-${imgNum}`)
-    const isChecked = imgDiv.classList.contains('checked')
-    if (isChecked) {
-      //取消选中样式
-      imgDiv.classList.remove('checked')
-      //遍历下载列表，删除取消选中的图片链接
-      // for (let i = downloadList.length - 1; i >= 0; i--) {
-      //   if (downloadList[i].imgName === name) downloadList.splice(i, 1)
-      // }
-    } else {
-      //添加选中样式及下载链接
-      imgDiv.classList.add('checked')
-      // downloadList.push(imgList[imgNum])
-    }
-    //console.log(downloadList)
-    console.log('isChecked', !isChecked)
-  }
 }
 
 
@@ -588,7 +515,7 @@ function updateRow(data: ReverseImgInfo, oldData: ReverseImgInfo) {
     }
   }).then(result => {
     // console.log(result)
-    const {msg, newPath} = result.data
+    const {msg} = result.data
     //判断是否修改文件路径
     // if (newPath !== undefined) data.imgPath = newPath
     //将修改后的信息显示出来
@@ -603,16 +530,6 @@ function updateRow(data: ReverseImgInfo, oldData: ReverseImgInfo) {
   })
 }
 
-
-//清除未修改的数据,如果未修改返回{}
-function diffObj(newData: ReverseImgInfo, oldData: ReverseImgInfo) {
-  return Object.keys(newData).concat(Object.keys(oldData))
-      .filter(key => newData[key] !== oldData[key])
-      .reduce((result, key) => {
-        result[key] = newData[key]; // 返回newData对象的属性
-        return result;
-      }, {});
-}
 
 //图片删除确认
 const deleteRow = (index: number, info: ReverseImgInfo) => {
@@ -640,17 +557,17 @@ const deleteRow = (index: number, info: ReverseImgInfo) => {
 //删除图片
 const deleteImage = (index: number, data: ReverseImgInfo) => {
   return ElMessage.warning('暂未支持删除操作')
-  axios({
-    // url: '/',
-    method: 'delete',
-    data
-  }).then((result) => {
-    // console.log(result)
-    ElMessage.success(result.data.msg)
-    tableData.splice(index, 1)
-  }).catch(error => {
-    console.dir('发生错误：' + error)
-  })
+  // axios({
+  //   // url: '/',
+  //   method: 'delete',
+  //   data
+  // }).then((result) => {
+  //   // console.log(result)
+  //   ElMessage.success(result.data.msg)
+  //   tableData.splice(index, 1)
+  // }).catch(error => {
+  //   console.dir('发生错误：' + error)
+  // })
 }
 </script>
 
