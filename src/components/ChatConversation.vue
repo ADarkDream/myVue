@@ -139,7 +139,7 @@
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
 .conversation-area {
   width: 340px;

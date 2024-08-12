@@ -164,7 +164,16 @@ export default function () {
             }, {})
     }
 
-
+    //el-table中按时间顺序和逆序排列
+    const sortByTime = (tableData,prop,order) => {
+        tableData.sort((a, b) => {
+            const propA = a[prop as keyof typeof a]
+            const propB = b[prop as keyof typeof b]
+            if (propA < propB) return order === 'ascending' ? -1 : 1;
+            if (propA > propB) return order === 'ascending' ? 1 : -1;
+            return 0;
+        })
+    }
     // 向外暴露
-    return {copyWebsiteRecord, copyText, copyCode, deepEqual, getBG, diffObj}
+    return {copyWebsiteRecord, copyText, copyCode, deepEqual, getBG, diffObj,sortByTime}
 }

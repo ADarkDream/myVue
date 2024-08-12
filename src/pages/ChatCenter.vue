@@ -3,16 +3,19 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, onUnmounted, reactive, ref} from 'vue'
+import {onUnmounted, nextTick, ref} from 'vue'
 import {ElMessage} from 'element-plus'
 import {useChatInfoStore} from "@/store/useChatInfoStore";
 import {useRouter} from "vue-router";
 import {useChatMsgStore} from "@/store/useChatMsgStore";
 import {ChatMsg} from "@/types/chat";
+import emitter from "@/utils/emitter";
 
-const {playerInfo, socket} = useChatInfoStore()//本地用户信息
+const playerInfo = useChatInfoStore()//本地用户信息
+const socket = playerInfo.socket
 const {roomMsg} = useChatMsgStore()//本地的聊天信息
 const router = useRouter()
+
 
 //监听服务器的首次连接，获取信息
 socket.on('connection', result => {
@@ -21,7 +24,9 @@ socket.on('connection', result => {
   //这里要先判断本地数据，确认是不是断线重连
   if (status === 200) {
     ElMessage.success(msg)
-    Object.assign(playerInfo, data)
+    // Object.assign(playerInfo, data)
+    playerInfo.setPID(data.playerID)
+    console.log('playerInfo', playerInfo)
   } else ElMessage.error('与聊天服务器连接失败')
 })
 
@@ -51,19 +56,17 @@ socket.on('room-join', result => {
     setTimeout(() => {
       router.push({name: 'talk', query: {roomID: playerInfo.roomID}})
     }, 1000)
-  } else if (status === 201) {//re-link重连事件
-    ElMessage.success(msg)//重连房间成功
-    console.log('msgHistory', data.msgHistory)
-    getMsgHistory(data.msgHistory)
   } else ElMessage.error(msg)
 })
 
 //处理获取到的历史消息
 const getMsgHistory = (msgData: ChatMsg[]) => {
-  const chatMsgInfo = JSON.parse(localStorage.getItem('chatMsgInfo'))
+  const chatMsgInfo = JSON.parse(localStorage.getItem('chatMsgInfo') || '{}')
   if (chatMsgInfo) {
-    const tempArr = mergeAndSortArrays(chatMsgInfo.roomMsg, msgData)
+    const tempArr = mergeAndSortArrays(chatMsgInfo.roomMsg || [], msgData)
     roomMsg.splice(0, roomMsg.length, ...tempArr)//将处理后的消息存入roomMsg
+    //接收到消息之后，执行向下滚动
+    nextTick(() => emitter.emit('scrollToBottom'))
   }
 }
 
@@ -91,8 +94,9 @@ socket.on('room-message', result => {
   if (status === 200) {
     // data.roomID=
     roomMsg.push(data)
+    //接收到消息之后，执行向下滚动
+    nextTick(() => emitter.emit('scrollToBottom'))
   }
-
 })
 
 
@@ -100,7 +104,9 @@ socket.on('room-message', result => {
 socket.on('player-join', result => {
   console.log('player-join收到消息：', result)
   const {status, msg, data} = result
-  if (status === 200) ElMessage.success(msg) //roomMsg.push({type: data.type, message:msg, time: data.time})
+  if (status === 200 && data.playerInfo.playerID !== playerInfo.playerID) //排除本人
+    ElMessage.success(msg)
+  //roomMsg.push({type: data.type, message:msg, time: data.time})
   // ElMessage.info(msg)
 })
 
@@ -113,6 +119,18 @@ socket.on('player-leave', result => {
   // list2.push(result)
 })
 
+const cycle = ref(1)
+
+// 监听连接错误事件
+socket.on('connect_error', (err) => {
+  ElMessage.error('聊天服务器连接失败,正在重试第' + cycle.value + '次')
+  cycle.value++
+  if (cycle.value > 3) {
+    socket.close()
+    ElMessage.error('聊天服务器连接失败,已关闭连接')
+  }
+  console.error(err)
+})
 
 //监听自己重连房间的消息
 // socket.on('re-link', result => {

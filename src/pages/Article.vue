@@ -1,6 +1,5 @@
 <template>
-  <div
-      :style="'min-height:'+(isPC? screenHeight-80 : screenHeight-40)+'px; background-color: var(--el-color-primary-light-9);' ">
+  <div :style="'min-height:'+(isPC? screenHeight-80 : screenHeight-40)+'px; background-color: var(--el-color-primary-light-9);' ">
     <div class="articleBar" v-if="false">
       <el-button @click="router.back()">
         <el-icon>

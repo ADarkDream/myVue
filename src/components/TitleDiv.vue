@@ -235,7 +235,7 @@
   </el-drawer>
   <!--  公告界面-->
   <el-dialog v-model="showNotice" :width="isPC? '60%':'90%' " :before-close="closeNotice" :show-close="!isPC"
-             style="z-index: 500"
+             :z-index="500"
              destroy-on-close>
     <template #header><span style="font-size: 24px">公告</span></template>
     <!--  Notice组件-->

@@ -10,7 +10,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "start": "npm run dev",
-    "sitemap":"node updateSitemap.js"
+    "sitemap": "node updateSitemap.js"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
@@ -25,6 +25,7 @@
     "mitt": "^2.1.0",
     "pinia": "^2.2.0",
     "pinia-plugin-persistedstate": "^3.2.1",
+    "scss": "^0.2.4",
     "sitemap": "^8.0.0",
     "socket.io-client": "^4.7.5",
     "spark-md5": "^3.0.2",
@@ -40,6 +41,8 @@
     "@vitejs/plugin-vue": "^5.0.4",
     "@vue/tsconfig": "^0.5.1",
     "npm-run-all2": "^6.1.2",
+    "sass": "^1.77.8",
+    "sass-loader": "^16.0.0",
     "typescript": "^5.4.5",
     "unplugin-auto-import": "^0.17.5",
     "unplugin-vue-components": "^0.26.0",

@@ -872,7 +872,7 @@ console.log('isPC',isPC.value)
 }
 
 
-/*下面是Transition组件的CSS动画*/
+/*region下面是Transition组件的CSS动画*/
 .list-enter-active,
 .list-leave-active {
   transition: all 0.5s ease;
@@ -927,4 +927,5 @@ console.log('isPC',isPC.value)
     transform: translate3d(4px, 0, 0);
   }
 }
+/*endregion*/
 </style>

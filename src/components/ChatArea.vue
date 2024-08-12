@@ -1,12 +1,13 @@
 <template>
   <div class="chat-area">
     <div class="chat-area-header">
-      <el-text type="primary" style="font-size: 22px;">{{isLogin? '':'临时'}}聊天室[Demo]</el-text>
+      <el-button @click="reLink" size="small" type="warning" plain>重连</el-button>
+      <el-text type="primary" style="font-size: 22px;">{{ isLogin ? '' : '临时' }}聊天室[Demo]</el-text>
       <el-button type="primary"
-                 @click="copyText('https:muxidream.cn/Chat/hall?roomID='+playerInfo.roomID+'&playerName=这里填昵称','房间号')"
+                 @click="copyText('https:muxidream.cn/Chat/talk?roomID='+playerInfo.roomID+'&playerName=这里填昵称','房间号')"
                  title="点击复制当前房间号" size="small">复制房间地址
       </el-button>
-      <el-button @click="reLink" size="small" type="warning" plain>重连</el-button>
+
       <!--          <div class="chat-area-group">
                   <img class="chat-area-profile"
                        src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%283%29+%281%29.png" alt=""/>
@@ -17,14 +18,16 @@
                   <span>+4</span>
                 </div>-->
     </div>
-    <el-scrollbar>
-      <div class="chat-area-main">
-
+    <el-scrollbar ref="scrollbarRef">
+      <div class="chat-area-main" ref="content">
         <template v-for="item in roomMsg" :key="item.time">
-          <div :class="['chat-msg',item.playerID===playerInfo.playerID?'owner':'guest']">
+          <div v-if="item.roomID===playerInfo.roomID"
+               :class="['chat-msg',item.playerID===playerInfo.playerID?'owner':'guest']">
             <div class="chat-msg-profile">
               <img class="chat-msg-img"
-                   :src="imageSrc" alt=""/>
+                   src="http://qiniufree.muxidream.cn/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png"
+                   alt="">
+              <!--                   :src="imageSrc" alt=""/>-->
               <el-text class="chat-msg-date">{{ getDiffTime(item.time) }}</el-text>
             </div>
             <div class="chat-msg-content">
@@ -57,7 +60,7 @@
         <path
             d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
       </svg>
-      <input type="text" v-model="msg" @keyup.enter="sendMsg" placeholder="Type something here..."/>
+      <input type="text" ref="inputRef" v-model="msg" @keyup.enter="sendMsg" placeholder="Type something here..."/>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile">
         <circle cx="12" cy="12" r="10"/>
@@ -82,36 +85,44 @@ import {useChatInfoStore} from "@/store/useChatInfoStore";
 import {useChatMsgStore} from '@/store/useChatMsgStore'
 
 
-const {playerInfo, socket} = useChatInfoStore()//本地用户信息
+const playerInfo = useChatInfoStore()//本地用户信息
+const socket = playerInfo.socket
 const {roomMsg} = useChatMsgStore()//本地的聊天信息
 // import {ChatMsg} from '@/types/chat'
 import useFunction from "@/hooks/useFunction";
+import emitter from "@/utils/emitter";
 
-const router = useRouter();
+const router = useRouter()
 const route = useRoute()
 const {copyText} = useFunction()
 const {isLogin, imageSrc} = useUserInfo()
 const {getDiffTime} = useTimestamp()
 
 
-
 onMounted(() => {
-  if (route.query.roomID && route.query.playerName) {
-    playerInfo.roomID = route.query.roomID as string
-    playerInfo.playerName = route.query.playerName as string
-    router.push({name: 'talk'})
-  }
+  const {roomID, playerName} = route.query
+  if (roomID) playerInfo.setRID(roomID as string)
+  if (playerName) playerInfo.setRName(playerName as string)
+
   if (!playerInfo.playerName) {//昵称为空，返回主页
     ElMessage.error('请先填写昵称')
-    return router.push({name: 'chat', query: {roomID: route.query.roomID}})
+    return router.push({name: 'hall', query: {roomID}})
   }
 
-  if (!playerInfo.roomID) {//房间号为空，设置为当前房间号
-    if (route.query.roomID) playerInfo.roomID = route.query.roomID as string
-    else return router.push({name: 'chat'})
+  if (!playerInfo.roomID) {//房间号为空
+    // 设置房间号为地址栏房间号
+    if (roomID) playerInfo.setRID(roomID as string)
+    else {
+      ElMessage.error('请先填写房间号')
+      return router.push({name: 'hall'})
+    }
   }
-  console.log('roomMsg', roomMsg)
-  reLink()
+  console.log('route.query',route.query,JSON.stringify(route.query)!=='{}')
+  //如果地址栏有参数则清除
+  if (JSON.stringify(route.query)!=='{}') return router.push({name: 'talk'})
+  reLink()//重连
+  inputFocus()//输入框获取焦点
+
   // if (chatMsgInfo) {//pinia刷新之后不能获取复杂数据类型，bug? 手动获取
   //   console.log(chatMsgInfo)
   //   // roomMsg.splice(0, roomMsg.length, chatMsgInfo.roomMsg) //恢复聊天信息
@@ -131,36 +142,70 @@ const msg = ref<string>('')
 
 //尝试重连
 const reLink = () => {
-  socket.emit('re-link')
+  const {playerID, playerName, roomID, roomName} = playerInfo
+  socket.emit('re-link', {
+    playerInfo: {playerID, playerName, roomID, roomName}
+  })
 }
 
 //发送信息
 const sendMsg = () => {
   if (msg.value) {
-    socket.emit('room-message', {message: msg.value})
+    const {playerID, playerName, roomID, roomName} = playerInfo
+    socket.emit('room-message', {message: msg.value, playerInfo: {playerID, playerName, roomID, roomName}})
     msg.value = ''
   }
 }
 
+//自己声明的el-scrollbar的接口类型
+interface CustomElScrollbar {
+  setScrollTop: (x: number) => void
+}
+
+//合并接口类型
+interface ElScrollbar extends CustomElScrollbar, HTMLDivElement {
+}
+
+//el-scrollbar滑动区域元素
+const scrollbarRef = ref<(ElScrollbar) | null>(null)
+//chat-area-main聊天区域元素
+const content = ref<HTMLDivElement | null>(null)
+//聊天输入框
+const inputRef = ref<HTMLInputElement | null>(null)
+
+//聊天窗口滚动到底部
+const scrollToBottom = () => {
+  if (content.value && scrollbarRef.value)
+    scrollbarRef.value.setScrollTop(content.value.scrollHeight)
+}
+
+//注册聊天窗口滚动到底部
+emitter.on('scrollToBottom', scrollToBottom)
+
+//输入框获取焦点
+const inputFocus = () => {
+  if (inputRef.value) inputRef.value.focus()
+}
 
 //关闭连接
 // const closeConnection2 = () => {
-  // if (server.readyState === WebSocket.OPEN) {
-  //   server.close(1000, '关掉了')
-  // }
+// if (server.readyState === WebSocket.OPEN) {
+//   server.close(1000, '关掉了')
+// }
 // }
 
 //阻止用户直接关闭当前标签页
-const listener = (event :Event) => {
+const listener = (event: Event) => {
   event.preventDefault(); // 阻止默认的关闭行为
- // event.returnValue = ''; // 设置警告消息为空字符串，以触发浏览器显示默认的关闭提示
+  // event.returnValue = ''; // 设置警告消息为空字符串，以触发浏览器显示默认的关闭提示
 }
 window.addEventListener('beforeunload', listener)
 
 
 //退出,删除全部监听
 onUnmounted(() => {
-  socket.emit('room-leave', {reason: '离开房间的原因'})
+  const {playerID, playerName, roomID, roomName} = playerInfo
+  socket.emit('room-leave', {playerInfo: {playerID, playerName, roomID, roomName}, reason: '离开聊天界面'})
   removeEventListener('beforeunload', listener)
   console.log('已退出chatRoom')
   // socket.removeAllListeners()
@@ -171,7 +216,7 @@ onUnmounted(() => {
 
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .chat-area {
   flex-grow: 1;
   display: flex;
@@ -244,8 +289,8 @@ onUnmounted(() => {
   }
 
   &-text {
-    background-color: var(--chat-text-bg);
-    padding: 15px;
+    /*    background-color: var(--chat-text-bg);
+    padding: 15px;*/
     border-radius: 20px 20px 20px 0;
     line-height: 1.5;
     font-size: 14px;
@@ -342,6 +387,7 @@ onUnmounted(() => {
   border-top: 1px solid var(--border-color);
   width: 100%;
   padding: 10px 20px;
+  height: 50px;
   align-items: center;
   background-color: var(--theme-bg-color);
   position: sticky;

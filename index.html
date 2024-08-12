@@ -4,22 +4,20 @@
     <meta charset="UTF-8">
     <link rel="manifest" href="/manifest.json"/>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <!--    删掉之后移动端会丢失响应式-->
+    <!--下一行删掉之后移动端会丢失响应式-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="baidu-site-verification" content="codeva-A4yk8FKcSI"/>
-    <!--    <link rel="apple-touch-icon-precomposed" href="/favicon_144x144.png">-->
+    <link rel="apple-touch-icon-precomposed" href="/favicon_144x144.png">
     <meta content="默默" name="author"/>
     <meta content="此网站为默默的个人网站，用于分享一些软件或网站，侵权请联系删除。" name="description"/>
     <title>默默的小站</title>
     <style>
         body {
-            /*            background: no-repeat  center / cover fixed;*/
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
             overflow-x: hidden;
-            background-color: #000; /*预设黑色背景*/
         }
 
         /*夜间模式*/
@@ -72,9 +70,8 @@
             width: 100%;
             user-select: none;
             z-index: 9999;
-            overflow: hidden
+            overflow: hidden;
         }
-
 
         svg {
             height: 30%;
@@ -128,29 +125,43 @@
 
         /*endregion*/
     </style>
-    <script type="text/javascript">
-        (function (c, l, a, r, i, t, y) {
-            c[a] = c[a] || function () {
-                (c[a].q = c[a].q || []).push(arguments)
-            };
-            t = l.createElement(r);
-            t.async = 1;
-            t.src = "https://www.clarity.ms/tag/" + i;
-            y = l.getElementsByTagName(r)[0];
-            y.parentNode.insertBefore(t, y);
-        })(window, document, "clarity", "script", "nl63h6oui7");
+    <script type="text/javascript"> //必应的网站分析验证
+    (function (c, l, a, r, i, t, y) {
+        c[a] = c[a] || function () {
+            (c[a].q = c[a].q || []).push(arguments)
+        }
+        t = l.createElement(r)
+        t.async = 1
+        t.src = "https://www.clarity.ms/tag/" + i
+        y = l.getElementsByTagName(r)[0]
+        y.parentNode.insertBefore(t, y)
+    })(window, document, "clarity", "script", "nl63h6oui7")
     </script>
 </head>
 <body>
-<div id="app">
-    <!--    以下是网站加载动画的样式-->
-    <div id="loading-mask">
-        <svg viewBox="0 0 400 200">
-            <text x="200" y="100">MOMO</text>
-        </svg>
-    </div>
+<!--    以下是网站加载动画的样式-->
+<div id="loading-mask">
+    <svg viewBox="0 0 400 200">
+        <text x="200" y="100">MOMO</text>
+    </svg>
 </div>
-<script type="module" src="./src/main.ts"></script>
+<div id="app"></div>
 </body>
+<script type="module" src="./src/main.ts"></script>
+<script type="text/javascript">
+    //动画的黑夜模式设置
+    const isDark = sessionStorage.getItem('isDark') === '1' || window.matchMedia('(prefers-color-scheme: dark)').matches
+    const mask = document.querySelector('#loading-mask')
+    //根据当前是否是黑夜模式更换加载动画背景颜色
+    mask.style.backgroundColor = isDark ? '#000' : '#FFF'
+    //加载事件
+    document.onreadystatechange = function () {
+        if (document.readyState === 'loading') { // 页面正在加载
+            mask.style.display = 'block'
+        } else if (document.readyState === 'complete') {       // 页面加载完毕
+            mask.style.display = 'none'
+        }
+    }
+</script>
 <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
 </html>

@@ -126,7 +126,10 @@ const msg2 = ref<string>('')
 // }
 const addMsg = () => {
   //尝试重连
-  socket.emit('re-link')
+  const {playerID, playerName, roomID, roomName} = playerInfo
+  socket.emit('re-link', {
+    playerInfo: {playerID, playerName, roomID, roomName}
+  })
 }
 
 //发送信息

@@ -111,7 +111,7 @@
           <template #default="scope">
             <div v-if="isEditRow!==scope.$index">
               <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row.uid,false)">
+              <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row,false)">
                 删除
               </el-button>
             </div>
@@ -202,7 +202,7 @@
           <template #default="scope">
             <div v-if="isEditRow!==scope.$index">
               <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row.uid,true)">
+              <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row,true)">
                 删除
               </el-button>
             </div>
@@ -229,7 +229,7 @@ import useFunction from "@/hooks/useFunction";
 import {UserInfo} from "@/types/user"
 
 const {getTime} = useTimeStamp()
-const {diffObj} = useFunction()
+const {diffObj, sortByTime} = useFunction()
 //控制用户列表和管理员列表
 const tableVisible = ref(false)
 //判断是否是超级管理员
@@ -256,20 +256,36 @@ const filterHandler = (
 }
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({prop, order}: Sort) {
+function handleSortChange({prop,order}:Sort) {
+  if (isEditRow.value !== -1) isEditRow.value = -1
   // 根据 column 和 order 对 this.tableData 进行排序
-  tableData.sort((a, b) => {
-    if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
-    if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
-    return 0;
-  })
-  tableData2.sort((a, b) => {
-    if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
-    if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
-    return 0;
-  })
+  // tableData.sort((a, b) => {
+  //   const propA = a[prop as keyof typeof a]
+  //   const propB = b[prop as keyof typeof b]
+  //   if (propA < propB) return order === 'ascending' ? -1 : 1;
+  //   if (propA > propB) return order === 'ascending' ? 1 : -1;
+  //   return 0;
+  // })
+  //
+  // tableData2.sort((a, b) => {
+  //   const propA = a[prop as keyof typeof a]
+  //   const propB = b[prop as keyof typeof b]
+  //   if (propA < propB) return order === 'ascending' ? -1 : 1;
+  //   if (propA > propB) return order === 'ascending' ? 1 : -1;
+  //   return 0;
+  // })
+  sortByTime(tableData,prop,order)
+    sortByTime(tableData2,prop,order)
 }
-
+    // const sortByTime2 = (mmm:UserInfo[]) => {
+    //     mmm.sort((a, b) => {
+    //         const propA = a[prop as keyof typeof a]
+    //         const propB = b[prop as keyof typeof b]
+    //         if (propA < propB) return order === 'ascending' ? -1 : 1;
+    //         if (propA > propB) return order === 'ascending' ? 1 : -1;
+    //         return 0;
+    //     })
+    // }
 
 getAllUsers()
 
@@ -328,8 +344,8 @@ const newUserInfo: UserInfo = reactive({
   updated_time: '',
 })
 
-let tableData: UserInfo[] = reactive([])
-let tableData2: UserInfo[] = reactive([])
+const tableData: UserInfo[] = reactive([])
+const tableData2: UserInfo[] = reactive([])
 //编辑标记
 let isEditRow = ref<number>(-1)
 
@@ -425,11 +441,13 @@ function addAdmin(uid: number) {
 }
 
 //删除确认框
-const deleteRow = (index: number, uid: number, isAdmin: boolean) => {
-  let str = '用户'
-  if (isAdmin) str = '管理员'
+const deleteRow = (index: number, row: UserInfo, isAdmin: boolean) => {
+  const {uid, username} = row
+  console.log( tableData2.splice(1,1))
+  console.log(row)
+  // handleSortChange()
   ElMessageBox.confirm(
-      `确认删除该${str}吗?`,
+      `确认删除${isAdmin ? '管理员' : '用户'}${username},${index}吗?`,
       'Warning',
       {
         confirmButtonText: '确认删除',

@@ -1,6 +1,6 @@
 <template>
-  <el-container>
-    <div class="solar-syst">
+  <el-container :style=" 'height:'+(isPC? screenHeight-80 : screenHeight-40)+'px'">
+    <div class="solar-system">
       <div class="sun"></div>
       <div class="mercury"></div>
       <div class="venus"></div>
@@ -13,20 +13,20 @@
       <div class="pluto"></div>
       <div class="asteroids-belt"></div>
     </div>
-    <el-card class="msg" shadow="hover">
+    <div class="msg">
       <h1>404 NOT FOUND</h1>
-      <el-text>对不起，您访问的页面不存在。</el-text>
-      <br>
-      <el-text>Sorry, the page you visited does not exist.</el-text>
-      <template #footer>
+      <div style="margin: 20px 0">
+        对不起，您访问的页面已迷失在太阳系。
+        <br>
+        Sorry,the page you visited has been lost in the solar system.
+      </div>
+      <el-space>
         <el-text text type="primary">{{ time }}</el-text>
-        <el-space>
-          <el-text type="info">秒后自动</el-text>
-          <el-link type="primary" @click="router.replace({name: 'home'})">返回首页</el-link>
-          <el-link type="primary" href="tencent://message/?uin=1224021291">联系站长</el-link>
-        </el-space>
-      </template>
-    </el-card>
+        <el-text type="info">秒后自动</el-text>
+        <el-link type="primary" @click="router.replace({name: 'home'})">返回首页</el-link>
+        <el-link type="primary" @click="showContact">联系站长</el-link>
+      </el-space>
+    </div>
   </el-container>
 
 
@@ -34,63 +34,76 @@
 
 <script setup lang="ts">
 import {onBeforeRouteLeave, useRouter} from "vue-router";
-import {ref} from "vue";
+import {ref, Ref} from "vue";
+import useResponsive from "@/hooks/useResponsive";
+import emitter from "@/utils/emitter";
 
 const router = useRouter()
+const {screenHeight, isPC} = useResponsive()
 
-const time = ref(10)
-const timer1 = ref(null)
-const timer2 = ref(null)
+const time: Ref<number> = ref(10)
+const timer1 = ref<NodeJS.Timeout>()
+const timer2 = ref<NodeJS.Timeout>()
 
-timer1.value = setTimeout(() => {
+//倒计时：秒
+timer1.value = setInterval(() => {
+  time.value--
+}, 1000)
+//跳转到首页
+timer2.value = setTimeout(() => {
   router.replace({name: 'home'})
 }, 11000)
 
-timer2.value = setInterval(() => {
-  time.value--
-  console.log(111)
-}, 1000)
+//显示站长联系方式
+const showContact = () => emitter.emit('showNotice', {showNum: '3', activeNum: '1'})
 
 onBeforeRouteLeave(() => {
-  console.log('计时器和倒计时已清除')
   clearTimeout(timer1.value)
   clearInterval(timer2.value)
+  console.log('计时器和倒计时已清除')
 })
 </script>
 
 <style scoped>
-.msg {
-  border: transparent;
-  width: 50%;
-  margin: 10% auto;
-}
-
-h1 {
-  color: gray;
-  font-size: 30px;
-}
-
-
-
 .el-container {
-  position: absolute;
+  position: relative;
   font: normal 1em/1.45em 'Helvetica Neue', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   color: #fff;
   background: radial-gradient(
       ellipse at bottom, #1c2837 0%, #050608 100%
-  );
-  background-attachment: fixed;
+  ) fixed;
+  overflow: hidden;
 }
 
-.solar-syst {
+.msg {
+  border: transparent;
+  width: 100%;
+  margin: 15% auto;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0);
+  color: gray;
+}
+
+@media (max-width: 980px) {
+  .msg { /*缩短选项框右边距*/
+    margin: 30% auto;
+  }
+}
+
+
+/*region太阳系动画*/
+.solar-system {
+  top: 0;
+  left: 0;
   margin: 0 auto;
   width: 100%;
   height: 100%;
-  position: relative;
+  position: absolute;
+
 }
 
-.solar-syst:after {
+.solar-system:after {
   content: '';
   position: absolute;
   height: 2px;
@@ -100,40 +113,39 @@ h1 {
   border-radius: 100px;
 }
 
-.solar-syst div {
+.solar-system div {
   border-radius: 1000px;
   top: 50%;
   left: 50%;
   position: absolute;
-  z-index: 999;
+
 }
 
-.solar-syst div:not(.sun) {
+.solar-system div:not(.sun) {
   border: 1px solid rgba(102, 166, 229, 0.12);
 }
 
-.solar-syst div:not(.sun):before {
+.solar-system div:not(.sun):before {
   left: 50%;
   border-radius: 100px;
   content: '';
   position: absolute;
 }
 
-.solar-syst div:not(.asteroids-belt):before {
+.solar-system div:not(.asteroids-belt):before {
   box-shadow: inset 0 6px 0 -2px rgba(0, 0, 0, 0.25);
 }
 
 .sun {
-  background: radial-gradient(
-      ellipse at center, #ffd000 1%, #f9b700 39%, #f9b700 39%, #e06317 100%
-  );
   height: 40px;
   width: 40px;
   margin-top: -20px;
   margin-left: -20px;
   background-clip: padding-box;
   border: 0 !important;
-  background-position: -28px -103px;
+  background: radial-gradient(
+      ellipse at center, #ffd000 1%, #f9b700 39%, #f9b700 39%, #e06317 100%
+  ) -28px -103px;
   background-size: 175%;
   box-shadow: 0 0 10px 2px rgba(255, 107, 0, 0.4), 0 0 22px 11px rgba(255, 203, 0, 0.13);
 }
@@ -195,7 +207,7 @@ h1 {
   height: 18px;
   width: 18px;
   left: 50%;
-  top: 0px;
+  top: 0;
   margin-left: -9px;
   margin-top: -9px;
   border-radius: 100px;
@@ -261,7 +273,7 @@ h1 {
   height: 2.34%;
   width: 4.676%;
   left: 50%;
-  top: 0px;
+  top: 0;
   transform: rotateZ(-52deg);
   margin-left: -2.3%;
   margin-top: -1.2%;
@@ -346,15 +358,6 @@ h1 {
   margin-left: -1.5px;
 }
 
-.hide {
-  display: none;
-}
-
-.links {
-  margin-top: 5px !important;
-  font-size: 1em !important;
-}
-
 @-webkit-keyframes orb {
   from {
     transform: rotate(0deg);
@@ -373,4 +376,5 @@ h1 {
   }
 }
 
+/*endregion*/
 </style>

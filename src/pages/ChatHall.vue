@@ -12,8 +12,8 @@
         <el-button type="primary" @click="addRoom" :loading="isLoading">创建房间</el-button>
         <el-button type="primary" @click="joinRoom" :loading="isLoading">加入房间</el-button>
         <!--          <el-button type="warning"  @click="socket.connect()" :loading="isLoading">重连</el-button>-->
-        <el-button type="primary" @click="socket.connect()" :loading="isLoading">连接</el-button>
-        <el-button type="primary" @click="socket.disconnect()" :loading="isLoading">断联</el-button>
+        <el-button type="primary" plain @click="socket.connect()" :loading="isLoading">连接</el-button>
+        <el-button type="warning" plain @click="socket.disconnect()" :loading="isLoading">断联</el-button>
       </el-form>
     </el-main>
   </el-container>
@@ -32,7 +32,8 @@ const router = useRouter()
 const route = useRoute()
 
 const {screenHeight, isPC} = useResponsive()
-const {playerInfo, socket} = useChatInfoStore()//本地用户信息
+const playerInfo = useChatInfoStore()//本地用户信息
+const socket = playerInfo.socket
 
 
 const isLoading = ref(false)
@@ -63,19 +64,35 @@ onMounted(() => {
 //创建房间
 const addRoom = () => {
   console.log('尝试创建房间')
+  console.log(formData)
   if (!formData.playerName) return ElMessage.error('昵称不能为空')
   else if (formData.playerName.length > 10) return ElMessage.error('昵称不能超过十个字符')
-  playerInfo.playerName = formData.playerName
-  socket.emit('room-add', {playerInfo})
+
+  // playerInfo.playerName = formData.playerName
+  playerInfo.setPName(formData.playerName)
+  // playerInfo.updateData('rid',playerInfo.playerID)
+  const {playerID, playerName, roomID, roomName} = playerInfo
+  console.log(1, playerInfo.playerName, 2, formData.playerName)
+  socket.emit('room-add', {
+    playerInfo: {playerID, playerName, roomID, roomName}
+  })
   loading()
 }
 
 //进入房间
 const joinRoom = () => {
   console.log('尝试加入房间')
+  console.log(formData)
   if (!formData.roomID || !formData.playerName) return ElMessage.error('房间号和昵称不能为空')
   else if (formData.playerName.length > 10) return ElMessage.error('昵称不能超过十个字符')
-  socket.emit('room-join', {formData, playerInfo})
+  playerInfo.setPName(formData.playerName)
+  playerInfo.setRID(formData.roomID)
+    const {playerID, playerName, roomID, roomName} = playerInfo
+  console.log(playerInfo)
+  // Object.assign(playerInfo, formData)
+  socket.emit('room-join', {
+    playerInfo: {playerID, playerName, roomID, roomName}
+  })
   loading()
 }
 

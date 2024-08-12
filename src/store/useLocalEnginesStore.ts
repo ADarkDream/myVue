@@ -15,47 +15,47 @@ export const useLocalEnginesStore = defineStore('searchEngines', () => {
     const searchEngines = reactive<EngineData[]>([
         {
             id: 0,
-            name: '百度',
+            name: '必应',
             index: 0,
+            src: ico_bing,
+            baseUrl: 'https://cn.bing.com',
+            searchUrl: '/search?q=',
+            isShow: true
+        },
+          {
+            id: 1,
+            name: '百度',
+            index: 1,
             src: ico_baidu,
             baseUrl: 'https://www.baidu.com',
             searchUrl: '/s?wd=',
             isShow: true
         },
         {
-            id: 1,
-            name: '哔哩哔哩',
-            index: 1,
-            src: ico_bilibili,
-            baseUrl: 'https://search.bilibili.com',
-            searchUrl: '/all?keyword=',
-            isShow: true
-        },
-        {
             id: 2,
-            name: '必应',
-            index: 2,
-            src: ico_bing,
-            baseUrl: 'https://cn.bing.com',
-            searchUrl: '/search?q=',
-            isShow: true
-        },
-        {
-            id: 3,
             name: '谷歌',
-            index: 3,
+            index: 2,
             src: ico_google,
             baseUrl: 'https://www.google.com',
             searchUrl: '/search?q=',
             isShow: true
         },
         {
-            id: 4,
+            id: 3,
             name: '360',
-            index: 4,
+            index: 3,
             src: ico_360,
             baseUrl: 'https://www.so.com',
             searchUrl: '/s?q=',
+            isShow: true
+        },
+        {
+            id: 4,
+            name: '哔哩哔哩',
+            index: 4,
+            src: ico_bilibili,
+            baseUrl: 'https://search.bilibili.com',
+            searchUrl: '/all?keyword=',
             isShow: true
         },
     ])
