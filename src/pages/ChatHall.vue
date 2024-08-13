@@ -11,9 +11,8 @@
         </el-form-item>
         <el-button type="primary" @click="addRoom" :loading="isLoading">创建房间</el-button>
         <el-button type="primary" @click="joinRoom" :loading="isLoading">加入房间</el-button>
-        <!--          <el-button type="warning"  @click="socket.connect()" :loading="isLoading">重连</el-button>-->
         <el-button type="primary" plain @click="socket.connect()" :loading="isLoading">连接</el-button>
-        <el-button type="warning" plain @click="socket.disconnect()" :loading="isLoading">断联</el-button>
+        <el-button type="warning" plain @click="socket.disconnect()" :loading="isLoading" v-if="false">断联</el-button>
       </el-form>
     </el-main>
   </el-container>

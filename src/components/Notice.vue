@@ -176,7 +176,6 @@ import {onMounted, reactive, ref} from "vue";
 import {Edit} from "@element-plus/icons-vue";
 import {ElCollapseTransition, ElMessage} from 'element-plus'
 import useTimeStamp from "@/hooks/useTimestamp";
-import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
 import {useRouter} from "vue-router";
 import Approve from "@/components/Approve.vue";
@@ -184,7 +183,6 @@ import Approve from "@/components/Approve.vue";
 
 const {copyText} = useFunction()
 const {getDiffTime} = useTimeStamp()
-const {isPC} = useResponsive()
 const router = useRouter()
 
 const {showFlag} = defineProps(['showFlag'])//切换页面的参数

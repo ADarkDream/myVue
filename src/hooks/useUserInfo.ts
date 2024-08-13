@@ -6,7 +6,7 @@ import {useBaseUrlStore} from '@/store/useBaseUrlStore'
 export default function () {
     const baseUrl = useBaseUrlStore()
     //获取本地存储的用户信息userInfo中的数据
-    const imageSrc = baseUrl.qiniuHttpsUrl + 'https://qiniu.muxidream.cn/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png'
+    const imageSrc = baseUrl.qiniuHttpsUrl + '/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png'
     let userInfo = reactive(getLocalUserInfo('userInfo'))
     if (userInfo.headImgUrl === '') userInfo.headImgUrl = imageSrc
     let uid = ref(userInfo.uid)

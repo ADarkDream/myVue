@@ -4,22 +4,26 @@
       <el-button @click="reLink" size="small" type="warning" plain>重连</el-button>
       <el-text type="primary" style="font-size: 22px;">{{ isLogin ? '' : '临时' }}聊天室[Demo]</el-text>
       <el-button type="primary"
-                 @click="copyText('https:muxidream.cn/Chat/talk?roomID='+playerInfo.roomID+'&playerName=这里填昵称','房间号')"
+                 @click="copyText('https:muxidream.cn/Chat/hall?roomID='+playerInfo.roomID+'&playerName=这里填昵称','房间号')"
                  title="点击复制当前房间号" size="small">复制房间地址
       </el-button>
-
-      <!--          <div class="chat-area-group">
-                  <img class="chat-area-profile"
-                       src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%283%29+%281%29.png" alt=""/>
-                  <img class="chat-area-profile"
-                       src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%282%29.png" alt="">
-                  <img class="chat-area-profile"
-                       src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%2812%29.png" alt=""/>
-                  <span>+4</span>
-                </div>-->
     </div>
     <el-scrollbar ref="scrollbarRef">
       <div class="chat-area-main" ref="content">
+        <el-text type="info">支持多人聊天，如果房间内没人了会自动关闭，聊天记录暂时不支持长期保存,暂时未优化移动端界面。
+        </el-text>
+        <br>
+        <el-text type="warning">如果消息发不出去可以试试点左上角重连</el-text>
+        <el-button link @click="showFeedback" type="success">测试期间如有bug请点击此处反馈！</el-button>
+        <!--            <div class="chat-area-group">
+           <img class="chat-area-profile"
+                  src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%283%29+%281%29.png" alt=""/>
+             <img class="chat-area-profile"
+                  src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%282%29.png" alt="">
+             <img class="chat-area-profile"
+                  src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%2812%29.png" alt=""/>
+             <span>+4</span>
+           </div>-->
         <template v-for="item in roomMsg" :key="item.time">
           <div v-if="item.roomID===playerInfo.roomID"
                :class="['chat-msg',item.playerID===playerInfo.playerID?'owner':'guest']">
@@ -37,38 +41,39 @@
       </div>
     </el-scrollbar>
     <div class="chat-area-footer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-video">
-        <path d="M23 7l-7 5 7 5V7z"/>
-        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-      </svg>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image">
-        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-        <circle cx="8.5" cy="8.5" r="1.5"/>
-        <path d="M21 15l-5-5L5 21"/>
-      </svg>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M12 8v8M8 12h8"/>
-      </svg>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-paperclip">
-        <path
-            d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
-      </svg>
-      <input type="text" ref="inputRef" v-model="msg" @keyup.enter="sendMsg" placeholder="Type something here..."/>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>
-      </svg>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-thumbs-up">
-        <path
-            d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>
-      </svg>
+      <!--      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"-->
+      <!--           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-video">-->
+      <!--        <path d="M23 7l-7 5 7 5V7z"/>-->
+      <!--        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>-->
+      <!--      </svg>-->
+      <!--      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"-->
+      <!--           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-image">-->
+      <!--        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>-->
+      <!--        <circle cx="8.5" cy="8.5" r="1.5"/>-->
+      <!--        <path d="M21 15l-5-5L5 21"/>-->
+      <!--      </svg>-->
+      <!--      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"-->
+      <!--           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus-circle">-->
+      <!--        <circle cx="12" cy="12" r="10"/>-->
+      <!--        <path d="M12 8v8M8 12h8"/>-->
+      <!--      </svg>-->
+      <!--      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"-->
+      <!--           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-paperclip">-->
+      <!--        <path-->
+      <!--            d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>-->
+      <!--      </svg>-->
+      <el-input  type="textarea" ref="inputRef" v-model="msg" @keyup.enter="sendMsg" placeholder="Type something here..."/>
+      <el-button type="primary" @click="sendMsg" :icon="Promotion">发送</el-button>
+      <!--      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"-->
+      <!--           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile">-->
+      <!--        <circle cx="12" cy="12" r="10"/>-->
+      <!--        <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>-->
+      <!--      </svg>-->
+      <!--      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"-->
+      <!--           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-thumbs-up">-->
+      <!--        <path-->
+      <!--            d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>-->
+      <!--      </svg>-->
     </div>
   </div>
 </template>
@@ -89,6 +94,7 @@ const {roomMsg} = useChatMsgStore()//本地的聊天信息
 // import {ChatMsg} from '@/types/chat'
 import useFunction from "@/hooks/useFunction";
 import emitter from "@/utils/emitter";
+import {Promotion} from "@element-plus/icons-vue";
 
 const router = useRouter()
 const route = useRoute()
@@ -130,9 +136,7 @@ onMounted(() => {
   //   })
   // }
 })
-
-
-// let token = sessionStorage.getItem('token') || localStorage.getItem('token')
+const showFeedback = () => emitter.emit('showNotice', {showNum: '3', activeNum: '2'})
 
 
 const msg = ref<string>('')
@@ -385,7 +389,7 @@ onUnmounted(() => {
   border-top: 1px solid var(--border-color);
   width: 100%;
   padding: 10px 20px;
-  height: 50px;
+  height: 60px;
   align-items: center;
   background-color: var(--theme-bg-color);
   position: sticky;
@@ -489,6 +493,10 @@ onUnmounted(() => {
     input {
       padding-right: 10px;
     }
+  }
+
+  .chat-msg {
+    padding: 20px 0;
   }
 }
 

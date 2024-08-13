@@ -36,8 +36,9 @@ const router = useRouter()
 //noWrap=true  移动端换行且用 | 隔开，默认为没有竖线隔开
 const {noWrap} = defineProps(['noWrap'])
 const showContact = () => emitter.emit('showNotice', {showNum: '3', activeNum: '1'})
-const gotoDownload = () => router.push({name: 'download'})
 const showFeedback = () => emitter.emit('showNotice', {showNum: '3', activeNum: '2'})
+const gotoDownload = () => router.push({name: 'download'})
+const gotoChat = () => router.push({name: 'hall'})
 const activeItemNum = ref(0)//当前展示的文本序号
 const noticeList = reactive([//底部轮播
   {
@@ -50,6 +51,10 @@ const noticeList = reactive([//底部轮播
     fun: gotoDownload
   }, {
     id: 2,
+    str: '欢迎前往聊天室demo测试',
+    fun: gotoChat
+  }, {
+    id: 3,
     str: '如有bug欢迎反馈',
     fun: showFeedback
   },
@@ -59,7 +64,7 @@ const timer = setInterval(() => {
   activeItemNum.value++
   if (activeItemNum.value >= length) activeItemNum.value = 0
   console.log(activeItemNum.value)
-}, 3000)
+}, 4000)
 
 onUnmounted(() => clearInterval(timer))
 </script>

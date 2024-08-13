@@ -1,6 +1,6 @@
 <template>
-  <el-container :style="'height:'+ (screenHeight-70)+'px'">
-    <el-header class="header">
+  <el-container :style="'height:'+(isPC? screenHeight-80 : screenHeight-40)+'px'">
+    <el-header class="header" v-if="isPC">
       <div class="logo">
         <svg viewBox="0 0 513 513" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -14,12 +14,12 @@
         <input type="text" placeholder="Search..."/>
       </div>
       <div class="user-settings">
-        <div class="dark-light" @click="changeDark">
-          <svg viewBox="0 0 24 24" stroke="CurrentColor" stroke-width="1.5" fill="none" stroke-linecap="round"
-               stroke-linejoin="round">
-            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-          </svg>
-        </div>
+<!--        <div class="dark-light" @click="changeDark">-->
+<!--          <svg viewBox="0 0 24 24" stroke="CurrentColor" stroke-width="1.5" fill="none" stroke-linecap="round"-->
+<!--               stroke-linejoin="round">-->
+<!--            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>-->
+<!--          </svg>-->
+<!--        </div>-->
         <div class="settings" @click="isShowDetail">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="CurrentColor"
                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -29,13 +29,13 @@
           </svg>
         </div>
         <img class="user-profile account-profile"
-             src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%281%29.png" alt="">
+             :src="imageSrc" alt="">
       </div>
     </el-header>
     <el-main class="wrapper">
-      <ChatConversation/>
+      <ChatConversation v-if="isPC"/>
       <ChatArea/>
-      <ChatDetail v-if="isShowDetailFlag"/>
+      <ChatDetail v-if="isShowDetailFlag&&isPC"/>
     </el-main>
   </el-container>
 </template>
@@ -47,9 +47,10 @@ import ChatDetail from "@/components/ChatDetail.vue";
 import ChatArea from "@/components/ChatArea.vue";
 import ChatConversation from "@/components/ChatConversation.vue";
 import {ref} from 'vue'
+import useUserInfo from "@/hooks/useUserInfo";
+const {isLogin, imageSrc} = useUserInfo()
 
-
-const {screenHeight} = useResponsive()
+const {screenHeight,isPC} = useResponsive()
 // const toggleButton = document.querySelector('.dark-light');
 const colors = document.querySelectorAll('.color');
 
@@ -219,7 +220,7 @@ const changeDark = () => {
 }
 
 .wrapper {
-  padding-top: 0;
+  padding: 0 20px;
   width: 100%;
   display: flex;
   flex-grow: 1;

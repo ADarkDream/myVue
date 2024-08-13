@@ -99,6 +99,10 @@
               <el-dropdown-item :icon="Comment" @click="showNotice=!showNotice">
                 公告
               </el-dropdown-item>
+              <!--临时聊天室-->
+              <el-dropdown-item @click="router.push({name:'hall'})" :icon="Comment">
+                聊天室demo
+              </el-dropdown-item>
               <!--设置-->
               <el-dropdown-item @click="showSetting=!showSetting" :icon="Tools">
                 设置
@@ -192,6 +196,10 @@
               <!--公告-->
               <el-dropdown-item :icon="Comment" @click="showNotice=!showNotice">
                 公告
+              </el-dropdown-item>
+              <!--临时聊天室-->
+              <el-dropdown-item @click="router.push({name:'hall'})" :icon="Comment">
+                聊天室demo
               </el-dropdown-item>
               <!--设置-->
               <el-dropdown-item :icon="Tools" @click="showSetting=!showSetting">
