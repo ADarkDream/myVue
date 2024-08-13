@@ -40,13 +40,12 @@ export default defineConfig({
         Components({
             resolvers: [ElementPlusResolver()],
         }),
-        //压缩打包后的代码，去掉注释
         legacy({
             targets: ["defaults", "ie 11"]
         }),
         //压缩成gzip，减少传输的资源大小，提高网站资源加载速度
         compression({
-            filter:/.(js|mjs|json|css|html)$/i,
+            filter: /.(js|mjs|json|css|html)$/i,
             algorithm: 'gzip',
             ext: '.gz', // 输出文件的扩展名
             threshold: 10240, // 只压缩大于 1KB 的文件
@@ -58,7 +57,7 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
     },
-    //下面的esbuild和build用于压缩打包后的代码
+    //下面的esbuild和build用于压缩打包后的代码,注释掉可以在线上看报错
     esbuild: {
         drop: ['console', 'debugger'], // 删除 所有的console 和 debugger
     },
@@ -72,7 +71,6 @@ export default defineConfig({
                 //         './src/components/TitleDiv.vue',
                 //         './src/components/AddUrl.vue',
                 //         './src/components/Aside.vue',
-                //         './src/components/Main.vue',
                 //         './src/components/Notice.vue',
                 //         './src/components/TitleDiv.vue',
                 //         './src/components/UploadImage.vue',

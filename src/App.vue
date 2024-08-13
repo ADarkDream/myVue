@@ -17,13 +17,7 @@ import {ref} from "vue"
 import TitleDiv from "@/components/TitleDiv.vue";
 import {ElMessage} from "element-plus";
 import {jwtDecode} from "jwt-decode";
-import useResponsive from "@/hooks/useResponsive";
-import {useRoute} from "vue-router";
 
-
-const {isPC} = useResponsive()
-
-const route = useRoute()
 
 // console.log(route.path==='/')
 interface Token {
@@ -54,7 +48,7 @@ axios.interceptors.request.use(function (config) {
 const isErrorPrinted = ref(false)
 
 // 添加响应拦截器，对响应数据做点什么
-axios.interceptors.response.use(    (response)=>{
+axios.interceptors.response.use((response) => {
   // 2xx 范围内的状态码都会触发该函数。
 
   // console.log('App组件打印的response数据如下：')
@@ -71,8 +65,24 @@ axios.interceptors.response.use(    (response)=>{
     }
   }
 
-
-  const result= response.data.data
+  //获取响应的地址
+  const baseURL = response.config.baseURL
+  //获取响应的接口
+  // const url = response.config.url
+  // console.log('baseURL',response.config.baseURL)
+  // console.log('url',response.config.url)
+  // if (baseURL && baseURL.includes('jinrishici')) {
+  //   const result = response.data.data
+  //   if (result.status === 'success') return response.data
+  //   else return Promise.reject(result)
+  // }
+  if (baseURL && baseURL.includes('hitokoto')) {
+    const result = response.data
+    if (result.status === 200) return result
+    else return Promise.reject(result)
+  }
+//上面是第三方接口处理，下面是自己的接口
+  const result = response.data.data
 
   if (result.status === 200) return response.data
       // 超出 2xx 范围的状态码都会触发该函数。
@@ -86,7 +96,7 @@ axios.interceptors.response.use(    (response)=>{
       //更改标志，使下一个相同的报错不显示提醒
       isErrorPrinted.value = true
       setTimeout(() => isErrorPrinted.value = false, 1000)
-      Promise.reject(result)
+      return Promise.reject(result)
     }
   } else if (result.status === 401 || result.status === 402) {//token过期或者未登录
     //更改标志，使下一个相同的报错不显示提醒

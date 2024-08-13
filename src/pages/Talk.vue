@@ -63,7 +63,7 @@ colors.forEach(color => {
 });
 
 // toggleButton.addEventListener('click', () => {
-//   document.body.classList.toggle('dark-mode');
+//   document.body.classList.toggle('dark');
 // });
 
 const isShowDetailFlag = ref(false)
@@ -73,7 +73,7 @@ const isShowDetail = () => {
 
 
 const changeDark = () => {
-  document.body.classList.toggle('dark-mode');
+  document.body.classList.toggle('dark');
 }
 
 
@@ -83,129 +83,116 @@ const changeDark = () => {
 @import url("https://fonts.googleapis.com/css?family=Manrope:300,400,500,600,700&display=swap&subset=latin-ext");
 
 :root {
-  --body-bg-color: #e5ecef;
-  --theme-bg-color: #fff;
-  --settings-icon-hover: #9fa7ac;
-  --developer-color: #f9fafb;
-  --input-bg: #f8f8fa;
-  --input-chat-color: #a2a2a2;
-  --border-color: #eef2f4;
-  --body-font: "Manrope", sans-serif;
-  --body-color: #273346;
-  --settings-icon-color: #c1c7cd;
-  --msg-message: #969eaa;
-  --chat-text-bg: #f1f2f6;
-  --theme-color: #0086ff;
-  --msg-date: #c0c7d2;
-  --button-bg-color: #f0f7ff;
-  --button-color: var(--theme-color);
-  --detail-font-color: #919ca2;
-  --msg-hover-bg: rgba(238, 242, 244, 0.4);
-  --active-conversation-bg: linear-gradient(
-      to right,
-      rgba(238, 242, 244, 0.4) 0%,
-      rgba(238, 242, 244, 0) 100%
-  );
-  --overlay-bg: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 1) 65%,
-      rgba(255, 255, 255, 1) 100%
-  );
-  --chat-header-bg: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 1) 0%,
-      rgba(255, 255, 255, 1) 78%,
-      rgba(255, 255, 255, 0) 100%
-  );
+ --body-bg-color: #e5ecef;
+ --theme-bg-color: #fff;
+ --settings-icon-hover: #9fa7ac;
+ --developer-color: #f9fafb;
+ --input-bg: #f8f8fa;
+ --input-chat-color: #a2a2a2;
+ --border-color: #eef2f4;
+ --body-font: "Manrope", sans-serif;
+ --body-color: #273346;
+ --settings-icon-color: #c1c7cd;
+ --msg-message: #969eaa;
+ --chat-text-bg: #f1f2f6;
+ --theme-color: #0086ff;
+ --msg-date: #c0c7d2;
+ --button-bg-color: #f0f7ff;
+ --button-color: var(--theme-color);
+ --detail-font-color: #919ca2;
+ --msg-hover-bg: rgba(238, 242, 244, 0.4);
+ --active-conversation-bg: linear-gradient(
+  to right,
+  rgba(238, 242, 244, 0.4) 0%,
+  rgba(238, 242, 244, 0) 100%
+ );
+ --overlay-bg: linear-gradient(
+  to bottom,
+  rgba(255, 255, 255, 0) 0%,
+  rgba(255, 255, 255, 1) 65%,
+  rgba(255, 255, 255, 1) 100%
+ );
+ --chat-header-bg: linear-gradient(
+  to bottom,
+  rgba(255, 255, 255, 1) 0%,
+  rgba(255, 255, 255, 1) 78%,
+  rgba(255, 255, 255, 0) 100%
+ );
 }
 
 [data-theme="purple"] {
-  --theme-color: #9f7aea;
-  --button-color: #9f7aea;
-  --button-bg-color: rgba(159, 122, 234, 0.12);
+ --theme-color: #9f7aea;
+ --button-color: #9f7aea;
+ --button-bg-color: rgba(159, 122, 234, 0.12);
 }
 
 [data-theme="green"] {
-  --theme-color: #38b2ac;
-  --button-color: #38b2ac;
-  --button-bg-color: rgba(56, 178, 171, 0.15);
+ --theme-color: #38b2ac;
+ --button-color: #38b2ac;
+ --button-bg-color: rgba(56, 178, 171, 0.15);
 }
 
 [data-theme="orange"] {
-  --theme-color: #ed8936;
-  --button-color: #ed8936;
-  --button-bg-color: rgba(237, 137, 54, 0.12);
+ --theme-color: #ed8936;
+ --button-color: #ed8936;
+ --button-bg-color: rgba(237, 137, 54, 0.12);
 }
 
-.dark-mode {
-  --body-bg-color: #1d1d1d;
-  --theme-bg-color: #27292d;
-  --border-color: #323336;
-  --body-color: #d1d1d2;
-  --active-conversation-bg: linear-gradient(
-      to right,
-      rgba(47, 50, 56, 0.54),
-      rgba(238, 242, 244, 0) 100%
-  );
-  --msg-hover-bg: rgba(47, 50, 56, 0.54);
-  --chat-text-bg: #383b40;
-  --chat-text-color: #b5b7ba;
-  --msg-date: #626466;
-  --msg-message: var(--msg-date);
-  --overlay-bg: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0) 0%,
-      #27292d 65%,
-      #27292d 100%
-  );
-  --input-bg: #2f3236;
-  --chat-header-bg: linear-gradient(
-      to bottom,
-      #27292d 0%,
-      #27292d 78%,
-      rgba(255, 255, 255, 0) 100%
-  );
-  --settings-icon-color: #7c7e80;
-  --developer-color: var(--border-color);
-  --button-bg-color: #393b40;
-  --button-color: var(--body-color);
-  --input-chat-color: #6f7073;
-  --detail-font-color: var(--input-chat-color);
+.dark {
+ --body-bg-color: #1d1d1d;
+ --theme-bg-color: #27292d;
+ --border-color: #323336;
+ --body-color: #d1d1d2;
+ --active-conversation-bg: linear-gradient(
+  to right,
+  rgba(47, 50, 56, 0.54),
+  rgba(238, 242, 244, 0) 100%
+ );
+ --msg-hover-bg: rgba(47, 50, 56, 0.54);
+ --chat-text-bg: #383b40;
+ --chat-text-color: #b5b7ba;
+ --msg-date: #626466;
+ --msg-message: var(--msg-date);
+ --overlay-bg: linear-gradient(
+  to bottom,
+  rgba(0, 0, 0, 0) 0%,
+  #27292d 65%,
+  #27292d 100%
+ );
+ --input-bg: #2f3236;
+ --chat-header-bg: linear-gradient(
+  to bottom,
+  #27292d 0%,
+  #27292d 78%,
+  rgba(255, 255, 255, 0) 100%
+ );
+ --settings-icon-color: #7c7e80;
+ --developer-color: var(--border-color);
+ --button-bg-color: #393b40;
+ --button-color: var(--body-color);
+ --input-chat-color: #6f7073;
+ --detail-font-color: var(--input-chat-color);
 }
 
 .blue {
-  background-color: #0086ff;
+ background-color: #0086ff;
 }
 
 .purple {
-  background-color: #9f7aea;
+ background-color: #9f7aea;
 }
 
 .green {
-  background-color: #38b2ac;
+ background-color: #38b2ac;
 }
 
 .orange {
-  background-color: #ed8936;
+ background-color: #ed8936;
 }
 
 * {
-  outline: none;
-  box-sizing: border-box;
-}
-
-img {
-  max-width: 100%;
-}
-
-
-:deep(.el-scrollbar__wrap) {
-  overflow-x: hidden !important;
-}
-
-:deep(.el-scrollbar__bar.is-horizontal) {
-  height: 0 !important;
+ outline: none;
+ box-sizing: border-box;
 }
 </style>
 
@@ -214,7 +201,7 @@ img {
 .el-container {
   display: flex;
   flex-direction: column;
-  background-color: var(--el-bg-color);
+  background-color: var(--theme-bg-color);
   max-width: 1600px;
   /* height: 100vh;*/
   height: 500px;
@@ -449,7 +436,7 @@ img {
 }
 
 
-.dark-mode {
+.dark {
   .search-bar input,
   .detail-area input {
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56.966 56.966' fill='%236f7073'%3e%3cpath d='M55.146 51.887L41.588 37.786A22.926 22.926 0 0046.984 23c0-12.682-10.318-23-23-23s-23 10.318-23 23 10.318 23 23 23c4.761 0 9.298-1.436 13.177-4.162l13.661 14.208c.571.593 1.339.92 2.162.92.779 0 1.518-.297 2.079-.837a3.004 3.004 0 00.083-4.242zM23.984 6c9.374 0 17 7.626 17 17s-7.626 17-17 17-17-7.626-17-17 7.626-17 17-17z'/%3e%3c/svg%3e");

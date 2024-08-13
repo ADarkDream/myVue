@@ -1,5 +1,5 @@
 <template>
-  <el-scrollbar height="400">
+  <el-scrollbar :height="isPC? '400':''">
     <el-switch v-model="searchFlag" @click="changeSearchFlag()" active-text="在新窗口打开搜索结果"
                inactive-text="在当前页打开搜索结果"/>
     <el-divider>默认搜索引擎</el-divider>
@@ -40,7 +40,7 @@ import useUserInfo from "@/hooks/useUserInfo";
 import useResponsive from "@/hooks/useResponsive";
 
 const {isLogin} = useUserInfo()
-const {dialogWidth2, elSize} = useResponsive()
+const {dialogWidth2, elSize,isPC} = useResponsive()
 
 
 const {

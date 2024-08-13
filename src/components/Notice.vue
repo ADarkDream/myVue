@@ -16,20 +16,28 @@
     <!--       网站介绍区-->
     <el-collapse-transition accordion v-show="isShow==='1'">
       <el-collapse v-model="activeName">
-        <!--    待更新的功能-->
         <el-collapse-item title="网站介绍" name="1">
           <el-card class="notice">
             <el-text>
-              1.本站为社交化导航网站，提供<el-button-group type="primary"><el-button link title="首页导航" @click="router.push({name:'home'})">站点导航、</el-button><el-button link title="论坛文章" target="_blank" @click="router.push({name:'forum'})">论坛交流、</el-button><el-button link title="重返未来相关界面" @click="router.push({name:'reverse1999'})">重返未来官图筛选和下载</el-button></el-button-group>等功能。<br>
+              1.本站为社交化导航网站，提供
+              <el-button-group type="primary">
+                <el-button link title="首页导航" @click="router.push({name:'home'})">站点导航、</el-button>
+                <el-button link title="论坛文章" target="_blank" @click="router.push({name:'forum'})">论坛交流、
+                </el-button>
+                <el-button link title="重返未来相关界面" @click="router.push({name:'reverse1999'})">
+                  重返未来官图筛选和下载
+                </el-button>
+              </el-button-group>
+              等功能。<br>
               2.
-              <el-button-group  target="_blank" type="primary">
+              <el-button-group target="_blank" type="primary">
                 <el-button link
-                    @click="copyText('1005993749','QQ群号','https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V')"
-                    title="点击前往QQ">工具资源群：Resource sharing群、
+                           @click="copyText('1005993749','QQ群号','https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V')"
+                           title="点击前往QQ">工具资源群：Resource sharing群、
                 </el-button>
                 <el-button link
-                    @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')"
-                    title="点击前往QQ">
+                           @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')"
+                           title="点击前往QQ">
                   重返未来群：金兔子特供部门🐰
                 </el-button>
               </el-button-group>
@@ -54,9 +62,11 @@
               </el-link>
               。
             </el-text>
-              <br>
+            <br>
             <el-text>
-              5.本站正在持续适配移动端，如部分界面错位可尝试PC访问或<el-button link title="前往反馈" type="primary" @click="changePage('3','2')">留言反馈</el-button>。
+              5.本站正在持续适配移动端，如部分界面错位可尝试PC访问或
+              <el-button link title="前往反馈" type="primary" @click="changePage('3','2')">留言反馈</el-button>
+              。
             </el-text>
           </el-card>
         </el-collapse-item>
@@ -77,6 +87,23 @@
               </el-button>
             </el-link>
           </template>
+        </el-collapse-item>
+        <el-collapse-item title="隐私政策" name="3">
+          <el-card class="privacyStatement">
+            <el-text>
+              本站与 Microsoft Clarity 合作，通过行为指标、热图和会话回放来捕捉您如何使用本站的网站并与之互动，以改进本站的产品和服务。网站使用数据是通过第一方和第三方
+              Cookie 以及其他跟踪技术捕获的，以确定产品和服务的受欢迎程度和在线活动。此外，本站将这些信息用于网站优化。有关
+              Microsoft 如何收集和使用您的数据的更多信息，请访问
+              <el-link type="primary" href="https://privacy.microsoft.com/zh-CN/privacystatement">Microsoft 隐私声明
+              </el-link>
+              。使用本站，即表示您同意本站和 Microsoft 可以收集和使用此数据。
+            </el-text>
+            <br>
+            <el-text><b>
+              PS:根据国家法律法规，本站仅收集访问者IP等身份信息，使用Clarity收集访问者在本站的浏览轨迹以确定bug位置进行优化，相关的账号、密码等隐私信息均不会被采集。
+            </b>
+            </el-text>
+          </el-card>
         </el-collapse-item>
       </el-collapse>
     </el-collapse-transition>
@@ -137,19 +164,8 @@
         </el-collapse-item>
       </el-collapse>
     </el-collapse-transition>
-
-    <div style="margin-top: 10px">
-      <el-button link tag="a" type="info"
-                 @click="copyText('50011502001039','备案号','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
-        <el-image src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败"/>
-        &ensp;渝公网安备50011502001039
-      </el-button>
-      <span v-if="isPC" style="margin: 0 10px">|</span>
-      <el-button link tag="a" type="info"
-                 @click="copyText('渝ICP备2024030473号','备案号','http://beian.miit.gov.cn/')">
-        渝ICP备2024030473号
-      </el-button>
-    </div>
+    <!--备案号-->
+    <Approve/>
     <!--    <el-divider>已加载全部内容</el-divider>-->
   </el-scrollbar>
 </template>
@@ -163,12 +179,13 @@ import useTimeStamp from "@/hooks/useTimestamp";
 import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
 import {useRouter} from "vue-router";
+import Approve from "@/components/Approve.vue";
 
 
 const {copyText} = useFunction()
 const {getDiffTime} = useTimeStamp()
 const {isPC} = useResponsive()
-const router=useRouter()
+const router = useRouter()
 
 const {showFlag} = defineProps(['showFlag'])//切换页面的参数
 
@@ -264,7 +281,15 @@ const submitFeedback = async () => {
   margin: 0 10px;
 }
 
-@media (max-width: 980px) {
+.privacyStatement {
+  display: flex;
+  justify-content: left;
+  text-align: left;
 
 }
+
+/*
+@media (max-width: 980px) {
+
+}*/
 </style>

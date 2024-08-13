@@ -207,7 +207,7 @@
 
   <!--登录和注册窗口-->
   <el-drawer v-model="showLogin" :before-close="isClose" :size="isPC? '30%':'100%' " :show-close="!isPC"
-             destroy-on-close="destroy-on-close">
+             destroy-on-close="destroy-on-close" :z-index="300">
     <template #header="{titleClass }">
       <el-button v-show="isShowLoginPage" @click="backBtn" class="backBtn" :icon="ArrowLeftBold">
         返回
@@ -433,7 +433,7 @@ const setTitle = (value: string) => {
 }
 
 const backBtn = () => {
-  isShowLoginPage.value =false
+  isShowLoginPage.value = false
   title.value = '登录/注册'
 }
 
@@ -441,14 +441,14 @@ const backBtn = () => {
 function toLogin() {
   isShowLoginPage.value = true
   flag.value = true
-  console.log(flag.value)
+  console.log('isLogin', flag.value)
 }
 
 //点击注册按钮
 function toSubmit() {
   isShowLoginPage.value = true
   flag.value = false
-  console.log(flag.value)
+  console.log('isLogin', flag.value)
 }
 
 //关闭公告时调用

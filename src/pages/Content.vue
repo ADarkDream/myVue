@@ -1,28 +1,35 @@
 <template>
-  <el-card class="content">
-    <div class="title">
-      <el-tooltip content="推荐导航网站" placement="bottom">
-        <el-button type="success" circle @click="changeFlag" :icon="UploadFilled"/>
-      </el-tooltip>
-      <el-text type="primary" style="font-size: 20px">{{ sortName }}</el-text>
-      <!--      <el-button v-if="false" @click="addAllUrl(localList[num],targetList[num])">批量上传 {{ nameList[num] }}-->
-      <!--        网址到数据库-->
-      <!--      </el-button>-->
-      <el-tooltip content="隐藏，精简模式" placement="bottom">
-        <el-button type="danger" circle @click="showContent" :icon="CloseBold"/>
-      </el-tooltip>
-    </div>
-    <el-divider/>
-    <div class="mainContent">
-      <!--网址显示区域-->
-      <el-card class="cards" shadow="hover" v-for="item in resultList">
-        <el-button plain link><img class="urlImg" :src="item.img" alt="">
-          <el-link :href="item.url" type="primary" :underline="false" target="_blank"> {{ item.name }}</el-link>
-        </el-button>
-        <template #footer>{{ item.detail }}</template>
-      </el-card>
-    </div>
-  </el-card>
+  <div>
+    <el-card class="content">
+      <div class="title">
+        <el-tooltip content="推荐导航网站" placement="bottom">
+          <el-button type="success" circle @click="changeFlag" :icon="UploadFilled"/>
+        </el-tooltip>
+        <el-text type="primary" style="font-size: 20px">{{ sortName }}</el-text>
+        <!--      <el-button v-if="false" @click="addAllUrl(localList[num],targetList[num])">批量上传 {{ nameList[num] }}-->
+        <!--        网址到数据库-->
+        <!--      </el-button>-->
+        <el-tooltip content="隐藏，精简模式" placement="bottom">
+          <el-button type="danger" circle @click="showContent" :icon="CloseBold"/>
+        </el-tooltip>
+      </div>
+      <el-divider/>
+      <div class="mainContent">
+        <!--网址显示区域-->
+        <el-card class="cards" shadow="hover" v-for="item in resultList">
+          <el-button plain link><img class="urlImg" :src="item.img" alt="">
+            <el-link :href="item.url" type="primary" :underline="false" target="_blank"> {{ item.name }}</el-link>
+          </el-button>
+          <template #footer>{{ item.detail }}</template>
+        </el-card>
+      </div>
+    </el-card>
+    <!--上传导航网址-->
+    <el-dialog v-model="dialogVisible" style="opacity: 1;" :show-close="false" title="推荐导航网站"
+               :width="dialogWidth">
+      <AddUrl/>
+    </el-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -32,21 +39,27 @@ import {onBeforeUnmount, onMounted, reactive, ref} from "vue";
 import {CloseBold, UploadFilled} from "@element-plus/icons-vue";
 import emitter from "@/utils/emitter";
 import {NavigationObj, Navigation, WebsiteInfoItem} from "@/types/url"
+import AddUrl from "@/components/AddUrl.vue";
+import useResponsive from "@/hooks/useResponsive";
+import useUserInfo from "@/hooks/useUserInfo";
 
 
-defineProps(['showContent', 'changeFlag'])
-
+defineProps(['showContent'])
+const {isLogin} = useUserInfo()
+const {dialogWidth} = useResponsive()
 
 const activeIndex = ref<number>(0)//导航分类的序号
 const sortName = ref<string>('')//导航分类标题
 //查询到的数据存储到本地
-const localListObj = reactive<NavigationObj>(JSON.parse(localStorage.getItem('localListObj')) || {}) //从本地获取
+const localListObj = reactive<NavigationObj>(JSON.parse(localStorage.getItem('localListObj') || '{}')) //从本地获取
 //查询到的数据存储到本地
-const localList = reactive<WebsiteInfoItem[]>(JSON.parse(localStorage.getItem('localList')) || []) //从本地获取
-const cloudList = reactive<WebsiteInfoItem[]>(JSON.parse(sessionStorage.getItem('cloudList')) || [])//云端最新的列表
+const localList = reactive<WebsiteInfoItem[]>(JSON.parse(localStorage.getItem('localList') || '[]')) //从本地获取
+const cloudList = reactive<WebsiteInfoItem[]>(JSON.parse(sessionStorage.getItem('cloudList') || '[]'))//云端最新的列表
 //底部当前呈现的网址数据
 const resultList = reactive<Navigation[]>([])
 
+//上传导航网站面板的显示与隐藏
+const dialogVisible = ref(false)
 
 //region本地数据切换逻辑
 
@@ -58,7 +71,7 @@ const getUrlListInfo = async () => {
     })
     console.log(result.data)
     const {data} = result.data
-    cloudList.splice(0, cloudList.length, ...data)
+    cloudList.splice(0, cloudList.length, ...data!)
     sessionStorage.setItem('cloudList', JSON.stringify(cloudList))
     let isChangeFlag = localList.length === 0//如果不存在本地列表，则直接修改
     console.log('localList', localList)
@@ -99,7 +112,7 @@ const getNewList = async (sort: string) => {
     const {data} = result.data
     console.log('查询到的云端数据如下：')
     console.log('result', data)
-    resultList.splice(0, resultList.length, ...data)//显示在页面上
+    resultList.splice(0, resultList.length, ...data!)//显示在页面上
     localListObj[sort] = data//将本分类导航加入到localListObj
     localList[activeIndex.value] = cloudList[activeIndex.value]//将本分类导航的信息加入到localList
     sortName.value = localList[activeIndex.value].name //修改分类的标题名
@@ -114,7 +127,7 @@ const getNewList = async (sort: string) => {
 }
 
 //用emitter得到Aside组件里面的点击事件传来的值，用于更改导航列表
-const handleGetNewList = async (Num?: number) => {
+const handleGetNewList = async (Num: number) => {
   activeIndex.value = Num
   await getNewList(cloudList[activeIndex.value].sort)
 }
@@ -122,6 +135,14 @@ const handleGetNewList = async (Num?: number) => {
 
 //注册切换导航列表的事件
 emitter.on('getListNum', handleGetNewList)
+
+
+//控制该功能登录后使用
+function changeFlag() {
+  console.log(isLogin.value)
+  if (isLogin.value) dialogVisible.value = !dialogVisible.value
+  else return ElMessage.info('该功能需要登录后使用！')
+}
 
 
 onMounted(async () => {
@@ -161,6 +182,7 @@ onBeforeUnmount(() => {
 </script>
 <style scoped>
 .content {
+  border-radius: 50px;
   padding: 0;
 }
 

@@ -9,7 +9,7 @@
     <meta name="baidu-site-verification" content="codeva-A4yk8FKcSI"/>
     <link rel="apple-touch-icon-precomposed" href="/favicon_144x144.png">
     <meta content="默默" name="author"/>
-    <meta content="此网站为默默的个人网站，用于分享一些软件或网站，侵权请联系删除。" name="description"/>
+    <meta content="一个社交化导航网站，致力于资源分享，及重返未来1999游戏资源站。社区建设中..." name="description"/>
     <title>默默的小站</title>
     <style>
         body {
@@ -73,14 +73,14 @@
             overflow: hidden;
         }
 
-        svg {
+        #loading-mask > svg {
             height: 30%;
             width: 100%;
             margin: 20% 0;
             overflow: hidden;
         }
 
-        svg text {
+        #loading-mask > svg > text {
             text-anchor: middle;
             dominant-baseline: middle;
             text-transform: uppercase;
@@ -126,16 +126,16 @@
         /*endregion*/
     </style>
     <script type="text/javascript"> //必应的网站分析验证
-    (function (c, l, a, r, i, t, y) {
-        c[a] = c[a] || function () {
-            (c[a].q = c[a].q || []).push(arguments)
-        }
-        t = l.createElement(r)
-        t.async = 1
-        t.src = "https://www.clarity.ms/tag/" + i
-        y = l.getElementsByTagName(r)[0]
-        y.parentNode.insertBefore(t, y)
-    })(window, document, "clarity", "script", "nl63h6oui7")
+    // (function (c, l, a, r, i, t, y) {
+    //     c[a] = c[a] || function () {
+    //         (c[a].q = c[a].q || []).push(arguments)
+    //     }
+    //     t = l.createElement(r)
+    //     t.async = 1
+    //     t.src = "https://www.clarity.ms/tag/" + i
+    //     y = l.getElementsByTagName(r)[0]
+    //     y.parentNode.insertBefore(t, y)
+    // })(window, document, "clarity", "script", "nl63h6oui7")
     </script>
 </head>
 <body>
@@ -156,11 +156,10 @@
     mask.style.backgroundColor = isDark ? '#000' : '#FFF'
     //加载事件
     document.onreadystatechange = function () {
-        if (document.readyState === 'loading') { // 页面正在加载
-            mask.style.display = 'block'
-        } else if (document.readyState === 'complete') {       // 页面加载完毕
-            mask.style.display = 'none'
-        }
+        // 页面正在加载
+        if (document.readyState === 'loading') mask.style.display = 'block'
+        // 页面加载完毕
+        else if (document.readyState === 'complete') mask.style.display = 'none'
     }
 </script>
 <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>

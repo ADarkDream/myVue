@@ -265,7 +265,7 @@ import useResponsive from "@/hooks/useResponsive";
 
 
 const {isPC} = useResponsive()
-
+const {showContent}=defineProps(['showContent'])
 //侧边栏折叠标志，true为折叠状态
 const isCollapse = ref(true)
 const showAside = ref(false)
@@ -274,7 +274,8 @@ const showAside = ref(false)
 //打开导航列表content
 function toContent(num: Number) {
   emitter.emit('getListNum', num)
-  emitter.emit('showContent')
+  showContent()
+  // emitter.emit('showContent')
   if (!isPC.value) showAside.value = false
 }
 

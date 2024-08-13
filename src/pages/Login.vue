@@ -4,9 +4,9 @@
       style="max-width: 600px"
       :model="ruleForm"
       status-icon
-      :rules="(Rules)"
+      :rules="Rules"
       label-width="auto"
-      class="demo-ruleForm"
+      class="loginForm"
       label-position="top"
   >
     <el-form-item prop="username" v-if="!loginFlag">
@@ -22,10 +22,16 @@
       <el-input v-model.lazy.trim="ruleForm.checkPassword" type="password" autocomplete="off" placeholder="确认密码"/>
     </el-form-item>
     <el-form-item prop="emailCode" v-if="!loginFlag">
-      <el-input v-model.lazy.trim="ruleForm.emailCode" style="width:75%;" autocomplete="off"
-                placeholder="输入邮箱验证码，注意大小写"/>
-      <el-button type="primary" :disabled="isDisabled" @click="getEmailCode()" style="width: 25%;">{{ getStr }}
-      </el-button>
+      <template style="display: flex;justify-content: space-between;width: 100%">
+        <el-input v-model.lazy.trim="ruleForm.emailCode" autocomplete="off"
+                  placeholder="输入邮箱验证码，注意大小写"/>
+        <el-button type="primary" :disabled="isDisabled" @click="getEmailCode()">{{ getStr }}
+        </el-button>
+      </template>
+    </el-form-item>
+    <el-form-item prop="policy" autocomplete="off">
+      <input type="checkbox" v-model="ruleForm.policy">我已阅读并同意
+      <el-button link type="primary" @click="showPolicy">隐私政策</el-button>
     </el-form-item>
     <div class="btn">
       <el-button @click="resetForm(ruleFormRef)">重置</el-button>
@@ -40,6 +46,7 @@
 import {onMounted, onUnmounted, reactive, ref} from 'vue'
 import {ElMessage, type FormInstance, type FormRules} from 'element-plus'
 import axios from "axios";
+import emitter from "@/utils/emitter";
 
 
 //表单数据
@@ -48,7 +55,8 @@ const ruleForm = reactive({
   email: '',
   password: '',
   checkPassword: '',
-  emailCode: ''
+  emailCode: '',
+  policy: false
 })
 
 
@@ -58,7 +66,7 @@ const ruleFormRef = ref<FormInstance>()
 //验证昵称
 const checkUserName = (rule: any, value: any, callback: any) => {
   if (!value) {
-    return callback(new Error('昵称不能为空，请输入2-10位中文、字母、或数字！'))
+    callback(new Error('昵称不能为空，请输入2-10位中文、字母、或数字！'))
   }
   setTimeout(() => {
     let reg = /[^\u4E00-\u9FA5a-zA-Z0-9]/i;
@@ -72,7 +80,7 @@ const checkUserName = (rule: any, value: any, callback: any) => {
 //验证邮箱
 const checkEmail = (rule: any, value: any, callback: any) => {
   if (!value) {
-    return callback(new Error('邮箱不能为空！请输入邮箱地址！'))
+    callback(new Error('邮箱不能为空！请输入邮箱地址！'))
   }
   setTimeout(() => {
     let reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+(([.\-])[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/i;
@@ -111,15 +119,20 @@ const validatePassword2 = (rule: any, value: any, callback: any) => {
 //验证邮箱验证码
 const checkEmailCode = (rule: any, value: any, callback: any) => {
   if (value === '') {
-    return callback(new Error('请输入邮箱验证码，大小写敏感！'))
+    callback(new Error('请输入邮箱验证码，大小写敏感！'))
   } else if (value.length !== 6) {
-    return callback(new Error("邮箱验证码位数错误！"))
+    callback(new Error("邮箱验证码位数错误！"))
   } else {
     callback()
   }
 }
+//验证隐私政策
+const checkPolicy = (rule: any, value: any, callback: any) => {
+  if (value === false) callback(new Error('请先阅读并勾选隐私政策！'))
+  else callback()
+}
 //用哪些表单验证规则
-let Rules = reactive<FormRules<typeof ruleForm>>({})
+const Rules = ref<FormRules<typeof ruleForm>>({})
 
 //endregion
 
@@ -132,7 +145,7 @@ const toRegister = () => {
   resetForm(ruleFormRef.value)//清除表单
   loginFlag.value = false
   checkFlag()
-  noAccount.value=false
+  noAccount.value = false
 }
 
 
@@ -142,18 +155,20 @@ const checkFlag = () => {
     //自动填入email地址
     ruleForm.email = sessionStorage.getItem('email') || ''
     //更改表单验证规则
-    Rules = {
-      email: [{validator: checkEmail, trigger: 'blur'}],
-      password: [{validator: validatePassword, trigger: 'blur'}],
+    Rules.value = {
+      email: [{validator: checkEmail, required: true, trigger: 'blur'}],
+      password: [{validator: validatePassword, required: true, trigger: 'blur'}],
+      policy: [{validator: checkPolicy, required: true, trigger: 'blur'}]
     }
   } else {
     setTitle('注册')
-    Rules = {
-      username: [{validator: checkUserName, trigger: 'blur'}],
-      email: [{validator: checkEmail, trigger: 'blur'}],
-      password: [{validator: validatePassword, trigger: 'blur'}],
-      checkPassword: [{validator: validatePassword2, trigger: 'blur'}],
-      emailCode: [{validator: checkEmailCode, trigger: 'blur'}],
+    Rules.value = {
+      username: [{validator: checkUserName, required: true, trigger: 'blur'}],
+      email: [{validator: checkEmail, required: true, trigger: 'blur'}],
+      password: [{validator: validatePassword, required: true, trigger: 'blur'}],
+      checkPassword: [{validator: validatePassword2, required: true, trigger: 'blur'}],
+      emailCode: [{validator: checkEmailCode, required: true, trigger: 'blur'}],
+      policy: [{validator: checkPolicy, required: true, trigger: 'blur'}]
     }
   }
 }
@@ -166,7 +181,6 @@ const getStr = ref('获取')
 const t = ref(61)
 const timer1 = ref(null)
 const timer2 = ref(null)
-
 const getEmailCode = async () => {
   try {
     const reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+(([.\-])[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/i;
@@ -298,6 +312,9 @@ const login = async () => {
 
 //endregion
 
+const showPolicy = () => emitter.emit('showNotice', {showNum: '1', activeNum: '3'})
+
+
 onMounted(() => {
   checkFlag()
 })
@@ -312,7 +329,9 @@ onUnmounted(() => {
 
 
 <style scoped>
-
+.loginForm {
+  margin: 0 auto;
+}
 
 .btn {
   display: flex;

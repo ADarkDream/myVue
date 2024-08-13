@@ -105,7 +105,7 @@ socket.on('player-join', result => {
   console.log('player-join收到消息：', result)
   const {status, msg, data} = result
   if (status === 200 && data.playerInfo.playerID !== playerInfo.playerID) //排除本人
-    ElMessage.success(msg)
+    ElMessage.info(msg)
   //roomMsg.push({type: data.type, message:msg, time: data.time})
   // ElMessage.info(msg)
 })
@@ -115,7 +115,7 @@ socket.on('player-join', result => {
 socket.on('player-leave', result => {
   console.log('player-leave收到消息：', result)
   const {status, msg, data} = result
-  if (status === 200) ElMessage.success(msg)//roomMsg.push({type: data.type, msg, time: data.time})
+  if (status === 200) ElMessage.info(msg)//roomMsg.push({type: data.type, msg, time: data.time})
   // list2.push(result)
 })
 
