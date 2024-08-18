@@ -1,5 +1,5 @@
 <template>
-  <el-header class="header1">
+  <el-header class="header1"  v-if="isPC">
     偏好设置
   </el-header>
   <el-card header="我的背景图">
@@ -14,7 +14,7 @@
   </el-card>
 
   <!--图片上传框-->
-  <el-dialog v-model="dialogVisible" :show-close="false" title="上传图片">
+  <el-dialog v-model="dialogVisible" :width="isPC? '':'wide:100%'" :show-close="false" title="上传图片">
     <UploadImage/>
   </el-dialog>
 </template>
@@ -23,12 +23,14 @@
 
 import UploadImage from "@/components/UploadImage.vue";
 import useUserInfo from '@/hooks/useUserInfo'
+import useResponsive from "@/hooks/useResponsive";
 import {ref, watch} from "vue";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {Delete, UploadFilled} from "@element-plus/icons-vue";
 import axios from "axios";
 //获取本地存储的用户信息
 const {bgUrl, updateLocalUserInfo} = useUserInfo()
+const {isPC}=useResponsive()
 const dialogVisible = ref(false)
 const isShow = ref(false)
 const isOpen = ref(false)

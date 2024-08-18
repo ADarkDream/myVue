@@ -1,5 +1,5 @@
 <template>
-  <el-scrollbar :height="(isPC? screenHeight-80 : screenHeight-40)+'px'  ">
+  <el-scrollbar :height="containerHeight+'px'  ">
     <el-container>
       <el-header style="opacity: 0.85;">
         <el-card style="position: relative">
@@ -294,7 +294,7 @@ import DownloadNotice from "@/components/DownloadNotice.vue";
 
 const {copyText, deepEqual} = useFunction()
 const router = useRouter()
-const {isPC, elSize, screenWidth, screenHeight} = useResponsive()
+const {isPC, elSize, screenWidth, containerHeight} = useResponsive()
 const {isLogin, updateLocalUserInfo} = useUserInfo()
 const baseUrl = useBaseUrlStore()
 

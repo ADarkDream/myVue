@@ -1,5 +1,5 @@
 <template>
-  <el-container :style="'height:'+(isPC? screenHeight-80 : screenHeight-40)+'px'">
+  <el-container :style="'height:'+containerHeight+'px'">
     <el-header class="header" v-if="isPC">
       <div class="logo">
         <svg viewBox="0 0 513 513" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -50,7 +50,7 @@ import {ref} from 'vue'
 import useUserInfo from "@/hooks/useUserInfo";
 const {isLogin, imageSrc} = useUserInfo()
 
-const {screenHeight,isPC} = useResponsive()
+const {containerHeight,isPC} = useResponsive()
 // const toggleButton = document.querySelector('.dark-light');
 const colors = document.querySelectorAll('.color');
 

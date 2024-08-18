@@ -13,6 +13,7 @@ declare module 'vue' {
     Approve: typeof import('./src/components/Approve.vue')['default']
     Aside: typeof import('./src/components/Aside.vue')['default']
     ChatArea: typeof import('./src/components/ChatArea.vue')['default']
+    ChatConnect: typeof import('./src/components/ChatConnect.vue')['default']
     ChatConversation: typeof import('./src/components/ChatConversation.vue')['default']
     ChatDetail: typeof import('./src/components/ChatDetail.vue')['default']
     DownloadNotice: typeof import('./src/components/DownloadNotice.vue')['default']
@@ -60,7 +61,6 @@ declare module 'vue' {
     ElTimeline: typeof import('element-plus/es')['ElTimeline']
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
-    ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     Notice: typeof import('./src/components/Notice.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -70,5 +70,6 @@ declare module 'vue' {
     TitleDiv: typeof import('./src/components/TitleDiv.vue')['default']
     UploadImage: typeof import('./src/components/UploadImage.vue')['default']
     UploadImgInfo: typeof import('./src/components/UploadImgInfo.vue')['default']
+    WorkTest: typeof import('./src/components/WorkTest.vue')['default']
   }
 }

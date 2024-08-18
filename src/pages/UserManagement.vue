@@ -1,5 +1,5 @@
 <template>
-  <el-header class="header1">
+  <el-header class="header1" v-if="isPC">
     内容管理
   </el-header>
   <el-header class="header2">
@@ -18,9 +18,8 @@
     />
     <el-button @click="clearFilter" v-show="tableVisible">清空全部筛选</el-button>
   </el-header>
-  <el-scrollbar height="500px">
     <!--    表格模式-->
-    <el-main v-if="tableVisible">
+    <el-main v-if="tableVisible" style="padding: 0">
       <!--      文章-->
       <template v-if="draftVisible">
         <el-button text type="info" class="title">文章列表</el-button>
@@ -28,9 +27,9 @@
         <!--    表格模式；文章-->
         <el-table ref="articleRef" :data="allArticleList" style="width: 100%" max-height="500" stripe border
                   highlight-current-row
-                  table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'descending' }">
+                  table-layout="auto"  :default-sort="{ prop: 'id', order: 'descending' }">
           <el-table-column fixed prop="id" label="ID" width="70" sortable/>
-          <el-table-column fixed prop="title" label="文章标题" width="200"/>
+          <el-table-column  prop="title" label="文章标题" width="200"/>
           <el-table-column prop="author" label="作者" width="150"/>
           <el-table-column prop="area" label="板块" width="100" :filters="[
         { text: '文章', value: '文章' },
@@ -96,10 +95,10 @@
       <template v-else>
         <el-button text type="info" class="title">草稿箱</el-button>
         <el-divider>{{ draftList.length }}</el-divider>
-        <el-table ref="draftRef" :data="draftList" max-height="500" stripe border highlight-current-row
+        <el-table ref="draftRef" :data="draftList" max-height="500" stripe border highlight-current-row style="width: 100%"
                   table-layout="auto" :default-sort="{ prop: 'id', order: 'descending' }">
-          <el-table-column fixed prop="id" label="ID" width="100" sortable/>
-          <el-table-column fixed prop="title" label="草稿标题" width="220"/>
+          <el-table-column fixed prop="id" label="ID" width="70" sortable/>
+          <el-table-column  prop="title" label="草稿标题" width="220"/>
           <el-table-column prop="area" label="板块" width="150"
                            :filters="[{ text: '文章', value: '文章' }, { text: '板块一', value: '板块一' },]"
                            :filter-method="filterHandler">
@@ -116,13 +115,13 @@
               <div v-else-if="scope.row.tags==='散文'">散文</div>
             </template>
           </el-table-column>
-          <el-table-column prop="created_time" label="创建时间" width="200">
+          <el-table-column prop="created_time" label="创建时间" width="250">
             <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
           </el-table-column>
-          <el-table-column prop="created_time" label="修改时间" width="200">
+          <el-table-column prop="created_time" label="修改时间" width="250">
             <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
           </el-table-column>
-          <el-table-column fixed="right" label="操作" width="150">
+          <el-table-column fixed="right" label="操作" width="120">
             <template #default="scope">
               <el-button link type="primary" size="small" @click="goEdit(scope.row,1)">编辑</el-button>
               <el-button link type="danger" size="small" @click="deleteRow(scope.row.id,1)">删除</el-button>
@@ -230,7 +229,6 @@
         </el-container>
       </div>
     </el-footer>
-  </el-scrollbar>
 </template>
 
 <script setup lang="ts">
@@ -238,10 +236,12 @@ import axios from "axios";
 import {ElMessage, ElMessageBox, type TableColumnCtx, type TableInstance} from "element-plus";
 import {reactive, ref} from "vue";
 import useTimeStamp from '@/hooks/useTimestamp'
+import useResponsive from "@/hooks/useResponsive";
 import {useRouter} from "vue-router";
 import emitter from "@/utils/emitter";
 
 const router = useRouter()
+const {isPC}=useResponsive()
 
 //查看文章
 const goArticle = (item: Article, isSubmit: number) => {
@@ -452,4 +452,9 @@ const deleteRow = (id: number, isDraft: number) => {
   border-radius: 10px;
 }
 
+@media (max-width: 980px) {
+  .card{
+    width: 100%;
+  }
+}
 </style>

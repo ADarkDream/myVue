@@ -1,5 +1,5 @@
 <template>
-  <div :style="'min-height:'+(isPC? screenHeight-80 : screenHeight-40)+'px; background-color: var(--el-color-primary-light-9);' ">
+  <div :style="'min-height:'+containerHeight+'px; background-color: var(--el-color-primary-light-9);' ">
     <div class="articleBar" v-if="false">
       <el-button @click="router.back()">
         <el-icon>
@@ -117,7 +117,7 @@ import useResponsive from "@/hooks/useResponsive";
 import hljs from 'highlight.js/lib/common';
 
 const {isLogin, isAdmin, uid, headImgUrl, errorImage} = useUserInfo()
-const {isPC, screenHeight} = useResponsive()
+const {isPC, screenHeight,containerHeight} = useResponsive()
 const router = useRouter()
 const route = useRoute() // 注意：接收参数的时候不带 ‘r’
 const isShow = ref(true)

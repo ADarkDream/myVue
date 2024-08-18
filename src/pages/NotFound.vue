@@ -1,5 +1,5 @@
 <template>
-  <el-container :style=" 'height:'+(isPC? screenHeight-80 : screenHeight-40)+'px'">
+  <el-container :style=" 'height:'+containerHeight+'px'">
     <div class="solar-system">
       <div class="sun"></div>
       <div class="mercury"></div>
@@ -39,7 +39,7 @@ import useResponsive from "@/hooks/useResponsive";
 import emitter from "@/utils/emitter";
 
 const router = useRouter()
-const {screenHeight, isPC} = useResponsive()
+const {containerHeight} = useResponsive()
 
 const time: Ref<number> = ref(10)
 const timer1 = ref<NodeJS.Timeout>()

@@ -9,9 +9,9 @@
       <el-button @click="router.push({name:'home'})" plain :icon="HomeFilled" v-if="!isHome">首页</el-button>
       <!--更换壁纸-->
       <el-button :icon="Switch" class="bgBtn" @click="changeBG(1)" v-if="isHome">更换壁纸</el-button>
-      <!--下载壁纸-->
+      <!--重返未来-->
       <el-button :icon="Download" class="bgBtn" @click="router.push({name:'download'})" v-if="isHome">
-        下载壁纸
+        重返未来
       </el-button>
       <!--日夜切换-->
       <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日" class="isDarkBtn">
@@ -96,7 +96,7 @@
                 &ensp;新闻
               </el-dropdown-item>
               <!--公告-->
-              <el-dropdown-item :icon="Comment" @click="showNotice=!showNotice">
+              <el-dropdown-item :icon="BellFilled" @click="showNotice=!showNotice">
                 公告
               </el-dropdown-item>
               <!--临时聊天室-->
@@ -176,13 +176,10 @@
                 退出登录
               </el-dropdown-item>
               <!--更换壁纸-->
-              <el-dropdown-item :icon="Switch" class="bgBtn" @click="changeBG(0)">更换壁纸</el-dropdown-item>
-              <!--下载壁纸-->
-              <el-dropdown-item :icon="Download" class="bgBtn" @click="router.push({name:'download'})">下载壁纸
+              <el-dropdown-item :icon="Switch" class="bgBtn" @click="changeBG(0)" v-if="!isHome">更换壁纸</el-dropdown-item>
+              <!--重返未来-->
+              <el-dropdown-item :icon="Download" class="bgBtn" @click="router.push({name:'download'})">重返未来
               </el-dropdown-item>
-              <!--日夜切换-->
-              <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日"
-                         :inactive-action-icon="Sunny" :active-action-icon="Moon" class="isDarkBtn"/>
               <!--新闻-->
               <el-dropdown-item @click="router.push({name:'news'})">
                 <svg t="1719772539751" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
@@ -194,7 +191,7 @@
                 &ensp;新闻
               </el-dropdown-item>
               <!--公告-->
-              <el-dropdown-item :icon="Comment" @click="showNotice=!showNotice">
+              <el-dropdown-item :icon="BellFilled" @click="showNotice=!showNotice">
                 公告
               </el-dropdown-item>
               <!--临时聊天室-->
@@ -270,7 +267,7 @@
 import {onMounted, reactive, ref, watch} from 'vue'
 import Login from "@/pages/Login.vue";
 import {
-  ArrowLeftBold, Avatar,
+  ArrowLeftBold, Avatar, BellFilled,
   Comment, Download,
   HomeFilled,
   Moon, Operation,

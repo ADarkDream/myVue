@@ -130,13 +130,25 @@
         </div>
       </div>
     </el-scrollbar>
-    <button class="add"></button>
+    <button class="add" @click="showConnect"  ></button>
     <div class="overlay"></div>
+    <el-dialog v-model="isShowConnect" :width="isPC?'40%':'80%' " title="加入房间" :show-close="!isPC">
+          <ChatConnect/>
+    </el-dialog>
+
   </div>
 </template>
 
 <script setup lang="ts">
-
+import {ref} from "vue";
+import ChatConnect from "@/components/ChatConnect.vue";
+import useResponsive from "@/hooks/useResponsive";
+const {isPC}=useResponsive()
+const isShowConnect=ref( false)
+const showConnect=()=>{
+  isShowConnect.value=true
+  console.log('111')
+}
 </script>
 
 <style scoped lang="scss">

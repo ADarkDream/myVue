@@ -79,7 +79,7 @@
       <!--      </el-form>-->
       <el-text type="primary">个人收集略有不足，如有错漏还请向我反馈。非常感谢！如有乐意帮忙的司辰也欢迎联系我！</el-text>
       <el-table ref="tableRef" :data="roleInfo" :height="screenHeight-230" stripe border highlight-current-row
-                table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }"
+                table-layout="auto"  :default-sort="{ prop: 'id', order: 'custom' }"
                 @sort-change="handleSortChange">
         <!--              @filter-change="filterChange">-->
         <el-table-column fixed prop="id" label="序号" min-width="80" align="center" sortable/>
