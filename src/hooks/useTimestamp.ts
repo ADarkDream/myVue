@@ -81,7 +81,7 @@ export default function () {
 
 
 //需要一个时间戳,否则默认给出当前时间
-    function getTime(timestamp = Date.now()) {
+    function getTime(timestamp: string | number = Date.now()) {
         let d = new Date(timestamp)
         let month = addZero(d.getMonth() + 1)
         let day = addZero(d.getDate())

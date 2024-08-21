@@ -172,7 +172,7 @@
                 <el-text type="danger" v-if="index===0">[new]</el-text>
                 <br></template>
             </el-collapse-item>
-            <el-collapse-item title="群聊和赞助" name="5">
+            <el-collapse-item title="群聊和赞赏" name="5">
               <el-text>欢迎通过
                 <el-text @click="showNotice()" type="success" title="点击反馈">反馈
                 </el-text>
@@ -185,19 +185,19 @@
                 </el-button>
               </el-text>
               <el-divider/>
-              <el-text>毕业俩月了还没找到工作，已经到了需要求赞助交网站网费的程度了QAQ</el-text>
+              <el-text>毕业俩月了还没找到工作，已经到了需要求赞赏交网站网费的程度了QAQ</el-text>
               <br>
               <el-text>如果您觉得本站有用或有趣，总之只要您愿意，不论是五毛还是一块，默默感激不尽！！！</el-text>
               <br>
               <el-text type="warning">所有收入仅用于维持网站运营。</el-text>
               <br>
-              <el-text>赞助者名单：</el-text>
+              <el-text>赞赏者名单：</el-text>
               <el-text type="info">(设计中)</el-text>&ensp;
-              <el-text>当前收到赞助：
+              <el-text>当前收到赞赏：
                 <el-text type="primary">{{ fee }}</el-text>&ensp;元(手动录入会有延迟)
               </el-text>
               <br>
-              <el-button v-if="!showPayCode" @click="showPayCode=true" type="success">点击展示微信收款码</el-button>
+              <el-button v-if="!showPayCode" @click="showPayCode=true" type="success">点击展示微信赞赏码</el-button>
               <el-image v-else style="width: 200px" lazy :src="baseUrl.qiniuHttpsUrl+ '/files/payCode.png'"/>
             </el-collapse-item>
           </el-collapse>
@@ -486,7 +486,7 @@ const getNotices = async () => {
     noticeList.forEach((item: Notice) => {
       if (item.sort === 'completed') completed.push(item)
       if (item.sort === 'unCompleted') unCompleted.push(item)
-      if (item.sort === 'others') fee.value = Number(item.content)//赞助费
+      if (item.sort === 'others') fee.value = Number(item.content)//赞赏费
     })
   } catch (error) {
     console.log('发生错误：')
@@ -781,7 +781,7 @@ const showDownloadNotice = (item?: NoticeActiveNum) => {
   Object.assign(showFlag, item)
 }
 
-//呼出赞助界面
+//呼出赞赏界面
 const showPayCodePanel = () => {
   isShowDownloadNotice.value = false
   activeIndex.value = '5'

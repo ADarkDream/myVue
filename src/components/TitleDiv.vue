@@ -68,9 +68,11 @@
         <el-button @click="router.push({name:'center'})" plain :icon="Comment" v-if="!isForum">论坛</el-button>
         <!--选项菜单-->
         <el-dropdown>
-          <el-button class="option" :icon="Operation">
+           <span>
+             <el-button class="option" :icon="Operation">
             选项
           </el-button>
+           </span>
           <template #dropdown>
             <el-dropdown-menu>
               <!--管理中心-->
@@ -80,6 +82,10 @@
               <!--用户中心-->
               <el-dropdown-item v-else-if="isLogin" :icon="UserFilled" @click="goCenter">
                 用户中心
+              </el-dropdown-item>
+              <!--记账本功能-->
+              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="router.push({name:'books'})">
+                前往账本
               </el-dropdown-item>
               <!--退出登录-->
               <el-dropdown-item v-if="isLogin" @click="exit" :icon="SwitchButton">
@@ -160,7 +166,9 @@
         <el-button size="small" @click="router.push({name:'center'})" plain :icon="Comment" v-if="!isHome&&!isForum"/>
         <!--选项下拉菜单-->
         <el-dropdown size="small">
-          <el-button size="small" class="option" :icon="Operation"/>
+          <span>
+            <el-button size="small" class="option" :icon="Operation"/>
+          </span>
           <template #dropdown>
             <el-dropdown-menu>
               <!--管理中心-->
@@ -171,12 +179,17 @@
               <el-dropdown-item v-else-if="isLogin" :icon="UserFilled" @click="goCenter">
                 用户中心
               </el-dropdown-item>
+              <!--记账本功能-->
+              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="router.push({name:'books'})">
+                前往账本
+              </el-dropdown-item>
               <!--退出登录-->
               <el-dropdown-item v-if="isLogin" @click="exit" :icon="SwitchButton">
                 退出登录
               </el-dropdown-item>
               <!--更换壁纸-->
-              <el-dropdown-item :icon="Switch" class="bgBtn" @click="changeBG(0)" v-if="!isHome">更换壁纸</el-dropdown-item>
+              <el-dropdown-item :icon="Switch" class="bgBtn" @click="changeBG(0)" v-if="!isHome">更换壁纸
+              </el-dropdown-item>
               <!--重返未来-->
               <el-dropdown-item :icon="Download" class="bgBtn" @click="router.push({name:'download'})">重返未来
               </el-dropdown-item>
@@ -270,7 +283,7 @@ import {
   ArrowLeftBold, Avatar, BellFilled,
   Comment, Download,
   HomeFilled,
-  Moon, Operation,
+  Moon, Notebook, Operation,
   Sunny, Switch, SwitchButton,
   Tools,
   UserFilled

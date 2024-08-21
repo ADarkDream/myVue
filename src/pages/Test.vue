@@ -1,5 +1,5 @@
 <template>
-  <el-container >
+  <el-container>
     <!--  <el-form ref="formRef" style="max-width: 600px;background-color: white" :model="form" label-width="auto" class="demo-dynamic">-->
     <!--    <el-form-item prop="email" label="Email" :rules="[-->
     <!--        {-->
@@ -38,93 +38,94 @@
     <!--    </el-form-item>-->
     <!--  </el-form>-->
 
-<!--    <WorkTest/>-->
+        <WorkTest/>
 
-<!--    <el-header >-->
-<!--      多选树状测试-->
-<!--      <el-tree-select-->
-<!--          v-model="value"-->
-<!--          :data="data"-->
-<!--          multiple-->
-<!--          :render-after-expand="false"-->
-<!--          :filter-node-method="filterNodeMethod"-->
-<!--          filterable-->
-<!--          show-checkbox-->
-<!--          style="width: 240px"-->
-<!--      />-->
-<!--      <el-button @click="getList">打印</el-button>-->
-<!--      <br>-->
-<!--      <el-input placeholder="请输入房间号" v-model.trim="roomNum"/>-->
-<!--      <el-input placeholder="请输入昵称" v-model.trim="playerName"/>-->
-<!--    </el-header>-->
-<!--    <el-main v-if="false" style="padding-top: 50px">-->
-<!--      <div v-if="false">-->
-<!--        <h2>websocket测试</h2>-->
-<!--        <div style="display: flex;justify-content:space-between;width: 95%;min-height: 300px; ">-->
-<!--          <el-card style="width: 50%">-->
-<!--            <template #header>-->
-<!--              <el-text type="primary">发送的信息</el-text>-->
-<!--            </template>-->
-<!--            <el-input placeholder="输入要发送的信息" v-model="msg" type="textarea"></el-input>-->
-<!--            <br>-->
-<!--            <template #footer>-->
-<!--              <el-button-group>-->
-<!--                <el-button type="success" @click="openConnection()">开启链接</el-button>-->
-<!--                <el-button type="primary" @click="sendMsg()">发送</el-button>-->
-<!--                <el-button type="danger" @click="closeConnection()">关闭连接</el-button>-->
-<!--              </el-button-group>-->
-<!--            </template>-->
-<!--          </el-card>-->
-<!--          <el-card style="width: 50%">-->
-<!--            <template #header>-->
-<!--              <el-text type="primary">ws 收到的信息</el-text>-->
-<!--            </template>-->
-<!--            <el-text type="warning" v-if="list.length===0">暂无返回的消息</el-text>-->
-<!--            <div v-else v-for="(item,index) in list" :key="index">-->
-<!--              <el-text type="success">第{{ index }}条</el-text>-->
-<!--              ：{{ item }}-->
-<!--            </div>-->
-<!--          </el-card>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div >-->
-<!--        <h2>socket.io测试</h2>-->
-<!--        <div style="display: flex;justify-content:space-between;width: 95%;min-height: 300px; ">-->
-<!--          <el-card style="width: 50%">-->
-<!--            <template #header>-->
-<!--              <el-text type="primary">发送的信息</el-text>-->
-<!--            </template>-->
-<!--            <el-input placeholder="输入要发送的信息" v-model="msg2" type="textarea"></el-input>-->
-<!--            <br>-->
-<!--            <template #footer>-->
-<!--              <el-button-group>-->
-<!--                <el-button type="success" @click="enterTheRoom()">加入房间</el-button>-->
-<!--                <el-button type="primary" @click="sendMsg2()">发送</el-button>-->
-<!--                <el-button type="danger" @click="closeConnection2()">关闭连接</el-button>-->
-<!--                <el-button type="danger" @click="">断开连接</el-button>-->
-<!--              </el-button-group>-->
-<!--            </template>-->
-<!--          </el-card>-->
-<!--          <el-card style="width: 50%">-->
-<!--            <template #header>-->
-<!--              <el-text type="primary">socket.io 收到的信息</el-text>-->
-<!--            </template>-->
-<!--            <el-text type="warning" v-if="list2.length===0">暂无返回的消息</el-text>-->
-<!--            <div v-else v-for="(item,index) in list2" :key="index">-->
-<!--              <el-text type="success">第{{ index }}条</el-text>-->
-<!--              ：{{ item }}-->
-<!--            </div>-->
-<!--          </el-card>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </el-main>-->
-<!--    <el-footer style="margin-top: 300px">-->
-<!--      {{testArr1}}<br>{{testArr2}}<br>{{testArr3}}<br>-->
 
-<!--      <el-button @click="add1">添加1</el-button>-->
-<!--      <el-button @click="add2">添加2</el-button>-->
-<!--      <el-button @click="add3">添加3</el-button>-->
-<!--    </el-footer>-->
+    <!--    <el-header >-->
+    <!--      多选树状测试-->
+    <!--      <el-tree-select-->
+    <!--          v-model="value"-->
+    <!--          :data="data"-->
+    <!--          multiple-->
+    <!--          :render-after-expand="false"-->
+    <!--          :filter-node-method="filterNodeMethod"-->
+    <!--          filterable-->
+    <!--          show-checkbox-->
+    <!--          style="width: 240px"-->
+    <!--      />-->
+    <!--      <el-button @click="getList">打印</el-button>-->
+    <!--      <br>-->
+    <!--      <el-input placeholder="请输入房间号" v-model.trim="roomNum"/>-->
+    <!--      <el-input placeholder="请输入昵称" v-model.trim="playerName"/>-->
+    <!--    </el-header>-->
+    <!--    <el-main v-if="false" style="padding-top: 50px">-->
+    <!--      <div v-if="false">-->
+    <!--        <h2>websocket测试</h2>-->
+    <!--        <div style="display: flex;justify-content:space-between;width: 95%;min-height: 300px; ">-->
+    <!--          <el-card style="width: 50%">-->
+    <!--            <template #header>-->
+    <!--              <el-text type="primary">发送的信息</el-text>-->
+    <!--            </template>-->
+    <!--            <el-input placeholder="输入要发送的信息" v-model="msg" type="textarea"></el-input>-->
+    <!--            <br>-->
+    <!--            <template #footer>-->
+    <!--              <el-button-group>-->
+    <!--                <el-button type="success" @click="openConnection()">开启链接</el-button>-->
+    <!--                <el-button type="primary" @click="sendMsg()">发送</el-button>-->
+    <!--                <el-button type="danger" @click="closeConnection()">关闭连接</el-button>-->
+    <!--              </el-button-group>-->
+    <!--            </template>-->
+    <!--          </el-card>-->
+    <!--          <el-card style="width: 50%">-->
+    <!--            <template #header>-->
+    <!--              <el-text type="primary">ws 收到的信息</el-text>-->
+    <!--            </template>-->
+    <!--            <el-text type="warning" v-if="list.length===0">暂无返回的消息</el-text>-->
+    <!--            <div v-else v-for="(item,index) in list" :key="index">-->
+    <!--              <el-text type="success">第{{ index }}条</el-text>-->
+    <!--              ：{{ item }}-->
+    <!--            </div>-->
+    <!--          </el-card>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--      <div >-->
+    <!--        <h2>socket.io测试</h2>-->
+    <!--        <div style="display: flex;justify-content:space-between;width: 95%;min-height: 300px; ">-->
+    <!--          <el-card style="width: 50%">-->
+    <!--            <template #header>-->
+    <!--              <el-text type="primary">发送的信息</el-text>-->
+    <!--            </template>-->
+    <!--            <el-input placeholder="输入要发送的信息" v-model="msg2" type="textarea"></el-input>-->
+    <!--            <br>-->
+    <!--            <template #footer>-->
+    <!--              <el-button-group>-->
+    <!--                <el-button type="success" @click="enterTheRoom()">加入房间</el-button>-->
+    <!--                <el-button type="primary" @click="sendMsg2()">发送</el-button>-->
+    <!--                <el-button type="danger" @click="closeConnection2()">关闭连接</el-button>-->
+    <!--                <el-button type="danger" @click="">断开连接</el-button>-->
+    <!--              </el-button-group>-->
+    <!--            </template>-->
+    <!--          </el-card>-->
+    <!--          <el-card style="width: 50%">-->
+    <!--            <template #header>-->
+    <!--              <el-text type="primary">socket.io 收到的信息</el-text>-->
+    <!--            </template>-->
+    <!--            <el-text type="warning" v-if="list2.length===0">暂无返回的消息</el-text>-->
+    <!--            <div v-else v-for="(item,index) in list2" :key="index">-->
+    <!--              <el-text type="success">第{{ index }}条</el-text>-->
+    <!--              ：{{ item }}-->
+    <!--            </div>-->
+    <!--          </el-card>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </el-main>-->
+    <!--    <el-footer style="margin-top: 300px">-->
+    <!--      {{testArr1}}<br>{{testArr2}}<br>{{testArr3}}<br>-->
+
+    <!--      <el-button @click="add1">添加1</el-button>-->
+    <!--      <el-button @click="add2">添加2</el-button>-->
+    <!--      <el-button @click="add3">添加3</el-button>-->
+    <!--    </el-footer>-->
 
   </el-container>
 </template>
@@ -133,29 +134,31 @@
 import {onMounted, onUnmounted, reactive, ref} from 'vue'
 import type {FormInstance} from 'element-plus'
 import {ElMessage} from 'element-plus'
-import {useRouter,useRoute} from "vue-router";
+import {useRouter, useRoute} from "vue-router";
 import useUserInfo from "@/hooks/useUserInfo";
 import {io} from "socket.io-client";
 
 
 import {useTestStore} from "@/store/useTestStore";
 import WorkTest from "@/components/WorkTest.vue";
-const {testArr1,testArr2,testArr3,playerInfo} =useTestStore()
+import Books from "@/pages/UserBooks.vue";
+
+const {testArr1, testArr2, testArr3, playerInfo} = useTestStore()
 console.log(testArr1)
-const add1=()=>{
-  testArr1.push({key:123,value:123})
+const add1 = () => {
+  testArr1.push({key: 123, value: 123})
 }
 
-const add2=()=>{
-  testArr2.push({key:123,value:123})
+const add2 = () => {
+  testArr2.push({key: 123, value: 123})
 }
-const add3=()=>{
-  testArr3.push({key:123,value:123})
+const add3 = () => {
+  testArr3.push({key: 123, value: 123})
 }
 
 
 const router = useRouter();
-const route=useRoute()
+const route = useRoute()
 const {isAdmin} = useUserInfo()
 
 onMounted(() => {
@@ -435,7 +438,7 @@ const getList = () => {
 <style scoped>
 .el-container {
   background-color: var(--el-bg-color);
-  display:flex;
+  display: flex;
   justify-content: center;
 }
 </style>

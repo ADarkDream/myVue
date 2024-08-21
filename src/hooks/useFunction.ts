@@ -51,7 +51,7 @@ export default function () {
         )
     }
 
-    //深度对比两个数据是否一致，能比较常见数据。isSort=true先排序再比较，使其对数组排序不敏感
+    //深度对比两个数据是否一致,返回true为一致，能比较常见数据。isSort=true先排序再比较，使其对数组排序不敏感
     // 不能比较循环引用对象(会导致无限递归)、特殊对象类型(例如 Date、Map、Set 等)，以及原型链上的属性、函数、 NaN、Symbol 类型。
     function deepEqual(a, b, isSort = false) {
         if (a === b) return true;
@@ -136,6 +136,7 @@ export default function () {
 //     return true;
 // }
 
+    //获取随机N张重返未来1999背景图片
     const getBG = async (sort?: number, limitNum?: number) => {
         try {
             const result = await axios({
@@ -165,7 +166,7 @@ export default function () {
     }
 
     //el-table中按时间顺序和逆序排列
-    const sortByTime = (tableData,prop,order) => {
+    const sortByTime = (tableData, prop, order) => {
         tableData.sort((a, b) => {
             const propA = a[prop as keyof typeof a]
             const propB = b[prop as keyof typeof b]
@@ -175,5 +176,5 @@ export default function () {
         })
     }
     // 向外暴露
-    return {copyWebsiteRecord, copyText, copyCode, deepEqual, getBG, diffObj,sortByTime}
+    return {copyWebsiteRecord, copyText, copyCode, deepEqual, getBG, diffObj, sortByTime}
 }

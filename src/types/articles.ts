@@ -1,9 +1,10 @@
-//文章类型声明
+//管理界面的文章类型
 interface Article {
     id: number,
     title: string,
     status: number,
     author: string,
+    authorId?: number,
     text: string,
     area: string,
     tags: string,
@@ -11,7 +12,7 @@ interface Article {
     updated_time: number
 }
 
-//文章评论
+//管理界面的文章评论
 interface Comment {
     id: number,
     uid: number,
@@ -22,4 +23,14 @@ interface Comment {
 }
 
 
-export {Article, Comment}
+//文章界面的评论
+interface CommentInfo {
+    id: number,
+    observer: string,
+    uid: number,
+    comment: string,
+    created_time: string,
+    headImgUrl: string
+}
+
+export {Article, Comment, CommentInfo}

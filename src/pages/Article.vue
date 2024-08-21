@@ -53,7 +53,6 @@
               <el-input class="input" v-model="comment" maxlength="300" :autosize="true"
                         placeholder="发表你的评论"
                         show-word-limit
-                        :prefix-icon="Comment"
                         type="textarea"></el-input>
             </el-col>
             <el-col :lg="2" :md="3" :sm="3" :xs="5" style="display: flex">
@@ -80,9 +79,11 @@
                   <el-text>{{ getDiffTime(item.created_time) }}</el-text>
                   <el-text type="primary">{{ index + 1 }}楼</el-text>
                   <el-dropdown>
+                     <span>
                     <el-icon class="el-icon--right">
                       <MoreFilled/>
                     </el-icon>
+                     </span>
                     <template #dropdown>
                       <el-dropdown-menu>
                         <el-dropdown-item command="a" :icon="WarnTriangleFilled">举报</el-dropdown-item>
@@ -108,16 +109,16 @@
 import axios from "axios";
 import useTimeStamp from '@/hooks/useTimestamp'
 import {ElMessage, ElMessageBox, ElLoading} from "element-plus";
-import {nextTick, onMounted,  reactive} from "vue";
+import {nextTick, onMounted, reactive} from "vue";
 import {ref} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {ArrowLeftBold, Refresh, Comment, Delete, MoreFilled, WarnTriangleFilled} from "@element-plus/icons-vue";
+import {ArrowLeftBold, Refresh, Delete, MoreFilled, WarnTriangleFilled} from "@element-plus/icons-vue";
 import useUserInfo from "@/hooks/useUserInfo";
 import useResponsive from "@/hooks/useResponsive";
 import hljs from 'highlight.js/lib/common';
-
+import {Article,CommentInfo} from '@/types/articles'
 const {isLogin, isAdmin, uid, headImgUrl, errorImage} = useUserInfo()
-const {isPC, screenHeight,containerHeight} = useResponsive()
+const {screenHeight, containerHeight} = useResponsive()
 const router = useRouter()
 const route = useRoute() // 注意：接收参数的时候不带 ‘r’
 const isShow = ref(true)
@@ -132,35 +133,16 @@ function go(author: string, area: string, tags: string) {
 
 
 //时间戳转换
-let { getDiffTime} = useTimeStamp()
+let {getDiffTime} = useTimeStamp()
 
-//文章类型声明
-interface Article {
-  title: string,
-  author: string,
-  authorId: number,
-  text: string,
-  area: string,
-  tags: string,
-  status: number,
-  created_time: string,
-  updated_time: string
-}
 
-//评论类型声明
-interface Comment {
-  id: number,
-  observer: string,
-  uid: number,
-  comment: string,
-  created_time: string,
-  headImgUrl: string
-}
+
+
 
 //文章信息
 const article = reactive({}) as Article
 //评论列表
-let comments: Comment[] = reactive([])
+const comments: CommentInfo[] = reactive([])
 
 //region刷新，获取文章
 async function getArticle() {
@@ -175,14 +157,14 @@ async function getArticle() {
     }
   }).then(async (result) => {
     console.log(result)
-    const { comments: commentsData} = result.data
+    const {comments: commentsData} = result.data
     console.log(!!comments)
     // ElMessage.success(msg)
     Object.assign(article, result.data.article)
     //判断返回的数据中是否有评论
     if (!!commentsData && commentsData.length !== 0) {
       comments.splice(0, comments.length)
-      commentsData.forEach((item: Comment) => {
+      commentsData.forEach((item: CommentInfo) => {
         comments.push(item);
       });
     }
@@ -198,10 +180,10 @@ async function getArticle() {
 
 //给代码块添加高亮
 // 复制功能
-import useFunction from "@/hooks/useFunction";
+// import useFunction from "@/hooks/useFunction";
 import emitter from "@/utils/emitter";
 
-const {copyCode} = useFunction()
+// const {copyCode} = useFunction()
 
 function addCodeHighLight() {
   const codeBlocks = document.querySelectorAll('[class*="language-"]')

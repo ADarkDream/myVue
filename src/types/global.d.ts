@@ -6,8 +6,8 @@ interface ResultData<T> {
 
 //el-table表格排序，handleSortChange传参声明
 interface Sort {
-  prop: string
-  order: 'ascending' | 'descending'
+    prop: string
+    order: 'ascending' | 'descending'
 }
 
 //el-table筛选的类型声明
@@ -15,8 +15,6 @@ type TableFilterItem<T> = {
     text: string,
     value: T
 }
-
-
 
 
 //公告

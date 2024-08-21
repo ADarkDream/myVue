@@ -25,13 +25,13 @@
         <el-button text type="info" class="title">文章列表</el-button>
         <el-divider>{{ allArticleList.length }}</el-divider>
         <!--    表格模式；文章-->
-        <el-table ref="articleRef" :data="allArticleList" style="width: 100%" max-height="500" stripe border
+        <el-table ref="articleRef" :data="allArticleList"  max-height="500" stripe border
                   highlight-current-row
                   table-layout="auto"  :default-sort="{ prop: 'id', order: 'descending' }">
-          <el-table-column fixed prop="id" label="ID" width="70" sortable/>
-          <el-table-column  prop="title" label="文章标题" width="200"/>
-          <el-table-column prop="author" label="作者" width="150"/>
-          <el-table-column prop="area" label="板块" width="100" :filters="[
+          <el-table-column fixed prop="id" label="ID"  sortable/>
+          <el-table-column  prop="title" label="文章标题" />
+          <el-table-column prop="author" label="作者" />
+          <el-table-column prop="area" label="板块"  :filters="[
         { text: '文章', value: '文章' },
         { text: '板块一', value: '板块一' },
       ]" :filter-method="filterHandler"
@@ -41,7 +41,7 @@
               <div v-else-if="scope.row.area==='板块一'">板块一</div>
             </template>
           </el-table-column>
-          <el-table-column prop="tags" label="标签" width="100"
+          <el-table-column prop="tags" label="标签"
                            :filters="[
         { text: '标签b', value: '标签b' },
         { text: '散文', value: '散文' },
@@ -59,7 +59,7 @@
           <!--      </template>-->
           <!--    </el-table-column>-->
 
-          <el-table-column prop="status" label="文章状态" width="120" :filters="[
+          <el-table-column prop="status" label="文章状态"  :filters="[
           { text: '待审核', value: 0 },
         { text: '已发布', value: 1 },
           { text: '未过审', value: 2 },
@@ -70,13 +70,13 @@
               <el-button text type="danger" v-else-if="scope.row.status===2">未过审</el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="created_time" label="创建时间" width="150">
+          <el-table-column prop="created_time" label="创建时间" min-width="140">
             <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
           </el-table-column>
-          <el-table-column prop="created_time" label="修改时间" width="150">
+          <el-table-column prop="created_time" label="修改时间" min-width="140">
             <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
           </el-table-column>
-          <el-table-column fixed="right" label="操作" width="150">
+          <el-table-column fixed="right" label="操作" min-width="140">
             <template #default="scope">
               <el-button v-if="scope.row.status===1" link type="primary" size="small" @click="goArticle(scope.row,1)">查看
               </el-button>
@@ -97,9 +97,9 @@
         <el-divider>{{ draftList.length }}</el-divider>
         <el-table ref="draftRef" :data="draftList" max-height="500" stripe border highlight-current-row style="width: 100%"
                   table-layout="auto" :default-sort="{ prop: 'id', order: 'descending' }">
-          <el-table-column fixed prop="id" label="ID" width="70" sortable/>
-          <el-table-column  prop="title" label="草稿标题" width="220"/>
-          <el-table-column prop="area" label="板块" width="150"
+          <el-table-column fixed prop="id" label="ID"  sortable/>
+          <el-table-column  prop="title" label="草稿标题" />
+          <el-table-column prop="area" label="板块"
                            :filters="[{ text: '文章', value: '文章' }, { text: '板块一', value: '板块一' },]"
                            :filter-method="filterHandler">
             <template #default="scope">
@@ -107,7 +107,7 @@
               <div v-else-if="scope.row.area==='板块一'">板块一</div>
             </template>
           </el-table-column>
-          <el-table-column prop="tags" label="标签" width="150"
+          <el-table-column prop="tags" label="标签"
                            :filters="[ { text: '标签b', value: '标签b' },{ text: '散文', value: '散文' },]"
                            :filter-method="filterHandler">
             <template #default="scope">
@@ -115,13 +115,13 @@
               <div v-else-if="scope.row.tags==='散文'">散文</div>
             </template>
           </el-table-column>
-          <el-table-column prop="created_time" label="创建时间" width="250">
+          <el-table-column prop="created_time" label="创建时间" min-width="140">
             <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
           </el-table-column>
-          <el-table-column prop="created_time" label="修改时间" width="250">
+          <el-table-column prop="created_time" label="修改时间" min-width="140">
             <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
           </el-table-column>
-          <el-table-column fixed="right" label="操作" width="120">
+          <el-table-column fixed="right" label="操作" min-width="100">
             <template #default="scope">
               <el-button link type="primary" size="small" @click="goEdit(scope.row,1)">编辑</el-button>
               <el-button link type="danger" size="small" @click="deleteRow(scope.row.id,1)">删除</el-button>

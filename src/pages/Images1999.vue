@@ -129,9 +129,9 @@
                 highlight-current-row
                 table-layout="auto" type="type" :default-sort="{ prop: 'imgIndex', order: 'custom' }"
                 @sort-change="handleSortChange">
-        <el-table-column fixed prop="imgIndex" label="本页序号" width="100" align="center" sortable/>
-        <el-table-column prop="id" label="ID" width="50" align="center" sortable/>
-        <el-table-column prop="version" label="版本" width="100" align="center">
+        <el-table-column fixed prop="imgIndex" label="本页序号" min-width="100" align="center" sortable/>
+        <el-table-column prop="id" label="ID" min-width="50" align="center" sortable/>
+        <el-table-column prop="version" label="版本" min-width="100" align="center">
           <template #default="scope">
             <template v-for="item in versionInfo" :key="item.value">
               <el-text v-if="item.value===scope.row.version">
@@ -140,7 +140,7 @@
             </template>
           </template>
         </el-table-column>
-        <el-table-column prop="imgUrl" sum-text :label="isEditRow===-1?'图片':'链接'  " width="200" align="center">
+        <el-table-column prop="imgUrl" sum-text :label="isEditRow===-1?'图片':'链接'  " min-width="200" align="center">
           <template #default="scope">
             <div v-if="isEditRow===scope.$index">
               <el-text type="primary" @click="copyText(scope.row.imgUrl,'图片链接'+scope.row.newName,scope.row.imgUrl)">
@@ -170,12 +170,12 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="roleNames" label="包含角色" width="100" align="center">
+        <el-table-column prop="roleNames" label="包含角色" min-width="100" align="center">
           <template #default="scope">
             <el-text type="primary">{{ scope.row.roleNames }}</el-text>
           </template>
         </el-table-column>
-        <el-table-column prop="newRoleNames" label="包含角色修改为" width="200" align="center">
+        <el-table-column prop="newRoleNames" label="包含角色修改为" min-width="200" align="center">
           <template #default="scope">
             <div v-if="isEditRow===scope.$index">
               <el-tree-select
@@ -192,14 +192,14 @@
             <el-text v-else type="warning">{{ scope.row.newRoleNames }}</el-text>
           </template>
         </el-table-column>
-        <el-table-column prop="newName" label="图片名" width="150" align="center"/>
-        <el-table-column prop="oldName" label="官方原名" width="150" align="center"/>
+        <el-table-column prop="newName" label="图片名" min-width="150" align="center"/>
+        <el-table-column prop="oldName" label="官方原名" min-width="150" align="center"/>
         <!--      <el-table-column prop="imgPath"  sum-text label="服务器存储路径" width="100" align="center"/>-->
-        <el-table-column prop="time" label="官方上传时间" width="120"/>
-        <el-table-column prop="created_time" label="整理时间" width="150">
+        <el-table-column prop="time" label="官方上传时间" min-width="120"/>
+        <el-table-column prop="created_time" label="整理时间" min-width="150">
           <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="100">
+        <el-table-column fixed="right" label="操作" min-width="100">
           <template #default="scope">
             <div v-if="isEditRow!==scope.$index">
               <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>

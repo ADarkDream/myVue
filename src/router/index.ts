@@ -8,9 +8,11 @@ const UserCenter = () => import( "@/pages/UserCenter.vue");
 const NotFound = () => import( "@/pages/NotFound.vue");
 const UserInfo = () => import( "@/pages/UserInfo.vue");
 const UserPreference = () => import( "@/pages/UserPreference.vue");
-
-const UserEdit = () => import( "@/pages/UserEdit.vue");
 const UserManagement = () => import( "@/pages/UserManagement.vue");
+const UserEdit = () => import( "@/pages/UserEdit.vue");
+const UserBooks = () => import("@/pages/UserBooks.vue")
+const UserBook = () => import("@/pages/UserBook.vue")
+
 const Article = () => import( "@/pages/Article.vue");
 const Center = () => import( "@/pages/Center.vue")
 const AdminArticlesManagement = () => import( "@/pages/AdminArticlesManagement.vue");
@@ -63,7 +65,7 @@ const router = createRouter({
                 }]
         },
         {//聊天大厅
-            name:'chat',
+            name: 'chat',
             path: '/Chat',
             component: ChatCenter,
             redirect: {name: 'hall'},
@@ -152,6 +154,18 @@ const router = createRouter({
                     name: 'userEdit',//发布文章界面
                     path: "edit",
                     component: UserEdit
+                },
+                {
+                    path: 'books',
+                    children: [{
+                        name: 'books',//账本界面
+                        path: '',
+                        component: UserBooks
+                    }, {
+                        name: 'book',//账单界面
+                        path: 'book',
+                        component: UserBook
+                    }]
                 }
             ]
         },

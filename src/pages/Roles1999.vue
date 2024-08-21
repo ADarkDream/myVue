@@ -234,8 +234,8 @@ function getRoles() {
   })
 }
 
-//添加导航网站面板的显示与隐藏
-let dialogVisible = ref(false)
+//添加角色面板的显示与隐藏
+const dialogVisible = ref(false)
 
 const tableRef = ref<TableInstance>()
 
@@ -355,7 +355,7 @@ interface Role {
 
 
 //编辑标记
-let isEditRow = ref<number>(-1)
+const isEditRow = ref<number>(-1)
 
 //编辑角色信息(修改编辑标记)
 const handleEdit = (index: number, row: Role) => {
