@@ -205,13 +205,13 @@ const clearFilter = () => {
 
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({column, prop, order}) {
+function handleSortChange() {
   // 根据 column 和 order 对 totalData 进行排序
-  totalData.sort((a, b) => {
-    if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
-    if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
-    return 0;
-  })
+  // totalData.sort((a, b) => {
+  //   if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
+  //   if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
+  //   return 0;
+  // })
   if (flag.value) render()
 }
 
@@ -224,7 +224,7 @@ function filterChange() {
   //预设筛选条件
   const filterName = item => searchUrl.name === '' ? true : item.name.toLowerCase().includes(searchUrl.name.toLowerCase())
   const filterDetail = item => searchUrl.detail === '' ? true : item.detail.toLowerCase().includes(searchUrl.detail.toLowerCase())
-  const filterUid = item => item.uid.toString().includes(searchUrl.uid.toString())
+  // const filterUid = item => item.uid.toString().includes(searchUrl.uid.toString())
   const filterStatus = item => searchUrl.status === 2 ? true : item.status === searchUrl.status
   const filterSort = item => searchUrl.sort === '' ? true : item.sort.includes(searchUrl.sort)
   const filterTags = item => searchUrl.tags === '' ? true : item.tags.includes(searchUrl.tags)

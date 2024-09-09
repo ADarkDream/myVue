@@ -368,9 +368,9 @@ const clearFilter = () => {
 }
 
 
-//监听排序行为，并修改数组顺序,否则删除会出错
+//监听排序行为，并修改数组顺序,否则删除会出错,column是item，prop是当前列的key，order是'ascending'或'desc'
 function handleSortChange({column, prop, order}) {
-  console.log(column, prop, order)
+  console.log(column,1, prop, 2,order)
   if (prop === 'id') {//根据排序整个列表
     condition.orderBy = prop
     order === 'descending' ? condition.isDesc = 'desc' : condition.isDesc = ''

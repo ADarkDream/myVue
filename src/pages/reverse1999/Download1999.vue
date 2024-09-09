@@ -185,9 +185,7 @@
                 </el-button>
               </el-text>
               <el-divider/>
-              <el-text>毕业俩月了还没找到工作，已经到了需要求赞赏交网站网费的程度了QAQ</el-text>
-              <br>
-              <el-text>如果您觉得本站有用或有趣，总之只要您愿意，不论是五毛还是一块，默默感激不尽！！！</el-text>
+              <el-text>如果您觉得本站有用或有趣，欢迎成为元老级赞助人！！！</el-text>
               <br>
               <el-text type="warning">所有收入仅用于维持网站运营。</el-text>
               <br>
@@ -290,7 +288,7 @@ import useFunction from "@/hooks/useFunction";
 import {useBaseUrlStore} from '@/store/useBaseUrlStore'
 import logo from '@/assets/logo-small.png'
 import emitter from "@/utils/emitter";
-import DownloadNotice from "@/components/DownloadNotice.vue";
+import DownloadNotice from "@/pages/reverse1999/components/DownloadNotice.vue";
 
 const {copyText, deepEqual} = useFunction()
 const router = useRouter()
@@ -538,7 +536,7 @@ const getImages = async () => {
     console.log(imgList)
 
     autoCol()   //再次触发自动布局
-    activeIndex.value = undefined
+    // activeIndex.value = undefined
   } catch (error) {
     console.log('发生错误：')
     console.log(error)
@@ -727,7 +725,7 @@ const downloadImg = async (url: string, imgName: string, imgPath: string) => {
   if (isOpenProxy.value)   //如果有端口代理
     imageUrl = url.replace('https://gamecms-res.sl916.com', 'http://localhost:3000/download1999')
   else if (!!imgPath) //没有端口代理
-    imageUrl = baseUrl.qiniuHttpUrl + imgPath.replace(/^\./, '')//七牛云备份,去掉路径中第一个点
+    imageUrl = baseUrl.qiniuHttpsUrl + imgPath.replace(/^\./, '')//七牛云备份,去掉路径中第一个点
   else//没有端口代理且服务器没有备份
     imageUrl = url.replace(axios.defaults.baseURL + '/download1999', 'http://localhost:3000/download1999')
   try {

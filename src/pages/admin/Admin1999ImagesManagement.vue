@@ -287,7 +287,7 @@ const clearFilter = () => {
 
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({prop, order}: Sort) {
+function handleSortChange({prop, order}: Sort<ReverseImgInfo>) {
   //  {column,prop, order}
   console.log(prop, order)
   if (prop === 'id') {//根据排序整个列表
@@ -297,7 +297,7 @@ function handleSortChange({prop, order}: Sort) {
   } else tableData.sort((a, b) => {  // 根据 column 和 order 对 this.tableData 进行排序,只排序本页
     const propA = a[prop as keyof typeof a]!
     const propB = b[prop as keyof typeof b]!
-    if (propA < propB) return order === 'ascending' ? -1 : 1;//
+    if (propA < propB) return order === 'ascending' ? -1 : 1;
     else if (propA > propB) {
       console.log('正序')
       return order === 'ascending' ? 1 : -1;

@@ -15,7 +15,7 @@
   <!--少量下载说明-->
   <el-collapse-transition v-show="isShow==='1'" style="text-align: left;">
     <el-card>默认情况下，你可以一次性批量下载最多10张图片。
-      <el-text type="warning">本站每月免费下载流量额度有限</el-text>
+      <el-text type="warning">本站每月能承受的图片下载流量费用有限</el-text>
       <br>
       <el-text class="text">1.如果你下载的数量不多，
         <el-text type="primary">长按或右键保存</el-text>
@@ -29,7 +29,7 @@
       </el-text>
       <br>
       <el-text class="text">3.如果你想了解更多信息，请查看
-        <el-text type="primary">其它说明</el-text>
+        <el-link type="primary" @click="changePage('3')">其它说明</el-link>
         。
       </el-text>
     </el-card>
@@ -79,12 +79,8 @@
       <el-collapse-item name="1" title="Q：为什么要作出限制？">
         <el-text class="text">
           A：网站图片提供
-          <el-text type="primary">下载需要带宽</el-text>
-          ，而默默的服务器
-          <el-text type="primary">带宽有限</el-text>
-          ，如果
-          <el-text type="danger">带宽耗尽便无法再直接下载</el-text>
-          ，届时只能通过
+          <el-text type="warning">下载需要流量费</el-text>
+          ，工资微薄，为防止恶意刷流量，所以限制每次只能下载10张图，如需批量下载更多请通过
           <el-link type="primary" @click="changePage('2')">下载大量(仅限PC)</el-link>
           的方式进行下载。
         </el-text>
@@ -106,20 +102,12 @@
                    @click="copyText('https://re.bluepoch.com/home/detail.html#wallpaper','重返未来1999官网','https://re.bluepoch.com/home/detail.html#wallpaper')"
                    title="点击前往重返未来1999官网">从重返未来1999官网
           </el-link>
-          下载图片(简单来说就是，你直接从重返未来1999官网下载，不通过默默的中转，不会额外消耗默默的带宽)
+          下载图片(简单来说就是，你直接从重返未来1999官网下载，不通过默默的中转，不会额外消耗默默的带宽和流量)
         </el-text>
       </el-collapse-item>
       <el-collapse-item name="3" title="Q：还有什么要狡辩的吗？">
         <el-text class="text">
-          A：1.本着为爱发颠为大家提供这个便利功能(虽然平时用不上)，如果
-          <el-text type="warning">每月带宽耗尽</el-text>
-          ，后续网站
-          <el-text type="warning">便无法直接下载</el-text>
-          了，届时网站仅提供
-          <el-text type="primary">分类查询</el-text>
-          和
-          <el-text type="primary">大量下载</el-text>
-          (自己动手丰衣足食)。
+          A：1.本着为爱发颠为大家提供这个便利功能(虽然平时用不上)，希望大家多多支持(遇到bug热心反馈一下)！
         </el-text>
         <br>
         <el-text class="text">

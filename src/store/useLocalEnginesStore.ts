@@ -2,10 +2,12 @@
 import {defineStore} from 'pinia'
 import {reactive} from 'vue'
 import ico_baidu from '@/assets/baidu.png';
+import ico_baidu_kaifa from  '@/assets/baidu_kaifa.png';
 import ico_bilibili from '@/assets/bilibili.png';
 import ico_bing from '@/assets/bing.png';
 import ico_google from '@/assets/google.png';
 import ico_360 from '@/assets/360.png';
+import ico_github from '@/assets/github.png';
 import ico_custom from '@/assets/custom.png';
 import {EngineData} from "@/types/url";
 
@@ -47,7 +49,7 @@ export const useLocalEnginesStore = defineStore('searchEngines', () => {
             src: ico_360,
             baseUrl: 'https://www.so.com',
             searchUrl: '/s?q=',
-            isShow: true
+            isShow: false
         },
         {
             id: 4,
@@ -56,6 +58,24 @@ export const useLocalEnginesStore = defineStore('searchEngines', () => {
             src: ico_bilibili,
             baseUrl: 'https://search.bilibili.com',
             searchUrl: '/all?keyword=',
+            isShow: false
+        },
+            {
+            id: 5,
+            name: '百度开发者搜索',
+            index: 5,
+            src: ico_baidu_kaifa,
+            baseUrl: 'https://kaifa.baidu.com',
+            searchUrl: '/searchPage?wd=',
+            isShow: true
+        },
+        {
+            id: 6,
+            name: 'GitHub',
+            index: 6,
+            src: ico_github,
+            baseUrl: 'https://github.com',
+            searchUrl: '/search?q=',
             isShow: true
         },
     ])

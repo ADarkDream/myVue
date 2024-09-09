@@ -31,8 +31,8 @@
 import {ref} from "vue";
 import {ElCollapseTransition} from "element-plus";
 import Aside from "@/components/Aside.vue";
-import SearchEngine from "@/components/SearchEngine.vue";
-import Content from "@/pages/Content.vue";
+import SearchEngine from "@/pages/home/SearchEngine.vue";
+import Content from "@/pages/home/Content.vue";
 import Approve from "@/components/Approve.vue";
 import useResponsive from "@/hooks/useResponsive";
 

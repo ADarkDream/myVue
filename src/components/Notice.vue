@@ -64,7 +64,7 @@
             </el-text>
             <br>
             <el-text>
-              5.本站正在持续适配移动端，如部分界面错位可尝试PC访问或
+              5.本站正在持续更新和适配移动端，如<el-text type="warning">UI错位</el-text>或<el-text type="danger">功能出错</el-text>请
               <el-button link title="前往反馈" type="primary" @click="changePage('3','2')">留言反馈</el-button>
               。
             </el-text>

@@ -278,7 +278,7 @@
 
 <script setup lang="ts">
 import {onMounted, reactive, ref, watch} from 'vue'
-import Login from "@/pages/Login.vue";
+import Login from "@/pages/admin/Login.vue";
 import {
   ArrowLeftBold, Avatar, BellFilled,
   Comment, Download,
@@ -308,15 +308,11 @@ if (localStorage.getItem('useUserBGUrl') !== '1') bgUrl.value = ''
 if (bgUrl.value === '') bgUrl.value = localStorage.getItem('bgUrl')
 
 //控制头像的显示
-let showHeadImg = ref(false)
-//控制公告界面的显示
-let showNotice = ref(true)
+const showHeadImg = ref(isLogin.value)
+//控制公告界面的显示,登陆之后默认不显示
+const showNotice = ref(!isLogin.value)
 //控制设置界面的显示
-let showSetting = ref(false)
-//下拉按钮里面的字，暂时用不上
-// let darkStr = ref('夜间模式')
-//控制日夜模式切换
-// let isDark = ref(sessionStorage.getItem('isDark') === '1' || false)
+const showSetting = ref(false)
 //登录和注册界面的判断
 const showLogin = ref(false)
 //登录和注册界面的标题——————待修改，需要响应式
@@ -332,36 +328,38 @@ const body = (document.querySelector('body') as HTMLElement)
 //网页初次渲染函数
 onMounted(() => {
   //如果本地壁纸为空
-  if (!bgUrl.value) {//如果背景图不存在
-    //响应式布局,判断是电脑则用横屏背景图
+  if (!bgUrl.value) //{//如果背景图不存在
+      //响应式布局,判断是电脑则用横屏背景图
     changeBG(isPC.value ? 1 : 0)
-  } else {
-    body.style.backgroundImage = `url(${bgUrl.value})`
-    console.log('当前背景图片地址是：' + bgUrl.value)
-    if (localStorage.getItem('useUserBGUrl') !== '1') console.log('如需更多壁纸请前往重返未来1999官网：' + 'https://re.bluepoch.com/home/detail.html#wallpaper')
-  }
+  // } else {
+  //   console.log(333, bgUrl.value)
+  //   // body.style.backgroundImage = 'url('+bgUrl.value+')'
+  //
+  //   console.log('当前背景图片地址是：' + bgUrl.value)
+  //   if (localStorage.getItem('useUserBGUrl') !== '1') console.log('如需更多壁纸请前往重返未来1999官网：' + 'https://re.bluepoch.com/home/detail.html#wallpaper')
+  // }
   //判断是否显示头像
-  if (localStorage.getItem('userInfo') !== null) showHeadImg.value = true
+  // if (localStorage.getItem('userInfo') !== null) showHeadImg.value = true
   //登陆之后不默认显示公告
-  if (isLogin.value) showNotice.value = false
+  // showNotice.value =!isLogin.value
   light()
 })
 
 
 //日夜模式切换逻辑
 function light() {
-  if (isDark.value === false) {
-    html.classList.remove('dark')
-    body.style.backgroundImage = `url(${bgUrl.value})`
-    // darkStr.value = '日间模式'
-    sessionStorage.setItem('isDark', '0')
-    // console.log('当前为日间模式')
-  } else {
+  if (isDark.value) {
     body.style.backgroundImage = ''
     html.classList.add('dark')
     // darkStr.value = '夜间模式'
     sessionStorage.setItem('isDark', '1')
     // console.log('当前为夜间模式')
+  } else {
+    html.classList.remove('dark')
+    body.style.backgroundImage = `url(${bgUrl.value})`
+    // darkStr.value = '日间模式'
+    sessionStorage.setItem('isDark', '0')
+    // console.log('当前为日间模式')
   }
 }
 

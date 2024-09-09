@@ -256,13 +256,13 @@ const clearFilter = () => {
 
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({column, prop, order}) {
+function handleSortChange() {
   // 根据 column 和 order 对 totalData 进行排序
-  totalData.sort((a, b) => {
-    if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
-    if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
-    return 0;
-  })
+  // totalData.sort((a, b) => {
+  //   if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
+  //   if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
+  //   return 0;
+  // })
   if (flag.value) render()
 }
 

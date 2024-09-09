@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container  :style="'height:'+containerHeight+'px'">
     <el-header>我的账本</el-header>
     <div>
       <el-button :size="elSize" type="primary" @click="dialogVisible=true">添加账本</el-button>
@@ -64,11 +64,11 @@ import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
 import useTimestamp from "@/hooks/useTimestamp";
 import {useRouter} from "vue-router";
-import AddBook from "@/components/AddBook.vue";
+import AddBook from "@/pages/user/books/components/AddBook.vue";
 import {Book} from '@/types/books'
 
 const {getTime} = useTimestamp()
-const {elSize, dialogWidth} = useResponsive()
+const {elSize, dialogWidth,containerHeight} = useResponsive()
 const {deepEqual, copyText} = useFunction()
 const router = useRouter()
 
@@ -159,7 +159,7 @@ const cancelAddBook = (val?: Book) => {
 }
 
 //分享功能
-const shareKey=(bookInfo)=>copyText(`【默默的小站】注册登陆之后可前往https://muxidream.cn/user/books加入账本【${bookInfo.name}】协作，账本ID：${bookInfo.bid}，协作码：${bookInfo.key},协作码仅一次有效。`,'账本ID和协作码')
+const shareKey=(bookInfo:Book)=>copyText(`【默默的小站】注册登陆之后可前往https://muxidream.cn/user/books加入协作账本【${bookInfo.name}】，账本ID：${bookInfo.bid}，协作码：${bookInfo.key},协作码仅一次有效。`,'账本ID和协作码')
 
 //前往账单列表
 const goBook = (bid: number) => {
@@ -167,7 +167,7 @@ const goBook = (bid: number) => {
   if (isEditID.value !== 0) return
   else {
     router.push({name: 'book', query: {bid}})
-    ElMessage.success(`即将前往账本：${bid}`)
+    // ElMessage.success(`即将前往账本：${bid}`)
   }
 }
 

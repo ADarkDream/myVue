@@ -8,8 +8,7 @@
   </div>
   <el-main style="padding-bottom:0;padding-top: 0 ">
     <el-table ref="tableRef" :data="tableData" style="width: 100%" max-height="500" stripe border highlight-current-row
-              table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }"
-              @sort-change="handleSortChange">
+              table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }">
       <el-table-column fixed prop="id" label="ID" width="70" sortable/>
 
       <el-table-column fixed prop="sort" label="分类" width="120"
@@ -148,16 +147,16 @@ const filterHandler = (
 }
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({prop, order}: Sort) {
-  // 根据 column 和 order 对 this.tableData 进行排序
-  tableData.sort((a, b) => {
-    const propA = a[prop as keyof typeof a]
-    const propB = b[prop as keyof typeof b]
-    if (propA < propB) return order === 'ascending' ? -1 : 1;
-    if (propA > propB) return order === 'ascending' ? 1 : -1;
-    return 0
-  })
-}
+// function handleSortChange({prop, order}: Sort<Image>) {
+//   // 根据 column 和 order 对 this.tableData 进行排序
+//   tableData.sort((a, b) => {
+//     const propA = a[prop as keyof typeof a]
+//     const propB = b[prop as keyof typeof b]
+//     if (propA < propB) return order === 'ascending' ? -1 : 1;
+//     if (propA > propB) return order === 'ascending' ? 1 : -1;
+//     return 0
+//   })
+// }
 
 //当前修改的图片信息
 let urlInfo:Image = reactive({

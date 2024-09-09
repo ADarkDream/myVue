@@ -4,6 +4,7 @@ import {createApp} from 'vue'
 import App from './App.vue'
 import router from "@/router";
 import ElementPlus from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn' //elementPlus国际化
 import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'wc-flow-layout'
@@ -36,7 +37,9 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 app.use(router)
 
-app.use(ElementPlus)
+app.use(ElementPlus, {
+  locale: zhCn,
+})
 app.use(hljsVuePlugin)//代码高亮，标签
 app.use(pinia)
 // app.directive('highlight', highlightDirective);//挂载

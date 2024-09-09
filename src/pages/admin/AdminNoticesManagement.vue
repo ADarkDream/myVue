@@ -8,8 +8,7 @@
   </div>
   <el-main style="padding-bottom:0;padding-top: 0 ">
     <el-table ref="tableRef" :data="tableData" style="width: 100%"  stripe border highlight-current-row
-              table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }"
-              @sort-change="handleSortChange">
+              table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }">
       <el-table-column fixed prop="id" label="ID" width="70" sortable/>
       <el-table-column prop="title" label="公告标题" width="150">
         <template #default="scope">
@@ -154,14 +153,14 @@ const filterHandler = (
 }
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({column, prop, order}) {
-  // 根据 column 和 order 对 this.tableData 进行排序
-  tableData.sort((a, b) => {
-    if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
-    if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
-    return 0;
-  })
-}
+// function handleSortChange({column, prop, order}) {
+//   // 根据 column 和 order 对 this.tableData 进行排序
+//   tableData.sort((a, b) => {
+//     if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;
+//     if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
+//     return 0;
+//   })
+// }
 
 let newNotice = reactive<Notice>({
   id: 0,

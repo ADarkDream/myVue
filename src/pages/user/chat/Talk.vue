@@ -43,9 +43,9 @@
 <script setup lang="ts">
 
 import useResponsive from "@/hooks/useResponsive";
-import ChatDetail from "@/components/ChatDetail.vue";
-import ChatArea from "@/components/ChatArea.vue";
-import ChatConversation from "@/components/ChatConversation.vue";
+import ChatDetail from "@/pages/user/chat/components/ChatDetail.vue";
+import ChatArea from "@/pages/user/chat/components/ChatArea.vue";
+import ChatConversation from "@/pages/user/chat/components/ChatConversation.vue";
 import {ref} from 'vue'
 import useUserInfo from "@/hooks/useUserInfo";
 const {isLogin, imageSrc} = useUserInfo()

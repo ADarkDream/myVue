@@ -94,8 +94,28 @@ export default function () {
         return date + ' ' + hour + ':' + minute
     }
 
+    function getDate(timestamp: string | number = Date.now()) {
+        let d = new Date(timestamp)
+        let month = addZero(d.getMonth() + 1)
+        let day = addZero(d.getDate())
+        let date = (d.getFullYear() - 2000) + '/' + month + '/' + day
+        let hour = addZero(d.getHours())
+        let minute = addZero(d.getMinutes())
+        // let ss = d.getSeconds() < 10 ? '0' + d.getSeconds() : d.getSeconds()
+        // let time = date + ' ' + hour + ':' + minute + ':' + ss
+        // if (hour.)
+        return date + ' ' + hour + ':' + minute
+    }
+
+    //格式化日期为YYYY-MM-DD
+    const formatDate = (date = new Date()) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份补0
+        const day = String(date.getDate()).padStart(2, '0'); // 日期补0
+        return `${year}-${month}-${day}`;
+    }
 
     // 向外暴露
-    return {getTime, getDiffTime, getDiffTimestamp}
+    return {getTime, getDiffTime, getDiffTimestamp,formatDate}
 }
 

@@ -256,36 +256,14 @@ const filterHandler = (
 }
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({prop,order}:Sort) {
+// function handleSortChange({prop, order}: Sort<UserInfo>) {
+function handleSortChange() {
   if (isEditRow.value !== -1) isEditRow.value = -1
-  // 根据 column 和 order 对 this.tableData 进行排序
-  // tableData.sort((a, b) => {
-  //   const propA = a[prop as keyof typeof a]
-  //   const propB = b[prop as keyof typeof b]
-  //   if (propA < propB) return order === 'ascending' ? -1 : 1;
-  //   if (propA > propB) return order === 'ascending' ? 1 : -1;
-  //   return 0;
-  // })
-  //
-  // tableData2.sort((a, b) => {
-  //   const propA = a[prop as keyof typeof a]
-  //   const propB = b[prop as keyof typeof b]
-  //   if (propA < propB) return order === 'ascending' ? -1 : 1;
-  //   if (propA > propB) return order === 'ascending' ? 1 : -1;
-  //   return 0;
-  // })
-  sortByTime(tableData,prop,order)
-    sortByTime(tableData2,prop,order)
+  // console.log(sortByTime(tableData, prop, order))
+  console.log(111)
+  // sortByTime(tableData, prop, order)
+  // sortByTime(tableData2, prop, order)
 }
-    // const sortByTime2 = (mmm:UserInfo[]) => {
-    //     mmm.sort((a, b) => {
-    //         const propA = a[prop as keyof typeof a]
-    //         const propB = b[prop as keyof typeof b]
-    //         if (propA < propB) return order === 'ascending' ? -1 : 1;
-    //         if (propA > propB) return order === 'ascending' ? 1 : -1;
-    //         return 0;
-    //     })
-    // }
 
 getAllUsers()
 
@@ -347,7 +325,7 @@ const newUserInfo: UserInfo = reactive({
 const tableData: UserInfo[] = reactive([])
 const tableData2: UserInfo[] = reactive([])
 //编辑标记
-let isEditRow = ref<number>(-1)
+const isEditRow = ref<number>(-1)
 
 
 //编辑用户信息(修改编辑标记)
@@ -443,7 +421,7 @@ function addAdmin(uid: number) {
 //删除确认框
 const deleteRow = (index: number, row: UserInfo, isAdmin: boolean) => {
   const {uid, username} = row
-  console.log( tableData2.splice(1,1))
+  console.log(tableData2.splice(1, 1))
   console.log(row)
   // handleSortChange()
   ElMessageBox.confirm(

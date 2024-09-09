@@ -31,6 +31,13 @@
     <!--      </el-button>-->
     <!--    </el-form-item>-->
 
+
+<!--      微信公众号登录-->
+<!--      <el-link-->
+<!--                 href="https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx35cf5f77dd955f3b&redirect_uri=https://muxidream.cn/test&response_type=code&scope=snsapi_userinfo#wechat_redirect">-->
+<!--        点击登录-->
+<!--      </el-link>-->
+
     <!--    <el-form-item>-->
     <!--      <el-button type="primary" @click="submitForm(formRef)">Submit</el-button>-->
     <!--      <el-button @click="addDomain">New domain</el-button>-->
@@ -38,7 +45,7 @@
     <!--    </el-form-item>-->
     <!--  </el-form>-->
 
-        <WorkTest/>
+    <!--    <WorkTest/>-->
 
 
     <!--    <el-header >-->
@@ -138,28 +145,18 @@ import {useRouter, useRoute} from "vue-router";
 import useUserInfo from "@/hooks/useUserInfo";
 import {io} from "socket.io-client";
 
-
 import {useTestStore} from "@/store/useTestStore";
 import WorkTest from "@/components/WorkTest.vue";
-import Books from "@/pages/UserBooks.vue";
 
-const {testArr1, testArr2, testArr3, playerInfo} = useTestStore()
-console.log(testArr1)
-const add1 = () => {
-  testArr1.push({key: 123, value: 123})
-}
 
-const add2 = () => {
-  testArr2.push({key: 123, value: 123})
-}
-const add3 = () => {
-  testArr3.push({key: 123, value: 123})
-}
+onMounted(() => {
+  const {testArr1, testArr2, testArr3} = useTestStore()
+  console.log(testArr1, testArr2, testArr3)
+})
 
 
 const router = useRouter();
 const route = useRoute()
-const {isAdmin} = useUserInfo()
 
 onMounted(() => {
   //管理员登录判断

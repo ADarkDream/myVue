@@ -1,3 +1,6 @@
+import {Bill} from "@/types/books";
+import {TableColumnCtx} from "element-plus";
+
 interface ResultData<T> {
     status: number,
     msg: string,
@@ -5,7 +8,8 @@ interface ResultData<T> {
 }
 
 //el-table表格排序，handleSortChange传参声明
-interface Sort {
+interface Sort<T> {
+    column?:T,
     prop: string
     order: 'ascending' | 'descending'
 }
@@ -16,6 +20,19 @@ type TableFilterItem<T> = {
     value: T
 }
 
+//el-table合并列的类型声明
+interface SpanMethodProps<T> {
+  row: T
+  column: TableColumnCtx<T>
+  rowIndex: number
+  columnIndex: number
+}
+
+//el-table表格统计的类型声明
+interface SummaryMethodProps<T = Bill> {
+  columns: TableColumnCtx<T>[]
+  data: T[]
+}
 
 //公告
 interface Notice {

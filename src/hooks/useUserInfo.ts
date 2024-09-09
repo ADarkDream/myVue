@@ -7,22 +7,22 @@ export default function () {
     const baseUrl = useBaseUrlStore()
     //获取本地存储的用户信息userInfo中的数据
     const imageSrc = baseUrl.qiniuHttpsUrl + '/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png'
-    let userInfo = reactive(getLocalUserInfo('userInfo'))
-    if (userInfo.headImgUrl === '') userInfo.headImgUrl = imageSrc
-    let uid = ref(userInfo.uid)
-    let email = ref(userInfo.email)
-    let username = ref(userInfo.username)
-    let signature = ref(userInfo.signature)
-    let headImgUrl = ref(userInfo.headImgUrl)
-    let bgUrl = ref(userInfo.bgUrl)
-    let isLogin = ref(false)
-    let isAdmin = ref(sessionStorage.getItem('isAdmin') === '1' || false)
-
+    const userInfo = reactive(getLocalUserInfo())
+    // if (userInfo.headImgUrl === '') userInfo.headImgUrl = imageSrc
+    const uid = ref(userInfo.uid)
+    const email = ref(userInfo.email)
+    const username = ref(userInfo.username)
+    const signature = ref(userInfo.signature)
+    const headImgUrl = ref(userInfo.headImgUrl)
+    const bgUrl = ref(userInfo.bgUrl)
+    const isLogin = ref(false)
+    const isAdmin = ref(sessionStorage.getItem('isAdmin') === '1' || false)
+    const errorFlag = ref(false)//头像错误标志
 
     //图像错误显示备用图
 
-    function getLocalUserInfo(key: string) {
-        const userInfo = JSON.parse(sessionStorage.getItem('userInfo')) || JSON.parse(localStorage.getItem('userInfo')) || {
+    function getLocalUserInfo() {
+        return JSON.parse(sessionStorage.getItem('userInfo')) || JSON.parse(localStorage.getItem('userInfo')) || {
             email: '',
             signature: '',
             uid: '',
@@ -30,12 +30,12 @@ export default function () {
             bgUrl: '',
             headImgUrl: imageSrc
         }
-        if (key === 'userInfo') return userInfo
-        if (key === 'email') return userInfo.email
-        if (key === 'username') return userInfo.username
-        if (key === 'headImgUrl') return userInfo.headImgUrl
-        if (key === 'bgUrl') return userInfo.bgUrl
-        if (key === 'signature') return userInfo.signature
+        // if (key === 'userInfo') return userInfo
+        // if (key === 'email') return userInfo.email
+        // if (key === 'username') return userInfo.username
+        // if (key === 'headImgUrl') return userInfo.headImgUrl
+        // if (key === 'bgUrl') return userInfo.bgUrl
+        // if (key === 'signature') return userInfo.signature
     }
 
     //批量更新本地userInfo中的数据
@@ -59,7 +59,6 @@ export default function () {
     }
 
     //检查本地token是否过期
-
     checkLocalToken()
 
     function checkLocalToken() {
@@ -67,8 +66,7 @@ export default function () {
         const token = sessionStorage.getItem('token') || '' || localStorage.getItem('token')
         if (token === null || token === undefined || token === '') {
             sessionStorage.setItem('isLogin', '0')
-            isLogin.value = false
-            return false
+            return isLogin.value = false
         }
         const tokenInfo = jwtDecode(token)
         // ((tokenInfo.exp * 1000 - Date.now() ) / 60000).toFixed()  //距离token过期剩余时间
@@ -76,17 +74,15 @@ export default function () {
             ElMessage.error('token已过期，请重新登录')
             sessionStorage.setItem('isLogin', '0')
             localStorage.removeItem('token') //清除过期的token
-            localStorage.removeItem('userInfo')//清除过期的用户信息
+            // localStorage.removeItem('userInfo')//清除过期的用户信息
             isLogin.value = false
-            return false
         } else {
             sessionStorage.setItem('isLogin', '1')
             isLogin.value = true
-            return true
         }
     }
 
-    const errorFlag = ref(false)//头像错误标志
+
 
     //头像加载错误(链接不对或被屏蔽)
     function errorImage(e: Event) {
@@ -96,11 +92,10 @@ export default function () {
         console.log('errorImg', imageSrc)
         if (!errorFlag.value) {//防止多个报错
             ElMessage.error('头像无法加载，已替换为默认头像。请尝试刷新或更换头像')
-            ElMessage.info('原因：服务器错误；或已被管理员删除')
+            // ElMessage.info('原因：服务器错误；或已被管理员删除')
             errorFlag.value = true
             setTimeout(() => errorFlag.value = false, 1000)
         }
-
     }
 
     // 向外暴露

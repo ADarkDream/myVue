@@ -141,7 +141,7 @@
 
 <script setup lang="ts">
 import {ref} from "vue";
-import ChatConnect from "@/components/ChatConnect.vue";
+import ChatConnect from "@/pages/user/chat/components/ChatConnect.vue";
 import useResponsive from "@/hooks/useResponsive";
 const {isPC}=useResponsive()
 const isShowConnect=ref( false)

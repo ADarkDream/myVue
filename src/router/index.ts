@@ -1,38 +1,38 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import Home from "@/pages/Home.vue"//常用，不异步加载
+import Home from "@/pages/home/Home.vue"//常用，不异步加载
 
-const Forum = () => import( "@/pages/Forum.vue");
-const AdminLogin = () => import( "@/pages/AdminLogin.vue");
-const AdminCenter = () => import( "@/pages/AdminCenter.vue");
-const UserCenter = () => import( "@/pages/UserCenter.vue");
+const Forum = () => import( "@/pages/forum/Forum.vue");
+const AdminLogin = () => import( "@/pages/admin/AdminLogin.vue");
+const AdminCenter = () => import( "@/pages/admin/AdminCenter.vue");
+const UserCenter = () => import( "@/pages/user/UserCenter.vue");
 const NotFound = () => import( "@/pages/NotFound.vue");
-const UserInfo = () => import( "@/pages/UserInfo.vue");
-const UserPreference = () => import( "@/pages/UserPreference.vue");
-const UserManagement = () => import( "@/pages/UserManagement.vue");
-const UserEdit = () => import( "@/pages/UserEdit.vue");
-const UserBooks = () => import("@/pages/UserBooks.vue")
-const UserBook = () => import("@/pages/UserBook.vue")
+const UserInfo = () => import( "@/pages/user/UserInfo.vue");
+const UserPreference = () => import( "@/pages/user/UserPreference.vue");
+const UserManagement = () => import( "@/pages/user/UserManagement.vue");
+const UserEdit = () => import( "@/pages/user/UserEdit.vue");
+const UserBooks = () => import("@/pages/user/books/UserBooks.vue")
+const UserBook = () => import("@/pages/user/books/UserBook.vue")
 
-const Article = () => import( "@/pages/Article.vue");
-const Center = () => import( "@/pages/Center.vue")
-const AdminArticlesManagement = () => import( "@/pages/AdminArticlesManagement.vue");
-const AdminUsersManagement = () => import( "@/pages/AdminUsersManagement.vue");
-const AdminNoticesManagement = () => import( "@/pages/AdminNoticesManagement.vue");
-const AdminUrlsManagement = () => import( "@/pages/AdminUrlsManagement.vue");
-const AdminImagesManagement = () => import( "@/pages/AdminImagesManagement.vue");
-const AdminFeedbackManagement = () => import( "@/pages/AdminFeedbackManagement.vue");
-const AdminCommentsManagement = () => import( "@/pages/AdminCommentsManagement.vue");
-const Download1999 = () => import( "@/pages/Download1999.vue");//常用，不异步加载
-const Roles1999 = () => import( "@/pages/Roles1999.vue");
-const Images1999 = () => import( "@/pages/Images1999.vue");
+const Article = () => import( "@/pages/forum/Article.vue");
+const Center = () => import( "@/pages/forum/Center.vue")
+const AdminArticlesManagement = () => import( "@/pages/admin/AdminArticlesManagement.vue");
+const AdminUsersManagement = () => import( "@/pages/admin/AdminUsersManagement.vue");
+const AdminNoticesManagement = () => import( "@/pages/admin/AdminNoticesManagement.vue");
+const AdminUrlsManagement = () => import( "@/pages/admin/AdminUrlsManagement.vue");
+const AdminImagesManagement = () => import( "@/pages/admin/AdminImagesManagement.vue");
+const AdminFeedbackManagement = () => import( "@/pages/admin/AdminFeedbackManagement.vue");
+const AdminCommentsManagement = () => import( "@/pages/admin/AdminCommentsManagement.vue");
+const Download1999 = () => import( "@/pages/reverse1999/Download1999.vue");//常用，不异步加载
+const Roles1999 = () => import( "@/pages/reverse1999/Roles1999.vue");
+const Images1999 = () => import( "@/pages/reverse1999/Images1999.vue");
 const Test = () => import( "@/pages/Test.vue");
 const News = () => import( "@/pages/News.vue");
 const NewsContent = () => import( "@/pages/NewsContent.vue");
-const Admin1999ImagesManagement = () => import("@/pages/Admin1999ImagesManagement.vue")
-const ChatCenter = () => import("@/pages/ChatCenter.vue")
-const ChatHall = () => import("@/pages/ChatHall.vue")
-const Chatroom = () => import("@/pages/ChatRoom.vue")
-const Talk = () => import("@/pages/Talk.vue")
+const Admin1999ImagesManagement = () => import("@/pages/admin/Admin1999ImagesManagement.vue")
+const ChatCenter = () => import("@/pages/user/chat/ChatCenter.vue")
+const ChatHall = () => import("@/pages/user/chat/ChatHall.vue")
+const Chatroom = () => import("@/pages/user/chat/ChatRoom.vue")
+const Talk = () => import("@/pages/user/chat/Talk.vue")
 const router = createRouter({
     history: createWebHistory(),//路由器工作模式，有web和hash两种，web上线后需要服务器配置，hash地址栏会出现#号
     routes: [

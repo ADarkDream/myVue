@@ -39,10 +39,11 @@
 
 <script setup lang="ts">
 import {reactive, ref} from "vue";
-import {ElMessage, UploadFile,ElLoading} from "element-plus";
+import {ElMessage, UploadFile, ElLoading} from "element-plus";
 import * as SparkMD5 from "spark-md5";
 import axios from "axios";
 import useUserInfo from "@/hooks/useUserInfo";
+
 
 const {updateLocalUserInfo} = useUserInfo()
 const {isAdmin} = useUserInfo()
@@ -90,7 +91,7 @@ function fileChange(file: UploadFile) {
 }
 
 //头像上传函数
-const updateAvatar = (file: File) => {
+const updateAvatar = async (file: File) => {
   if (file === null) return ElMessage.info('请先选择图片再上传')
   if (['image/png', 'image/jpeg', 'image/jpg'].indexOf(file.type) === -1) return ElMessage.error('仅支持PNG/JPEG/JPG格式')
   if (file.size / 1024 / 1024 > 2) return ElMessage.error('图片文件大小不能超过2MB')
@@ -107,18 +108,19 @@ const updateAvatar = (file: File) => {
     text: 'Loading',
     background: 'rgba(0, 0, 0, 0.7)',
   })
-  axios({
-    url: '/upload',
-    method: 'post',
-    // headers: {'Content-Type': 'multipart/form-data'},
-    data: param
-  }).then(result => {
+  try {
+    const result = await axios({
+      url: '/upload',
+      method: 'post',
+      // headers: {'Content-Type': 'multipart/form-data'},
+      data: param
+    })
     console.log(result)
     loading.close()
     const {status, msg, imgUrl} = result.data as { status: number, msg: string, imgUrl: string }
     if (status === 200) ElMessage.success(msg)
     if (!isAdmin.value) {
-      console.log(111)
+      console.log('非管理员管理状态')
       if (image.sort === 'headImg') {
         updateLocalUserInfo({headImgUrl: imgUrl})
         // headImgUrl.value=imgUrl
@@ -127,17 +129,16 @@ const updateAvatar = (file: File) => {
         //修改背景图
       }
     }
-
     setTimeout(() => {
       location.reload()
-    }, 1000)
-  }).catch(error => {
+    }, status === 300 ? 5000 : 1500)
+  } catch (error) {
     loading.close()
     console.log(error)
     setTimeout(() => {
       cancel()
     }, 2000)
-  })
+  }
 
 };
 

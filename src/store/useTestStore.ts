@@ -13,9 +13,9 @@ export const useTestStore = defineStore('test', () => {
             roomName: '',
             // token
         })
-        const testArr1 = reactive([])
-        const testArr2 = reactive([])
-        const testArr3 = reactive([])
+        const testArr1 = reactive([1])
+        const testArr2 = reactive([2])
+        const testArr3 = reactive([3])
 
         return {playerInfo, testArr1, testArr2, testArr3}
     }, //{persist: true}
