@@ -96,7 +96,7 @@
         <el-button text type="info" class="title">草稿箱</el-button>
         <el-divider>{{ draftList.length }}</el-divider>
         <el-table ref="draftRef" :data="draftList" max-height="500" stripe border highlight-current-row style="width: 100%"
-                  table-layout="auto" :default-sort="{ prop: 'id', order: 'descending' }">
+               table-layout="auto" :default-sort="{ prop: 'id', order: 'descending' }">
           <el-table-column fixed prop="id" label="ID"  sortable/>
           <el-table-column  prop="title" label="草稿标题" />
           <el-table-column prop="area" label="板块"

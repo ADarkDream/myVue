@@ -8,8 +8,8 @@
           <el-text>图片上传之后会审核30S左右,请稍后刷新。若图片没有成功加载,可能是<el-text type="warning">图片违规</el-text>或<el-text type="danger">服务器错误</el-text></el-text><br>
       <el-space>
         <el-switch v-model="isOpen" inline-prompt active-text="应用" inactive-text="去除" size="large" v-if="isShow"/>
-        <el-button type="primary" @click="dialogVisible=!dialogVisible" :icon="UploadFilled">上传</el-button>
-        <el-button type="danger" :icon="Delete" @click="deleteRow" v-if="isShow">删除</el-button>
+        <el-button :size="elSize" type="primary" @click="dialogVisible=!dialogVisible" :icon="UploadFilled">上传</el-button>
+        <el-button :size="elSize" type="danger" :icon="Delete" @click="deleteRow" v-if="isShow">删除</el-button>
       </el-space>
       <template #footer>
         <el-image :src="bgUrl"/>
@@ -35,7 +35,7 @@ import {Delete, UploadFilled} from "@element-plus/icons-vue";
 import axios from "axios";
 //获取本地存储的用户信息
 const {bgUrl, updateLocalUserInfo} = useUserInfo()
-const {isPC} = useResponsive()
+const {isPC,elSize} = useResponsive()
 const dialogVisible = ref(false)
 const isShow = ref(false)
 const isOpen = ref(false)

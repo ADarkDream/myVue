@@ -1,39 +1,25 @@
 <template>
-
-
   <el-container>
     <el-header>
-      <div>
-        <el-date-picker
-            v-model="dateRange"
-            type="daterange"
-            range-separator="To"
-            start-placeholder="选择账单开始日期"
-            end-placeholder="选择账单结束日期"
-            :size="elSize"
-            unlink-panels
-            @change="getBillList"
-            :disabled-date="disabledDate"
-            value-format="YYYY-MM-DD"
-        />
-        <div :style="isPC?'margin-left:20px;display: inline-block;':''">
-          <el-button :size="elSize" v-if="!isNull" @click="showBillPanel" type="primary">添加账单</el-button>
-          <span style="margin-left:10px "> 已销账单：
-          <el-switch v-model="isShowDelLine" active-text="显示" inactive-text="隐藏" inline-prompt/>
-        </span>
-        </div>
-      </div>
-
-      <div style="display: flex;justify-content: space-between">
-        <el-button-group size="small" type="primary">
+      <div style="display: flex;justify-content: space-between;padding-bottom:5px" >
+        <el-button-group :size="elSize" type="primary">
           <el-button @click="changeDateType('day')">日</el-button>
           <el-button @click="changeDateType('week')">周</el-button>
           <el-button @click="changeDateType('month')">月</el-button>
         </el-button-group>
-        <el-text>
-
-        </el-text>
-        <el-button-group size="small">
+        <el-date-picker v-if="isPC"  style="max-width: 250px"
+                        v-model="dateRange"
+                        type="daterange"
+                        range-separator="To"
+                        start-placeholder="选择账单开始日期"
+                        end-placeholder="选择账单结束日期"
+                        :size="elSize"
+                        unlink-panels
+                        @change="getBillList"
+                        :disabled-date="disabledDate"
+                        value-format="YYYY-MM-DD"
+        />
+        <el-button-group :size="elSize">
           <el-button @click="getNewDateRange('minus')"><span v-if="dateStr==='日'">前一{{ dateStr }}</span><span v-else>上一{{
               dateStr
             }}</span>
@@ -46,6 +32,18 @@
           </el-button>
         </el-button-group>
       </div>
+      <el-date-picker style="max-width: 250px" v-if="!isPC"
+                      v-model="dateRange"
+                      type="daterange"
+                      range-separator="To"
+                      start-placeholder="选择账单开始日期"
+                      end-placeholder="选择账单结束日期"
+                      :size="elSize"
+                      unlink-panels
+                      @change="getBillList"
+                      :disabled-date="disabledDate"
+                      value-format="YYYY-MM-DD"
+      />
     </el-header>
     <el-empty v-if="isNull" description="暂无账单">
       <el-button @click="showBillPanel" type="primary">添加账单</el-button>
@@ -53,8 +51,8 @@
       <!--">邀请协作-->
       <!--        </el-button>-->
     </el-empty>
-    <el-main v-else>
-      <el-table ref="tableRef" :data="billList" :max-height="screenHeight-250" stripe border
+    <el-main v-else style="padding-top: 0">
+      <el-table ref="tableRef" :data="billList" :height="screenHeight-250"  stripe border
                 show-overflow-tooltip
                 highlight-current-row row-key="id"
                 table-layout="auto"
@@ -64,6 +62,7 @@
                 @row-click="showBillPanel">
         <!--                        show-summary-->
         <!--                  :summary-method="getSummaries">-->
+        <template #empty><el-empty/> </template>
         <el-table-column prop="gid" label="组序" min-width="50" align="center" sortable/>
         <el-table-column prop="name" label="名目" min-width="80" align="center"/>
         <el-table-column prop="type" label="类型" min-width="70" align="center"/>
@@ -93,7 +92,7 @@
             </el-button>
             <el-button v-if="scope.row.status===1" link type="info" size="small"
                        @click.stop="deleteRow(scope.$index,{gid:scope.row.gid},0)">
-              取消销账
+              还原
             </el-button>
             <el-button link type="danger" size="small" @click.stop="deleteRow(scope.$index,{id:scope.row.id},2)">
               删除
@@ -101,7 +100,16 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-collapse v-model="activeNames" style="width: 80%;text-align: left" accordion v-if="isPC">
+
+    </el-main>
+<el-footer >
+        <div v-if="!isNull" style="width: 100%;display: flex;justify-content: space-between">
+          <el-text > 已销账单：
+          <el-switch v-model="isShowDelLine" active-text="显示" inactive-text="隐藏" inline-prompt/>
+        </el-text>
+        <el-button :size="elSize"  @click="showBillPanel" type="primary" :style="isPC?'':'margin: 4px 5px'">添加账单</el-button>
+      </div>
+      <el-collapse  v-model="activeNames" style="width: 80%;text-align: left" accordion v-if="false">
         <el-collapse-item title="备忘" name="1">
           <div style="padding-left:10px;">
             <p>添加账单之后,判断添加的数据是否在当前时间范围内,需要把dateRange改成全局共享</p>
@@ -123,8 +131,7 @@
           </div>
         </el-collapse-item>
       </el-collapse>
-    </el-main>
-
+</el-footer>
   </el-container>
 
 
@@ -283,8 +290,16 @@ onMounted(async () => {
   overflow-x: hidden;
 }
 
+.el-header,.el-main,.el-footer{
+  height: auto;
+  padding: 5px 20px;
+}
 
-
+@media (max-width: 980px) {
+  .el-header,.el-main,.el-footer{
+  padding: 5px;
+}
+}
 </style>
 
 
@@ -305,18 +320,19 @@ onMounted(async () => {
 
   /* 设置整体日期面板的宽度 */
   .el-picker-panel.el-date-range-picker.el-popper {
-/*    width: 322px;*/
+    /*    width: 322px;*/
   }
 
   /* 隐藏中间线段 */
   .el-date-range-picker__content.is-left {
     border-right: none;
   }
-.el-picker-panel__body{
- display: flex;
-  padding:0;
-/*  justify-content: center;*/
-}
+
+  .el-picker-panel__body {
+    display: flex;
+    padding: 0;
+    /*  justify-content: center;*/
+  }
 
   /* 左边日期面板宽度 */
   .el-picker-panel__content {

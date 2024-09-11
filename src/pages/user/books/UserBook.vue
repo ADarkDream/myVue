@@ -1,9 +1,15 @@
 <template>
   <el-container>
+    <el-header>
+      <el-breadcrumb :separator-icon="ArrowRight">
+        <el-breadcrumb-item :to="{ name: 'books' }">账本列表</el-breadcrumb-item>
+        <el-breadcrumb-item >{{ bookInfo.name }}</el-breadcrumb-item>
+      </el-breadcrumb>
+    </el-header>
     <el-main>
       <el-tabs v-model="activeName" :tab-position="tabPosition"
                :style="isPC? 'width: 90%;margin: 0 auto':'width: 100%;margin: 0 auto' ">
-        <el-tab-pane label="账本月历" :name="0">
+        <el-tab-pane :style="tabContentHeight" label="账本月历" :name="0">
           <BookCalendar :getTheBillDesc="getTheBillDesc" :bookDesc="bookDesc" :changeTab="changeTab"/>
         </el-tab-pane>
         <el-tab-pane label="账单详情" :name="1">
@@ -15,20 +21,29 @@
         </el-tab-pane>
         <el-tab-pane label="协作成员" :name="3">
           <el-empty v-if="members.length<=1" description="暂无成员">
-            <!--              <el-button v-if="uid===bookInfo.uid" type="primary" @click="copyText(`【默默的小站】注册登陆之后可前往https://muxidream.cn/user/books加入协作账本【${bookInfo.name}】，账本ID：${bookInfo.bid}，协作码：${bookInfo.key},协作码仅一次有效。`,'账本ID和协作码')-->
-            <!--">邀请协作-->
-            <!--              </el-button>-->
+            <el-button v-if="uid===bookInfo.uid" type="primary" @click="copyText(`【默默的小站】注册登陆之后可前往https://muxidream.cn/user/books加入协作账本【${bookInfo.name}】，账本ID：${bookInfo.bid}，协作码：${bookInfo.key},协作码仅一次有效。`,'账本ID和协作码')
+            ">邀请协作
+            </el-button>
           </el-empty>
           <div v-else>
             <div style="display: flex;justify-content: space-evenly">
               <el-text type="primary" v-for="item in members">{{ item.username }}</el-text>
-              <el-button v-if="uid===bookInfo.uid" :size="elSize" type="primary" @click="copyText(`【默默的小站】注册登陆之后可前往https://muxidream.cn/user/books加入协作账本【${bookInfo.name}】，账本ID：${bookInfo.bid}，协作码：${bookInfo.key},协作码仅一次有效。`,'账本ID和协作码')
-">邀请协作
-              </el-button>
             </div>
-
+            <el-button v-if="uid===bookInfo.uid" :size="elSize" style="margin: 10px auto" type="primary" @click="copyText(`【默默的小站】注册登陆之后可前往https://muxidream.cn/user/books加入协作账本【${bookInfo.name}】，账本ID：${bookInfo.bid}，协作码：${bookInfo.key},协作码仅一次有效。`,'账本ID和协作码')
+">邀请协作
+            </el-button>
           </div>
 
+        </el-tab-pane>
+        <el-tab-pane label="使用说明" :name="4">
+          <el-collapse accordion>
+            <el-collapse-item title="账本月历" :name="1">
+              123
+            </el-collapse-item>
+            <el-collapse-item title="账单详情" :name="2"></el-collapse-item>
+            <el-collapse-item title="花费统计" :name="3"></el-collapse-item>
+            <el-collapse-item title="协作成员" :name="4"></el-collapse-item>
+          </el-collapse>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -59,11 +74,12 @@ import BillDetails from "@/pages/user/books/components/BillDetails.vue";
 import BillTotalCost from "@/pages/user/books/components/BillTotalCost.vue";
 import emitter from "@/utils/emitter";
 import {useBookStore} from '@/store/useBookStore'
+import {ArrowRight} from "@element-plus/icons-vue";
 
 
 const route = useRoute()
 const {formatDate} = useTimestamp()
-const {isPC, elSize, dialogWidth} = useResponsive()
+const {isPC, elSize, dialogWidth, screenHeight} = useResponsive()
 const {copyText} = useFunction()
 // import {numPlus} = useComputed()
 const {uid} = useUserInfo()
@@ -73,6 +89,8 @@ const bookData = useBookStore()
 const tabPosition = ref<TabsInstance['tabPosition']>('top')
 //el-tabs的默认激活标签
 const activeName = ref(0)
+//el-tabs的内容区高度
+const tabContentHeight = ref('height:' + (screenHeight.value - 145) + 'px;overflow:scroll')
 
 //切换el-tabs
 const changeTab = async (index: number, dateString?: string) => {
@@ -472,6 +490,11 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.el-header{
+  padding: 10px;
+  height: auto;
+}
+
 .el-main {
   padding: 0;
   display: flex;

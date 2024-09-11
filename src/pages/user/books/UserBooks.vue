@@ -1,20 +1,18 @@
 <template>
-  <el-container  :style="'height:'+containerHeight+'px'">
-    <el-header>我的账本</el-header>
-    <div>
+  <el-container :style="'height:'+containerHeight+'px'">
+    <el-header>
       <el-button :size="elSize" type="primary" @click="dialogVisible=true">添加账本</el-button>
-    </div>
+    </el-header>
     <el-main>
-     <el-empty v-if="books.length===0" description="暂无账本"/>
-      <div v-for="(item,index) in books" :key="item.bid" @click="goBook(item.bid)">
-        <el-card class="books" shadow="hover">
-          <template #header>
-            <el-input v-if="isEditID===item.bid" v-model.trim="newBookInfo.name" maxlength="10"/>
-            <template v-else>
-              <el-text class="title">{{ item.name }}</el-text>
-              <el-text class="title" type="success" v-if="!item.key">[协作]</el-text>
-              <div @click.stop>
-                 <el-dropdown class="menu" >
+      <el-empty v-if="books.length===0" description="暂无账本"/>
+      <el-card class="book" shadow="hover" v-for="(item,index) in books" :key="item.bid" @click="goBook(item.bid)">
+        <template #header>
+          <el-input v-if="isEditID===item.bid" v-model.trim="newBookInfo.name" maxlength="10"/>
+          <template v-else>
+            <el-text class="title">{{ item.name }}</el-text>
+            <el-text class="title" type="success" v-if="!item.key">[协作]</el-text>
+            <div @click.stop>
+              <el-dropdown class="menu">
             <span>
               <el-icon><MoreFilled/></el-icon>
             </span>
@@ -30,23 +28,22 @@
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
-              </div>
+            </div>
 
-            </template>
           </template>
-          <div >
-            <el-input v-if="isEditID===item.bid" :size="elSize" v-model.trim="newBookInfo.intro" maxlength="30"/>
-            <el-text v-else>{{ item.intro || '暂无说明' }}</el-text>
-          </div>
-          <template #footer>
-            <el-button-group v-if="isEditID===item.bid" :size="elSize" style="margin-top: 5px">
-              <el-button type="primary" plain @click.stop="isEditID=0">取消</el-button>
-              <el-button type="success" @click.stop="updateBook(false,index)">保存</el-button>
-            </el-button-group>
-            <el-text v-else class="footer">{{ getTime(item.updated_time) }}</el-text>
-          </template>
-        </el-card>
-      </div>
+        </template>
+        <div>
+          <el-input v-if="isEditID===item.bid" :size="elSize" v-model.trim="newBookInfo.intro" maxlength="30"/>
+          <el-text v-else>{{ item.intro || '暂无说明' }}</el-text>
+        </div>
+        <template #footer>
+          <el-button-group v-if="isEditID===item.bid" :size="elSize" style="margin-top: 5px">
+            <el-button type="primary" plain @click.stop="isEditID=0">取消</el-button>
+            <el-button type="success" @click.stop="updateBook(false,index)">保存</el-button>
+          </el-button-group>
+          <el-text v-else class="footer">{{ getTime(item.updated_time) }}</el-text>
+        </template>
+      </el-card>
     </el-main>
     <!--账本新建框-->
     <el-dialog v-model="dialogVisible" :width="dialogWidth" :show-close="false" title="新增账本">
@@ -68,7 +65,7 @@ import AddBook from "@/pages/user/books/components/AddBook.vue";
 import {Book} from '@/types/books'
 
 const {getTime} = useTimestamp()
-const {elSize, dialogWidth,containerHeight} = useResponsive()
+const {elSize, dialogWidth, containerHeight, screenHeight} = useResponsive()
 const {deepEqual, copyText} = useFunction()
 const router = useRouter()
 
@@ -94,14 +91,12 @@ const newBookInfo = ref<Book>({
 const dialogVisible = ref(false)
 
 
-
-
 //获取账本列表
 const getBooks = async () => {
   try {
     const result = await axios({url: '/myBooks'})
     console.log(result)
-    const { data} = result.data
+    const {data} = result.data
     books.splice(0, books.length, ...data)
 
   } catch (error) {
@@ -155,11 +150,11 @@ const cancelAddBook = (val?: Book) => {
   if (val) {
     books.push(val)
   }
-    dialogVisible.value = false
+  dialogVisible.value = false
 }
 
 //分享功能
-const shareKey=(bookInfo:Book)=>copyText(`【默默的小站】注册登陆之后可前往https://muxidream.cn/user/books加入协作账本【${bookInfo.name}】，账本ID：${bookInfo.bid}，协作码：${bookInfo.key},协作码仅一次有效。`,'账本ID和协作码')
+const shareKey = (bookInfo: Book) => copyText(`【默默的小站】注册登陆之后可前往https://muxidream.cn/user/books加入协作账本【${bookInfo.name}】，账本ID：${bookInfo.bid}，协作码：${bookInfo.key},协作码仅一次有效。`, '账本ID和协作码')
 
 //前往账单列表
 const goBook = (bid: number) => {
@@ -178,18 +173,30 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.el-main {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+.el-header {
+  height: auto;
+  padding-top: 5px;
+  margin-bottom: 5px;
 }
 
+.el-main {
+  padding: 0 20px;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+}
+
+
+
 /*账本信息卡片*/
-.books {
+.book {
   position: relative;
   border-radius: 5px;
+  width: 150px;
   background: linear-gradient(45deg, #ffb30066, #ffb300a5);
-  margin: 5px auto;
+  margin: 5px 15px 0 15px;
+  max-height: 180px;
 }
 
 .title {
@@ -210,9 +217,14 @@ onMounted(async () => {
 }
 
 @media (max-width: 980px) {
-  .books {
+  .el-main{
+     justify-content: space-between;
+  }
+
+  .book {
     width: 150px;
     margin: 5px;
+    flex-shrink: 0.5;
   }
 
 
@@ -224,7 +236,8 @@ onMounted(async () => {
   .footer {
     font-size: 11px
   }
-}
 
+
+}
 
 </style>

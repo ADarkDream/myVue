@@ -89,3 +89,8 @@ onMounted(async ()=>{
 <style scoped>
 
 </style>
+<style>
+.el-calendar__body{
+  padding: 5px;
+}
+</style>

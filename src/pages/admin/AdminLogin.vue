@@ -16,7 +16,8 @@
         <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱"/>
       </el-form-item>
       <el-form-item prop="password">
-        <el-input v-model.lazy.trim="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)" type="password" autocomplete="off" placeholder="输入密码"/>
+        <el-input v-model.lazy.trim="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)" type="password"
+                  autocomplete="off" placeholder="输入密码"/>
       </el-form-item>
 
 
@@ -148,7 +149,7 @@ function login() {
     const {userInfo} = result.data
     sessionStorage.setItem('userInfo', JSON.stringify(userInfo))
     //成功提示信息
-    ElMessage.success(`管理员  ${ userInfo.username} 登录成功`)
+    ElMessage.success(`管理员  ${userInfo.username} 登录成功`)
     sessionStorage.setItem('isLogin', '1')
     sessionStorage.setItem('isAdmin', '1')
     //刷新当前页面，解决TitleDiv不更新的问题
@@ -182,4 +183,9 @@ function login() {
   justify-content: center;
 }
 
+@media (max-width: 980px) {
+  .card {
+    width: 90%;
+  }
+}
 </style>

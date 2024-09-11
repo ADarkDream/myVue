@@ -4,6 +4,7 @@
             table-layout="auto" :default-sort="{ prop: 'uid', order: 'custom' }"
             :row-style="showDelLine"
   >
+    <template #empty><el-empty/> </template>
     <el-table-column prop="username" label="昵称" min-width="80" align="center"/>
     <el-table-column prop="totalExpense" label="(加上已销账单)总支出" min-width="80" align="center">
       <template #default="scope">

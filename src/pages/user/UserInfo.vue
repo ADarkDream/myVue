@@ -65,6 +65,7 @@
         <el-input class="textarea" v-model="newSignature" @blur="isUpdateSignature" @keyup.enter="editSignature"
                   type="textarea" maxlength="50" show-word-limit placeholder="请留下你的足迹……"/>
       </el-card>
+          <div style="margin: 5px auto">试用性功能[无需登录]：<el-button @click="router.push({name:'chat'})" :size="elSize"  type="info">聊天室</el-button> </div>
     </el-main>
 
   </el-container>
@@ -202,13 +203,13 @@ onMounted(async () => {
 })
 
 //用户的评论数量
-const commentNum = ref()
+const commentNum = ref(0)
 //用户的发布的文章数量
-const articleNum = ref()
+const articleNum = ref(0)
 //用户的未发布的文章数量
-const noSubmitArticleNum = ref()
+const noSubmitArticleNum = ref(0)
 //用户的的草稿数量
-const draftNum = ref()
+const draftNum = ref(0)
 
 //获取用户评论信息
 const getUserComments = async () => {
