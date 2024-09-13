@@ -3,12 +3,11 @@
     <el-header>
       <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ name: 'books' }">账本列表</el-breadcrumb-item>
-        <el-breadcrumb-item >{{ bookInfo.name }}</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ bookInfo.name }}</el-breadcrumb-item>
       </el-breadcrumb>
     </el-header>
     <el-main>
-      <el-tabs v-model="activeName" :tab-position="tabPosition"
-               :style="isPC? 'width: 90%;margin: 0 auto':'width: 100%;margin: 0 auto' ">
+      <el-tabs v-model="activeName" :tab-position="tabPosition">
         <el-tab-pane :style="tabContentHeight" label="账本月历" :name="0">
           <BookCalendar :getTheBillDesc="getTheBillDesc" :bookDesc="bookDesc" :changeTab="changeTab"/>
         </el-tab-pane>
@@ -35,15 +34,11 @@
           </div>
 
         </el-tab-pane>
-        <el-tab-pane label="使用说明" :name="4">
-          <el-collapse accordion>
-            <el-collapse-item title="账本月历" :name="1">
-              123
-            </el-collapse-item>
-            <el-collapse-item title="账单详情" :name="2"></el-collapse-item>
-            <el-collapse-item title="花费统计" :name="3"></el-collapse-item>
-            <el-collapse-item title="协作成员" :name="4"></el-collapse-item>
-          </el-collapse>
+        <el-tab-pane :name="4">
+          <template #label>
+            <el-badge is-dot>使用说明</el-badge>
+          </template>
+          <BookIntroduction/>
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -63,7 +58,7 @@ import {computed, onMounted, reactive, ref} from "vue";
 import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
 import useTimestamp from '@/hooks/useTimestamp'
-import {numPlus, numMinus, getMonthDateRange, getAllMonthDateRange} from "@/hooks/useComputed";
+import {numPlus, numMinus, getAllMonthDateRange} from "@/hooks/useComputed";
 import useUserInfo from "@/hooks/useUserInfo";
 import {useRoute} from "vue-router";
 import AddBill from "@/pages/user/books/components/AddBill.vue";
@@ -75,6 +70,7 @@ import BillTotalCost from "@/pages/user/books/components/BillTotalCost.vue";
 import emitter from "@/utils/emitter";
 import {useBookStore} from '@/store/useBookStore'
 import {ArrowRight} from "@element-plus/icons-vue";
+import BookIntroduction from "@/pages/user/books/components/BookIntroduction.vue";
 
 
 const route = useRoute()
@@ -90,7 +86,7 @@ const tabPosition = ref<TabsInstance['tabPosition']>('top')
 //el-tabs的默认激活标签
 const activeName = ref(0)
 //el-tabs的内容区高度
-const tabContentHeight = ref('height:' + (screenHeight.value - 145) + 'px;overflow:scroll')
+const tabContentHeight = ref(isPC ? '' : 'height:' + (screenHeight.value - 145) + 'px;overflow:scroll')
 
 //切换el-tabs
 const changeTab = async (index: number, dateString?: string) => {
@@ -142,20 +138,14 @@ const thisBill = ref<NewBill>()
 const computation = () => {
   presentPrice.value = 0
   totalPrice.value = 0
-  // totalCostList.value=[]
-  memberInfo = {}
-  //临时uid列表
-  const uidList: number[] = []
-
-  bookData.billList.forEach(bill => {
-    const {uid, username, price, status} = bill
-    //数组形式，添加成员
-    if (!uidList.includes(uid)) {
-      uidList.push(uid)
-      memberList.push({value: uid, text: username})
-    }
+  //当前账本协作成员人数
+  let userNum = memberList.length
+  //清空计算完成的账单数据
+  totalCostList.value = []
+  members.forEach(userInfo => {
+    const {uid, username} = userInfo
     // 对象形式，使用uid作为键,计算每个用户的花费，total是加上了已销账单的数据
-    if (!memberInfo[bill.uid]) memberInfo[bill.uid] = {
+    memberInfo[uid] = {
       uid,
       username,
       expense: 0,
@@ -163,27 +153,45 @@ const computation = () => {
       totalExpense: 0,
       totalIncome: 0
     }
-
+  })
+  console.log(' memberInfo', memberInfo)
+  bookData.billList.forEach(bill => {
+    const {uid, username, price, status} = bill
+    //如果用户不在协作列表中(已退出协作的成员)
+    if (!memberInfo[uid]) {
+      memberInfo[uid] = {
+        uid,
+        username,
+        expense: 0,
+        income: 0,
+        totalExpense: 0,
+        totalIncome: 0
+      }
+      //计算完成的账单列表中添加成员
+      memberList.push({value: uid, text: username})
+      //添加成员数
+      userNum++
+    }
     if (status === 0) {
       //计算每个用户的当前总花费
-      memberInfo[bill.uid].expense = numPlus(memberInfo[bill.uid].expense, price)
+      memberInfo[uid].expense = numPlus(memberInfo[uid].expense, price)
       //计算所有人的当前总花费
       presentPrice.value = numPlus(presentPrice.value, price)
     }
     if (status === 0 || status === 1) {
       //计算每个用户的总花费
-      memberInfo[bill.uid].totalExpense = numPlus(memberInfo[bill.uid].totalExpense, price)
+      memberInfo[uid].totalExpense = numPlus(memberInfo[uid].totalExpense, price)
       //计算所有人的总花费
       totalPrice.value = numPlus(totalPrice.value, price)
     }
   })
 
   //计算平均花费
-  const presentAveragePay = Number((presentPrice.value / uidList.length).toFixed(2))
-  const totalAveragePay = Number((totalPrice.value / uidList.length).toFixed(2))
+  const presentAveragePay = Number((presentPrice.value / userNum).toFixed(2))
+  const totalAveragePay = Number((totalPrice.value / userNum).toFixed(2))
   //最终的花费表
-  totalCostList.value = uidList.map(key => {
-    const data = memberInfo[key]
+  totalCostList.value = memberList.map(item => {
+    const data = memberInfo[item.value]
     data.income = numMinus(data.expense, presentAveragePay)//计算需要收取的金额
     return data
   })
@@ -192,10 +200,10 @@ const computation = () => {
   totalCostList.value.push({
     uid: 0,
     username: '当前总计',
-    expense: presentPrice.value,
-    income: 0,//presentAveragePay,
-    totalExpense: totalPrice.value,
-    totalIncome: totalAveragePay
+    expense: presentPrice.value,//当前总支出
+    income: presentAveragePay,//当前平均支出
+    totalExpense: totalPrice.value,//总支出(加已销账单)
+    totalIncome: totalAveragePay//总平均支出(加已销账单)
   })
   // totalCostList.value.push({uid: 0, username: '(加上已销账单)总计', expense: totalPrice.value, income: totalAveragePay})
   // console.log('averagePay', averagePay)
@@ -220,6 +228,11 @@ const getTheBookDesc = async () => {
     bookInfo.value = data!.book
     console.log('bookInfo', bookInfo.value)
     Object.assign(members, data!.members)
+    members.forEach(userInfo => {
+      const {uid, username} = userInfo
+      //数组形式，添加成员信息
+      memberList.push({value: uid, text: username})
+    })
     // billList.splice(0, billList.length, ...data!.bills)
     // computation()
   } catch (error) {
@@ -268,7 +281,9 @@ const getTheBook = async (start_date: string, end_date: string) => {
     bookData.updateBillList(data!.bills)
 
     if (data!.bills.length === 0) return ElMessage.info('当前时间范围内不存在账单')
-    computation()
+    //首次加载页面时memberInfo还没出来
+    if (Object.keys(memberInfo).length === 0) setTimeout(() => computation(), 500)
+    else computation()
   } catch (error) {
     console.log('发生错误：')
     console.dir(error)
@@ -470,12 +485,6 @@ const objectSpanMethod = ({row, rowIndex, columnIndex}: SpanMethodProps<Bill>) =
 //   return sums
 // }
 
-emitter.on('get-bill-list', async ({start_date, end_date}) => {
-  console.log('emitter1')
-  await getTheBook(start_date, end_date)
-  console.log('emitter2')
-})
-
 
 onMounted(async () => {
   const {DateRange} = getAllMonthDateRange({theDate: new Date()}, 'now')
@@ -486,11 +495,14 @@ onMounted(async () => {
 
   // console.log(getAllMonthDateRange({theDate: new Date()}, 'now'))
 })
-
+emitter.on('get-bill-list', async ({start_date, end_date}) => {
+  console.log(`emitter触发：getTheBook(${start_date + ',' + end_date})`)
+  await getTheBook(start_date, end_date)
+})
 </script>
 
 <style scoped>
-.el-header{
+.el-header {
   padding: 10px;
   height: auto;
 }
@@ -500,6 +512,11 @@ onMounted(async () => {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.el-tabs {
+  width: 90%;
+  margin: 0 auto
 }
 
 /*日历被选中*/
@@ -512,8 +529,15 @@ onMounted(async () => {
   height: 16px;
 }
 
-@media (max-width: 980px) {
 
+@media (max-width: 980px) {
+  .el-tabs {
+    width: 100%;
+  }
+
+  .el-tabs__header {
+    padding: 0 20px;
+  }
 
   .el-card :deep(.el-card__body), :deep(.el-card__header), :deep(.el-card__footer) {
     padding: 5px;
@@ -525,4 +549,21 @@ onMounted(async () => {
   }
 }
 
+</style>
+<style>
+/*全局样式*/
+.el-collapse-item__header {
+  padding: 0 10px;
+}
+
+.el-collapse-item__content {
+  padding: 0 5px;
+  /*首行空一个字符*/
+  text-indent: 1em
+}
+
+/*去除小圆点的影响*/
+.el-badge {
+  text-indent: 0
+}
 </style>

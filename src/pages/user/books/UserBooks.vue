@@ -4,7 +4,7 @@
       <el-button :size="elSize" type="primary" @click="dialogVisible=true">添加账本</el-button>
     </el-header>
     <el-main>
-      <el-empty v-if="books.length===0" description="暂无账本"/>
+      <el-empty style="margin: 0 auto" v-if="books.length===0" description="暂无账本"/>
       <el-card class="book" shadow="hover" v-for="(item,index) in books" :key="item.bid" @click="goBook(item.bid)">
         <template #header>
           <el-input v-if="isEditID===item.bid" v-model.trim="newBookInfo.name" maxlength="10"/>

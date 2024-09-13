@@ -1,13 +1,13 @@
 <template>
   <el-container>
     <el-header>
-      <div style="display: flex;justify-content: space-between;padding-bottom:5px" >
+      <div style="display: flex;justify-content: space-between;padding-bottom:5px">
         <el-button-group :size="elSize" type="primary">
           <el-button @click="changeDateType('day')">日</el-button>
           <el-button @click="changeDateType('week')">周</el-button>
           <el-button @click="changeDateType('month')">月</el-button>
         </el-button-group>
-        <el-date-picker v-if="isPC"  style="max-width: 250px"
+        <el-date-picker v-if="isPC" style="max-width: 250px"
                         v-model="dateRange"
                         type="daterange"
                         range-separator="To"
@@ -52,7 +52,7 @@
       <!--        </el-button>-->
     </el-empty>
     <el-main v-else style="padding-top: 0">
-      <el-table ref="tableRef" :data="billList" :height="screenHeight-250"  stripe border
+      <el-table ref="tableRef" :data="billList" :height="screenHeight-290" stripe border
                 show-overflow-tooltip
                 highlight-current-row row-key="id"
                 table-layout="auto"
@@ -62,7 +62,9 @@
                 @row-click="showBillPanel">
         <!--                        show-summary-->
         <!--                  :summary-method="getSummaries">-->
-        <template #empty><el-empty/> </template>
+        <template #empty>
+          <el-empty/>
+        </template>
         <el-table-column prop="gid" label="组序" min-width="50" align="center" sortable/>
         <el-table-column prop="name" label="名目" min-width="80" align="center"/>
         <el-table-column prop="type" label="类型" min-width="70" align="center"/>
@@ -100,38 +102,17 @@
           </template>
         </el-table-column>
       </el-table>
-
     </el-main>
-<el-footer >
-        <div v-if="!isNull" style="width: 100%;display: flex;justify-content: space-between">
-          <el-text > 已销账单：
+    <el-footer>
+      <div v-if="!isNull" class="footer">
+        <el-text> 已销账单：
           <el-switch v-model="isShowDelLine" active-text="显示" inactive-text="隐藏" inline-prompt/>
         </el-text>
-        <el-button :size="elSize"  @click="showBillPanel" type="primary" :style="isPC?'':'margin: 4px 5px'">添加账单</el-button>
+        <el-button :size="elSize" @click="showBillPanel" type="primary" :style="isPC?'':'margin: 4px 5px'">添加账单
+        </el-button>
       </div>
-      <el-collapse  v-model="activeNames" style="width: 80%;text-align: left" accordion v-if="false">
-        <el-collapse-item title="备忘" name="1">
-          <div style="padding-left:10px;">
-            <p>添加账单之后,判断添加的数据是否在当前时间范围内,需要把dateRange改成全局共享</p>
-            <p>组账单第一个销账会导致下面的子帐单UI错位，暂定为将子账单一并销账</p>
-            <p>el-table左右容器溢出，有问题</p>
-            <p>日历界面总计计算不准确，有问题,在后端</p>
-            <p>移动端隐藏右侧日期选择器面板有bug，显示有空白</p>
-          </div>
-        </el-collapse-item>
-        <el-collapse-item title="已解决BUG" name="2">
-          <div style="padding-left:10px;">
-            <p class="delLine">首次加载时日历界面无法获得帐单列表；</p>
-            <p class="delLine">不要星期日开始；</p>
-            <p class="delLine">修改组内子账单时，禁用日期修改；；</p>
-            <p class="delLine">首次加载时日历界面无法获得帐单列表；</p>
-            <p class="delLine">添加账单之后,需要重排表格</p>
-            <p class="delLine">AddBill需要修改,修改组别后没传递参数gid</p>
-            <p class="delLine">cancelAddBill下的日期需要修改</p>
-          </div>
-        </el-collapse-item>
-      </el-collapse>
-</el-footer>
+
+    </el-footer>
   </el-container>
 
 
@@ -146,8 +127,7 @@ import useTimestamp from "@/hooks/useTimestamp";
 import useResponsive from "@/hooks/useResponsive";
 // import useComputed from "@/hooks/useComputed";
 
-//折叠面板序号
-const activeNames = ref('0')
+
 
 const {
   showBillPanel,
@@ -290,15 +270,28 @@ onMounted(async () => {
   overflow-x: hidden;
 }
 
-.el-header,.el-main,.el-footer{
+.el-header, .el-main, .el-footer {
   height: auto;
   padding: 5px 20px;
 }
 
-@media (max-width: 980px) {
-  .el-header,.el-main,.el-footer{
-  padding: 5px;
+/*底部添加账单按钮*/
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
+
+@media (max-width: 980px) {
+  .el-header, .el-main, .el-footer {
+    padding: 5px;
+  }
+
+  .footer {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+  }
 }
 </style>
 

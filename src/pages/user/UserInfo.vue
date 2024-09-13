@@ -8,8 +8,8 @@
       <el-avatar :size="isPC ? 150:75" title="更换头像" :src="headImgUrl" @error="errorImage"
                  @click="dialogVisible=true"/>
       <div>
-        <div>
-          <el-button :size="elSize" text v-show="isDisabled" @click="isDisabled = false" title="修改昵称" :icon="Edit">
+        <div :style="isPC ?'':'text-align:left'">
+          <el-button  text v-show="isDisabled" @click="isDisabled = false" title="修改昵称" :icon="Edit">
             {{
               username
             }}
@@ -63,9 +63,11 @@
       <el-card class="textareaDiv" shadow="hover">
         <template #header>个人简介</template>
         <el-input class="textarea" v-model="newSignature" @blur="isUpdateSignature" @keyup.enter="editSignature"
-                  type="textarea" maxlength="50" show-word-limit placeholder="请留下你的足迹……"/>
+                  type="textarea" maxlength="50" show-word-limit placeholder="这千千万万个故事里，许会有一颗与你我一般无二的心。"/>
       </el-card>
-          <div style="margin: 5px auto">试用性功能[无需登录]：<el-button @click="router.push({name:'chat'})" :size="elSize"  type="info">聊天室</el-button> </div>
+      <div style="margin: 5px auto">试用性功能[无需登录]：
+        <el-button @click="router.push({name:'chat'})" :size="elSize" type="info">聊天室</el-button>
+      </div>
     </el-main>
 
   </el-container>
@@ -309,7 +311,7 @@ const isUpdateSignature = () => {
         editSignature()
       })
       .catch(() => {
-        newSignature.value = getLocalUserInfo('signature')
+        newSignature.value = signature.value
         ElMessage.info('个性签名已还原')
       })
 }
@@ -575,10 +577,15 @@ const hideForm = () => {
 </script>
 
 <style scoped>
-.box{
-  width: 100%;
-    margin: 10px 1%;
+.el-container {
+  position: relative;
 }
+
+.box {
+  width: 100%;
+  margin: 10px 1%;
+}
+
 .cards {
   display: flex;
   justify-content: space-between;
@@ -621,10 +628,10 @@ const hideForm = () => {
 }
 
 .user {
-  width: 20%;
+  width: 23%;
   height: 100%;
   position: absolute;
-  top: 5%;
+  padding-top: 30px;
 }
 
 .change {
@@ -643,7 +650,7 @@ const hideForm = () => {
     position: relative;
     display: flex;
     justify-content: space-around;
-    margin-top: 5px;
+    padding-top: 5px;
   }
 
   .info {

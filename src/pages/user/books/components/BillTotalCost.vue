@@ -4,9 +4,11 @@
             table-layout="auto" :default-sort="{ prop: 'uid', order: 'custom' }"
             :row-style="showDelLine"
   >
-    <template #empty><el-empty/> </template>
+    <template #empty>
+      <el-empty/>
+    </template>
     <el-table-column prop="username" label="昵称" min-width="80" align="center"/>
-    <el-table-column prop="totalExpense" label="(加上已销账单)总支出" min-width="80" align="center">
+    <el-table-column prop="totalExpense" label="总支出" min-width="80" align="center">
       <template #default="scope">
         <el-text type="info">{{ scope.row.totalExpense }}</el-text>
       </template>
@@ -18,7 +20,10 @@
     </el-table-column>
     <el-table-column prop="income" label="应收取" min-width="80" align="center">
       <template #default="scope">
-        <el-text :type="scope.row.income>0&&(scope.$index-length+1<0) ?'success':'danger'">{{scope.row.income}}</el-text>
+        <span v-if="scope.$index+1===totalCostList.length">平均 <el-text type="primary">{{ scope.row.income }}</el-text></span>
+        <span v-else-if="scope.row.income>0">收取 <el-text type="success">{{ scope.row.income }}</el-text></span>
+        <span v-else>支付 <el-text type="danger">{{ 0-scope.row.income }}</el-text></span>
+        元
       </template>
     </el-table-column>
   </el-table>

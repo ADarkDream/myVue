@@ -3,12 +3,12 @@
     <template #header="{ date }">
       <span v-if="isPC">账本月历(此处支出总计包含已销账单)</span>
       <span>{{ date }}</span>
-      <el-button-group>
-        <el-button size="small" @click="selectDate('prev-month')">
+      <el-button-group size="small">
+        <el-button @click="selectDate('prev-month')">
           上月
         </el-button>
-        <el-button size="small" @click="selectDate('today')">今天</el-button>
-        <el-button size="small" @click="selectDate('next-month')">
+        <el-button @click="selectDate('today')">今天</el-button>
+        <el-button @click="selectDate('next-month')">
           下月
         </el-button>
       </el-button-group>

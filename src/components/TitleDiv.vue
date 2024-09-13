@@ -6,11 +6,11 @@
       <!--    返回键-->
       <el-button :icon="ArrowLeftBold" @click="router.back()" v-if="!isHome">返回</el-button>
       <!--首页-->
-      <el-button @click="router.push({name:'home'})" plain :icon="HomeFilled" v-if="!isHome">首页</el-button>
+      <el-button @click="goTo('home')" plain :icon="HomeFilled" v-if="!isHome">首页</el-button>
       <!--更换壁纸-->
       <el-button :icon="Switch" class="bgBtn" @click="changeBG(1)" v-if="isHome">更换壁纸</el-button>
       <!--重返未来-->
-      <el-button :icon="Download" class="bgBtn" @click="router.push({name:'download'})" v-if="isHome">
+      <el-button :icon="Download" class="bgBtn" @click="goTo('download')" v-if="isHome">
         重返未来
       </el-button>
       <!--日夜切换-->
@@ -65,7 +65,7 @@
           &ensp;{{ username }}
         </el-button>
         <!--论坛-->
-        <el-button @click="router.push({name:'center'})" plain :icon="Comment" v-if="!isForum">论坛</el-button>
+        <el-button @click="goTo('center')" plain :icon="Comment" v-if="!isForum">论坛</el-button>
         <!--选项菜单-->
         <el-dropdown>
            <span>
@@ -84,15 +84,15 @@
                 用户中心
               </el-dropdown-item>
               <!--记账本功能-->
-              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="router.push({name:'books'})">
-                前往账本
-              </el-dropdown-item>
+<!--              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="goTo('books')">-->
+<!--                前往账本-->
+<!--              </el-dropdown-item>-->
               <!--退出登录-->
               <el-dropdown-item v-if="isLogin" @click="exit" :icon="SwitchButton">
                 退出登录
               </el-dropdown-item>
               <!--新闻-->
-              <el-dropdown-item @click="router.push({name:'news'})">
+              <el-dropdown-item @click="goTo('news')">
                 <svg t="1719772539751" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
                      xmlns="http://www.w3.org/2000/svg" p-id="4292" width="200" height="200">
                   <path
@@ -106,7 +106,7 @@
                 公告
               </el-dropdown-item>
               <!--临时聊天室-->
-              <el-dropdown-item @click="router.push({name:'hall'})" :icon="Comment">
+              <el-dropdown-item @click="goTo('hall')" :icon="Comment">
                 聊天室demo
               </el-dropdown-item>
               <!--设置-->
@@ -126,13 +126,13 @@
     <el-col :span="8" class="title-left">
       <el-space spacer="">
         <!--侧边导航栏-->
-        <el-button size="small" @click="emitter.emit('showAsideBtn',2)" plain :icon="Switch" v-if="isHome"/>
-        <!--论坛-->
-        <el-button size="small" @click="router.push({name:'center'})" plain :icon="Comment" v-if="isHome"/>
+        <el-button size="small" @click="emitter.emit('showAsideBtn',2)" plain :icon="MoreFilled" v-if="isHome"/>
+        <!--重返未来1999-->
+        <el-button size="small" @click="goTo('download')" plain :icon="Download" v-if="isHome"/>
         <!--    返回键-->
         <el-button size="small" :icon="ArrowLeftBold" @click="router.back()" plain v-if="!isHome"/>
         <!--首页-->
-        <el-button size="small" @click="router.push({name:'home'})" plain :icon="HomeFilled" v-if="!isHome"/>
+        <el-button size="small" @click="goTo('home')" plain :icon="HomeFilled" v-if="!isHome"/>
         <!--日夜切换-->
         <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日"
                    :inactive-action-icon="Sunny" :active-action-icon="Moon" size="small"/>
@@ -163,7 +163,7 @@
           <el-image class="headIcon" :src="headImgUrl" alt="" :onerror="errorImage"/>
         </el-button>
         <!--论坛-->
-        <el-button size="small" @click="router.push({name:'center'})" plain :icon="Comment" v-if="!isHome&&!isForum"/>
+        <el-button size="small" @click="goTo('center')" plain :icon="Comment" />
         <!--选项下拉菜单-->
         <el-dropdown size="small">
           <span>
@@ -180,21 +180,21 @@
                 用户中心
               </el-dropdown-item>
               <!--记账本功能-->
-              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="router.push({name:'books'})">
-                前往账本
-              </el-dropdown-item>
+<!--              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="goTo('books')">-->
+<!--                前往账本-->
+<!--              </el-dropdown-item>-->
               <!--退出登录-->
               <el-dropdown-item v-if="isLogin" @click="exit" :icon="SwitchButton">
                 退出登录
               </el-dropdown-item>
               <!--更换壁纸-->
-              <el-dropdown-item :icon="Switch" class="bgBtn" @click="changeBG(0)" v-if="!isHome">更换壁纸
+              <el-dropdown-item :icon="Switch" class="bgBtn" @click="changeBG(0)">更换壁纸
               </el-dropdown-item>
               <!--重返未来-->
-              <el-dropdown-item :icon="Download" class="bgBtn" @click="router.push({name:'download'})">重返未来
+              <el-dropdown-item :icon="Download" class="bgBtn" @click="goTo('download')" v-if="!isHome">重返未来
               </el-dropdown-item>
               <!--新闻-->
-              <el-dropdown-item @click="router.push({name:'news'})">
+              <el-dropdown-item @click="goTo('news')">
                 <svg t="1719772539751" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
                      xmlns="http://www.w3.org/2000/svg" p-id="4292" width="200" height="200">
                   <path
@@ -208,7 +208,7 @@
                 公告
               </el-dropdown-item>
               <!--临时聊天室-->
-              <el-dropdown-item @click="router.push({name:'hall'})" :icon="Comment">
+              <el-dropdown-item @click="goTo('hall')" :icon="Comment">
                 聊天室demo
               </el-dropdown-item>
               <!--设置-->
@@ -283,7 +283,7 @@ import {
   ArrowLeftBold, Avatar, BellFilled,
   Comment, Download,
   HomeFilled,
-  Moon, Notebook, Operation,
+  Moon, MoreFilled, Notebook, Operation,
   Sunny, Switch, SwitchButton,
   Tools,
   UserFilled
@@ -295,6 +295,7 @@ import {useRouter, useRoute} from "vue-router";
 import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
 import emitter from "@/utils/emitter";
+import {NoticeActiveNum} from "@/types/global";
 
 const {isLogin, isAdmin, username, headImgUrl, bgUrl, errorImage} = useUserInfo()
 const {isDark, isPC, isHome, isForum} = useResponsive()
@@ -324,6 +325,10 @@ const isShowLoginPage = ref(false)
 
 const html = (document.querySelector('html') as HTMLElement)
 const body = (document.querySelector('body') as HTMLElement)
+
+const goTo = (name: string) => router.push({name})
+
+
 
 //网页初次渲染函数
 onMounted(() => {

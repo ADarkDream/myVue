@@ -156,7 +156,6 @@ aside {
     padding: 0;
     position: fixed;
     width: 100%;
-
   }
 }
 

@@ -38,14 +38,14 @@
       />
       <Editor
           class="editor"
-          :style="{height:screenHeight-400+'px'}"
+          :style="{height:screenHeight-500+'px'}"
           v-model="valueHtml"
           :defaultConfig="editorConfig"
           :mode="mode"
           @onCreated="handleCreated"
       />
 
-      <el-footer style="margin: 20px 0 40px 0">
+      <el-footer style="margin: 20px 0 40px 0;display: flex;justify-content: space-evenly">
         <el-button @click="addDraft">保存为草稿</el-button>
         <el-button @click="submit" type="primary">发布文章</el-button>
       </el-footer>

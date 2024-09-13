@@ -1,17 +1,30 @@
 <template>
   <div class="tabBar">
+<!--    悬浮按钮-->
+<!--    <div style="position: absolute;bottom: 60px;justify-content: space-evenly;">-->
+<!--          <div > 123</div>-->
+<!--           <div > 123</div>-->
+<!--    </div>-->
+
     <menu ref="menu" class="menu">
 
-      <div :class="index===0? 'menu__item active':'menu__item'" style="--bgColorItem: #ff8c00;" @click="change(0)">
+      <div :class="activeIndex===0? 'menu__item active':'menu__item'" style="--bgColorItem: #ff8c00;"
+           @click="clickItem(0)">
         <svg class="icon" viewBox="0 0 24 24">
-          <path d="M3.8,6.6h16.4"/>
-          <path d="M20.2,12.1H3.8"/>
-          <path d="M3.8,17.5h16.4"/>
-        </svg>
+                    <path d="M3.8,6.6h16.4"/>
+                    <path d="M20.2,12.1H3.8"/>
+                    <path d="M3.8,17.5h16.4"/>
+          <!--圆-->
+<!--          <path d="M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z"/>-->
+          <!--头-->
+<!--          <path d="M12,10 C10.34,10 9,8.66 9,7 C9,5.34 10.34,4 12,4 C13.66,4 15,5.34 15,7 C15,8.66 13.66,10 12,10 Z"/>-->
+          <!--身体-->
+              </svg>
       </div>
 
-      <div :class="index===1? 'menu__item active':'menu__item'" style="--bgColorItem: #f54888;" @click="change(1)">
-              <svg class="icon" viewBox="0 0 24 24">
+      <div :class="activeIndex===1? 'menu__item active':'menu__item'" style="--bgColorItem: #f54888;"
+           @click="clickItem(1)">
+        <svg class="icon" viewBox="0 0 24 24">
           <path d="M5.1,3.9h13.9c0.6,0,1.2,0.5,1.2,1.2v13.9c0,0.6-0.5,1.2-1.2,1.2H5.1c-0.6,0-1.2-0.5-1.2-1.2V5.1
           C3.9,4.4,4.4,3.9,5.1,3.9z"/>
           <path d="M5.5,20l9.9-9.9l4.7,4.7"/>
@@ -21,13 +34,15 @@
       </div>
 
 
-      <div :class="index===2? 'menu__item active':'menu__item'" style="--bgColorItem: #65ddb7;" @click="change(2)">
+      <div :class="activeIndex===2? 'menu__item active':'menu__item'" style="--bgColorItem: #65ddb7;"
+           @click="clickItem(2)">
         <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="100" height="100">
           <path d="M12,12H20M12,12V20M12,12V4M12,12H4"/>
         </svg>
       </div>
 
-      <div :class="index===3? 'menu__item active':'menu__item'" style="--bgColorItem: #7373fb;" @click="change(3)">
+      <div :class="activeIndex===3? 'menu__item active':'menu__item'" style="--bgColorItem: #7373fb;"
+           @click="clickItem(3)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M3.4,11.9l8.8,4.4l8.4-4.4"/>
           <path d="M3.4,16.2l8.8,4.5l8.4-4.5"/>
@@ -35,7 +50,8 @@
         </svg>
       </div>
 
-      <div :class="index===4? 'menu__item active':'menu__item'" style="--bgColorItem:#e0b115;" @click="change(4)">
+      <div :class="activeIndex===4? 'menu__item active':'menu__item'" style="--bgColorItem:#e0b115;"
+           @click="clickItem(4)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M5.1,3.9h13.9c0.6,0,1.2,0.5,1.2,1.2v13.9c0,0.6-0.5,1.2-1.2,1.2H5.1c-0.6,0-1.2-0.5-1.2-1.2V5.1
           C3.9,4.4,4.4,3.9,5.1,3.9z"/>
@@ -44,7 +60,7 @@
         </svg>
       </div>
 
-      <div ref="menu__border" class="menu__border"></div>
+      <div ref="menuBorder" class="menu__border"></div>
 
     </menu>
     <!--半圆形背景-->
@@ -62,7 +78,7 @@
 
 <script setup lang="ts">
 //region
-import {ref, onMounted, nextTick} from 'vue';
+import {ref, onMounted} from 'vue';
 import {useRouter} from 'vue-router';
 
 const {change, index} = defineProps(['change', 'index'])
@@ -131,40 +147,60 @@ const router = useRouter()
 
 //endregion
 // const bgColorsBody = ["#ffb457", "#ff96bd", "#9999fb", "#ffe797", "#cffff1"];
-let activeItem = null;
-let menu = null;
-let menuBorder = null;
 
-const clickItem = (item, index) => {
-  if (activeItem === item) return;
-  activeItem = item;
-  offsetMenuBorder(activeItem, menuBorder);
-};
+//元素：tab菜单
+const menu = ref(null)
+//元素数组：按钮
+let menuItems = null
+//元素：当前选中的按钮元素
+const activeIndex = ref(index)
+const activeItem = ref(null)
+//元素：半圆背景
+const menuBorder = ref(null)
 
-const offsetMenuBorder = (element, menuBorder) => {
-  const offsetActiveItem = element.getBoundingClientRect();
-  const left = Math.floor(offsetActiveItem.left - menu.offsetLeft - (menuBorder.offsetWidth - offsetActiveItem.width) / 2) + "px"
-  menuBorder.style.transform = `translate3d(${left}, 0, 0)`;
-};
+
+//点击按钮触发
+const clickItem = (id: number) => {
+//重复点击同一个按钮
+  if (activeIndex.value === id) return
+  //跳转路由
+  change(id)
+  activeIndex.value = id
+  offsetMenuBorder(menuItems![id])
+}
+
+//移动半圆背景和显示圆形背景
+const offsetMenuBorder = (element: HTMLDivElement) => {
+
+  const offsetActiveItem = element.getBoundingClientRect()
+  console.log('menuItems![index]', menuItems![index])
+  console.log('offsetActiveItem', offsetActiveItem)
+  const left = Math.floor(offsetActiveItem.left - menu.value.offsetLeft - (menuBorder.value.offsetWidth - offsetActiveItem.width) / 2) + "px"
+  menuBorder.value.style.transform = `translate3d(${left}, 0, 0)`
+}
 
 onMounted(() => {
+  //跳转到某界面
   change(index)
-  menu = document.querySelector(".menu");
-  const menuItems = menu.querySelectorAll(".menu__item");
-  menuBorder = menu.querySelector(".menu__border");
-  activeItem = menu.querySelector(".active");
+  activeIndex.value = index
+  console.log('barindex', index)
+  //获取按钮元素
+  menuItems = menu.value.querySelectorAll(".menu__item");
+  console.log('menuItems[index]', menuItems[index])
+  offsetMenuBorder(menuItems[index]);
 
-  offsetMenuBorder(activeItem, menuBorder);
+  // menuItems.forEach((item) => {
+  //   item.addEventListener("click", () => {
+  //     clickItem(item)
+  //     console.log(item)
+  //   })
+  // })
 
-  menuItems.forEach((item, index) => {
-    item.addEventListener("click", () => clickItem(item, index));
-  });
-
-  window.addEventListener("resize", () => {
-    offsetMenuBorder(activeItem, menuBorder);
-    menu.style.setProperty("--timeOut", "none");
-  });
-});
+  // window.addEventListener("resize", () => {
+  //   offsetMenuBorder(menuItems[index]);
+  //   menu.value.style.setProperty("--timeOut", "none");
+  // })
+})
 </script>
 
 
