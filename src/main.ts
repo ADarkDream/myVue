@@ -15,7 +15,7 @@ import 'element-plus/theme-chalk/base.css'
 // import {createPinia} from 'pinia'
 import pinia from '@/store'
 
-// import emitter from "@/utils/emitter";
+// import {emitter} from "@/utils/emitter";
 
 import hljsVuePlugin from "@highlightjs/vue-plugin";
 import 'highlight.js/lib/common';//直接加载常用代码语言

@@ -59,6 +59,8 @@ interface TotalCost {
     username: string,
     expense: number,
     income: number,
+    totalExpense:number,
+    totalIncome:number
 }
 
 //获取日期周期函数需要的参数

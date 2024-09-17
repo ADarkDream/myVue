@@ -84,12 +84,16 @@
                 用户中心
               </el-dropdown-item>
               <!--记账本功能-->
-<!--              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="goTo('books')">-->
-<!--                前往账本-->
-<!--              </el-dropdown-item>-->
+              <!--              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="goTo('books')">-->
+              <!--                前往账本-->
+              <!--              </el-dropdown-item>-->
               <!--退出登录-->
               <el-dropdown-item v-if="isLogin" @click="exit" :icon="SwitchButton">
                 退出登录
+              </el-dropdown-item>
+                            <!--退出登录 -->
+              <el-dropdown-item v-if="isLogin&&isAdmin" @click="exit(true)" :icon="SwitchButton">
+                退出管理员登录
               </el-dropdown-item>
               <!--新闻-->
               <el-dropdown-item @click="goTo('news')">
@@ -163,7 +167,7 @@
           <el-image class="headIcon" :src="headImgUrl" alt="" :onerror="errorImage"/>
         </el-button>
         <!--论坛-->
-        <el-button size="small" @click="goTo('center')" plain :icon="Comment" />
+        <el-button size="small" @click="goTo('center')" plain :icon="Comment"/>
         <!--选项下拉菜单-->
         <el-dropdown size="small">
           <span>
@@ -180,12 +184,16 @@
                 用户中心
               </el-dropdown-item>
               <!--记账本功能-->
-<!--              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="goTo('books')">-->
-<!--                前往账本-->
-<!--              </el-dropdown-item>-->
+              <!--              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="goTo('books')">-->
+              <!--                前往账本-->
+              <!--              </el-dropdown-item>-->
               <!--退出登录-->
               <el-dropdown-item v-if="isLogin" @click="exit" :icon="SwitchButton">
                 退出登录
+              </el-dropdown-item>
+              <!--退出登录 -->
+              <el-dropdown-item v-if="isLogin&&isAdmin" @click="exit(true)" :icon="SwitchButton">
+                退出管理员登录
               </el-dropdown-item>
               <!--更换壁纸-->
               <el-dropdown-item :icon="Switch" class="bgBtn" @click="changeBG(0)">更换壁纸
@@ -278,7 +286,7 @@
 
 <script setup lang="ts">
 import {onMounted, reactive, ref, watch} from 'vue'
-import Login from "@/pages/admin/Login.vue";
+import Login from "@/pages/user/Login.vue";
 import {
   ArrowLeftBold, Avatar, BellFilled,
   Comment, Download,
@@ -294,7 +302,7 @@ import useUserInfo from '@/hooks/useUserInfo'
 import {useRouter, useRoute} from "vue-router";
 import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 import {NoticeActiveNum} from "@/types/global";
 
 const {isLogin, isAdmin, username, headImgUrl, bgUrl, errorImage} = useUserInfo()
@@ -327,7 +335,6 @@ const html = (document.querySelector('html') as HTMLElement)
 const body = (document.querySelector('body') as HTMLElement)
 
 const goTo = (name: string) => router.push({name})
-
 
 
 //网页初次渲染函数
@@ -399,16 +406,23 @@ function goCenter() {
 
 
 //退出登录
-function exit() {
-  sessionStorage.clear()
-  localStorage.removeItem('token')
-  localStorage.removeItem('userInfo')
-  localStorage.removeItem('userEngines')
-  localStorage.removeItem('useUserBGUrl')
-  localStorage.removeItem('userBGUrl')
-// 调用函数清除所有sessionStorage
-  ElMessage.info('已退出登录,本地的用户数据已清除')
-  ElMessage.info('部分本地信息会保留，如需清除请在右上角选择“选项“→”设置”→“清除全部本地缓存信息”')
+function exit(isAdmin = false) {
+  if (isAdmin) {
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('userInfo')
+    sessionStorage.removeItem('isAdmin')
+  } else {
+    localStorage.removeItem('token')
+    localStorage.removeItem('userInfo')
+    localStorage.removeItem('userEngines')
+    localStorage.removeItem('useUserBGUrl')
+    localStorage.removeItem('userBGUrl')
+// 清除所有sessionStorage
+    sessionStorage.clear()
+    ElMessage.info('已退出登录,本地的用户数据已清除')
+    ElMessage.info('部分本地信息会保留，如需清除请在右上角选择“选项“→”设置”→“清除全部本地缓存信息”')
+  }
+  ElMessage.info('已退出管理员登录')
   setTimeout(() => {
     location.href = '/'
   }, 2500)

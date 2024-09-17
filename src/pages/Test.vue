@@ -1,11 +1,13 @@
 <template>
   <el-container>
     <!--    <WorkTest/>-->
+    <Music style=""/>
   </el-container>
 </template>
 
 <script lang="ts" setup>
 import WorkTest from "@/components/WorkTest.vue";
+import Music from "@/components/Music.vue";
 
 
 

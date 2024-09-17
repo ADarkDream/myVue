@@ -115,7 +115,15 @@ export default function () {
         return `${year}-${month}-${day}`;
     }
 
+    //格式化时间,用于获取音乐播放的时常
+function formatMusicTime(duration=0) {
+    const totalSeconds = Math.floor(duration); // 去掉小数部分，不四舍五入
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${addZero(minutes)}:${addZero(seconds)}`;
+}
+
     // 向外暴露
-    return {getTime, getDiffTime, getDiffTimestamp,formatDate}
+    return {getTime, getDiffTime, getDiffTimestamp,formatDate,formatMusicTime}
 }
 

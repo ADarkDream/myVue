@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 import {onUnmounted, reactive, ref} from "vue";
 import {useRouter} from "vue-router";
 

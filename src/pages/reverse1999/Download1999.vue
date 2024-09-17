@@ -287,7 +287,7 @@ import {useRouter} from "vue-router";
 import useFunction from "@/hooks/useFunction";
 import {useBaseUrlStore} from '@/store/useBaseUrlStore'
 import logo from '@/assets/logo-small.png'
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 import DownloadNotice from "@/pages/reverse1999/components/DownloadNotice.vue";
 
 const {copyText, deepEqual} = useFunction()

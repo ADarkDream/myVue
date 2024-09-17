@@ -9,7 +9,7 @@ import {useChatInfoStore} from "@/store/useChatInfoStore";
 import {useRouter} from "vue-router";
 import {useChatMsgStore} from "@/store/useChatMsgStore";
 import {ChatMsg} from "@/types/chat";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 
 const playerInfo = useChatInfoStore()//本地用户信息
 const socket = playerInfo.socket

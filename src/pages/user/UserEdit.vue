@@ -62,7 +62,7 @@ import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import {Editor, Toolbar} from '@wangeditor/editor-for-vue'
 import axios from "axios";
 import {useRoute, useRouter} from "vue-router";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 import useResponsive from "@/hooks/useResponsive";
 
 const {isPC, screenHeight} = useResponsive()

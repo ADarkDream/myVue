@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import {onMounted, reactive, ref} from "vue";
 import {More, Search, Sort} from "@element-plus/icons-vue";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 
 import axios from "axios";
 import useUserInfo from "@/hooks/useUserInfo";

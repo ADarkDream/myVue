@@ -65,7 +65,7 @@ import AddBook from "@/pages/user/books/components/AddBook.vue";
 import {Book} from '@/types/books'
 
 const {getTime} = useTimestamp()
-const {elSize, dialogWidth, containerHeight, screenHeight} = useResponsive()
+const {elSize, dialogWidth, containerHeight} = useResponsive()
 const {deepEqual, copyText} = useFunction()
 const router = useRouter()
 

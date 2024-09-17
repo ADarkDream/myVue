@@ -51,26 +51,25 @@
 </template>
 
 <script setup lang="ts">
-
 import axios from "axios";
 import {ElMessage, ElMessageBox, type TabsInstance} from "element-plus";
-import {computed, onMounted, reactive, ref} from "vue";
+import {computed, onBeforeMount, onBeforeUnmount, reactive, ref} from "vue";
 import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
 import useTimestamp from '@/hooks/useTimestamp'
 import {numPlus, numMinus, getAllMonthDateRange} from "@/hooks/useComputed";
+import {useBookStore} from '@/store/useBookStore'
 import useUserInfo from "@/hooks/useUserInfo";
 import {useRoute} from "vue-router";
 import AddBill from "@/pages/user/books/components/AddBill.vue";
-import {Book, Bill, TotalCost, BillDesc, NewBill} from '@/types/books'
-import {ResultData, SpanMethodProps, TableFilterItem} from "@/types/global";
 import BookCalendar from "@/pages/user/books/components/BookCalendar.vue";
 import BillDetails from "@/pages/user/books/components/BillDetails.vue";
 import BillTotalCost from "@/pages/user/books/components/BillTotalCost.vue";
-import emitter from "@/utils/emitter";
-import {useBookStore} from '@/store/useBookStore'
-import {ArrowRight} from "@element-plus/icons-vue";
 import BookIntroduction from "@/pages/user/books/components/BookIntroduction.vue";
+import {Book, Bill, TotalCost, BillDesc, NewBill} from '@/types/books'
+import {ResultData, SpanMethodProps, TableFilterItem} from "@/types/global";
+import {ArrowRight} from "@element-plus/icons-vue";
+import {emitter} from "@/utils/emitter";
 
 
 const route = useRoute()
@@ -134,86 +133,6 @@ const thisItemIndex = ref(0)
 const thisBill = ref<NewBill>()
 
 
-//计算总价
-const computation = () => {
-  presentPrice.value = 0
-  totalPrice.value = 0
-  //当前账本协作成员人数
-  let userNum = memberList.length
-  //清空计算完成的账单数据
-  totalCostList.value = []
-  members.forEach(userInfo => {
-    const {uid, username} = userInfo
-    // 对象形式，使用uid作为键,计算每个用户的花费，total是加上了已销账单的数据
-    memberInfo[uid] = {
-      uid,
-      username,
-      expense: 0,
-      income: 0,
-      totalExpense: 0,
-      totalIncome: 0
-    }
-  })
-  console.log(' memberInfo', memberInfo)
-  bookData.billList.forEach(bill => {
-    const {uid, username, price, status} = bill
-    //如果用户不在协作列表中(已退出协作的成员)
-    if (!memberInfo[uid]) {
-      memberInfo[uid] = {
-        uid,
-        username,
-        expense: 0,
-        income: 0,
-        totalExpense: 0,
-        totalIncome: 0
-      }
-      //计算完成的账单列表中添加成员
-      memberList.push({value: uid, text: username})
-      //添加成员数
-      userNum++
-    }
-    if (status === 0) {
-      //计算每个用户的当前总花费
-      memberInfo[uid].expense = numPlus(memberInfo[uid].expense, price)
-      //计算所有人的当前总花费
-      presentPrice.value = numPlus(presentPrice.value, price)
-    }
-    if (status === 0 || status === 1) {
-      //计算每个用户的总花费
-      memberInfo[uid].totalExpense = numPlus(memberInfo[uid].totalExpense, price)
-      //计算所有人的总花费
-      totalPrice.value = numPlus(totalPrice.value, price)
-    }
-  })
-
-  //计算平均花费
-  const presentAveragePay = Number((presentPrice.value / userNum).toFixed(2))
-  const totalAveragePay = Number((totalPrice.value / userNum).toFixed(2))
-  //最终的花费表
-  totalCostList.value = memberList.map(item => {
-    const data = memberInfo[item.value]
-    data.income = numMinus(data.expense, presentAveragePay)//计算需要收取的金额
-    return data
-  })
-  console.log('totalCost', totalCostList.value)
-  //添加总计栏
-  totalCostList.value.push({
-    uid: 0,
-    username: '当前总计',
-    expense: presentPrice.value,//当前总支出
-    income: presentAveragePay,//当前平均支出
-    totalExpense: totalPrice.value,//总支出(加已销账单)
-    totalIncome: totalAveragePay//总平均支出(加已销账单)
-  })
-  // totalCostList.value.push({uid: 0, username: '(加上已销账单)总计', expense: totalPrice.value, income: totalAveragePay})
-  // console.log('averagePay', averagePay)
-  // console.log('totalPrice', totalPrice.value)
-  // console.log('memberInfo', memberInfo)
-  // console.log('memberList', memberList)
-  // console.log('totalCost', totalCost.value)
-}
-
-
 //获取账本信息
 const getTheBookDesc = async () => {
   try {
@@ -264,7 +183,6 @@ const getTheBillDesc = async (start_date: string, end_date: string) => {
   }
 }
 
-
 //获取账单列表
 const getTheBook = async (start_date: string, end_date: string) => {
   try {
@@ -281,13 +199,98 @@ const getTheBook = async (start_date: string, end_date: string) => {
     bookData.updateBillList(data!.bills)
 
     if (data!.bills.length === 0) return ElMessage.info('当前时间范围内不存在账单')
-    //首次加载页面时memberInfo还没出来
-    if (Object.keys(memberInfo).length === 0) setTimeout(() => computation(), 500)
     else computation()
   } catch (error) {
     console.log('发生错误：')
     console.dir(error)
   }
+}
+
+//计算总价
+const computation = () => {
+  presentPrice.value = 0
+  totalPrice.value = 0
+  //当前账本协作成员人数
+  let userNum = memberList.length
+  //清空计算完成的账单数据
+  totalCostList.value = []
+  console.log('遍历前 memberInfo', memberInfo)
+  console.log('遍历前 members', members)
+  console.log('遍历members.forEach有BUG，刷新可能不会遍历')
+  members.forEach(userInfo => {
+    const {uid, username} = userInfo
+    // 对象形式，使用uid作为键,计算每个用户的花费，total是加上了已销账单的数据
+    memberInfo[uid] = {
+      uid,
+      username,
+      expense: 0,
+      income: 0,
+      totalExpense: 0,
+      totalIncome: 0
+    }
+    console.log('遍历中 memberInfo', memberInfo)
+  })
+
+  console.log('遍历后 memberInfo', memberInfo)
+    console.log('遍历后 memberList', memberList)
+  bookData.billList.forEach(bill => {
+    const {uid, username, price, status} = bill
+    //如果用户不在协作列表中(已退出协作的成员)
+    if (!memberInfo[uid]) {
+      memberInfo[uid] = {
+        uid,
+        username,
+        expense: 0,
+        income: 0,
+        totalExpense: 0,
+        totalIncome: 0
+      }
+      //计算完成的账单列表中添加成员
+      memberList.push({value: uid, text: username})
+      //添加成员数
+      userNum++
+    }
+    //计算未销账单
+    if (status === 0) {
+      //计算每个用户的当前总花费
+      memberInfo[uid].expense = numPlus(memberInfo[uid].expense, price)
+      //计算所有人的当前总花费
+      presentPrice.value = numPlus(presentPrice.value, price)
+    }
+    //计算全部账单
+    if (status === 0 || status === 1) {
+      //计算每个用户的总花费
+      memberInfo[uid].totalExpense = numPlus(memberInfo[uid].totalExpense, price)
+      //计算所有人的总花费
+      totalPrice.value = numPlus(totalPrice.value, price)
+    }
+  })
+
+  //计算平均花费
+  const presentAveragePay = Number((presentPrice.value / userNum).toFixed(2))
+  const totalAveragePay = Number((totalPrice.value / userNum).toFixed(2))
+  //最终的花费表
+  totalCostList.value = memberList.map(item => {
+    const data = memberInfo[item.value]
+    data.income = numMinus(data.expense, presentAveragePay)//计算需要收取的金额
+    return data
+  })
+
+  //添加总计栏
+  totalCostList.value.push({
+    uid: 0,
+    username: '当前总计',
+    expense: presentPrice.value,//当前总支出
+    income: presentAveragePay,//当前平均支出
+    totalExpense: totalPrice.value,//总支出(加已销账单)
+    totalIncome: totalAveragePay//总平均支出(加已销账单)
+  })
+  // totalCostList.value.push({uid: 0, username: '(加上已销账单)总计', expense: totalPrice.value, income: totalAveragePay})
+  // console.log('averagePay', averagePay)
+  // console.log('totalPrice', totalPrice.value)
+  // console.log('memberInfo', memberInfo)
+  // console.log('memberList', memberList)
+  console.log('totalCostList', totalCostList.value)
 }
 
 
@@ -484,9 +487,17 @@ const objectSpanMethod = ({row, rowIndex, columnIndex}: SpanMethodProps<Bill>) =
 //
 //   return sums
 // }
+interface TheDateRange {
+  start_date: string;
+  end_date: string;
+}
 
+const emitterGitBillList = async ({start_date, end_date}: TheDateRange) => {
+  console.log(`emitter触发：getTheBook(${start_date + ',' + end_date})`)
+  await getTheBook(start_date, end_date)
+}
 
-onMounted(async () => {
+onBeforeMount(async () => {
   const {DateRange} = getAllMonthDateRange({theDate: new Date()}, 'now')
   await Promise.all([
     getTheBookDesc(),
@@ -495,9 +506,13 @@ onMounted(async () => {
 
   // console.log(getAllMonthDateRange({theDate: new Date()}, 'now'))
 })
-emitter.on('get-bill-list', async ({start_date, end_date}) => {
-  console.log(`emitter触发：getTheBook(${start_date + ',' + end_date})`)
-  await getTheBook(start_date, end_date)
+
+console.log('开启了gitBillList的emitter监听')
+emitter.on('get-bill-list', emitterGitBillList)
+
+onBeforeUnmount(() => {
+  emitter.off('get-bill-list', emitterGitBillList)
+  console.log('注销了gitBillList的emitter监听')
 })
 </script>
 

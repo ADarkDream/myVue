@@ -181,7 +181,7 @@ async function getArticle() {
 //给代码块添加高亮
 // 复制功能
 // import useFunction from "@/hooks/useFunction";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 
 // const {copyCode} = useFunction()
 

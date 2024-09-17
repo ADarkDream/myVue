@@ -161,7 +161,7 @@
 import {ElCollapseTransition} from "element-plus";
 import {onMounted, ref} from "vue";
 import useFunction from "@/hooks/useFunction";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 
 const {showFlag,showPayCodePanel} = defineProps(['showFlag','showPayCodePanel'])//切换页面的参数
 const {copyText} = useFunction()

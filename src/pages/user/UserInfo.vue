@@ -149,7 +149,7 @@
 
 <script setup lang="ts">
 import axios from "axios";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 import {ElMessage, ElMessageBox, FormInstance, FormRules} from "element-plus";
 import {Edit} from "@element-plus/icons-vue";
 import {ref, reactive, onMounted} from 'vue';

@@ -1,48 +1,52 @@
 <template>
-  <el-card class="card">
-    <template #header>管理员登录界面</template>
-    <el-form
-        ref="ruleFormRef"
-        style="max-width: 600px"
-        :model="ruleForm"
-        status-icon
-        :rules="(Rules)"
-        label-width="auto"
-        class="demo-ruleForm login"
-        label-position="top"
-    >
+  <el-dialog
+      v-model="centerDialogVisible"
+      title="管理员登录界面"
+      align-center
+      width="500"
+      style="opacity: 0.8;"
+      :show-close="false"
+  >
+      <el-form
+          ref="ruleFormRef"
+          :model="ruleForm"
+          status-icon
+          :rules="(Rules)"
+          label-width="auto"
+          label-position="top"
+      >
 
-      <el-form-item prop="email">
-        <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱"/>
-      </el-form-item>
-      <el-form-item prop="password">
-        <el-input v-model.lazy.trim="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)" type="password"
-                  autocomplete="off" placeholder="输入密码"/>
-      </el-form-item>
-
-
-      <div class="btn">
-        <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="loading">登录</el-button>
-      </div>
-    </el-form>
-  </el-card>
+        <el-form-item prop="email">
+          <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱"/>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model.lazy.trim="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)" type="password"
+                    autocomplete="off" placeholder="输入密码"/>
+        </el-form-item>
 
 
+        <div class="btn">
+          <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+          <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="loading">登录</el-button>
+        </div>
+      </el-form>
+  </el-dialog>
 </template>
 
 <script lang="ts" setup>
+import axios from "axios";
 import {reactive, ref} from 'vue'
 import {ElMessage, type FormInstance, type FormRules} from 'element-plus'
-import axios from "axios";
-import {useRouter} from "vue-router";
-//按键的字
-import useUserInfo from "@/hooks/useUserInfo";
 
-//管理员登录判断
+import {useRouter} from "vue-router";
+import useResponsive from "@/hooks/useResponsive";
+import useUserInfo from "@/hooks/useUserInfo";
+const {isPC} =useResponsive()
 const {isAdmin} = useUserInfo()
-console.log(isAdmin.value)
-const router = useRouter();
+const router = useRouter()
+
+const centerDialogVisible = ref(true)
+//管理员登录判断
 if (isAdmin.value) router.replace({name: 'adminUsersManagement'})
 
 
@@ -167,13 +171,7 @@ function login() {
 
 
 <style scoped>
-.card {
-  width: 50%;
-  margin: 10% 24%;
-  opacity: 0.9;
-}
-
-.login {
+.el-form {
   width: 50%;
   margin: 5% 25%;
 }
@@ -184,8 +182,13 @@ function login() {
 }
 
 @media (max-width: 980px) {
-  .card {
-    width: 90%;
+  .el-form {
+    width: 80%;
+    margin: 3% auto;
+  }
+
+  .el-input {
+    width: 100%;
   }
 }
 </style>

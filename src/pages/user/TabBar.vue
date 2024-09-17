@@ -1,25 +1,24 @@
 <template>
   <div class="tabBar">
-<!--    悬浮按钮-->
-<!--    <div style="position: absolute;bottom: 60px;justify-content: space-evenly;">-->
-<!--          <div > 123</div>-->
-<!--           <div > 123</div>-->
-<!--    </div>-->
-
+    <!--    悬浮按钮-->
+    <!--    <div style="position: absolute;bottom: 60px;justify-content: space-evenly;">-->
+    <!--          <div > 123</div>-->
+    <!--           <div > 123</div>-->
+    <!--    </div>-->
     <menu ref="menu" class="menu">
 
       <div :class="activeIndex===0? 'menu__item active':'menu__item'" style="--bgColorItem: #ff8c00;"
            @click="clickItem(0)">
         <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M3.8,6.6h16.4"/>
-                    <path d="M20.2,12.1H3.8"/>
-                    <path d="M3.8,17.5h16.4"/>
+          <path d="M3.8,6.6h16.4"/>
+          <path d="M20.2,12.1H3.8"/>
+          <path d="M3.8,17.5h16.4"/>
           <!--圆-->
-<!--          <path d="M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z"/>-->
+          <!--          <path d="M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z"/>-->
           <!--头-->
-<!--          <path d="M12,10 C10.34,10 9,8.66 9,7 C9,5.34 10.34,4 12,4 C13.66,4 15,5.34 15,7 C15,8.66 13.66,10 12,10 Z"/>-->
+          <!--          <path d="M12,10 C10.34,10 9,8.66 9,7 C9,5.34 10.34,4 12,4 C13.66,4 15,5.34 15,7 C15,8.66 13.66,10 12,10 Z"/>-->
           <!--身体-->
-              </svg>
+        </svg>
       </div>
 
       <div :class="activeIndex===1? 'menu__item active':'menu__item'" style="--bgColorItem: #f54888;"
@@ -201,6 +200,7 @@ onMounted(() => {
   //   menu.value.style.setProperty("--timeOut", "none");
   // })
 })
+
 </script>
 
 

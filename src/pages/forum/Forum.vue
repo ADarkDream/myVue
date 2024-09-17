@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import useResponsive from "@/hooks/useResponsive";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 
 const {containerHeight} = useResponsive()
 

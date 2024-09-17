@@ -238,7 +238,7 @@ import {reactive, ref} from "vue";
 import useTimeStamp from '@/hooks/useTimestamp'
 import useResponsive from "@/hooks/useResponsive";
 import {useRouter} from "vue-router";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 
 const router = useRouter()
 const {isPC}=useResponsive()

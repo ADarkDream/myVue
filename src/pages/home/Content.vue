@@ -37,7 +37,7 @@ import axios from "axios";
 import {ElMessage} from "element-plus";
 import {onBeforeUnmount, onMounted, reactive, ref} from "vue";
 import {CloseBold, UploadFilled} from "@element-plus/icons-vue";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 import {NavigationObj, Navigation, WebsiteInfoItem} from "@/types/url"
 import AddUrl from "@/components/AddUrl.vue";
 import useResponsive from "@/hooks/useResponsive";

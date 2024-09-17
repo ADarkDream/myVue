@@ -261,7 +261,7 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
 import {Switch} from '@element-plus/icons-vue'
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 import useResponsive from "@/hooks/useResponsive";
 
 

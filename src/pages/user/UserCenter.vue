@@ -72,7 +72,7 @@
 import {onBeforeUnmount, onMounted, ref} from 'vue'
 import {useRoute, useRouter} from "vue-router";
 import useUserInfo from "@/hooks/useUserInfo";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 import useResponsive from "@/hooks/useResponsive";
 import {BellFilled, Document, Edit, EditPen, User} from "@element-plus/icons-vue";
 import TabBar from "@/pages/user/TabBar.vue";

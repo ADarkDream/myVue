@@ -36,7 +36,7 @@
 import {onBeforeRouteLeave, useRouter} from "vue-router";
 import {ref, Ref} from "vue";
 import useResponsive from "@/hooks/useResponsive";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 
 const router = useRouter()
 const {containerHeight} = useResponsive()

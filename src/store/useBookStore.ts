@@ -1,7 +1,7 @@
 // 引入defineStore用于创建store
 import {defineStore} from 'pinia'
 import {reactive, ref} from 'vue'
-import {Bill} from "@/types/books";
+import {Bill, TotalCost} from "@/types/books";
 
 
 // 定义并暴露一个store
@@ -24,8 +24,8 @@ export const useBookStore = defineStore('book', () => {
             updated_time: "2024-09-01T15:26:46.000Z",
             username: "默默"
         })
-//总价
-//     const
+// //总价
+//         const totalCostList = ref<TotalCost[]>([]);
 
         //更新整个订单
         const updateBillList = (newBillList: Bill[]) => {
@@ -35,24 +35,16 @@ export const useBookStore = defineStore('book', () => {
         const addBill = (newBill: Bill) => {
             billList.push(newBill)
         }
-
-
         //修改账单
         const updateBill = ({newBill, index}: {
             newBill?: Bill,
             index?: number,
         }) => {
             //修改账单状态(status),0正常，1结算，2删除
-            console.log(newBill, index, status)
+            console.log(newBill, index)
 
             //修改订单(合并)
             if (newBill) billList.splice(index, 1, newBill)
-        }
-
-        //修改账单状态(status),0正常，1结算，2删除
-        const changeBill = (status: number, index: number) => {
-            if (status === 0 || 1) billList[index].status = status
-            if (status === 2) billList.value.splice(index, 1)
         }
 
         //删除账单

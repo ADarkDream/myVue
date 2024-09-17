@@ -119,7 +119,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, onUpdated, ref} from "vue";
 import {Bill, DateParam, DateValue} from '@/types/books'
 import {SpanMethodProps} from "@/types/global";
 import {ElMessage, TableInstance} from "element-plus";
@@ -138,7 +138,7 @@ const {
 const {getTime, getDiffTime, formatDate} = useTimestamp()
 const {isPC, elSize, screenHeight} = useResponsive()
 import {getWeekDateRange, getMonthDateRange, getDayDateRange} from "@/hooks/useComputed";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 import {useBookStore} from "@/store/useBookStore";
 
 const bookData = useBookStore()
@@ -259,7 +259,7 @@ const objectSpanMethod = ({row, rowIndex, columnIndex}: SpanMethodProps<Bill>) =
 }
 
 
-onMounted(async () => {
+onMounted( () => {
   getNewDateRange('now')
 })
 

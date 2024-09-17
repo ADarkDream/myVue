@@ -93,7 +93,7 @@ const socket = playerInfo.socket
 const {roomMsg} = useChatMsgStore()//本地的聊天信息
 // import {ChatMsg} from '@/types/chat'
 import useFunction from "@/hooks/useFunction";
-import emitter from "@/utils/emitter";
+import {emitter} from "@/utils/emitter";
 import {Promotion} from "@element-plus/icons-vue";
 
 const router = useRouter()
