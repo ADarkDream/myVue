@@ -1,14 +1,14 @@
 // 引入defineStore用于创建store
 import {defineStore} from 'pinia'
 import {reactive} from 'vue'
-import ico_baidu from '@/assets/baidu.png';
-import ico_baidu_kaifa from  '@/assets/baidu_kaifa.png';
-import ico_bilibili from '@/assets/bilibili.png';
-import ico_bing from '@/assets/bing.png';
-import ico_google from '@/assets/google.png';
-import ico_360 from '@/assets/360.png';
-import ico_github from '@/assets/github.png';
-import ico_custom from '@/assets/custom.png';
+import ico_baidu from '@/assets/home/baidu.png';
+import ico_baidu_kaifa from '@/assets/home/baidu_kaifa.png';
+import ico_bilibili from '@/assets/home/bilibili.png';
+import ico_bing from '@/assets/home/bing.png';
+import ico_google from '@/assets/home/google.png';
+import ico_360 from '@/assets/home/360.png';
+import ico_github from '@/assets/home/github.png';
+import ico_custom from '@/assets/home/custom.png';
 import {EngineData} from "@/types/url";
 
 

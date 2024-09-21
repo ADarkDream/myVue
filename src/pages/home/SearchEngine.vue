@@ -86,18 +86,18 @@ const engineOption = ref(false)
 
 
 
-const getHitokoto = async () => {
-  try {
-    const result = await axios.get('https://v2.jinrishici.com/token')
-    console.log(result.data.hitokoto)
-    placeholder.value = result.data.hitokoto as string
-
-  } catch (error) {
-    console.log('发生错误：')
-    console.dir(error)
-    placeholder.value = '海内存知己'
-  }
-}
+// const getHitokoto = async () => {
+//   try {
+//     const result = await axios.get('https://v2.jinrishici.com/token')
+//     console.log(result.data.hitokoto)
+//     placeholder.value = result.data.hitokoto as string
+//
+//   } catch (error) {
+//     console.log('发生错误：')
+//     console.dir(error)
+//     placeholder.value = '海内存知己'
+//   }
+// }
 
 
 //region 显示内容区

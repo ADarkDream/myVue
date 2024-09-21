@@ -443,7 +443,7 @@ function reset() {
 function getVersion() {
   axios({
     url: '/getVersion',
-    params: {role: 'diff'}
+    params: {version:true,role: 'diff'}
   }).then(result => {
     console.log(result)
     const {versionList, roleList} = result.data.data

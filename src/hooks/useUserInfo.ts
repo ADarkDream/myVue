@@ -22,7 +22,17 @@ export default function () {
     //图像错误显示备用图
 
     function getLocalUserInfo() {
-        return JSON.parse(sessionStorage.getItem('userInfo')) || JSON.parse(localStorage.getItem('userInfo')) || {
+        const sessionData = sessionStorage.getItem('userInfo')
+        if (sessionData) {
+            console.log('session,userInfo', sessionData)
+            return JSON.parse(sessionData)
+        }
+        const localData = localStorage.getItem('userInfo')
+        if (localData) {
+            console.log('local,userInfo', localData)
+            return JSON.parse(localData)
+        }
+        return {
             email: '',
             signature: '',
             uid: '',
@@ -81,7 +91,6 @@ export default function () {
             isLogin.value = true
         }
     }
-
 
 
     //头像加载错误(链接不对或被屏蔽)

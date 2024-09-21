@@ -52,7 +52,7 @@
 import {reactive, ref} from 'vue'
 import {ElMessage, type FormInstance} from "element-plus";
 import axios from "axios";
-import ico_custom from "@/assets/custom.png";
+import ico_custom from "@/assets/home/custom.png";
 import useUserInfo from "@/hooks/useUserInfo";
 import {EngineData} from '@/types/url'
 

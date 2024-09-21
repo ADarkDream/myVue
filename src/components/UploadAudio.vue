@@ -75,7 +75,7 @@ function fileChange(file: UploadFile) {
   let Spark = new SparkMD5.ArrayBuffer()
   fileReader.readAsArrayBuffer(file.raw!)
   fileReader.onload = function (e: ProgressEvent<FileReader>) {
-    //将用户上传的图片转换成url赋值给头像
+    // //将用户上传的图片转换成url赋值给头像
     nullImgUrl.value = URL.createObjectURL(file.raw!)
     Spark.append(e.target!.result as ArrayBuffer)
     md5.value = Spark.end()

@@ -36,7 +36,7 @@
 import {reactive, ref} from 'vue'
 import {ElMessage} from "element-plus";
 import axios from "axios";
-import ico_custom from "@/assets/custom.png";
+import ico_custom from "@/assets/home/custom.png";
 import {Navigation} from '@/types/url'
 
 

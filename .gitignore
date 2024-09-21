@@ -30,5 +30,3 @@ coverage
 *.tsbuildinfo
 /sitemap.xml
 /sitemap.xml.gz
-/src/assets/workTest/
-/src/components/WorkTest.vue

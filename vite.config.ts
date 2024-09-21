@@ -8,6 +8,7 @@ import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 import legacy from "@vitejs/plugin-legacy"
 import compression from 'vite-plugin-compression';
+import VueDevTools from 'vite-plugin-vue-devtools'
 // https://vitejs.dev/config/
 
 export default defineConfig({
@@ -16,21 +17,25 @@ export default defineConfig({
     },
     server: {
         host: "0.0.0.0",//开发模式开启调试的外网网址
-        // proxy: { //前端代理的接口，仅限本地开发使用，上线之后需要nginx或后端代理
-        //     "/download1999": {
-        //         target: "https://gamecms-res.sl916.com",
-        //         changeOrigin: true, //是否跨域
-        //         rewrite: (path) => path.replace(/^\/download1999/, ""), //将代理的地址替换为目标地址
-        //         // ws: true,                       //是否代理 websockets
-        //         secure: true, //是否https接口
-        //     }
-        // }
+        proxy: { //前端代理的接口，仅限本地开发使用，上线之后需要nginx或后端代理
+            //     "/download1999": {
+            //         target: "https://gamecms-res.sl916.com",
+            //         changeOrigin: true, //是否跨域
+            //         rewrite: (path) => path.replace(/^\/download1999/, ""), //将代理的地址替换为目标地址
+            //         // ws: true,                       //是否代理 websockets
+            //         secure: true, //是否https接口
+            //     }
+        }
     },
     plugins: [
         vue({
             template: {
                 compilerOptions: {isCustomElement: (tag) => tag.startsWith('wc-')}
             },
+        }),
+        //调试插件,默认启动vscode
+        VueDevTools({
+            // launchEditor: 'webstorm',
         }),
         VueSetupExtend(),
         // 以下两项是为配置Element-plus自动按需导入

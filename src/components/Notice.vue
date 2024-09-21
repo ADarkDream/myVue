@@ -1,6 +1,6 @@
 <template>
   <!--    导航栏-->
-  <el-menu mode="horizontal" :default-active="isShow">
+  <el-menu mode="horizontal" :default-active="showFlag.showNum">
     <el-menu-item index="1" @click="changePage('1')">
       网站介绍
     </el-menu-item>
@@ -14,8 +14,8 @@
 
   <el-scrollbar height="350px">
     <!--       网站介绍区-->
-    <el-collapse-transition accordion v-show="isShow==='1'">
-      <el-collapse v-model="activeName">
+    <el-collapse-transition accordion v-show="showFlag.showNum==='1'">
+      <el-collapse v-model="showFlag.activeNum">
         <el-collapse-item title="网站介绍" name="1">
           <el-card class="notice">
             <el-text>
@@ -64,7 +64,11 @@
             </el-text>
             <br>
             <el-text>
-              5.本站正在持续更新和适配移动端，如<el-text type="warning">UI错位</el-text>或<el-text type="danger">功能出错</el-text>请
+              5.本站正在持续更新和适配移动端，如
+              <el-text type="warning">UI错位</el-text>
+              或
+              <el-text type="danger">功能出错</el-text>
+              请
               <el-button link title="前往反馈" type="primary" @click="changePage('3','2')">留言反馈</el-button>
               。
             </el-text>
@@ -75,7 +79,7 @@
             <el-link target="_blank"
                      href="https://letsgofishing5.github.io/lsgfish-resource-sharing/"
                      title="资源收藏与分享">
-              <el-button><img src="@/assets/custom.png" alt="" style="width: 25px">&ensp;
+              <el-button><img src="../assets/home/custom.png" alt="" style="width: 25px">&ensp;
                 lsgfish-resource-sharing
               </el-button>
             </el-link>
@@ -109,8 +113,8 @@
     </el-collapse-transition>
 
     <!--    更新相关-->
-    <el-collapse-transition v-show="isShow==='2'">
-      <el-collapse v-model="activeName" accordion style="border: none;text-align: left">
+    <el-collapse-transition v-show="showFlag.showNum==='2'">
+      <el-collapse v-model="showFlag.activeNum" accordion style="border: none;text-align: left">
         <!--    待更新的功能-->
         <el-collapse-item title="待更新的功能" name="1">
           <template v-for="item in noUpdated" :key="item.id">
@@ -133,8 +137,8 @@
     </el-collapse-transition>
 
     <!--联系和反馈-->
-    <el-collapse-transition v-show="isShow==='3'">
-      <el-collapse v-model="activeName" accordion style="border: none">
+    <el-collapse-transition v-show="showFlag.showNum==='3'">
+      <el-collapse v-model="showFlag.activeNum" accordion style="border: none">
         <!--联系方式-->
         <el-collapse-item title="联系方式" name="1">
           <template style="display: flex;justify-content: space-around">
@@ -179,33 +183,24 @@ import useTimeStamp from "@/hooks/useTimestamp";
 import useFunction from "@/hooks/useFunction";
 import {useRouter} from "vue-router";
 import Approve from "@/components/Approve.vue";
+import {Notice} from "@/types/global";
 
 
 const {copyText} = useFunction()
 const {getDiffTime} = useTimeStamp()
 const router = useRouter()
 
-const {showFlag} = defineProps(['showFlag'])//切换页面的参数
+const {showFlag,changePage} = defineProps(['showFlag', 'changePage'])//切换页面的参数
 
 const updateNotes = reactive<Notice[]>([])//已更新的公告
 const noUpdated = reactive<Notice[]>([])//未更新的公告
-const isShow = ref<string>('1') //显示第几个公告区
-const activeName = ref<string[]>(['1'])//展开第几条,因为设置了accordion，所以必须是字符串格式
 const contact = ref('')//反馈联系方式
 const content = ref('')//反馈内容
 
 
 onMounted(() => {
   getNotices()//获取公告
-  if (!!showFlag) changePage(showFlag.showNum, showFlag.activeNum)//更换页面
 })
-
-
-//切换公告页面
-const changePage = (showNum: string, activeNum = '1') => {
-  isShow.value = showNum
-  setTimeout(() => activeName.value = activeNum.split(','), 300)
-}
 
 
 //获取已发布公告

@@ -63,7 +63,7 @@ const length = noticeList.length
 const timer = setInterval(() => {
   activeItemNum.value++
   if (activeItemNum.value >= length) activeItemNum.value = 0
-  console.log('Approve当前显示的消息序号：',activeItemNum.value)
+  // console.log('Approve当前显示的消息序号：',activeItemNum.value)
 }, 4000)
 
 //注销定时器

@@ -67,14 +67,16 @@ declare module 'vue' {
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    LoginFormComp: typeof import('./src/components/form/LoginFormComp.vue')['default']
     Music: typeof import('./src/components/Music.vue')['default']
     Notice: typeof import('./src/components/Notice.vue')['default']
+    RegisterFormComp: typeof import('./src/components/form/RegisterFormComp.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Time: typeof import('./src/components/Time.vue')['default']
     TitleDiv: typeof import('./src/components/TitleDiv.vue')['default']
+    UploadAudio: typeof import('./src/components/UploadAudio.vue')['default']
     UploadImage: typeof import('./src/components/UploadImage.vue')['default']
     UploadImgInfo: typeof import('./src/components/UploadImgInfo.vue')['default']
-    WorkTest: typeof import('./src/components/WorkTest.vue')['default']
   }
 }

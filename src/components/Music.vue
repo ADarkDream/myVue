@@ -1,71 +1,177 @@
 <template>
-  <el-container>
+  <el-container :style="'height:'+containerHeight+'px'">
+    <el-header>音乐播放器demo</el-header>
     <el-main>
-      <audio ref="audioElement" :src='musicList[playingIndex].src' type="audio/mpeg"></audio>
+      <audio ref="audioElement" crossOrigin='anonymous' :src='musicList[playingIndex].src' type="audio/mpeg"/>
 
-      <el-collapse>
+      <el-collapse style="text-align: left" accordion>
         <el-collapse-item title="备忘">
-          <div>没有点播放,直接点下一首,有BUG</div>
+          <!--          <div>没有点播放,直接点下一首,有BUG</div>-->
+          <div>单曲循环用回调函数</div>
           <div>随机播放有BUG，会随机到自己，需要改一下</div>
-          <div>需要判断每种模式，只有一首歌的情况(上一首下一首是否会错)</div>
-          <div>toggleMusic里面的isPlay大都为true，可以删减</div>
-          <div>toggleMusic里面的监听器可以删减</div>
-          <div>歌曲名设置成超出容器才开始滚动</div>
-          <div>设置默认专辑图、歌曲名、歌手名</div>
+          <!--          <div>神姬音乐文件有特殊字符，可能无法上传，注意修改并校验</div>-->
+          <!--          <div>神姬播放失败但没有提醒</div>-->
+          <!--          <div>注意等canplay之后再计算时间总长，否则会出现NAN</div>-->
+          <div>七牛云链接后加上?avinfo可以获得音频源数据</div>
+          <div>
+            用第三方库 lyric-parser 进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。
+          </div>
+          <div>
+            <el-text type="warning">
+              使用在线地址！！！
+            </el-text>
+          </div>
+          <!--          <div>需要判断每种模式，只有一首歌的情况(上一首下一首是否会错)</div>-->
+          <!--          <div>toggleMusic里面的isPlay大都为true，可以删减</div>-->
+          <!--          <div>toggleMusic里面的监听器不可以删减！！！</div>-->
+          <!--          <div>歌曲名设置成超出容器才开始滚动</div>-->
+          <!--          <div>设置默认专辑图、歌曲名、歌手名</div>-->
           <div>各类设置存本地，用store</div>
+          1、 {{ isPlaying }} 2、{{ infoBarActive }} 3、{{ controlPanelActive }} 4、{{ duration }}
+        </el-collapse-item>
+        <el-collapse-item title="播放列表">
+          <template v-for="(item,index) in musicList" :key="index">
+            <div>
+              <el-text>{{ index + 1 }}、{{ item.name || '未命名' }} - {{ item.artist || '未知艺术家' }}</el-text>&ensp;
+              <el-text @click="toggleMusic({index})" size="small" type="primary">
+                点击播放
+              </el-text>
+            </div>
+          </template>
+        </el-collapse-item>
+        <el-collapse-item title="添加音乐">
+          <el-form v-model="newMusic" label-width="auto" label-position="top"
+                   style="width: 100%;" :size="elSize">
+            <el-form-item label="输入网易云音乐ID获取音频链接(仅支持免费音乐)">
+              <el-row :gutter="24">
+                <el-col :span="16">
+                  <el-input v-model.trim="cloudMusicID" placeholder="输入网易云音乐ID"></el-input>
+                </el-col>
+                <el-col :span="8">
+                  <el-button @click="getCloudMusicUrl" type="primary" plain>获取并播放
+                  </el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+            <el-form-item prop="src" label="输入音频链接">
+              <el-row :gutter="24">
+                <el-col :span="16">
+                  <el-input v-model="newMusic.src" placeholder="输入音频链接"></el-input>
+                </el-col>
+                <el-col :span="8">
+                  <el-button @click="addMusic" type="success" plain>添加并播放</el-button>
+                </el-col>
+              </el-row>
+            </el-form-item>
+          </el-form>
         </el-collapse-item>
       </el-collapse>
-        <div>
-             <el-button @click="toggleMode" type="primary">切换模式：{{ modeList[modeIndex].name }}</el-button>
-        </div>
-        <div style="width: 300px;margin:50px 10px 150px 10px">
-          <el-text>
-            音量：{{ (volume * 100).toFixed(0) }}%
-          </el-text>
-          <el-slider v-model="volume" @input="changeVolume" class="volumeBar" :min="0" :max="2" :step="0.1"
-                     :marks="{0:'静音',1:'100%',2:'200%'}" :show-tooltip="false"/>
-        </div>
 
+    </el-main>
+    <div class="footer">
+
+      <!--音量控制面板-->
+      <div style="width: 300px;height: 100px;margin:0 auto 50px">
+        <el-text>
+          音量：{{ (volume * 100).toFixed(0) }}%
+        </el-text>
+        <el-slider v-model="volume" @input="changeVolume" class="volumeBar" :min="0" :max="2" :step="0.1"
+                   :marks="{0:'静音',1:'100%',2:'200%'}" :show-tooltip="false"/>
+      </div>
+
+      <!--播放器-->
       <div class="player">
-        <div class="info" :class="{ active: infoBarActive }">
-          <span class="name">{{ musicList[playingIndex].name }}</span>
-          <span class="artist">{{ musicList[playingIndex].artist }}</span>
-          <div class="progress-bar">
-            <!--            <div class="volumeBar"></div>-->
-            <el-slider v-model="currentTime" @change="changeCurrentTime" :min="0"
-                       :max="duration" :show-tooltip="false"/>
-            <div class="time"><span>{{
-                formatMusicTime(currentTime)
-              }}</span><span>{{ formatMusicTime(duration) }}</span></div>
+        <div class="play-panel" :class="{ active: infoBarActive }">
+          <div class="play-option">
+            <!--播放模式-->
+            <span @click="toggleMode">
+              <!--列表循环-->
+              <svg v-if="modeIndex===0" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M411.3152 780.8v71.3728l-108.6208-108.6208 108.6208-108.6208V704H640a166.4 166.4 0 0 0 166.4-166.4v-128a38.4 38.4 0 0 1 76.8 0v128a243.2 243.2 0 0 1-243.2 243.2h-228.6848z m229.5296-512V196.5568l108.5952 108.6208-108.5952 108.5952V345.6H409.6A166.4 166.4 0 0 0 243.2 512v128a38.4 38.4 0 0 1-76.8 0v-128a243.2 243.2 0 0 1 243.2-243.2h231.2448z"/>
+              </svg>
+              <!--顺序播放-->
+              <svg v-else-if="modeIndex===1" class="icon" style="width: 26px;padding: 2px" viewBox="0 0 1024 1024"
+                   xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M697.4464 381.4656L861.6192 256l-164.1728-125.4656zM697.4464 663.0656L861.6192 537.6l-164.1728-125.4656zM697.4464 919.0656L861.6192 793.6l-164.1728-125.4656z"></path>
+                <path
+                    d="M153.6 230.4m38.4 0l588.8 0q38.4 0 38.4 38.4l0 0q0 38.4-38.4 38.4l-588.8 0q-38.4 0-38.4-38.4l0 0q0-38.4 38.4-38.4Z"></path>
+                <path
+                    d="M153.6 486.4m38.4 0l588.8 0q38.4 0 38.4 38.4l0 0q0 38.4-38.4 38.4l-588.8 0q-38.4 0-38.4-38.4l0 0q0-38.4 38.4-38.4Z"></path>
+                <path
+                    d="M153.6 742.4m38.4 0l512 0q38.4 0 38.4 38.4l0 0q0 38.4-38.4 38.4l-512 0q-38.4 0-38.4-38.4l0 0q0-38.4 38.4-38.4Z"/>
+              </svg>
+              <!--随机播放-->
+              <svg v-else-if="modeIndex===2" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M768 704v-70.2208L876.6208 742.4 768 851.0208V780.8h-17.6128c-108.1344 0-188.0576-37.5296-224.1536-123.2128a38.4 38.4 0 1 1 70.784-29.824c22.016 52.3264 72.96 76.2368 153.344 76.2368H768z m0-435.2V198.5792L876.6208 307.2 768 415.8208V345.6h-17.6128c-80.384 0-131.328 23.9104-153.344 76.2368l-99.2768 235.7504c-36.096 85.6832-116.0192 123.2128-224.1536 123.2128H230.4a38.4 38.4 0 0 1 0-76.8h43.2128c80.384 0 131.328-23.9104 153.344-76.2368l99.2768-235.7504c36.096-85.6832 116.0192-123.2128 224.1536-123.2128H768z m-537.6 0h43.2128c108.1344 0 188.0576 37.5296 224.1536 123.2128a38.4 38.4 0 1 1-70.784 29.824c-22.016-52.3264-72.96-76.2368-153.344-76.2368H230.4a38.4 38.4 0 0 1 0-76.8z"/>
+              </svg>
+              <!--单曲循环-->
+              <svg v-else-if="modeIndex===3" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M411.3152 780.8v71.3728l-108.6208-108.6208 108.6208-108.6208V704H640a166.4 166.4 0 0 0 166.4-166.4v-128a38.4 38.4 0 0 1 76.8 0v128a243.2 243.2 0 0 1-243.2 243.2h-228.6848z m229.5296-512V196.5568l108.5952 108.6208-108.5952 108.5952V345.6H409.6A166.4 166.4 0 0 0 243.2 512v128a38.4 38.4 0 0 1-76.8 0v-128a243.2 243.2 0 0 1 243.2-243.2h231.2448z m-123.2128 128.1024h22.9376V652.8h-29.3888v-220.0576c-16.128 16.4864-36.1984 27.9552-60.2112 35.1232v-29.3888a152.32 152.32 0 0 0 35.84-15.4112 148.4032 148.4032 0 0 0 30.8224-26.1632z"/>
+              </svg>
+            </span>
+            <!--播放列表-->
+            <span @click="ElMessage.info('播放列表')">
+               <svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+              <path
+                  d="M819.2 787.072l-108.6208-82.9952L819.2 621.056v166.016zM192 256h588.8a38.4 38.4 0 0 1 0 76.8h-588.8a38.4 38.4 0 0 1 0-76.8z m0 204.8h588.8a38.4 38.4 0 0 1 0 76.8h-588.8a38.4 38.4 0 0 1 0-76.8z m0 204.8h409.6a38.4 38.4 0 0 1 0 76.8h-409.6a38.4 38.4 0 0 1 0-76.8z"/>
+            </svg>
+            </span>
+          </div>
+          <div class="play-info">
+            <span ref="musicName" class="name" :class="{ scroll: nameScroll }">{{
+                isLoading ? '加载中' : musicList[playingIndex].name || '未命名'
+              }}</span>
+            <span ref="musicArtist" class="artist" :class="{ scroll: artistScroll }">{{
+                isLoading ? '加载中' : musicList[playingIndex].artist || '未知艺术家'
+              }}</span>
+            <div class="progress-bar">
+              <!--            <div class="volumeBar"></div>-->
+              <el-slider v-model="currentTime" @change="changeCurrentTime" :min="0"
+                         :max="duration" :show-tooltip="false"/>
+              <div class="time"><span>{{
+                  formatMusicTime(currentTime)
+                }}</span><span>{{ formatMusicTime(duration) }}</span></div>
+            </div>
           </div>
         </div>
         <div class="control-panel" :class="{ active: controlPanelActive }">
-          <div class="album-art" :style="'--bgImage:'+`url('${musicList[playingIndex].albumArt}')`"
+          <div class="album-art"
+               :style="'--bgImage:'+`url(${musicList[playingIndex].albumArt || defaultAlbumArt})`"
                @click="play()"></div>
           <div class="controls">
-            <div class="prev" @click="toggleMusic(false,false)"></div>
+            <div class="prev" @click="toggleMusic({isNext:false,isAuto:false})"></div>
             <div class="play" @click="play()"></div>
-            <div class="next" @click="toggleMusic(true,false)"></div>
+            <div class="next" @click="toggleMusic({isNext:true,isAuto:false})"></div>
           </div>
         </div>
       </div>
-    </el-main>
-
+    </div>
   </el-container>
 </template>
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+import {nextTick, onMounted, ref} from 'vue';
 import useTimestamp from "@/hooks/useTimestamp";
 import {useBaseUrlStore} from "@/store/useBaseUrlStore";
 import {ElMessage} from 'element-plus'
+import defaultAlbumArt from '@/assets/music.svg'
+import axios from "axios";
+import useResponsive from "@/hooks/useResponsive";
 
+const {isPC, elSize, containerHeight} = useResponsive()
 const {formatMusicTime} = useTimestamp()
-const {defaultUrl}=useBaseUrlStore()
+const {defaultUrl} = useBaseUrlStore()
 //是否显示控制面板
 const infoBarActive = ref(false)
 //是否旋转专辑图
 const controlPanelActive = ref(false)
-
+//是否滚动歌名
+const nameScroll = ref(false)
+//是否滚动歌手名
+const artistScroll = ref(false)
 // const images = ref(`url('${img}')`)
 
 
@@ -75,6 +181,9 @@ const audioContext = new AudioContext()
 // audioContext.crossOrigin = 'anonymous'
 //音频DOM元素
 const audioElement = ref<HTMLAudioElement>()
+//歌名和歌手名DOM元素
+const musicName = ref<HTMLDivElement>()
+const musicArtist = ref<HTMLDivElement>()
 //音量控制
 let gainNode = audioContext.createGain()
 
@@ -82,6 +191,7 @@ let track = null
 
 //是否正在播放的标志
 const isPlaying = ref(false)
+const isLoading = ref(false)
 //播放进度
 const currentTime = ref(audioElement.value?.currentTime)
 //音乐总时长
@@ -91,58 +201,65 @@ const duration = ref(audioElement.value?.duration)
 const volume = ref(1)
 
 //播放列表
-const musicList = ref([
-  {
-    id: 1,
-    name: '未命名',
-    artist: '川川尾巴小心不要被扯掉了',
-    albumArt: 'src/assets/专辑图-川川尾巴小心不要被扯掉了.jpg',
-    src: 'src/assets/未命名-川川尾巴小心不要被扯掉了.m4a'
-  }, {
-    id: 2,
-    name: '大鱼',
-    artist: '周深',
-    albumArt: 'http://qiniufree.muxidream.cn/headImg/20230906_202134_1719571185364.jpg',
-    src: 'src/assets/大鱼-周深.mp3'
-  }, {
-    id: 3,
-    name: '神姬',
-    artist: 'EinWil&Jayx',
-    albumArt: '@/assets/hutao.png',
-    src: 'src/assets/神姬-EinWil&Jayx.m4a'
-  }, {
-    id: 4,
-    name: 'call of silence（Cover Piano）',
-    artist: '向晚丶',
-    albumArt: '@/assets/hutao.png',
-    src: 'src/assets/call of silence（Cover Piano） - 向晚丶.mp3'
-  }])
 // const musicList = ref([
 //   {
 //     id: 1,
 //     name: '未命名',
 //     artist: '川川尾巴小心不要被扯掉了',
-//     albumArt:defaultUrl+ 'music/album-art/专辑图-川川尾巴小心不要被扯掉了.jpg',
-//     src:defaultUrl+ '/music/files/%E6%9C%AA%E5%91%BD%E5%90%8D-%E5%B7%9D%E5%B7%9D%E5%B0%BE%E5%B7%B4%E5%B0%8F%E5%BF%83%E4%B8%8D%E8%A6%81%E8%A2%AB%E6%89%AF%E6%8E%89%E4%BA%86.m4a'
+//     albumArt: '/music/album-art/专辑图-川川尾巴小心不要被扯掉了.jpg',
+//     // src: '/music/file/未命名-川川尾巴小心不要被扯掉了.m4a'
+//     src: defaultUrl + '/music/files/%E6%9C%AA%E5%91%BD%E5%90%8D-%E5%B7%9D%E5%B7%9D%E5%B0%BE%E5%B7%B4%E5%B0%8F%E5%BF%83%E4%B8%8D%E8%A6%81%E8%A2%AB%E6%89%AF%E6%8E%89%E4%BA%86.m4a'
 //   }, {
 //     id: 2,
 //     name: '大鱼',
 //     artist: '周深',
-//     albumArt: 'http://qiniufree.muxidream.cn/headImg/20230906_202134_1719571185364.jpg',
-//     src:defaultUrl+ '/music/files/%E5%A4%A7%E9%B1%BC-%E5%91%A8%E6%B7%B1.mp3'
+//     albumArt: '',
+//     src: '/music/file/大鱼-周深.mp3'
 //   }, {
 //     id: 3,
 //     name: '神姬',
 //     artist: 'EinWil&Jayx',
-//     albumArt: '@/assets/hutao.png',
-//     src: defaultUrl+'/music/files/%E7%A5%9E%E5%A7%AC-EinWil%26Jayx.m4a'
+//     albumArt: '',
+//     src: '/music/file/神姬-EinWil&Jayx.m4a'
 //   }, {
 //     id: 4,
 //     name: 'call of silence（Cover Piano）',
 //     artist: '向晚丶',
-//     albumArt: '@/assets/hutao.png',
-//     src: defaultUrl+'/music/files/call%20of%20silence%EF%BC%88Cover%20Piano%EF%BC%89%20-%20%E5%90%91%E6%99%9A%E4%B8%B6.mp3'
+//     albumArt: '',
+//     src: '/music/file/call of silence（Cover Piano） - 向晚丶.mp3'
 //   }])
+const musicList = ref([
+  {
+    id: 1,
+    name: '未命名',
+    artist: '川川尾巴小心不要被扯掉了',
+    albumArt: defaultUrl + '/music/album-art/%E4%B8%93%E8%BE%91%E5%9B%BE-%E5%B7%9D%E5%B7%9D%E5%B0%BE%E5%B7%B4%E5%B0%8F%E5%BF%83%E4%B8%8D%E8%A6%81%E8%A2%AB%E6%89%AF%E6%8E%89%E4%BA%86.jpg',
+    src: defaultUrl + '/music/files/%E6%9C%AA%E5%91%BD%E5%90%8D-%E5%B7%9D%E5%B7%9D%E5%B0%BE%E5%B7%B4%E5%B0%8F%E5%BF%83%E4%B8%8D%E8%A6%81%E8%A2%AB%E6%89%AF%E6%8E%89%E4%BA%86.m4a'
+  }, {
+    id: 2,
+    name: '大鱼',
+    artist: '周深',
+    albumArt: '',
+    src: defaultUrl + '/music/files/%E5%A4%A7%E9%B1%BC-%E5%91%A8%E6%B7%B1.mp3'
+  }, {
+    id: 3,
+    name: '神姬',
+    artist: 'EinWil&Jayx',
+    albumArt: '',
+    src: defaultUrl + '/music/files/%E7%A5%9E%E5%A7%AC-EinWil%26Jayx.m4a'
+  }, {
+    id: 4,
+    name: 'call of silence（Cover Piano）',
+    artist: '向晚丶',
+    albumArt: '',
+    src: defaultUrl + '/music/files/call%20of%20silence%EF%BC%88Cover%20Piano%EF%BC%89%20-%20%E5%90%91%E6%99%9A%E4%B8%B6.mp3'
+  }, {
+    id: 5,
+    name: '会开花的云 (Live版)',
+    artist: '姚晓棠 / 弦子',
+    albumArt: 'http://p1.music.126.net/yokTdCD6kPIyJJyUIXa7mw==/109951169749390081.jpg',
+    src: 'http://m701.music.126.net/20240921000544/d376426c0f74ed0961b6330947c7369e/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/44332420698/eb78/a053/5ee1/18fbfdb584f79c0015f63589d339e871.mp3'
+  }])
 //当前播放的歌的序号
 const playingIndex = ref(0)
 //播放模式
@@ -167,12 +284,24 @@ const modeList = [
 //当前播放模式的序号
 const modeIndex = ref(0)
 
+const newMusic = ref({
+  id: 5,
+  name: '',
+  artist: '',
+  albumArt: '',
+  src: ''
+})
+
+const cloudMusicID = ref()
+
+
 onMounted(() => {
   track = audioContext.createMediaElementSource(audioElement.value as HTMLAudioElement)
 
   track.connect(gainNode).connect(audioContext.destination)
 })
 
+//计算当前播放时长的定时器
 const timer1 = ref<NodeJS.Timeout>()
 
 //播放和暂停
@@ -188,7 +317,7 @@ function play(pause = false) {
   }
 //pause为true则必定暂停，pause默认则看isPlaying.value
   console.log(pause, isPlaying.value)
-  if (pause || isPlaying.value) {
+  if (pause || isPlaying.value) {//暂停
     isPlaying.value = false
     audioElement.value?.pause()
     infoBarActive.value = false
@@ -196,11 +325,23 @@ function play(pause = false) {
     //关闭播放时间计时器
     clearTimeout(timer1.value)
     console.log('播放暂停')
-  } else {
+  } else {//播放
     isPlaying.value = true
-    audioElement.value?.play()
+    if (audioElement.value) {
+      // audioElement.value.play().catch(err => {
+      //   ElMessage.error('播放失败')
+      //   console.error("播放失败：", err)
+      // })
+      // 重新加载新歌曲
+      audioElement.value.load()
+
+      // 绑定新的 `canplay` 事件监听器，确保加载完成后再播放
+      audioElement.value.addEventListener('canplay', handleCanPlay);
+    }
     infoBarActive.value = true
     controlPanelActive.value = true
+    isLoading.value = false
+    nextTick(() => isScroll())
     duration.value = audioElement.value?.duration
     //开启播放时间计时器,显示当前播放时长
     timer1.value = setInterval(() => playing(), 500)
@@ -213,7 +354,7 @@ const playing = () => {
   currentTime.value = audioElement.value?.currentTime
   if (audioElement.value?.currentTime === duration.value) {
 //切换下一首
-    toggleMusic(true, true)
+    toggleMusic({isNext: true, isAuto: true})
   }
 }
 
@@ -221,12 +362,28 @@ const playing = () => {
 const changeVolume = (value: number) => gainNode.gain.value = value
 
 //修改播放进度
-const changeCurrentTime = () => {
+const changeCurrentTime = (newCurrentTime: number) => {
   if (audioElement.value) {
-    audioElement.value.currentTime = currentTime.value
-
+    audioElement.value.currentTime = newCurrentTime
+    console.log('跳转到', formatMusicTime(newCurrentTime))
   }
-  // console.log(currentTime.value)
+}
+
+//判断歌曲和歌手名是否超出长度限制，是否滚动
+const isScroll = () => {
+  console.log('判断歌曲和歌手名是否超出长度限制', musicName.value, musicArtist.value)
+  if (musicName.value) {//歌曲名滚动
+    const nameSW = musicName.value.scrollWidth
+    const nameCW = musicName.value.clientWidth
+    nameScroll.value = nameSW > nameCW
+    console.log('歌曲名是否超出容器', nameScroll.value)
+  }
+  if (musicArtist.value) {//歌手名滚动
+    const artistSW = musicArtist.value.scrollWidth
+    const artistCW = musicArtist.value.clientWidth
+    artistScroll.value = artistSW > artistCW
+    console.log('歌手名是否超出容器', nameScroll.value)
+  }
 }
 
 //切换模式
@@ -240,40 +397,45 @@ const toggleMode = () => {
 }
 
 //切换音乐
-const toggleMusic = (isNext = true, isAuto = true) => {
-  if (!audioElement.value || musicList.value.length === 0) return
-  //暂停播放
-  audioElement.value.pause()
+const toggleMusic = ({isNext = true, isAuto = true, index}: { isNext?: boolean, isAuto?: boolean, index?: number }) => {
+  const length = musicList.value.length
+  if (!audioElement.value || length === 0) return ElMessage.error('播放列表为空')
+  else if (length === 1 && !isAuto) {
+    return ElMessage.info('播放列表只有一首歌')
+  }
+  if (isPlaying.value) { //暂停播放
+    audioElement.value.pause()
+    isPlaying.value = false
+  }
   //重置播放进度
   audioElement.value.currentTime = 0
+  //设置加载flag
+  isLoading.value = true
   // 移除旧的 `canplay` 事件监听器
   audioElement.value.removeEventListener('canplay', handleCanPlay)
-  //是否继续播放
-  let isPlay = true
   //切换歌曲逻辑
-  if (modeIndex.value === 0) {
-    isPlay = listLoop(isNext)
+  //定向切歌
+  if (index) playingIndex.value = index
+  //按模式切歌
+  else if (modeIndex.value === 0) {
+    listLoop(isNext)
   } else if (modeIndex.value === 1) {
-    isPlay = sequentialPlay(isNext)
+    sequentialPlay(isNext)
   } else if (modeIndex.value === 2) {
     randomPlay()
   } else if (modeIndex.value === 3) {
-    isPlay = singleLoop(isNext, isAuto)
+    singleLoop(isNext, isAuto)
   }
 
-  // 设置新的音频源
-  audioElement.value.src = musicList.value[playingIndex.value].src;
-
   // 重新加载新歌曲
-  audioElement.value.load()
-
-  // 绑定新的 `canplay` 事件监听器，确保加载完成后再播放
-  audioElement.value.addEventListener('canplay', handleCanPlay);
-
-
-  // 设置播放状态
-  isPlaying.value = true
-  if (!isPlay) play()
+  // audioElement.value.load()
+  //
+  // // 绑定新的 `canplay` 事件监听器，确保加载完成后再播放
+  // audioElement.value.addEventListener('canplay', handleCanPlay);
+  //
+  // isScroll()
+  //如果当前不是播放状态，则播放
+  if (!isPlaying.value) play()
 }
 
 
@@ -287,16 +449,40 @@ const handleCanPlay = () => {
 
   // 播放新歌曲
   audioElement.value.play().catch(err => {
-    console.error("播放失败：", err);
+    ElMessage.error('播放失败')
+    console.error("播放失败：", err)
   })
-
+  isLoading.value = false
   // 解绑 `canplay` 事件监听器，防止多次触发
   audioElement.value.removeEventListener('canplay', handleCanPlay)
 
   // 更新歌曲时长
-  duration.value = audioElement.value?.duration
-  console.log(duration.value, audioElement.value?.duration)
+  duration.value = audioElement.value.duration
+  // console.log(duration.value, audioElement.value?.duration)
 }
+
+const getMusicInfo = async (musicId: number) => {
+  // 动态获取新的音频链接
+  // const musicId = musicList.value[playingIndex.value].id
+  try {
+    // 通过 fetch 获取新的歌曲链接 (假设服务端返回 JSON 包含音频 URL)
+    const response = await fetch(`/api/getMusicUrl?id=${musicId}`)
+    const data = await response.json()
+
+    if (data && data.url && audioElement.value) {
+      // 设置新的音频源
+      audioElement.value.src = data.url
+    } else {
+      ElMessage.error('音频链接无效')
+    }
+
+  } catch (error) {
+    ElMessage.error('获取歌曲链接失败')
+    console.error('获取歌曲链接失败：', error)
+    return
+  }
+}
+
 
 //列表循环
 const listLoop = (isNext: boolean) => {
@@ -309,9 +495,7 @@ const listLoop = (isNext: boolean) => {
   } else if (playingIndex.value < 0) {
     playingIndex.value = musicList.value.length - 1
   }
-  // playingMusic.value = musicList.value[playingIndex.value]
   console.log('列表循环', playingIndex.value, musicList.value[playingIndex.value])
-  return true
 }
 
 //顺序播放
@@ -322,14 +506,13 @@ const sequentialPlay = (isNext: boolean) => {
   if (playingIndex.value >= musicList.value.length) {
     //换成默认的信息，空白信息
     playingIndex.value--
-    return false
+    return ElMessage.info('当前是最后一首')
   } else if (playingIndex.value <= 0) {
     playingIndex.value++
-    return false
+    return ElMessage.info('当前是第一首')
   }
 
   console.log('顺序播放', playingIndex.value, musicList.value[playingIndex.value])
-  return true
 }
 
 //随机播放
@@ -338,7 +521,6 @@ const randomPlay = () => {
   if (playingIndex.value === randomNum && musicList.value.length !== 1) return randomPlay
   playingIndex.value = randomNum
   console.log('顺序播放', playingIndex.value, musicList.value[playingIndex.value])
-  return true
 }
 
 //单曲循环
@@ -351,30 +533,152 @@ const singleLoop = (isNext: boolean, isAuto: boolean) => {
   } else {
     listLoop(isNext)
   }
-  return true
 }
+
+//添加并播放新音乐
+const addMusic = () => {
+  if (newMusic.value.src) {
+    musicList.value.push(newMusic.value)
+    toggleMusic({index: musicList.value.length - 1})
+  } else return ElMessage.error('音乐链接不能为空')
+}
+
+//根据网易云音乐ID获取直链
+const getCloudMusicUrl = async () => {
+  try {
+    if (!cloudMusicID.value) return ElMessage.error('音乐ID不能为空')
+    const result = await axios({
+      url: '/getCloudMusic',
+      params: {id: cloudMusicID.value},
+    })
+    console.log(result)
+    const {status, msg, data} = result.data
+    newMusic.value.src = data.resultUrl
+    addMusic()
+
+    // console.log()
+  } catch (error) {
+    console.log('发生错误：')
+    console.dir(error)
+  }
+}
+//region 播放buffer音频
+// 1. 创建 AudioContext
+// const audioContext2 = new window.AudioContext();
+//
+// // 2. 定义音频源变量
+// let audioBuffer;
+// let source; // 当前播放的音频源
+//
+// // 3. 加载并播放音频
+// async function loadAndPlayAudio(url: string) {
+//   // 如果当前有音频在播放，先停止它
+//   if (source) {
+//     source.stop()
+//   }
+//
+//   // 加载新的音频文件
+//   try {
+//     // 使用 fetch 进行异步获取音频文件
+//     const response = await fetch(url)
+//
+//     // 将响应转换为 ArrayBuffer
+//     const arrayBuffer = await response.arrayBuffer()
+//
+//     // 使用 AudioContext 解码音频数据, 将解码后的数据保存到 audioBuffer 中
+//     audioBuffer = await audioContext2.decodeAudioData(arrayBuffer)
+//
+//     // 播放音频
+//     playAudio();
+//   } catch (error) {
+//     console.error('音频加载错误:', error)
+//   }
+// }
+//
+// // 4. 播放音频
+// function playAudio() {
+//   // 创建新的 AudioBufferSourceNode
+//   source = audioContext2.createBufferSource();
+//   source.buffer = audioBuffer;
+//
+//   // 将音频源连接到 AudioContext 的目的地（扬声器）
+//   source.connect(audioContext2.destination);
+//
+//   // 开始播放音频
+//   source.start();
+// }
+
+// 5. 切换音频文件
+//loadAndPlayAudio(newUrl);
+
+//endregion
+
+
+const  recommendLst= async () => {
+  try {
+    const result = await axios({
+      url: '/getCloudMusicInfo',
+      params: {},
+      //method: 'post',
+      //data: {}
+    })
+    console.log(result)
+    const {status, msg, data} = result.data
+
+  } catch (error) {
+    console.log('发生错误：')
+    console.dir(error)
+  }
+}
+
+recommendLst()
 </script>
 
 <style scoped>
+.el-header {
+  height: auto;
+  margin-top: 20px;
+}
+
+.footer {
+  position: fixed;
+  height: 300px;
+  bottom: 0;
+  width: 100%;
+}
 
 .player {
   position: relative;
+  margin: 0 auto;
   width: 300px;
+  --bgImage: url('@/assets/music.svg');
+  --infoColor: rgba(107, 179, 250, 0.44);
+  --btnColor: #eee;
   /*播放音乐的信息*/
 
-  .info {
+  .play-panel {
     position: absolute;
     height: 75px;
     top: 0;
     opacity: 0;
-    left: 100px;
+    left: 10px;
     right: 10px;
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: var(--infoColor);
     padding: 5px 15px 5px 10px;
     border-radius: 15px;
     transition: all .5s ease;
     box-shadow: 2px 1px 2px 1px rgba(0, 0, 0, 0.2);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
 
+    .play-info {
+      white-space: nowrap; /*禁止换行*/
+      overflow-x: hidden;
+    }
+
+    .scroll {
+      animation: scroll 10s linear infinite;
+    }
 
     .name, .artist {
       display: block;
@@ -387,7 +691,7 @@ const singleLoop = (isNext: boolean, isAuto: boolean) => {
     }
 
     .artist {
-      color: #999;
+      color: #494343;
       font-size: 12px;
       margin-bottom: 8px;
     }
@@ -479,6 +783,7 @@ const singleLoop = (isNext: boolean, isAuto: boolean) => {
         background-repeat: no-repeat;
         background-size: 80px;
         background-image: var(--bgImage);
+        fill: black;
       }
     }
 
@@ -500,6 +805,7 @@ const singleLoop = (isNext: boolean, isAuto: boolean) => {
       justify-content: flex-end;
       height: 80px;
       padding: 0 15px;
+      background-color: var(--el-bg-color);
 
       .prev,
       .play,
@@ -511,7 +817,7 @@ const singleLoop = (isNext: boolean, isAuto: boolean) => {
         background-repeat: no-repeat;
         background-size: 20px;
         margin: 5px 0;
-        background-color: #fff;
+        background-color: var(--el-bg-color);
         cursor: pointer;
         transition: background-color .3s ease;
         -webkit-transition: background-color .3s ease;
@@ -520,7 +826,7 @@ const singleLoop = (isNext: boolean, isAuto: boolean) => {
       .prev:hover,
       .play:hover,
       .next:hover {
-        background-color: #eee;
+        background-color: var(--btnColor);
         transition: background-color .3s ease;
         -webkit-transition: background-color .3s ease;
       }
@@ -557,6 +863,18 @@ const singleLoop = (isNext: boolean, isAuto: boolean) => {
   }
 }
 
+/*播放模式和播放列表的图标*/
+.icon {
+  width: 30px;
+  margin: 0 5px;
+}
+
+/*夜间模式*/
+.dark .player {
+  --btnColor: gray;
+  --infoColor: rgba(194, 192, 192, 0.8); /* rgba(196, 182, 193, 0.85);   */
+}
+
 /*旋转动画*/
 @keyframes rotation {
   0% {
@@ -568,6 +886,17 @@ const singleLoop = (isNext: boolean, isAuto: boolean) => {
   }
 }
 
+/*长文本滚动：歌名过长自动滚动*/
+
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
 
 </style>
 
@@ -611,24 +940,4 @@ const singleLoop = (isNext: boolean, isAuto: boolean) => {
   height: 10px;
 }
 
-/*长文本滚动*/
-
-.info {
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.info .name {
-  display: inline-block;
-  animation: scroll 10s linear infinite;
-}
-
-@keyframes scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
 </style>

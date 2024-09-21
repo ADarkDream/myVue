@@ -88,10 +88,10 @@
               <!--                前往账本-->
               <!--              </el-dropdown-item>-->
               <!--退出登录-->
-              <el-dropdown-item v-if="isLogin" @click="exit" :icon="SwitchButton">
+              <el-dropdown-item v-if="isLogin" @click="exit()" :icon="SwitchButton">
                 退出登录
               </el-dropdown-item>
-                            <!--退出登录 -->
+              <!--退出登录 -->
               <el-dropdown-item v-if="isLogin&&isAdmin" @click="exit(true)" :icon="SwitchButton">
                 退出管理员登录
               </el-dropdown-item>
@@ -188,7 +188,7 @@
               <!--                前往账本-->
               <!--              </el-dropdown-item>-->
               <!--退出登录-->
-              <el-dropdown-item v-if="isLogin" @click="exit" :icon="SwitchButton">
+              <el-dropdown-item v-if="isLogin" @click="exit()" :icon="SwitchButton">
                 退出登录
               </el-dropdown-item>
               <!--退出登录 -->
@@ -234,13 +234,6 @@
   <!--登录和注册窗口-->
   <el-drawer v-model="showLogin" :before-close="isClose" :size="isPC? '30%':'100%' " :show-close="!isPC"
              destroy-on-close="destroy-on-close" :z-index="300">
-    <template #header="{titleClass }">
-      <el-button v-show="isShowLoginPage" @click="backBtn" class="backBtn" :icon="ArrowLeftBold">
-        返回
-      </el-button>
-      <h4 :class="titleClass">{{ title }}</h4>
-      <div/>
-    </template>
     <div>
       <el-image class="headImg" :src="headImgUrl" v-if="showHeadImg" alt="" :onerror="errorImage"/>
       <svg class="headImg" v-if="!showHeadImg" viewBox="0 0 1024 1024">
@@ -251,13 +244,12 @@
             d="M512 220.223c-88.224 0-160 71.776-160 160s71.776 160 160 160c88.225 0 160-71.775 160-160s-71.775-160-160-160z m0 256c-52.935 0-96-43.065-96-96s43.065-96 96-96 96 43.065 96 96-43.065 96-96 96z"
             fill="CurrentColor"></path>
       </svg>
-      <Login v-if="isShowLoginPage" :flag="flag" :setTitle="setTitle"/>
-      <div v-else>
-        <el-button class="bt2" @click="toLogin">登录</el-button>
-        <el-button class="bt2" @click="toSubmit">注册</el-button>
-      </div>
+      <!--      <Login v-if="isShowLoginPage" :flag="flag" :setTitle="setTitle"/>-->
+      <LoginFormComp ref="loginForm" :toggleLoading="toggleLoading" v-if="isShowLoginPage"/>
+      <RegisterFormComp ref="registerForm" :toggleLoading="toggleLoading" :toggleLogin="toggleLogin" v-else/>
+      <el-button class="bt2" @click="submit" :loading="isLoading">{{ isShowLoginPage ? '登录' : '注册' }}</el-button>
     </div>
-
+    <el-link style="margin-top: 10px" @click="isShowLoginPage=!isShowLoginPage">前往{{ !isShowLoginPage ? '登录' : '注册' }}</el-link>
   </el-drawer>
   <!--  公告界面-->
   <el-dialog v-model="showNotice" :width="isPC? '60%':'90%' " :before-close="closeNotice" :show-close="!isPC"
@@ -265,7 +257,7 @@
              destroy-on-close>
     <template #header><span style="font-size: 24px">公告</span></template>
     <!--  Notice组件-->
-    <Notice v-if="!isLogin||showNotice" :showFlag="showFlag"/>
+    <Notice v-if="!isLogin||showNotice" :showFlag="showFlag" :changePage="changePage"/>
   </el-dialog>
 
 
@@ -286,12 +278,11 @@
 
 <script setup lang="ts">
 import {onMounted, reactive, ref, watch} from 'vue'
-import Login from "@/pages/user/Login.vue";
 import {
   ArrowLeftBold, Avatar, BellFilled,
   Comment, Download,
   HomeFilled,
-  Moon, MoreFilled, Notebook, Operation,
+  Moon, MoreFilled, Operation,
   Sunny, Switch, SwitchButton,
   Tools,
   UserFilled
@@ -304,6 +295,8 @@ import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
 import {emitter} from "@/utils/emitter";
 import {NoticeActiveNum} from "@/types/global";
+import LoginFormComp from "@/components/form/LoginFormComp.vue";
+import RegisterFormComp from "@/components/form/RegisterFormComp.vue";
 
 const {isLogin, isAdmin, username, headImgUrl, bgUrl, errorImage} = useUserInfo()
 const {isDark, isPC, isHome, isForum} = useResponsive()
@@ -324,12 +317,8 @@ const showNotice = ref(!isLogin.value)
 const showSetting = ref(false)
 //登录和注册界面的判断
 const showLogin = ref(false)
-//登录和注册界面的标题——————待修改，需要响应式
-const title = ref('登录/注册')
-//登录和注册按钮的显示和隐藏
-const flag = ref(true)
 //登录相关的多个组件的显示与隐藏
-const isShowLoginPage = ref(false)
+const isShowLoginPage = ref(true)
 
 const html = (document.querySelector('html') as HTMLElement)
 const body = (document.querySelector('body') as HTMLElement)
@@ -411,6 +400,7 @@ function exit(isAdmin = false) {
     sessionStorage.removeItem('token')
     sessionStorage.removeItem('userInfo')
     sessionStorage.removeItem('isAdmin')
+    ElMessage.info('已退出管理员登录')
   } else {
     localStorage.removeItem('token')
     localStorage.removeItem('userInfo')
@@ -422,7 +412,7 @@ function exit(isAdmin = false) {
     ElMessage.info('已退出登录,本地的用户数据已清除')
     ElMessage.info('部分本地信息会保留，如需清除请在右上角选择“选项“→”设置”→“清除全部本地缓存信息”')
   }
-  ElMessage.info('已退出管理员登录')
+
   setTimeout(() => {
     location.href = '/'
   }, 2500)
@@ -444,6 +434,32 @@ function showLoginDrawer() {
   }, 200)
 }
 
+const loginForm = ref<InstanceType<typeof LoginFormComp>>()
+const registerForm = ref<InstanceType<typeof RegisterFormComp>>()
+
+//注册和登录时触发
+const isLoading = ref(false)
+
+//传递给子组件,来切换loading状态
+const toggleLoading = (val: boolean) => {
+  console.log('toggleLoading', val)
+  isLoading.value = val
+}
+
+//跳转到登陆界面
+const toggleLogin = () => {
+  isShowLoginPage.value=true
+}
+
+//登陆或注册
+const submit = () => {
+  if (isShowLoginPage.value && loginForm.value) {
+    loginForm.value.submitForm()
+  } else if (!isShowLoginPage.value && registerForm.value) {
+    registerForm.value.submitForm()
+  }
+}
+
 //关闭登录和注册窗口时的提示
 const isClose = (done: Function) => {
   ElMessageBox.confirm('你想退出登录/注册吗?关闭窗口后已填信息不会保留。', {
@@ -463,35 +479,16 @@ const isClose = (done: Function) => {
   // })
 }
 
-const setTitle = (value: string) => {
-  title.value = value
-}
-
-const backBtn = () => {
-  isShowLoginPage.value = false
-  title.value = '登录/注册'
-}
-
-//点击登录按钮
-function toLogin() {
-  isShowLoginPage.value = true
-  flag.value = true
-  console.log('isLogin', flag.value)
-}
-
-//点击注册按钮
-function toSubmit() {
-  isShowLoginPage.value = true
-  flag.value = false
-  console.log('isLogin', flag.value)
-}
-
 //关闭公告时调用
 function closeNotice() {
   ElMessage.info('公告可在右上角查看。登录后将不会默认加载')
   showNotice.value = false
-  showFlag.showNum = '1'
-  showFlag.activeNum = '1'
+  // showFlag.showNum = '1'
+  // showFlag.activeNum = '1'
+  Object.assign(showFlag, {
+    showNum: '1',
+    activeNum: '1'
+  })
 }
 
 //判断当前页面,改变导航栏的按钮显隐
@@ -526,10 +523,16 @@ const showFlag = reactive<NoticeActiveNum>({
   activeNum: '1'
 })
 
+//切换公告页面
+const changePage = (showNum: string, activeNum = '1') => {
+  showFlag.showNum = showNum
+  setTimeout(() => showFlag.activeNum = activeNum, 300)
+}
+
 //打开公告列表
 emitter.on('showNotice', (item: NoticeActiveNum) => {
   showNotice.value = true
-  Object.assign(showFlag, item)
+  changePage(item.showNum, item.activeNum)
 })
 
 </script>
@@ -593,8 +596,8 @@ emitter.on('showNotice', (item: NoticeActiveNum) => {
 }
 
 .bt2 {
-  margin-top: 100px;
-  width: 120px;
+  margin-top: 30px;
+  width: 70%;
   height: 50px;
   font-size: 18px;
 }
