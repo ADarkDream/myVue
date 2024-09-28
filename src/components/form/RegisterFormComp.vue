@@ -35,6 +35,9 @@
       <el-button link type="primary" @click="showPolicy">隐私政策</el-button>
       <el-button style="position: absolute;right: 0" link @click="resetForm()">重置表单</el-button>
     </el-form-item>
+        <el-button class="submitBtn" @click="submitForm()" :loading="isLoading">注册</el-button>
+    <br>
+    <el-link @click="toLogin(true)">前往登录</el-link>
   </el-form>
 </template>
 
@@ -53,7 +56,8 @@ const timer1 = ref<ReturnType<typeof setTimeout>>()
 const isDisabled = ref(false)
 
 //切换父组件loading状态
-const {toggleLoading,toggleLogin} = defineProps(['toggleLoading','toggleLogin'])
+const {toLogin} = defineProps(['toLogin'])
+const isLoading = ref(false)
 
 //表单数据
 const ruleForm = reactive<registerForm>({
@@ -128,7 +132,7 @@ const showPolicy = () => ElMessage.info('隐私政策') //emitter.emit('showNoti
 //region提交表单，再次判断表单验证是否通过
 const submitForm = async () => {
   //设置按钮禁用
-  toggleLoading(true)
+  isLoading.value=true
 
   if (!ruleFormRef.value) return
   await ruleFormRef.value.validate(async (res) => {
@@ -139,7 +143,7 @@ const submitForm = async () => {
     // else {
     // ElMessage.error('操作失败')
     // }
-    toggleLoading(false)
+   isLoading.value=false
   })
 }
 
@@ -167,7 +171,7 @@ const register = async () => {
     sessionStorage.setItem('email', email)
     resetForm()//清除表单
     //打开登录界面
-    toggleLogin()
+    toLogin(true)
   } catch (error) {
     console.error(error)
     // ElMessage.error('出现错误', error.message)
@@ -197,5 +201,10 @@ onUnmounted(() => {
 
 
 <style scoped>
-
+.submitBtn {
+  margin: 30px auto 10px;
+  width: 70%;
+  height: 50px;
+  font-size: 18px;
+}
 </style>

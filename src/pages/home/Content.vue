@@ -42,6 +42,7 @@ import {NavigationObj, Navigation, WebsiteInfoItem} from "@/types/url"
 import AddUrl from "@/components/AddUrl.vue";
 import useResponsive from "@/hooks/useResponsive";
 import useUserInfo from "@/hooks/useUserInfo";
+import {ResultData} from "@/types/global";
 
 
 defineProps(['showContent'])

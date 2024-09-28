@@ -97,11 +97,10 @@
               </el-dropdown-item>
               <!--新闻-->
               <el-dropdown-item @click="goTo('news')">
-                <svg t="1719772539751" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
-                     xmlns="http://www.w3.org/2000/svg" p-id="4292" width="200" height="200">
+                <svg class="el-icon" viewBox="0 0 1024 1024" >
                   <path
                       d="M878.18 118.28l-732.3 0c-58.14 0-105.42 47.34-105.42 105.42l0 576.48c0 58.2 47.34 105.48 105.42 105.48l732.3 0c58.14 0 105.42-47.28 105.42-105.48l0-576.42c-0.06-58.14-47.34-105.48-105.42-105.48zM923.54 800.24c0 25.08-20.4 45.48-45.42 45.48l-732.24 0c-25.02 0-45.42-20.4-45.42-45.48l0-576.48c0-25.02 20.4-45.42 45.42-45.42l732.3 0c25.02 0 45.42 20.4 45.42 45.42l0 576.48zM181.04 264.08l661.86 0 0 61.86-661.86 0 0-61.86zM542 390.74l300.96 0 0 61.86-300.96 0 0-61.86zM542 516.08l300.96 0 0 88.74-300.96 0 0-88.74zM542 692l246.36 0 0 61.86-246.36 0 0-61.86zM181.04 391.64l285.96 0 0 362.16-285.96 0 0-362.16z"
-                      fill="CurrentColor" p-id="4293"></path>
+                      fill="CurrentColor" ></path>
                 </svg>
                 &ensp;新闻
               </el-dropdown-item>
@@ -203,11 +202,10 @@
               </el-dropdown-item>
               <!--新闻-->
               <el-dropdown-item @click="goTo('news')">
-                <svg t="1719772539751" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
-                     xmlns="http://www.w3.org/2000/svg" p-id="4292" width="200" height="200">
+                <svg class="el-icon" viewBox="0 0 1024 1024" >
                   <path
                       d="M878.18 118.28l-732.3 0c-58.14 0-105.42 47.34-105.42 105.42l0 576.48c0 58.2 47.34 105.48 105.42 105.48l732.3 0c58.14 0 105.42-47.28 105.42-105.48l0-576.42c-0.06-58.14-47.34-105.48-105.42-105.48zM923.54 800.24c0 25.08-20.4 45.48-45.42 45.48l-732.24 0c-25.02 0-45.42-20.4-45.42-45.48l0-576.48c0-25.02 20.4-45.42 45.42-45.42l732.3 0c25.02 0 45.42 20.4 45.42 45.42l0 576.48zM181.04 264.08l661.86 0 0 61.86-661.86 0 0-61.86zM542 390.74l300.96 0 0 61.86-300.96 0 0-61.86zM542 516.08l300.96 0 0 88.74-300.96 0 0-88.74zM542 692l246.36 0 0 61.86-246.36 0 0-61.86zM181.04 391.64l285.96 0 0 362.16-285.96 0 0-362.16z"
-                      fill="CurrentColor" p-id="4293"></path>
+                      fill="CurrentColor" ></path>
                 </svg>
                 &ensp;新闻
               </el-dropdown-item>
@@ -232,24 +230,17 @@
 
 
   <!--登录和注册窗口-->
-  <el-drawer v-model="showLogin" :before-close="isClose" :size="isPC? '30%':'100%' " :show-close="!isPC"
-             destroy-on-close="destroy-on-close" :z-index="300">
-    <div>
-      <el-image class="headImg" :src="headImgUrl" v-if="showHeadImg" alt="" :onerror="errorImage"/>
-      <svg class="headImg" v-if="!showHeadImg" viewBox="0 0 1024 1024">
-        <path
-            d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"
-            fill="CurrentColor"></path>
-        <path
-            d="M512 220.223c-88.224 0-160 71.776-160 160s71.776 160 160 160c88.225 0 160-71.775 160-160s-71.775-160-160-160z m0 256c-52.935 0-96-43.065-96-96s43.065-96 96-96 96 43.065 96 96-43.065 96-96 96z"
-            fill="CurrentColor"></path>
-      </svg>
-      <!--      <Login v-if="isShowLoginPage" :flag="flag" :setTitle="setTitle"/>-->
-      <LoginFormComp ref="loginForm" :toggleLoading="toggleLoading" v-if="isShowLoginPage"/>
-      <RegisterFormComp ref="registerForm" :toggleLoading="toggleLoading" :toggleLogin="toggleLogin" v-else/>
-      <el-button class="bt2" @click="submit" :loading="isLoading">{{ isShowLoginPage ? '登录' : '注册' }}</el-button>
-    </div>
-    <el-link style="margin-top: 10px" @click="isShowLoginPage=!isShowLoginPage">前往{{ !isShowLoginPage ? '登录' : '注册' }}</el-link>
+  <el-drawer v-model="showLogin" :before-close="isClose" :size="isPC? '30%':'100%' "
+           :with-header="!isPC" :destroy-on-close="true" :z-index="300">
+    <el-image class="headImg" :src="headImgUrl" v-if="showHeadImg" alt="" :onerror="errorImage"/>
+    <svg class="headImg" v-if="!showHeadImg" viewBox="0 0 1024 1024">
+      <path
+          d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"/>
+      <path
+          d="M512 220.223c-88.224 0-160 71.776-160 160s71.776 160 160 160c88.225 0 160-71.775 160-160s-71.775-160-160-160z m0 256c-52.935 0-96-43.065-96-96s43.065-96 96-96 96 43.065 96 96-43.065 96-96 96z"/>
+    </svg>
+    <LoginFormComp ref="loginForm" :toLogin="toLogin" v-if="isShowLoginPage"/>
+    <RegisterFormComp ref="registerForm" :toLogin="toLogin" v-else/>
   </el-drawer>
   <!--  公告界面-->
   <el-dialog v-model="showNotice" :width="isPC? '60%':'90%' " :before-close="closeNotice" :show-close="!isPC"
@@ -434,31 +425,13 @@ function showLoginDrawer() {
   }, 200)
 }
 
-const loginForm = ref<InstanceType<typeof LoginFormComp>>()
-const registerForm = ref<InstanceType<typeof RegisterFormComp>>()
 
-//注册和登录时触发
-const isLoading = ref(false)
 
-//传递给子组件,来切换loading状态
-const toggleLoading = (val: boolean) => {
-  console.log('toggleLoading', val)
-  isLoading.value = val
+//登录和注册界面跳转
+const toLogin = (toLogin = false) => {
+  isShowLoginPage.value = toLogin
 }
 
-//跳转到登陆界面
-const toggleLogin = () => {
-  isShowLoginPage.value=true
-}
-
-//登陆或注册
-const submit = () => {
-  if (isShowLoginPage.value && loginForm.value) {
-    loginForm.value.submitForm()
-  } else if (!isShowLoginPage.value && registerForm.value) {
-    registerForm.value.submitForm()
-  }
-}
 
 //关闭登录和注册窗口时的提示
 const isClose = (done: Function) => {
@@ -593,20 +566,9 @@ emitter.on('showNotice', (item: NoticeActiveNum) => {
 /*登录界面的头像矢量图大小*/
 .headImg {
   width: 200px;
+  margin-bottom: 20px;
+  fill: CurrentColor
 }
-
-.bt2 {
-  margin-top: 30px;
-  width: 70%;
-  height: 50px;
-  font-size: 18px;
-}
-
-.backBtn {
-  left: 0;
-  position: absolute;
-}
-
 
 .setting {
   display: flex;
@@ -621,6 +583,10 @@ emitter.on('showNotice', (item: NoticeActiveNum) => {
 @media (max-width: 980px) {
   .username {
     padding: 0;
+  }
+
+  .headImg {
+    width: 100px;
   }
 
   /*
@@ -642,5 +608,11 @@ emitter.on('showNotice', (item: NoticeActiveNum) => {
     display: flex;
     justify-content: center;
   }
+}
+
+</style>
+<style>
+.el-drawer__header{
+  margin-bottom:0 ;
 }
 </style>

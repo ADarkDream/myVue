@@ -68,7 +68,7 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     LoginFormComp: typeof import('./src/components/form/LoginFormComp.vue')['default']
-    Music: typeof import('./src/components/Music.vue')['default']
+    Music: typeof import('./src/pages/music/Music.vue')['default']
     Notice: typeof import('./src/components/Notice.vue')['default']
     RegisterFormComp: typeof import('./src/components/form/RegisterFormComp.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

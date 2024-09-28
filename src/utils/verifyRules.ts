@@ -4,7 +4,7 @@
 
 const verifyRules = {
 	//验证昵称
-	userName: (rule: any, value: any, callback: any) => {
+	userName: (rule: any, value: string, callback: any) => {
 		if (!value) {
 			callback(new Error('昵称不能为空，请输入2-10位中文、字母、或数字！'))
 		}
@@ -18,7 +18,7 @@ const verifyRules = {
 		}, 1000)
 	},
 	//验证邮箱
-	email: (rule: any, value: any, callback: any) => {
+	email: (rule: any, value: string, callback: any) => {
 		if (!value) {
 			callback(new Error('邮箱不能为空！请输入邮箱地址！'))
 		}
@@ -32,7 +32,7 @@ const verifyRules = {
 		}, 1000)
 	},
 	//验证密码
-	password: (rule: any, value: any, callback: any) => {
+	password: (rule: any, value: string, callback: any) => {
 		if (!value) {
 			callback(new Error('密码不能为空！请输入密码！'))
 		}
@@ -56,7 +56,7 @@ const verifyRules = {
 	// 		}
 	// 	},
 	//验证邮箱验证码
-	emailCode: (rule: any, value: any, callback: any) => {
+	emailCode: (rule: any, value: string, callback: any) => {
 		if (value === '') {
 			callback(new Error('请输入邮箱验证码，大小写敏感！'))
 		} else if (value.length !== 6) {
@@ -66,7 +66,7 @@ const verifyRules = {
 		}
 	},
 	//验证隐私政策
-	policy: (rule: any, value: any, callback: any) => {
+	policy: (rule: any, value: boolean, callback: any) => {
 		if (value === false) callback(new Error('请先阅读并勾选隐私政策！'))
 		else callback()
 	}

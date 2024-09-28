@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import Music from "@/components/Music.vue";
+import Music from "@/pages/music/Music.vue";
 
 
 

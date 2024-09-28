@@ -48,6 +48,6 @@ interface Notice {
 
 //打开公告列表的序号
 type NoticeActiveNum = {
-    showNum?: string,
+    showNum: string,
     activeNum?: string
 }
