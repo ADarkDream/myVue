@@ -33,6 +33,7 @@ const ChatCenter = () => import("@/pages/user/chat/ChatCenter.vue")
 const ChatHall = () => import("@/pages/user/chat/ChatHall.vue")
 const Chatroom = () => import("@/pages/user/chat/ChatRoom.vue")
 const Talk = () => import("@/pages/user/chat/Talk.vue")
+const Music = () => import("@/pages/music/Music.vue")
 const router = createRouter({
     history: createWebHistory(),//路由器工作模式，有web和hash两种，web上线后需要服务器配置，hash地址栏会出现#号
     routes: [
@@ -82,6 +83,11 @@ const router = createRouter({
                 path: 'talk',
                 component: Talk,
             }]
+        },
+        {
+            name: 'music',
+            path: '/music',
+            component: Music
         },
         {
             name: 'adminLogin',
@@ -198,7 +204,8 @@ const router = createRouter({
             name: "notFound",
             path: "/:pathMatch(.*)*",//匹配所有路由，找不到就显示404NotFound
             component: NotFound,
-        }, {
+        },
+        {
             path: '/News',
             children: [{
                 name: 'news',

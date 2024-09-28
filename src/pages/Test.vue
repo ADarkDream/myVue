@@ -1,11 +1,18 @@
 <template>
   <el-container>
-    <Music style=""/>
+<el-main>
+  <h1>本页面为功能测试页</h1>
+  <div style="margin-top: 30px;padding: 20px">
+    <el-button @click="router.push({name:'chat'})">点击前往聊天室demo</el-button>
+  </div>
+  <div><el-button @click="router.push({name:'music'})">点击前往音乐播放器demo</el-button></div>
+</el-main>
   </el-container>
 </template>
 
 <script lang="ts" setup>
-import Music from "@/pages/music/Music.vue";
+import {useRouter} from "vue-router";
+const router=useRouter()
 
 
 

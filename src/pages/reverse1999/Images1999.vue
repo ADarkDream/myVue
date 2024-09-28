@@ -256,8 +256,9 @@ const router = useRouter()
 import useUserInfo from "@/hooks/useUserInfo";
 import useFunction from "@/hooks/useFunction";
 import useResponsive from "@/hooks/useResponsive";
+import {Notice, TableFilterItem} from "@/types/global";
 
-const {copyText, deepEqual,diffObj} = useFunction()
+const {copyText, deepEqual, diffObj} = useFunction()
 const {isAdmin} = useUserInfo()
 const {screenHeight, elSize, isPC} = useResponsive()
 
@@ -370,7 +371,7 @@ const clearFilter = () => {
 
 //监听排序行为，并修改数组顺序,否则删除会出错,column是item，prop是当前列的key，order是'ascending'或'desc'
 function handleSortChange({column, prop, order}) {
-  console.log(column,1, prop, 2,order)
+  console.log(column, 1, prop, 2, order)
   if (prop === 'id') {//根据排序整个列表
     condition.orderBy = prop
     order === 'descending' ? condition.isDesc = 'desc' : condition.isDesc = ''
@@ -397,7 +398,7 @@ async function getVersion() {
   try {
     const result = await axios({
       url: '/getVersion',
-      params: {role: 'all'}
+      params: {version:true,role: 'all'}
     })
     console.log('getVersion', result)
     const {versionList, roleList}: { versionList: VersionInfo[], roleList: Role[] } = result.data.data
@@ -412,10 +413,10 @@ async function getVersion() {
     const campList = new Set([])
     const raceList = new Set([])
     roleInfo.forEach(item => {
-      campList.add(item.camp)
-      raceList.add(item.race)
+      if (item.camp) campList.add(item.camp)
+      if (item.race) raceList.add(item.race)
     })
-    campList.delete('')   //删除空值
+    // campList.delete('')   //删除空值
     campInfo.splice(0, campInfo.length, ...campList)
     raceInfo.splice(0, campInfo.length, ...raceList)
     console.log('campList', campList)
@@ -437,7 +438,6 @@ async function getVersion() {
   } catch (error) {
     console.log('发生错误：')
     console.log(error)
-    ElMessage.error('发生错误：' + error.message)
   }
 }
 
@@ -715,5 +715,10 @@ const deleteImage = (index: number, data: ReverseImgInfo) => {
   display: flex;
   justify-content: center;
   padding: 10px 0;
+}
+
+/*下拉菜单的元素居左*/
+.el-select-dropdown__item{
+  text-align: left;
 }
 </style>
