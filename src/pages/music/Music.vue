@@ -1,11 +1,11 @@
 <template>
-  <el-container :style="'height:'+containerHeight+'px'">
+  <el-container :style="'height:'+(containerHeight+(isPC?0:100))+'px'">
     <el-header>音乐播放器demo</el-header>
     <el-main>
       <audio ref="audioElement" crossOrigin='anonymous' :src='playList[playingIndex].src' type="audio/mpeg"/>
 
-      <el-collapse style="text-align: left">
-        <el-collapse-item title="备忘">
+      <el-collapse style="text-align: left" v-model="activeName" accordion>
+        <el-collapse-item title="备忘" name="0">
           <!--          <div>没有点播放,直接点下一首,有BUG</div>-->
           <!--          <div>单曲循环用回调函数</div>-->
           <!--          <div>随机播放有BUG，会随机到自己，需要改一下</div>-->
@@ -17,9 +17,9 @@
           <div>
             用第三方库 lyric-parser 进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。
           </div>
-          <div>
-            添加新VIP歌曲的src会变成空对象{}，控制台“获取的音乐信息：”处会显示.期间不能切歌,必须刷新网页才能恢复正常
-          </div>
+          <!--          <div>-->
+          <!--            添加新VIP歌曲的src会变成空对象{}，控制台“获取的音乐信息：”处会显示.期间不能切歌,必须刷新网页才能恢复正常-->
+          <!--          </div>-->
           <!--            <el-text type="warning">-->
           <!--              使用在线地址！！！-->
           <!--            </el-text>-->
@@ -31,23 +31,23 @@
           <div>各类设置存本地，用store</div>
           <div>{{ playList[playingIndex].duration }}</div>
         </el-collapse-item>
-        <el-collapse-item title="播放列表">
+        <el-collapse-item title="播放列表" name="1">
           <template v-for="(item,index) in playList" :key="index">
             <div>
               <el-text>{{ index + 1 }}、{{ item.name || '未命名' }} -
-                {{ item.artists.map(artist => artist.name).join('&') || '未知艺术家' }}
-              </el-text>&ensp;<span>{{item.fee===1}},{{!item.src}},{{index}}</span>
-              <el-text v-if="item.fee===1&&!item.src">[VIP]</el-text>
+                {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }}
+              </el-text>&ensp;
+              <el-text v-if="item.fee===1&&!item.src" type="danger">[VIP]</el-text>
               <el-text v-else @click="toggleMusic({index})" size="small" type="primary">
                 点击播放
               </el-text>
             </div>
           </template>
         </el-collapse-item>
-        <el-collapse-item title="添加音乐">
+        <el-collapse-item title="添加音乐" name="2">
           <el-form v-model="newMusic" label-width="auto" label-position="top"
                    style="width: 100%;" :size="elSize">
-            <el-form-item label="输入网易云音乐ID获取音频链接(仅支持免费音乐)">
+            <el-form-item label="输入音乐ID获取音频链接(仅支持网易云免费音乐)">
               <el-row :gutter="24">
                 <el-col :span="16">
                   <el-input v-model.trim="cloudMusicID" placeholder="输入网易云音乐ID"></el-input>
@@ -68,27 +68,19 @@
                 </el-col>
               </el-row>
             </el-form-item>
-            <el-form-item prop="src" label="输入音频链接">
-              <!--             <SearchMusic/>-->
+            <el-form-item prop="src" label="搜索音乐(网易云)">
+              <SearchMusic :addCloudMusic="addCloudMusic" style="width: 100%;margin: 0 auto"/>
             </el-form-item>
           </el-form>
         </el-collapse-item>
       </el-collapse>
 
     </el-main>
+
     <div class="footer">
-
-      <!--音量控制面板-->
-      <div style="width: 300px;height: 100px;margin:0 auto 50px">
-        <el-text>
-          音量：{{ (volume * 100).toFixed(0) }}%
-        </el-text>
-        <el-slider v-model="volume" @input="changeVolume" class="volumeBar" :min="0" :max="1" :step="0.1"
-                   :marks="{0:'静音',1:'100%',2:'200%'}" :show-tooltip="false"/>
-      </div>
-
       <!--播放器-->
       <div class="player">
+
         <div class="play-panel" :class="{ active: infoBarActive }">
           <div class="play-option">
             <!--播放模式-->
@@ -154,6 +146,59 @@
             <div class="prev" @click="toggleMusic({isNext:false,isAuto:false})"></div>
             <div class="play" @click="play()"></div>
             <div class="next" @click="toggleMusic({isNext:true,isAuto:false})"></div>
+            <!--右侧面板-->
+            <div class="options">
+              <!--音量控制面板-->
+              <el-slider v-if="isShowVolumePanel" v-model="volume" @input="changeVolume" class="volumeBar" :min="0"
+                         :max="1" :step="0.1"
+                         :marks="{0:'0%',1:'100%',2:'200%'}" :vertical="true" height="100px" :show-tooltip="false"/>
+              <!--播放模式-->
+              <span @click="playConfigStore.toggleMode()">
+              <!--列表循环-->
+              <svg v-if="modeIndex===0" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M411.3152 780.8v71.3728l-108.6208-108.6208 108.6208-108.6208V704H640a166.4 166.4 0 0 0 166.4-166.4v-128a38.4 38.4 0 0 1 76.8 0v128a243.2 243.2 0 0 1-243.2 243.2h-228.6848z m229.5296-512V196.5568l108.5952 108.6208-108.5952 108.5952V345.6H409.6A166.4 166.4 0 0 0 243.2 512v128a38.4 38.4 0 0 1-76.8 0v-128a243.2 243.2 0 0 1 243.2-243.2h231.2448z"/>
+              </svg>
+                <!--顺序播放-->
+              <svg v-else-if="modeIndex===1" class="icon" style="width: 26px;padding: 2px" viewBox="0 0 1024 1024"
+                   xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M697.4464 381.4656L861.6192 256l-164.1728-125.4656zM697.4464 663.0656L861.6192 537.6l-164.1728-125.4656zM697.4464 919.0656L861.6192 793.6l-164.1728-125.4656z"></path>
+                <path
+                    d="M153.6 230.4m38.4 0l588.8 0q38.4 0 38.4 38.4l0 0q0 38.4-38.4 38.4l-588.8 0q-38.4 0-38.4-38.4l0 0q0-38.4 38.4-38.4Z"></path>
+                <path
+                    d="M153.6 486.4m38.4 0l588.8 0q38.4 0 38.4 38.4l0 0q0 38.4-38.4 38.4l-588.8 0q-38.4 0-38.4-38.4l0 0q0-38.4 38.4-38.4Z"></path>
+                <path
+                    d="M153.6 742.4m38.4 0l512 0q38.4 0 38.4 38.4l0 0q0 38.4-38.4 38.4l-512 0q-38.4 0-38.4-38.4l0 0q0-38.4 38.4-38.4Z"/>
+              </svg>
+                <!--随机播放-->
+              <svg v-else-if="modeIndex===2" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M768 704v-70.2208L876.6208 742.4 768 851.0208V780.8h-17.6128c-108.1344 0-188.0576-37.5296-224.1536-123.2128a38.4 38.4 0 1 1 70.784-29.824c22.016 52.3264 72.96 76.2368 153.344 76.2368H768z m0-435.2V198.5792L876.6208 307.2 768 415.8208V345.6h-17.6128c-80.384 0-131.328 23.9104-153.344 76.2368l-99.2768 235.7504c-36.096 85.6832-116.0192 123.2128-224.1536 123.2128H230.4a38.4 38.4 0 0 1 0-76.8h43.2128c80.384 0 131.328-23.9104 153.344-76.2368l99.2768-235.7504c36.096-85.6832 116.0192-123.2128 224.1536-123.2128H768z m-537.6 0h43.2128c108.1344 0 188.0576 37.5296 224.1536 123.2128a38.4 38.4 0 1 1-70.784 29.824c-22.016-52.3264-72.96-76.2368-153.344-76.2368H230.4a38.4 38.4 0 0 1 0-76.8z"/>
+              </svg>
+                <!--单曲循环-->
+              <svg v-else-if="modeIndex===3" class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M411.3152 780.8v71.3728l-108.6208-108.6208 108.6208-108.6208V704H640a166.4 166.4 0 0 0 166.4-166.4v-128a38.4 38.4 0 0 1 76.8 0v128a243.2 243.2 0 0 1-243.2 243.2h-228.6848z m229.5296-512V196.5568l108.5952 108.6208-108.5952 108.5952V345.6H409.6A166.4 166.4 0 0 0 243.2 512v128a38.4 38.4 0 0 1-76.8 0v-128a243.2 243.2 0 0 1 243.2-243.2h231.2448z m-123.2128 128.1024h22.9376V652.8h-29.3888v-220.0576c-16.128 16.4864-36.1984 27.9552-60.2112 35.1232v-29.3888a152.32 152.32 0 0 0 35.84-15.4112 148.4032 148.4032 0 0 0 30.8224-26.1632z"/>
+              </svg>
+            </span>
+              <!--音量控制-->
+              <span @click="isShowVolumePanel=!isShowVolumePanel">
+                <!--静音-->
+                <svg v-if="volume===0" class="icon" viewBox="0 0 1024 1024"><path
+                    d="M128 420.576v200.864h149.12l175.456 140.064V284.288l-169.792 136.288H128z m132.256-64l204.288-163.968a32 32 0 0 1 52.032 24.96v610.432a32 32 0 0 1-51.968 24.992l-209.92-167.552H96a32 32 0 0 1-32-32v-264.864a32 32 0 0 1 32-32h164.256zM752 458.656L870.4 300.8a32 32 0 1 1 51.2 38.4L792 512l129.6 172.8a32 32 0 0 1-51.2 38.4l-118.4-157.856-118.4 157.856a32 32 0 0 1-51.2-38.4l129.6-172.8-129.6-172.8a32 32 0 0 1 51.2-38.4l118.4 157.856z"/></svg>
+                <!--音量-->
+        <svg v-else class="icon" viewBox="0 0 1024 1024"><path
+            d="M128 420.576v200.864h149.12l175.456 140.064V284.288l-169.792 136.288H128z m132.256-64l204.288-163.968a32 32 0 0 1 52.032 24.96v610.432a32 32 0 0 1-51.968 24.992l-209.92-167.552H96a32 32 0 0 1-32-32v-264.864a32 32 0 0 1 32-32h164.256zM670.784 720.128a32 32 0 0 1-44.832-45.664 214.08 214.08 0 0 0 64.32-153.312 213.92 213.92 0 0 0-55.776-144.448 32 32 0 1 1 47.36-43.04 277.92 277.92 0 0 1 72.416 187.488 278.08 278.08 0 0 1-83.488 198.976zM822.912 858.88a32 32 0 1 1-45.888-44.608A419.008 419.008 0 0 0 896 521.152c0-108.704-41.376-210.848-114.432-288.384a32 32 0 0 1 46.592-43.872c84.16 89.28 131.84 207.04 131.84 332.256 0 127.84-49.76 247.904-137.088 337.728z"/></svg>
+              </span>
+              <!--播放列表-->
+              <span @click="changePanel('1')">
+               <svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+              <path
+                  d="M819.2 787.072l-108.6208-82.9952L819.2 621.056v166.016zM192 256h588.8a38.4 38.4 0 0 1 0 76.8h-588.8a38.4 38.4 0 0 1 0-76.8z m0 204.8h588.8a38.4 38.4 0 0 1 0 76.8h-588.8a38.4 38.4 0 0 1 0-76.8z m0 204.8h409.6a38.4 38.4 0 0 1 0 76.8h-409.6a38.4 38.4 0 0 1 0-76.8z"/>
+            </svg>
+            </span>
+            </div>
           </div>
         </div>
       </div>
@@ -163,7 +208,6 @@
 <script setup lang="ts">
 import {nextTick, onMounted, ref, computed} from 'vue';
 import useTimestamp from "@/hooks/useTimestamp";
-
 import {ElMessage} from 'element-plus'
 import defaultAlbumArt from '@/assets/music.svg'
 import axios from "axios";
@@ -177,8 +221,13 @@ import {usePlayConfigStore} from '@/store/music/usePlayConfigStore'
 const musicStore = useMusicStore()
 const playConfigStore = usePlayConfigStore()
 
-const {elSize, containerHeight} = useResponsive()
+const {isPC, elSize, containerHeight} = useResponsive()
 const {formatMusicTime} = useTimestamp()
+
+//是否显示
+const activeName = ref('2')
+const changePanel = (name: string) => activeName.value = name
+
 
 //是否显示控制面板
 const infoBarActive = ref(false)
@@ -202,6 +251,9 @@ const musicName = ref<HTMLDivElement>()
 const musicArtist = ref<HTMLDivElement>()
 //音量控制
 let gainNode = audioContext.createGain()
+//显示音量控制面板
+const isShowVolumePanel = ref(false)
+
 
 let track = null
 
@@ -248,32 +300,32 @@ const cloudMusicID = ref()
 //如果音乐有id没地址，则要通过id获取最新的src，然后重新赋值
 const resetUrl = async (song: CloudSongInfo) => {
   // if (!song.src) {
-    // const {isError, songs} = await addCloudMusicList([song.cloud_music_id])
-    // if (isError) return
-    // else if (song?.fee === 1) {
-    //   return ElMessage.warning('暂不支持VIP音乐')
-    // } else if (songs) {
-    //   musicStore.addMusicList(songs, {isReplace: true})
-    // }
+  // const {isError, songs} = await addCloudMusicList([song.cloud_music_id])
+  // if (isError) return
+  // else if (song?.fee === 1) {
+  //   return ElMessage.warning('暂不支持VIP音乐')
+  // } else if (songs) {
+  //   musicStore.addMusicList(songs, {isReplace: true})
+  // }
   // }
 
   if (song.src) return
-     //获取播放链接
-      const result = await axios<ResultData<{ playInfo: { cloud_music_id: number, src: string } }>>({
-        url: '/getPlayInfo',
-        params: {cloud_music_id: song.cloud_music_id,fee:song.fee},
-      })
-      const {status, msg, data} = result.data
-      if (data) {
-        //合并歌曲信息和播放地址信息
-        const newSong= Object.assign(song, data.playInfo)
-        console.log('newSong',[newSong])
-        const index = musicStore.addMusicList([newSong], {isReplace: true})
-        console.log(`播放第${index}首歌`)
-          ElMessage.info(`播放第${index}首歌`)
-        //切换到添加的这首歌
-        // await toggleMusic({index})
-      } else return  ElMessage.warning('暂不支持VIP音乐')
+  //获取播放链接
+  const result = await axios<ResultData<{ playInfo: { cloud_music_id: number, src: string } }>>({
+    url: '/getPlayInfo',
+    params: {cloud_music_id: song.cloud_music_id, fee: song.fee},
+  })
+  const {status, msg, data} = result.data
+  if (data) {
+    //合并歌曲信息和播放地址信息
+    const newSong = Object.assign(song, data.playInfo)
+    console.log('newSong', [newSong])
+    const index = musicStore.addMusicList([newSong], {isReplace: true})
+    console.log(`播放第${index}首歌`)
+    ElMessage.info(`播放第${index}首歌`)
+    //切换到添加的这首歌
+    // await toggleMusic({index})
+  } else return ElMessage.warning('暂不支持VIP音乐')
 
 }
 
@@ -300,12 +352,11 @@ function play(pause = false) {
   }
 
 
-
   if (audioContext.state === "suspended") {
     audioContext.resume()
   }
 //pause为true则必定暂停，pause默认则看isPlaying.value
-  console.log('是否暂停：',pause,'播放：',!isPlaying.value)
+  console.log('是否暂停：', pause, '播放：', !isPlaying.value)
   if (pause || isPlaying.value) {//暂停
     isPlaying.value = false
     audioElement.value?.pause()
@@ -401,7 +452,7 @@ const toggleMusic = async ({isNext = true, isAuto = true, index}: {
   if (index) {
     ElMessage.info(index.toString())
     playingIndex.value = index
-    console.log('即将播放第'+index+'首')
+    console.log('即将播放第' + index + '首')
   }
   //按模式切歌
   else if (modeIndex.value === 0) {
@@ -416,7 +467,7 @@ const toggleMusic = async ({isNext = true, isAuto = true, index}: {
   //获取要播放的这一首歌
   const song = playList.value[playingIndex.value]
   console.log('即将播放', song)
-  if (song?.fee === 1&&!song.src) {
+  if (song?.fee === 1 && !song.src) {
     musicStore.deleteMusic(song.cloud_music_id)
     return ElMessage.warning('暂不支持VIP音乐')
   }
@@ -516,7 +567,7 @@ const addMusic = async () => {
   if (!reg.test(newMusic.value.src)) return ElMessage.error('请输入一个网址链接')
   //去除响应式
   const songInfo = Object.assign({}, newMusic.value) as CloudSongInfo
-  console.log('[songInfo]',[songInfo])
+  console.log('[songInfo]', [songInfo])
   const index = musicStore.addMusicList([songInfo], {})
   //切换到最后一首
   await toggleMusic({index})
@@ -560,6 +611,10 @@ const addCloudMusic = async (id: number, isPlay = false) => {
   }
 }
 
+
+// emitter.on('addCloudMusic',({id, isPlay = false}:{id: number, isPlay:boolean})=>addCloudMusic(id, isPlay))
+
+//获取音乐信息
 const addCloudMusicList = async (idList: number[]): Promise<{
   isError: boolean,
   songs?: CloudSongInfo[]
@@ -710,16 +765,23 @@ const addCloudMusicList = async (idList: number[]): Promise<{
 }
 
 .footer {
-  position: fixed;
-  height: 300px;
-  bottom: 0;
   width: 100%;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+.el-slider {
+  position: absolute;
+  bottom: 95px;
+  right: 15px;
 }
 
 .player {
+  padding: 0;
+  width: 400px;
   position: relative;
-  margin: 0 auto;
-  width: 300px;
+  margin: 0 auto 40px;
   --bgImage: url('@/assets/music.svg');
   --infoColor: rgba(107, 179, 250, 0.44);
   --btnColor: #eee;
@@ -811,7 +873,7 @@ const addCloudMusicList = async (idList: number[]): Promise<{
     position: relative;
     background-color: #fff;
     border-radius: 15px;
-    width: 300px;
+    width: 100%;
     height: 80px;
     z-index: 5;
     box-shadow: 0 20px 20px 5px rgba(132, 132, 132, 0.3);
@@ -870,11 +932,15 @@ const addCloudMusicList = async (idList: number[]): Promise<{
 
 
     .controls {
-      display: flex;
-      justify-content: flex-end;
+      /*   display: flex;
+         justify-content: flex-end;*/
       height: 80px;
-      padding: 0 15px;
+      padding: 0 0 0 30%;
       background-color: var(--el-bg-color);
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 2fr;
+      width: 70%;
+
 
       .prev,
       .play,
@@ -930,6 +996,10 @@ const addCloudMusicList = async (idList: number[]): Promise<{
 
     animation: rotation 3s infinite linear;
   }
+
+  .options {
+    flex-wrap: wrap;
+  }
 }
 
 /*播放模式和播放列表的图标*/
@@ -967,6 +1037,24 @@ const addCloudMusicList = async (idList: number[]): Promise<{
   }
 }
 
+
+@media (max-width: 780px) {
+  .footer {
+    //width: 100%;
+    //height: auto;
+
+    .player {
+      margin: 0;
+      width: 100%;
+
+      .control-panel {
+        /*  width: 100%;*/
+
+      }
+
+    }
+  }
+}
 </style>
 
 <style>

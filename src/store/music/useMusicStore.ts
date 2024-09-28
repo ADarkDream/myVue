@@ -51,7 +51,7 @@ export const useMusicStore = defineStore('music', () => {
         {
             cloud_music_id: 2123822354,
             name: '我要你 (我要你在我身旁)',
-            artists: [{name: ''}, {name: ''}],
+            artists: [{name: '任素汐'}],
             album: {name: '', pic_url: ''},
             src: ''
         }
