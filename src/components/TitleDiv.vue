@@ -97,10 +97,10 @@
               </el-dropdown-item>
               <!--新闻-->
               <el-dropdown-item @click="goTo('news')">
-                <svg class="el-icon" viewBox="0 0 1024 1024" >
+                <svg class="el-icon" viewBox="0 0 1024 1024">
                   <path
                       d="M878.18 118.28l-732.3 0c-58.14 0-105.42 47.34-105.42 105.42l0 576.48c0 58.2 47.34 105.48 105.42 105.48l732.3 0c58.14 0 105.42-47.28 105.42-105.48l0-576.42c-0.06-58.14-47.34-105.48-105.42-105.48zM923.54 800.24c0 25.08-20.4 45.48-45.42 45.48l-732.24 0c-25.02 0-45.42-20.4-45.42-45.48l0-576.48c0-25.02 20.4-45.42 45.42-45.42l732.3 0c25.02 0 45.42 20.4 45.42 45.42l0 576.48zM181.04 264.08l661.86 0 0 61.86-661.86 0 0-61.86zM542 390.74l300.96 0 0 61.86-300.96 0 0-61.86zM542 516.08l300.96 0 0 88.74-300.96 0 0-88.74zM542 692l246.36 0 0 61.86-246.36 0 0-61.86zM181.04 391.64l285.96 0 0 362.16-285.96 0 0-362.16z"
-                      fill="CurrentColor" ></path>
+                      fill="CurrentColor"></path>
                 </svg>
                 &ensp;新闻
               </el-dropdown-item>
@@ -111,6 +111,10 @@
               <!--临时聊天室-->
               <el-dropdown-item @click="goTo('hall')" :icon="Comment">
                 聊天室demo
+              </el-dropdown-item>
+                 <!--音乐播放器-->
+              <el-dropdown-item @click="goTo('music')"><img class="el-icon" src="@/assets/music.svg" alt="">
+                &ensp;音乐播放器demo
               </el-dropdown-item>
               <!--设置-->
               <el-dropdown-item @click="showSetting=!showSetting" :icon="Tools">
@@ -202,10 +206,10 @@
               </el-dropdown-item>
               <!--新闻-->
               <el-dropdown-item @click="goTo('news')">
-                <svg class="el-icon" viewBox="0 0 1024 1024" >
+                <svg class="el-icon" viewBox="0 0 1024 1024">
                   <path
                       d="M878.18 118.28l-732.3 0c-58.14 0-105.42 47.34-105.42 105.42l0 576.48c0 58.2 47.34 105.48 105.42 105.48l732.3 0c58.14 0 105.42-47.28 105.42-105.48l0-576.42c-0.06-58.14-47.34-105.48-105.42-105.48zM923.54 800.24c0 25.08-20.4 45.48-45.42 45.48l-732.24 0c-25.02 0-45.42-20.4-45.42-45.48l0-576.48c0-25.02 20.4-45.42 45.42-45.42l732.3 0c25.02 0 45.42 20.4 45.42 45.42l0 576.48zM181.04 264.08l661.86 0 0 61.86-661.86 0 0-61.86zM542 390.74l300.96 0 0 61.86-300.96 0 0-61.86zM542 516.08l300.96 0 0 88.74-300.96 0 0-88.74zM542 692l246.36 0 0 61.86-246.36 0 0-61.86zM181.04 391.64l285.96 0 0 362.16-285.96 0 0-362.16z"
-                      fill="CurrentColor" ></path>
+                      fill="CurrentColor"></path>
                 </svg>
                 &ensp;新闻
               </el-dropdown-item>
@@ -216,6 +220,10 @@
               <!--临时聊天室-->
               <el-dropdown-item @click="goTo('hall')" :icon="Comment">
                 聊天室demo
+              </el-dropdown-item>
+              <!--音乐播放器-->
+              <el-dropdown-item @click="goTo('music')"><img class="el-icon" src="@/assets/music.svg" alt="">
+                &ensp;音乐播放器demo
               </el-dropdown-item>
               <!--设置-->
               <el-dropdown-item :icon="Tools" @click="showSetting=!showSetting">
@@ -231,7 +239,7 @@
 
   <!--登录和注册窗口-->
   <el-drawer v-model="showLogin" :before-close="isClose" :size="isPC? '30%':'100%' "
-           :with-header="!isPC" :destroy-on-close="true" :z-index="300">
+             :with-header="!isPC" :destroy-on-close="true" :z-index="300">
     <el-image class="headImg" :src="headImgUrl" v-if="showHeadImg" alt="" :onerror="errorImage"/>
     <svg class="headImg" v-if="!showHeadImg" viewBox="0 0 1024 1024">
       <path
@@ -426,7 +434,6 @@ function showLoginDrawer() {
 }
 
 
-
 //登录和注册界面跳转
 const toLogin = (toLogin = false) => {
   isShowLoginPage.value = toLogin
@@ -612,7 +619,7 @@ emitter.on('showNotice', (item: NoticeActiveNum) => {
 
 </style>
 <style>
-.el-drawer__header{
-  margin-bottom:0 ;
+.el-drawer__header {
+  margin-bottom: 0;
 }
 </style>

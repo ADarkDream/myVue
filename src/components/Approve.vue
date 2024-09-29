@@ -1,11 +1,12 @@
 <template>
   <div>
     <div>
-            <transition-group name="list">
+      <transition-group name="list">
         <template v-for="item in noticeList" :key="item.id">
           <el-button v-if="item.id===activeItemNum" link type="primary" @click="item.fun">{{ item.str }}</el-button>
         </template>
-      </transition-group> <br>
+      </transition-group>
+      <br>
       <el-button link tag="a" type="info"
                  @click="copyText('50011502001039','备案号','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
         <el-image src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败"/>
@@ -39,6 +40,7 @@ const showContact = () => emitter.emit('showNotice', {showNum: '3', activeNum: '
 const showFeedback = () => emitter.emit('showNotice', {showNum: '3', activeNum: '2'})
 const gotoDownload = () => router.push({name: 'download'})
 const gotoChat = () => router.push({name: 'hall'})
+const gotoMusic = () => router.push({name: 'music'})
 const activeItemNum = ref(0)//当前展示的文本序号
 const noticeList = reactive([//底部轮播
   {
@@ -55,6 +57,10 @@ const noticeList = reactive([//底部轮播
     fun: gotoChat
   }, {
     id: 3,
+    str: '欢迎前往音乐播放器demo测试',
+    fun: gotoMusic
+  }, {
+    id: 4,
     str: '如有bug欢迎反馈',
     fun: showFeedback
   },
