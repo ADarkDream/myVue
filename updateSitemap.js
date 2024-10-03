@@ -1,5 +1,6 @@
 // 本脚本用来更新站点地图sitemap.xml
 // 控制台输入 `node updateSitemap.js` 来生成
+//将生成的sitemap.xml和gz文件存放到前端HTML项目的根目录下
 
 import {SitemapStream, streamToPromise} from 'sitemap'
 import {Readable} from 'stream'
@@ -17,7 +18,8 @@ async function generateSitemap() {
         {url: '/reverse1999/download', changefreq: 'monthly', priority: 1, lastmod: new Date().toISOString()},
         {url: '/reverse1999/roles', changefreq: 'monthly', priority: 0.5, lastmod: new Date().toISOString()},
         {url: '/reverse1999/images', changefreq: 'monthly', priority: 0.5, lastmod: new Date().toISOString()},
-        {url: '/forum', changefreq: 'monthly', priority: 0.5, lastmod: new Date().toISOString()}
+        {url: '/forum', changefreq: 'monthly', priority: 0.7, lastmod: new Date().toISOString()},
+        {url: '/music', changefreq: 'monthly', priority: 0.5, lastmod: new Date().toISOString()}
     ]
 
     // 创建写入流

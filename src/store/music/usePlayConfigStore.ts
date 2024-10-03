@@ -3,8 +3,15 @@ import {defineStore} from 'pinia'
 import {computed, ref} from "vue";
 import {useBaseUrlStore} from "@/store/useBaseUrlStore";
 import {useMusicStore} from "@/store/music/useMusicStore";
-const musicStore=useMusicStore()
+
+const musicStore = useMusicStore()
 const playList = computed(() => musicStore.playList)
+//当前播放的歌的序号
+const playingIndex = computed({
+      get: () => musicStore.playingIndex,
+      set: (val: number) => musicStore.playingIndex = val
+    }
+)
 
 // 定义并暴露一个store
 export const usePlayConfigStore = defineStore('play_config', () => {
@@ -41,6 +48,20 @@ export const usePlayConfigStore = defineStore('play_config', () => {
         }
         console.log('切换播放模式，当前为：', modeIndex.value, modeList[modeIndex.value])
     }
+
+    //按模式切歌
+        const togglePlayingIndex = (isNext, isAuto) => {
+     if (modeIndex.value === 0) {
+    listLoop(isNext)
+  } else if (modeIndex.value === 1) {
+    sequentialPlay(isNext)
+  } else if (modeIndex.value === 2) {
+    randomPlay()
+  } else if (modeIndex.value === 3) {
+    singleLoop(isNext, isAuto)
+  }
+    }
+
 
     //列表循环
     const listLoop = (isNext: boolean) => {
@@ -93,5 +114,5 @@ export const usePlayConfigStore = defineStore('play_config', () => {
         }
     }
 
-    return {modeList, modeIndex, volume, toggleMode}
+    return {modeList, modeIndex, volume, toggleMode,togglePlayingIndex, listLoop, sequentialPlay, randomPlay, singleLoop}
 }, {persist: true})

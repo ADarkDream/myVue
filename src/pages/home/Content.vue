@@ -148,6 +148,7 @@ function changeFlag() {
 
 onMounted(async () => {
   if (cloudList.length === 0 || localList.length === 0) await getUrlListInfo()
+  if (cloudList[activeIndex.value])
   await getNewList(cloudList[activeIndex.value].sort)
 })
 

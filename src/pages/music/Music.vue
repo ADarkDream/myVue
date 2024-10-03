@@ -1,6 +1,8 @@
 <template>
   <el-container :style="'height:'+(containerHeight)+'px'">
-    <el-header>音乐播放器demo</el-header>
+    <el-header>
+      <SearchMusic :addCloudMusic="addCloudMusic"/>
+    </el-header>
     <el-main>
       <audio ref="audioElement" crossOrigin='anonymous' :src='playList[playingIndex].src' type="audio/mpeg"/>
       <!--音量控制面板-->
@@ -8,25 +10,20 @@
 
       <el-collapse style="text-align: left" v-model="activeName" accordion>
         <el-collapse-item title="备忘" name="0">
-          <div>1、会员歌曲不能跳过,在resetUrl里面改逻辑</div>
+          <div>1、会员歌曲和播放失败的不能自动跳过,在resetUrl里面改逻辑</div>
           <div>2、七牛云链接后加上?avinfo可以获得音频源数据</div>
           <div>3、用第三方库 lyric-parser 进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。</div>
-          <div>4、各类设置存本地，用store</div>
+          <div>4、歌单界面和歌词界面</div>
+          <div>5、</div>
+
         </el-collapse-item>
-        <el-collapse-item title="播放列表" name="1">
-          <template v-for="(item,index) in playList" :key="index">
-            <div>
-              <el-text>{{ index + 1 }}、{{ item.name || '未命名' }} -
-                {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }}
-              </el-text>&ensp;
-              <el-text v-if="item.fee===1&&!item.src" type="danger">[VIP]</el-text>
-              <el-text v-else @click="toggleMusic({index})" size="small" type="primary">
-                点击播放
-              </el-text>
-            </div>
-          </template>
+        <el-collapse-item title="歌单列表(开发中，暂不可用)" name="1">
+          <MusicList :toggleMusic="toggleMusic"/>
         </el-collapse-item>
-        <el-collapse-item title="添加音乐" name="2">
+        <el-collapse-item title="播放列表" name="2">
+          <PlayList :toggleMusic="toggleMusic"/>
+        </el-collapse-item>
+        <el-collapse-item title="添加音乐" name="3">
           <el-form v-model="newMusic" label-width="auto" label-position="top"
                    style="width: 100%;" :size="elSize">
             <el-form-item label="输入音乐ID获取音频链接(仅支持网易云免费音乐)">
@@ -51,9 +48,6 @@
               </el-row>
             </el-form-item>
           </el-form>
-        </el-collapse-item>
-        <el-collapse-item title="搜索音乐(网易云)" name="3">
-          <SearchMusic :addCloudMusic="addCloudMusic" style="width: 100%;margin: 0 auto"/>
         </el-collapse-item>
       </el-collapse>
 
@@ -83,9 +77,28 @@
                :style="'--bgImage:'+`url(${playList[playingIndex].album.pic_url || defaultAlbumArt})`"
                @click="play({})"></div>
           <div class="controls">
-            <div class="prev" @click="toggleMusic({isNext:false,isAuto:false})"></div>
-            <div class="play" @click="play({})"></div>
-            <div class="next" @click="toggleMusic({isNext:true,isAuto:false})"></div>
+            <div class="prev" @click="toggleMusic({isNext:false,isAuto:false})">
+              <svg viewBox="0 0 250.488 250.488">
+                <path
+                    d="M237.484,22.587c-3.266,0-7.591-0.401-11.072,2.005l-92.264,77.91V37.252   c0-2.507,0.057-14.666-13.004-14.666c-3.265,0-7.59-0.401-11.072,2.005L8.107,110.693c-9.669,6.674-7.997,14.551-7.997,14.551   s-1.671,7.878,7.997,14.551l101.965,86.102c3.482,2.405,7.807,2.004,11.072,2.004c13.062,0,13.004-11.7,13.004-14.666v-65.249   l92.264,77.911c3.482,2.405,7.807,2.004,11.072,2.004c13.062,0,13.004-11.7,13.004-14.666V37.252   C250.488,34.746,250.546,22.587,237.484,22.587z"/>
+              </svg>
+            </div>
+            <div class="play" @click="play({})">
+              <svg v-if="isPlaying" class="play_icon" viewBox="0 0 232.679 232.679">
+                <path
+                    d="M80.543,0H35.797c-9.885,0-17.898,8.014-17.898,17.898v196.883   c0,9.885,8.013,17.898,17.898,17.898h44.746c9.885,0,17.898-8.013,17.898-17.898V17.898C98.44,8.014,90.427,0,80.543,0z M196.882,0   h-44.746c-9.886,0-17.899,8.014-17.899,17.898v196.883c0,9.885,8.013,17.898,17.899,17.898h44.746   c9.885,0,17.898-8.013,17.898-17.898V17.898C214.781,8.014,206.767,0,196.882,0z"/>
+              </svg>
+              <svg v-else class="pause_icon" viewBox="0 0 232.153 232.153">
+                <path
+                    d="M203.791,99.628L49.307,2.294c-4.567-2.719-10.238-2.266-14.521-2.266   c-17.132,0-17.056,13.227-17.056,16.578v198.94c0,2.833-0.075,16.579,17.056,16.579c4.283,0,9.955,0.451,14.521-2.267   l154.483-97.333c12.68-7.545,10.489-16.449,10.489-16.449S216.471,107.172,203.791,99.628z"/>
+              </svg>
+            </div>
+            <div class="next" @click="toggleMusic({isNext:true,isAuto:false})">
+              <svg viewBox="0 0 250.488 250.488">
+                <path
+                    d="M237.484,22.587c-3.266,0-7.591-0.401-11.072,2.005l-92.264,77.91V37.252   c0-2.507,0.057-14.666-13.004-14.666c-3.265,0-7.59-0.401-11.072,2.005L8.107,110.693c-9.669,6.674-7.997,14.551-7.997,14.551   s-1.671,7.878,7.997,14.551l101.965,86.102c3.482,2.405,7.807,2.004,11.072,2.004c13.062,0,13.004-11.7,13.004-14.666v-65.249   l92.264,77.911c3.482,2.405,7.807,2.004,11.072,2.004c13.062,0,13.004-11.7,13.004-14.666V37.252   C250.488,34.746,250.546,22.587,237.484,22.587z"/>
+              </svg>
+            </div>
             <!--右侧面板-->
             <div class="options">
               <!--播放模式-->
@@ -137,11 +150,9 @@
             d="M128 420.576v200.864h149.12l175.456 140.064V284.288l-169.792 136.288H128z m132.256-64l204.288-163.968a32 32 0 0 1 52.032 24.96v610.432a32 32 0 0 1-51.968 24.992l-209.92-167.552H96a32 32 0 0 1-32-32v-264.864a32 32 0 0 1 32-32h164.256zM670.784 720.128a32 32 0 0 1-44.832-45.664 214.08 214.08 0 0 0 64.32-153.312 213.92 213.92 0 0 0-55.776-144.448 32 32 0 1 1 47.36-43.04 277.92 277.92 0 0 1 72.416 187.488 278.08 278.08 0 0 1-83.488 198.976zM822.912 858.88a32 32 0 1 1-45.888-44.608A419.008 419.008 0 0 0 896 521.152c0-108.704-41.376-210.848-114.432-288.384a32 32 0 0 1 46.592-43.872c84.16 89.28 131.84 207.04 131.84 332.256 0 127.84-49.76 247.904-137.088 337.728z"/></svg>
               </span>
               <!--播放列表-->
-              <span @click="changePanel('1')">
+              <span @click="changePanel('2')">
                <svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-              <path
-                  d="M819.2 787.072l-108.6208-82.9952L819.2 621.056v166.016zM192 256h588.8a38.4 38.4 0 0 1 0 76.8h-588.8a38.4 38.4 0 0 1 0-76.8z m0 204.8h588.8a38.4 38.4 0 0 1 0 76.8h-588.8a38.4 38.4 0 0 1 0-76.8z m0 204.8h409.6a38.4 38.4 0 0 1 0 76.8h-409.6a38.4 38.4 0 0 1 0-76.8z"/>
-            </svg>
+                  <path d="M717.12 394.88v12.592h-0.32v218.656h-48v-48h0.32V397.616a11.248 11.248 0 0 1-0.08-1.28v-36.864h48v34.752l0.08 0.64zM648.528 748.8h-68.256a85.328 85.328 0 1 1 0-170.672h88.848V397.616a11.248 11.248 0 0 1-0.08-1.28V336a48 48 0 0 1 48-48h71.232a48 48 0 0 1 48 48v23.472a48 48 0 0 1-48 48H716.8v273.056a68.272 68.272 0 0 1-68.272 68.272z m-67.2-122.704a37.344 37.344 0 0 0 0 74.688h71.504a16 16 0 0 0 16-16V626.08h-87.488zM716.912 336v23.568h71.36V336h-71.36z m-529.76-48H580.88c6.16 0 11.136 4.976 11.136 11.136v25.728A11.136 11.136 0 0 1 580.88 336H187.136A11.136 11.136 0 0 1 176 324.864v-25.728c0-6.16 4.976-11.136 11.136-11.136zM580.88 464c-15.84 0-29.328 9.984-34.56 24 5.232 14.016 18.72 24 34.56 24H187.136c15.84 0 29.328-9.984 34.56-24a36.88 36.88 0 0 0-34.56-24h393.728z m-393.728 0H580.88c6.16 0 11.136 4.976 11.136 11.136v25.728A11.136 11.136 0 0 1 580.88 512H187.136A11.136 11.136 0 0 1 176 500.864v-25.728c0-6.16 4.976-11.136 11.136-11.136z m0 192H404.88c6.16 0 11.136 4.976 11.136 11.136v25.728A11.136 11.136 0 0 1 404.88 704H187.136A11.136 11.136 0 0 1 176 692.864v-25.728c0-6.16 4.976-11.136 11.136-11.136z" /> </svg>
             </span>
             </div>
           </div>
@@ -154,7 +165,7 @@
 import {nextTick, onMounted, ref, computed} from 'vue';
 import useTimestamp from "@/hooks/useTimestamp";
 import {ElMessage} from 'element-plus'
-import defaultAlbumArt from '@/assets/music.svg'
+import defaultAlbumArt from '@/assets/music/music.svg'
 import axios from "axios";
 import useResponsive from "@/hooks/useResponsive";
 import {ResultData} from "@/types/global";
@@ -163,6 +174,9 @@ import SearchMusic from "@/pages/music/components/SearchMusic.vue";
 import {useMusicStore} from "@/store/music/useMusicStore";
 import {usePlayConfigStore} from '@/store/music/usePlayConfigStore'
 import VolumeComp from "@/components/smallComp/VolumeComp.vue";
+import PlayList from "@/pages/music/components/PlayList.vue";
+import {useRoute, useRouter} from "vue-router";
+import MusicList from "@/pages/music/components/MusicList.vue";
 
 const musicStore = useMusicStore()
 const playConfigStore = usePlayConfigStore()
@@ -171,9 +185,10 @@ const {isPC, elSize, containerHeight} = useResponsive()
 const {formatMusicTime} = useTimestamp()
 
 //是否显示
-const activeName = ref('3')
+const activeName = ref('4')
 const changePanel = (name: string) => activeName.value = name
-
+const route = useRoute()
+const router = useRouter()
 
 //是否显示控制面板
 const infoBarActive = ref(false)
@@ -228,7 +243,11 @@ const playList = computed(() => musicStore.playList)
 
 
 //当前播放的歌的序号
-const playingIndex = ref(0)
+const playingIndex = computed({
+      get: () => musicStore.playingIndex,
+      set: (val: number) => musicStore.playingIndex = val
+    }
+)
 
 //当前播放模式的序号
 const modeIndex = computed(() => playConfigStore.modeIndex)
@@ -267,8 +286,8 @@ const resetUrl = async (song: CloudSongInfo) => {
     const newSong = Object.assign(song, data.playInfo)
     console.log('newSong', [newSong])
     const index = musicStore.addMusicList([newSong], {isReplace: true})
-    console.log(`播放第${index}首歌：${playList.value[index].name}`)
-    ElMessage.info(`播放第${index}首歌：${playList.value[index].name}`)
+    console.log(`播放第${index + 1}首歌：${playList.value[index].name}`)
+    ElMessage.info(`播放：${playList.value[index].name}`)
     //切换到添加的这首歌
     // await toggleMusic({index})
   } else return ElMessage.warning('暂不支持VIP音乐')
@@ -279,6 +298,16 @@ onMounted(async () => {
   track = audioContext.createMediaElementSource(audioElement.value as HTMLAudioElement)
 
   track.connect(gainNode).connect(audioContext.destination)
+
+  //分享功能，从路径中获取音乐id，播放并清除路径参数
+  const {cloud_music_id} = route.query
+  if (cloud_music_id) {
+    // newMusic.value
+    addCloudMusic(Number(cloud_music_id), true)
+    router.replace({name: 'music'})
+  }
+
+
   // await Promise.all([
 
   // ])
@@ -341,7 +370,7 @@ const playing = () => {
   currentTime.value = audioElement.value?.currentTime
   if (audioElement.value?.currentTime === duration.value) {
 //切换下一首
-    toggleMusic({isNext: true, isAuto: true})
+    toggleMusic({})
   }
 }
 
@@ -400,18 +429,11 @@ const toggleMusic = async ({isNext = true, isAuto = true, index}: {
   //定向切歌
   if (index) {
     playingIndex.value = index
-    console.log(`即将播放第${index}首歌：${playList.value[index].name}`)
+    console.log(`即将播放：${playList.value[index].name}`)
   }
   //按模式切歌
-  else if (modeIndex.value === 0) {
-    listLoop(isNext)
-  } else if (modeIndex.value === 1) {
-    sequentialPlay(isNext)
-  } else if (modeIndex.value === 2) {
-    randomPlay()
-  } else if (modeIndex.value === 3) {
-    singleLoop(isNext, isAuto)
-  }
+  else playConfigStore.togglePlayingIndex(isNext, isAuto)
+
   //获取要播放的这一首歌
   const song = playList.value[playingIndex.value]
   console.log('即将播放', song)
@@ -421,14 +443,6 @@ const toggleMusic = async ({isNext = true, isAuto = true, index}: {
   }
   await resetUrl(song)
 
-
-  // 重新加载新歌曲
-  // audioElement.value.load()
-  //
-  // // 绑定新的 `canplay` 事件监听器，确保加载完成后再播放
-  // audioElement.value.addEventListener('canplay', handleCanPlay);
-  //
-  // isScroll()
   //如果当前不是播放状态，则播放
   if (!isPlaying.value) play({isReplay: true})
 }
@@ -436,11 +450,6 @@ const toggleMusic = async ({isNext = true, isAuto = true, index}: {
 
 const handleCanPlay = () => {
   if (!audioElement.value) return
-  // track.disconnect()
-  // track = audioContext.createMediaElementSource(audioElement.value as HTMLAudioElement);
-  // gainNode = audioContext.createGain()
-  // 连接新的音频源到 gainNode
-  // track.connect(gainNode).connect(audioContext.destination);
 
   // 播放新歌曲
   audioElement.value.play().catch(err => {
@@ -454,60 +463,8 @@ const handleCanPlay = () => {
 
   // 更新歌曲时长
   duration.value = audioElement.value.duration
-  // console.log(duration.value, audioElement.value?.duration)
 }
 
-
-//列表循环
-const listLoop = (isNext: boolean) => {
-  if (isNext) playingIndex.value++
-  else playingIndex.value--
-  //下一首，此为最后一首
-  if (playingIndex.value >= playList.value.length) {
-    playingIndex.value = 0
-    //上一首，此为第一首
-  } else if (playingIndex.value < 0) {
-    playingIndex.value = playList.value.length - 1
-  }
-  console.log('列表循环', playingIndex.value, playList.value[playingIndex.value])
-}
-
-//顺序播放
-const sequentialPlay = (isNext: boolean) => {
-  if (isNext) playingIndex.value++
-  else playingIndex.value--
-  //下一首，此为最后一首或上一首，此为第一首
-  if (playingIndex.value >= playList.value.length) {
-    //换成默认的信息，空白信息
-    playingIndex.value--
-    return ElMessage.info('当前是最后一首')
-  } else if (playingIndex.value <= 0) {
-    playingIndex.value++
-    return ElMessage.info('当前是第一首')
-  }
-
-  console.log('顺序播放', playingIndex.value, playList.value[playingIndex.value])
-}
-
-//随机播放
-const randomPlay = () => {
-  const randomNum = Math.floor(Math.random() * (playList.value.length))
-  if (playingIndex.value === randomNum && playList.value.length !== 1) return randomPlay
-  playingIndex.value = randomNum
-  console.log('顺序播放', playingIndex.value, playList.value[playingIndex.value])
-}
-
-//单曲循环
-const singleLoop = (isNext: boolean, isAuto: boolean) => {
-  //自动切换，循环当前音乐
-  if (isAuto) {
-    // if (audioElement.value) audioElement.value.currentTime = 0
-    console.log('单曲循环', playingIndex.value, playList.value[playingIndex.value])
-    //手动切换
-  } else {
-    listLoop(isNext)
-  }
-}
 
 //添加并播放新音乐
 const addMusic = async () => {
@@ -548,7 +505,7 @@ const addCloudMusic = async (id: number, isPlay = false) => {
         //合并歌曲信息和播放地址信息
         songs[0] = Object.assign(song, data.playInfo)
         const index = musicStore.addMusicList(songs, {isReplace: true})
-        console.log(`播放第${index}首歌`)
+        console.log(`播放第${index + 1}首歌`)
         //切换到添加的这首歌
         await toggleMusic({index})
       }
@@ -680,7 +637,7 @@ const addCloudMusicList = async (idList: number[]): Promise<{
 
 // 5. 切换音频文件
 //loadAndPlayAudio(newUrl);
-
+//loadAndPlayAudio('https://music.163.com/song/media/outer/url?id=2129243576.mp3')
 //endregion
 
 
@@ -716,7 +673,7 @@ const addCloudMusicList = async (idList: number[]): Promise<{
 
 .el-header {
   height: auto;
-  margin-top: 20px;
+  margin: 5px;
 }
 
 .footer {
@@ -732,7 +689,7 @@ const addCloudMusicList = async (idList: number[]): Promise<{
   width: 400px;
   position: relative;
   margin: 0 auto 40px;
-  --bgImage: url('@/assets/music.svg');
+  --bgImage: url('@/assets/music/music.svg');
   --infoColor: rgba(107, 179, 250, 0.44);
   --btnColor: #eee;
   --scrollNamePosition: -50%;
@@ -876,10 +833,16 @@ const addCloudMusicList = async (idList: number[]): Promise<{
       grid-template-columns: 1fr 1fr 1fr 2fr;
       width: 70%;
 
+      svg {
+        fill: #c2c6cf;
+        animation: keyframes-fill .5s;
+      }
 
       .prev,
       .play,
       .next {
+        display: flex;
+        justify-content: center;
         width: 55px;
         height: 80px;
         border-radius: 10px;
@@ -893,6 +856,12 @@ const addCloudMusicList = async (idList: number[]): Promise<{
         -webkit-transition: background-color .3s ease;
       }
 
+      .prev svg,
+      .play svg,
+      .next svg {
+        width: 25px;
+      }
+
       .prev:hover,
       .play:hover,
       .next:hover {
@@ -901,53 +870,26 @@ const addCloudMusicList = async (idList: number[]): Promise<{
         -webkit-transition: background-color .3s ease;
       }
 
-      /*上一首按钮*/
-
-      .prev {
-        background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDI1MC40ODggMjUwLjQ4OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjUwLjQ4OCAyNTAuNDg4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlByZXZpb3VzX3RyYWNrIj4KCTxwYXRoIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDsiIGQ9Ik0yMzcuNDg0LDIyLjU4N2MtMy4yNjYsMC03LjU5MS0wLjQwMS0xMS4wNzIsMi4wMDVsLTkyLjI2NCw3Ny45MVYzNy4yNTIgICBjMC0yLjUwNywwLjA1Ny0xNC42NjYtMTMuMDA0LTE0LjY2NmMtMy4yNjUsMC03LjU5LTAuNDAxLTExLjA3MiwyLjAwNUw4LjEwNywxMTAuNjkzYy05LjY2OSw2LjY3NC03Ljk5NywxNC41NTEtNy45OTcsMTQuNTUxICAgcy0xLjY3MSw3Ljg3OCw3Ljk5NywxNC41NTFsMTAxLjk2NSw4Ni4xMDJjMy40ODIsMi40MDUsNy44MDcsMi4wMDQsMTEuMDcyLDIuMDA0YzEzLjA2MiwwLDEzLjAwNC0xMS43LDEzLjAwNC0xNC42NjZ2LTY1LjI0OSAgIGw5Mi4yNjQsNzcuOTExYzMuNDgyLDIuNDA1LDcuODA3LDIuMDA0LDExLjA3MiwyLjAwNGMxMy4wNjIsMCwxMy4wMDQtMTEuNywxMy4wMDQtMTQuNjY2VjM3LjI1MiAgIEMyNTAuNDg4LDM0Ljc0NiwyNTAuNTQ2LDIyLjU4NywyMzcuNDg0LDIyLjU4N3oiIGZpbGw9IiNjMmM2Y2YiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K);
-      }
-
-      /*暂停按钮 |> */
-
-      .play {
-        background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi4xNTMgMjMyLjE1MyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjE1MyAyMzIuMTUzOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBsYXkiPgoJPHBhdGggc3R5bGU9ImZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkOyIgZD0iTTIwMy43OTEsOTkuNjI4TDQ5LjMwNywyLjI5NGMtNC41NjctMi43MTktMTAuMjM4LTIuMjY2LTE0LjUyMS0yLjI2NiAgIGMtMTcuMTMyLDAtMTcuMDU2LDEzLjIyNy0xNy4wNTYsMTYuNTc4djE5OC45NGMwLDIuODMzLTAuMDc1LDE2LjU3OSwxNy4wNTYsMTYuNTc5YzQuMjgzLDAsOS45NTUsMC40NTEsMTQuNTIxLTIuMjY3ICAgbDE1NC40ODMtOTcuMzMzYzEyLjY4LTcuNTQ1LDEwLjQ4OS0xNi40NDksMTAuNDg5LTE2LjQ0OVMyMTYuNDcxLDEwNy4xNzIsMjAzLjc5MSw5OS42Mjh6IiBmaWxsPSIjYzJjNmNmIi8+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg==);
-      }
-
       /*下一首按钮*/
 
       .next {
-        background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDI1MC40ODggMjUwLjQ4OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjUwLjQ4OCAyNTAuNDg4OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9Ik5leHRfdHJhY2tfMiI+Cgk8cGF0aCBzdHlsZT0iZmlsbC1ydWxlOmV2ZW5vZGQ7Y2xpcC1ydWxlOmV2ZW5vZGQ7IiBkPSJNMjQyLjM4MSwxMTAuNjkzTDE0MC40MTUsMjQuNTkxYy0zLjQ4LTIuNDA2LTcuODA1LTIuMDA1LTExLjA3MS0yLjAwNSAgIGMtMTMuMDYxLDAtMTMuMDAzLDExLjctMTMuMDAzLDE0LjY2NnY2NS4yNDlsLTkyLjI2NS03Ny45MWMtMy40ODItMi40MDYtNy44MDctMi4wMDUtMTEuMDcyLTIuMDA1ICAgQy0wLjA1NywyMi41ODcsMCwzNC4yODcsMCwzNy4yNTJ2MTc1Ljk4M2MwLDIuNTA3LTAuMDU3LDE0LjY2NiwxMy4wMDQsMTQuNjY2YzMuMjY1LDAsNy41OSwwLjQwMSwxMS4wNzItMi4wMDVsOTIuMjY1LTc3LjkxICAgdjY1LjI0OWMwLDIuNTA3LTAuMDU4LDE0LjY2NiwxMy4wMDMsMTQuNjY2YzMuMjY2LDAsNy41OTEsMC40MDEsMTEuMDcxLTIuMDA1bDEwMS45NjYtODYuMTAxICAgYzkuNjY4LTYuNjc1LDcuOTk3LTE0LjU1MSw3Ljk5Ny0xNC41NTFTMjUyLjA0OSwxMTcuMzY3LDI0Mi4zODEsMTEwLjY5M3oiIGZpbGw9IiNjMmM2Y2YiLz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8Zz4KPC9nPgo8L3N2Zz4K)
+        transform: rotate(180deg);
       }
     }
 
-    /*播放按钮 || */
-
-    &.active .controls .play {
-      background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTguMS4xLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgdmlld0JveD0iMCAwIDIzMi42NzkgMjMyLjY3OSIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMjMyLjY3OSAyMzIuNjc5OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgd2lkdGg9IjEyOHB4IiBoZWlnaHQ9IjEyOHB4Ij4KPGcgaWQ9IlBhdXNlIj4KCTxwYXRoIHN0eWxlPSJmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZDsiIGQ9Ik04MC41NDMsMEgzNS43OTdjLTkuODg1LDAtMTcuODk4LDguMDE0LTE3Ljg5OCwxNy44OTh2MTk2Ljg4MyAgIGMwLDkuODg1LDguMDEzLDE3Ljg5OCwxNy44OTgsMTcuODk4aDQ0Ljc0NmM5Ljg4NSwwLDE3Ljg5OC04LjAxMywxNy44OTgtMTcuODk4VjE3Ljg5OEM5OC40NCw4LjAxNCw5MC40MjcsMCw4MC41NDMsMHogTTE5Ni44ODIsMCAgIGgtNDQuNzQ2Yy05Ljg4NiwwLTE3Ljg5OSw4LjAxNC0xNy44OTksMTcuODk4djE5Ni44ODNjMCw5Ljg4NSw4LjAxMywxNy44OTgsMTcuODk5LDE3Ljg5OGg0NC43NDYgICBjOS44ODUsMCwxNy44OTgtOC4wMTMsMTcuODk4LTE3Ljg5OFYxNy44OThDMjE0Ljc4MSw4LjAxNCwyMDYuNzY3LDAsMTk2Ljg4MiwweiIgZmlsbD0iI2MyYzZjZiIvPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=)
-    }
   }
+
+  /*专辑图旋转*/
 
   .control-panel.active .album-art::before {
-
     animation: rotation 3s infinite linear;
   }
+
+  /*播放器右侧按键布局*/
 
   .options {
     flex-wrap: wrap;
     text-align: right;
-
-    /*音量条的位置*/
-
-    .volume-bar {
-      position: absolute;
-      bottom: 50px;
-      right: 40px;
-      border-radius: 15px;
-      height: 130px;
-      background-color: var(--btnColor);
-      opacity: 0.8;
-      transition: all 1s ease;
-    }
   }
 }
 
@@ -963,7 +905,7 @@ const addCloudMusicList = async (idList: number[]): Promise<{
   transform: scale(0.8);
 }
 
-/*旋转动画*/
+/*专辑图旋转动画*/
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
@@ -975,8 +917,6 @@ const addCloudMusicList = async (idList: number[]): Promise<{
 }
 
 /*长文本滚动：歌名过长自动滚动*/
-
-
 @keyframes scroll {
   from {
     transform: translateX(0);
@@ -986,8 +926,25 @@ const addCloudMusicList = async (idList: number[]): Promise<{
   }
 }
 
+/*SVG切换时的抖动动画*/
+@keyframes keyframes-fill {
+  0% {
+    transform: rotate(-180deg) scale(0);
+    opacity: 0;
+  }
 
+  50% {
+    transform: rotate(-10deg) scale(1.2);
+  }
+
+}
+
+/*移动端布局*/
 @media (max-width: 780px) {
+  .el-main {
+    padding-top: 0;
+  }
+
   .footer {
     /* width: 100%;
      height: auto;*/
@@ -1048,8 +1005,8 @@ const addCloudMusicList = async (idList: number[]): Promise<{
 
 .el-slider__button {
   display: none;
-  width: 10px;
-  height: 10px;
+  /*  width: 10px;
+    height: 10px;*/
 }
 
 </style>

@@ -13,6 +13,19 @@ interface Album {
     publish_time?: number
 }
 
+//歌单信息
+interface MusicList {
+    music_list_id?: number,
+    name: string,
+    uid?: number,
+    pic_url: string,
+    status?: number,
+    created_time?: string,
+    updated_time?:string,
+}
+
+
+//网易云音乐信息(筛选后)
 interface CloudSongInfo {
     cloud_music_id: number,
     name: string,
@@ -25,6 +38,7 @@ interface CloudSongInfo {
     album: Album
 }
 
+
 interface SongInfo {
     name: string,
     // duration: number,//音乐时长
@@ -34,9 +48,10 @@ interface SongInfo {
 }
 
 
+//搜索音乐返回的结果
 interface SearchResult {
     songs: CloudSongInfo[],
     songCount: number
 }
 
-export type {CloudSongInfo, SongInfo, SearchResult}
+export type {CloudSongInfo,MusicList, SearchResult,SongInfo}

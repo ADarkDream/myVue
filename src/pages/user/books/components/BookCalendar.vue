@@ -51,7 +51,7 @@ import useResponsive from "@/hooks/useResponsive";
 dayjs.locale('zh-cn');//每周从周一开始
 
 
-const {isPC, elSize} = useResponsive()
+const {isPC} = useResponsive()
 const {formatDate}=useTimestamp()
 
 // const {isPC} = useResponsive()

@@ -113,9 +113,8 @@
       <div style="padding-left:10px;">
         <p>1、添加账单之后,判断添加的数据是否在当前时间范围内,需要把dateRange改成全局共享</p>
         <p>2、组账单第一个销账会导致下面的子帐单UI错位，暂定为将子账单一并销账</p>
-        <el-text tag="p" type="danger"> 3、日历界面总计计算不准确，有问题,在后端</el-text>
-        <el-text tag="p" type="danger">4、移动端隐藏右侧日期选择器面板有bug，显示有空白</el-text>
-        <p>5、刷新之后会返回账本列表界面</p>
+        <el-text tag="p" type="danger">3、移动端隐藏右侧日期选择器面板有bug，显示有空白</el-text>
+        <p>4、刷新之后会返回账本列表界面</p>
       </div>
     </el-collapse-item>
     <el-collapse-item title="已解决BUG" :name="6">
@@ -128,6 +127,7 @@
         <p class="delLine">AddBill需要修改,修改组别后没传递参数gid</p>
         <p class="delLine">cancelAddBill下的日期需要修改</p>
         <p class="delLine">el-table左右容器溢出，有问题</p>
+        <p class="delLine"> 日历界面总计计算不准确，有问题,在后端</p>
       </div>
     </el-collapse-item>
   </el-collapse>

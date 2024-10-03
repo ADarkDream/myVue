@@ -103,7 +103,7 @@ export const useMusicStore = defineStore('music', () => {
            name: "神姬",
             duration: 223.69,
             comment_thread_id: "R_SO_4_1981095072",
-            src: "http://m701.music.126.net/20240930002438/60eaa71136a861ab4c3eda2ee9934e1b/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/18946808451/f402/6cd6/4eaa/4f69b24cf83770be3f0ac6a3e8610818.mp3",
+            src: "",
             fee: 8,
             mvid: 0,
             artists: [
@@ -128,7 +128,7 @@ export const useMusicStore = defineStore('music', () => {
     ])
 
 //当前播放的歌的序号
-//     const playingIndex = ref(0)
+    const playingIndex = ref(0)
 
     //播放列表序号和id对应的对象,id为键，index为值
     const playListIndex = computed(() => {
@@ -177,5 +177,5 @@ export const useMusicStore = defineStore('music', () => {
     }
 
 
-    return {playList, isPlaying, isLoading, playListIndex, addMusicList, deleteMusic}
+    return {playList, isPlaying, isLoading, playListIndex,playingIndex, addMusicList, deleteMusic}
 })

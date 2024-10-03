@@ -13,7 +13,7 @@ export default function () {
                 }, 1500)
             },
             () => {
-                alert(msg + '复制失败,请自行复制')
+                alert(msg + '复制失败,请自行复制以下内容：',text)
                 if (url !== undefined) setTimeout(() => {
                     window.open(url)
                 }, 1500)
@@ -28,7 +28,7 @@ export default function () {
                 ElMessage.success(msg + '已复制到剪贴板')
             },
             () => {
-                alert(msg + '复制失败,请自行复制')
+                alert(msg + '复制失败,请自行复制以下内容：',code)
             }
         )
     }
