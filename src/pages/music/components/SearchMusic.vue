@@ -1,22 +1,25 @@
 <template>
   <div class="container">
-    <div class="searchDiv">
-      <button @click="searchMusic()">
-        <el-icon>
-          <Search/>
-        </el-icon>
-      </button>
-      <input class="input" v-model="searchStore.searchConfig.s" @keyup.enter="searchMusic()"
-             placeholder="歌曲名或歌手名">
-      <button class="reset" @click="searchStore.searchConfig.s=''" v-if="searchStore.searchConfig.s!==''">
-        <el-icon>
-          <Close/>
-        </el-icon>
-      </button>
+    <div class="header">
+      <div class="searchDiv">
+        <el-button :icon="Back" size="small" @click="closeSearchPanel()"></el-button>
+        <el-input v-model.trim="searchStore.searchConfig.s" @keyup.enter="searchMusic()" placeholder="歌曲名或歌手名"
+                  size="small"/>
+        <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
+      </div>
+      <el-radio-group v-if="true" v-model="searchStore.searchConfig.type" size="small">
+        <el-radio-button label="单曲" :value="1"/>
+        <el-radio-button label="专辑" :value="10"/>
+        <el-radio-button label="歌手" :value="100"/>
+        <el-radio-button label="歌单" :value="1000"/>
+        <el-radio-button label="用户" :value="1002"/>
+        <el-radio-button label="歌词" :value="1006"/>
+      </el-radio-group>
     </div>
-    <el-drawer v-model="showResult" :show-close="false" direction="btt" size="75%" title="搜索结果">
+    <!--    <el-drawer v-model="showResult" :show-close="false" direction="btt" size="75%" title="搜索结果">-->
+    <div v-if="showResult">
       <div style="text-align: left">
-        <div v-for="(item,index) in searchStore.searchResult" :key="index" >
+        <div v-for="(item,index) in searchStore.searchResult" :key="index">
           <el-text>{{ page * 10 + index + 1 }}、{{ item.name || '未命名' }} -
             {{
               item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家'
@@ -38,8 +41,8 @@
           <span>共{{ songCount }}条搜索结果</span>
         </div>
       </div>
-
-    </el-drawer>
+    </div>
+    <!--    </el-drawer>-->
   </div>
 
 </template>
@@ -49,19 +52,19 @@ import {computed, ref} from "vue";
 import {useMusicSearchStore} from "@/store/music/useMusicSearchStore";
 import useResponsive from "@/hooks/useResponsive";
 import {ElMessage} from "element-plus";
-import {Close, Search} from "@element-plus/icons-vue";
+import {Back, Search} from "@element-plus/icons-vue";
 
 const searchStore = useMusicSearchStore()
-
 const {elSize} = useResponsive()
-const {addCloudMusic} = defineProps(['addCloudMusic'])
+const {addCloudMusic, closeSearchPanel} = defineProps(['addCloudMusic', 'closeSearchPanel'])
+
+
 const page = ref(0)
 const songCount = computed(() => searchStore.songCount)
 const showResult = ref(false)
 
 const searchMusic = async (flag?: string) => {
-
-
+  if (!searchStore.searchConfig.s) return
   if (flag === '-') {
     if (page.value === 0) return ElMessage.info('当前是第一页')
     page.value--
@@ -84,7 +87,7 @@ const searchMusic = async (flag?: string) => {
 <style scoped>
 .container {
   --timing: 0.3s;
-  --width-of-input: 200px;
+  --width-of-input: 250px;
   --height-of-input: 40px;
   --border-height: 2px;
   --input-bg: #e1e4ea;
@@ -106,10 +109,12 @@ const searchMusic = async (flag?: string) => {
   color: #8b8ba7;
 }
 
-/* styling of whole input container */
+.header {
+  text-align: left;
+}
+
 .searchDiv {
-  position: absolute;
-  right: 20px;
+  position: relative;
   width: var(--width-of-input);
   height: var(--height-of-input);
   display: flex;
@@ -118,7 +123,7 @@ const searchMusic = async (flag?: string) => {
   border-radius: var(--border-radius);
   transition: border-radius 0.5s ease;
   background: var(--input-bg, #fff);
-
+  justify-content: space-between;
 }
 
 /* styling of Input */
@@ -148,18 +153,20 @@ const searchMusic = async (flag?: string) => {
 }
 
 /* Hover on Input */
-.searchDiv:focus-within {
+/*.searchDiv:focus-within {
   border-radius: var(--after-border-radius);
-}
+}*/
 
 input:focus {
   outline: none;
+  border: none;
 }
 
-/* here is code of animated border */
+/*
+!* here is code of animated border *!
 .searchDiv:focus-within:before {
   transform: scale(1);
-}
+}*/
 
 /* styling of close button */
 /* == you can click the close button to remove text == */
@@ -193,10 +200,9 @@ input:not(:placeholder-shown) ~ .reset {
 /*移动端布局*/
 @media (max-width: 780px) {
   .container {
-    --width-of-input:150px;
+    --width-of-input: 100%;
     --height-of-input: 25px;
   }
-
 
 
   .searchDiv {
@@ -207,4 +213,25 @@ input:not(:placeholder-shown) ~ .reset {
 }
 
 
+</style>
+<style>
+.el-input__wrapper {
+  background: transparent;
+  border: none;
+}
+
+.el-input__wrapper:focus {
+  box-shadow: none;
+  border: none;
+}
+
+.el-input__inner:focus {
+  box-shadow: none;
+  border: none;
+}
+
+.el-input:focus {
+  box-shadow: none;
+  border: none;
+}
 </style>

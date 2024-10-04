@@ -138,25 +138,23 @@ aside {
   height: 40px;
   z-index: 100;
 }
-
-
-@media (min-width: 981px) {
-  .main {
-    padding-top: 0
-  }
+.el-main{
+  padding: 20px;
 }
 
 @media (max-width: 980px) {
-  .main {
-    padding: 40px 0 0 0;
-    overflow-x: hidden;
-  }
-
-  .shade {
+    .shade {
     padding: 0;
     position: fixed;
     width: 100%;
   }
+
+  .main {
+    padding: 40px 0 0 0;
+    overflow: hidden;
+  }
+
+
 }
 
 

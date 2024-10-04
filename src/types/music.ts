@@ -10,7 +10,7 @@ interface Album {
     album_id?: number,
     name: string,
     pic_url?: string
-    publish_time?: number
+    publish_time?: string
 }
 
 //歌单信息

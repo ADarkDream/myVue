@@ -1,21 +1,27 @@
 <template>
   <el-container :style="'height:'+(containerHeight)+'px'">
     <el-header>
-      <SearchMusic :addCloudMusic="addCloudMusic"/>
+      <el-button :icon="Plus"></el-button>
+      <!--      <el-radio-group>-->
+      <!--        <el-radio-button>112</el-radio-button>-->
+      <!--               <el-radio-button>112</el-radio-button>-->
+      <!--               <el-radio-button>112</el-radio-button>-->
+      <!--      </el-radio-group>-->
+      <el-button :icon="Search" @click="isShowSearchPanel=true"></el-button>
     </el-header>
-    <el-main>
-      <audio ref="audioElement" crossOrigin='anonymous' :src='playList[playingIndex].src' type="audio/mpeg"/>
-      <!--音量控制面板-->
-      <VolumeComp v-if="isShowVolumePanel" :min="0" :max="100" :value="volume*100" :changeVolume="changeVolume"/>
+    <el-main style="background-color: transparent">
 
-      <el-collapse style="text-align: left" v-model="activeName" accordion>
+      <!--音量控制面板-->
+      <VolumeComp v-if="musicPlayStore.isShowVolumePanel" :min="0" :max="100" :value="volume*100" :changeVolume="changeVolume"/>
+
+      <el-collapse style="text-align: left;background-color: transparent" v-model="activeName" accordion>
         <el-collapse-item title="备忘" name="0">
-          <div>1、会员歌曲和播放失败的不能自动跳过,在resetUrl里面改逻辑</div>
+          <span style="background-color: transparent;">1、会员歌曲和播放失败的不能自动跳过,在resetUrl里面改逻辑</span>
           <div>2、七牛云链接后加上?avinfo可以获得音频源数据</div>
           <div>3、用第三方库 lyric-parser 进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。</div>
           <div>4、歌单界面和歌词界面</div>
-          <div>5、</div>
-
+          <div>5、顺序播放到最后一首会重复播放</div>
+          <div>6、重复播放同一首换成暂停和播放，或者做出提醒</div>
         </el-collapse-item>
         <el-collapse-item title="歌单列表(开发中，暂不可用)" name="1">
           <MusicList :toggleMusic="toggleMusic"/>
@@ -50,12 +56,16 @@
           </el-form>
         </el-collapse-item>
       </el-collapse>
-
+      <el-button @click="musicPlayStore.togglePlayerVisible()">显示播放器</el-button>还差音量控制和页面布局，然后删除Music中的函数
     </el-main>
+    <Player/>
 
-    <div class="footer">
+
+
+    <div class="footer" v-if="false">
       <!--播放器-->
-      <div class="player">
+      <div class="player" :class="{hidePlayer:!isShowPlayer,showPlayer:isShowPlayer}" @click="musicPlayStore.togglePlayerVisible()">
+        <audio ref="audioElement" crossOrigin='anonymous' :src='playList[playingIndex].src' type="audio/mpeg"/>
         <div class="play-panel" :class="{ active: infoBarActive }">
             <span ref="musicName" class="name" :class="{ scroll: nameScroll }" :style="transformX">{{
                 isLoading ? '加载中' : playList[playingIndex].name || '未命名'
@@ -132,7 +142,7 @@
               </svg>
             </span>
               <!--锁-->
-              <span @click="isLock=!isLock">
+              <span @click="lockThePlayer()">
                 <svg v-if="isLock" class="icon small_icon" viewBox="0 0 1024 1024"><path
                     d="M894.419759 379.302769l-122.366955 0 0-101.96223c0-65.430198-25.470091-126.941134-71.723531-173.194574-46.25344-46.25344-107.764376-71.723531-173.194574-71.723531s-126.941134 25.470091-173.194574 71.723531-71.723531 107.764376-71.723531 173.194574l0 101.96223-122.366955 0c-11.307533 0-20.466124 9.168824-20.466124 20.466124l0 571.34255c0 11.2973 9.15859 20.466124 20.466124 20.466124l734.570121 0c11.307533 0 20.466124-9.168824 20.466124-20.466124l0-571.34255C914.885883 388.471592 905.727293 379.302769 894.419759 379.302769zM323.148841 277.340539c0-54.501288 21.213137-105.727996 59.740616-144.255475 38.517245-38.517245 89.743954-59.730383 144.245242-59.730383s105.727996 21.213137 144.245242 59.730383c38.527478 38.527478 59.740616 89.754187 59.740616 144.255475l0 101.96223-407.971715 0L323.148841 277.340539 323.148841 277.340539zM873.953635 950.645318l-693.637874 0 0-530.410302 693.637874 0L873.953635 950.645318z"></path><path
                     d="M588.348875 644.6256c0 18.071587-7.971555 34.137495-20.404726 45.332465l0 56.691163c0 22.543436-18.276249 40.819684-40.809451 40.819684-22.533202 0-40.809451-18.276249-40.809451-40.819684l0-56.691163c-12.43317-11.19497-20.404726-27.260877-20.404726-45.332465 0-33.810037 27.40414-61.214177 61.214177-61.214177C560.954969 583.411423 588.348875 610.815563 588.348875 644.6256z"/></svg>
@@ -152,17 +162,22 @@
               <!--播放列表-->
               <span @click="changePanel('2')">
                <svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M717.12 394.88v12.592h-0.32v218.656h-48v-48h0.32V397.616a11.248 11.248 0 0 1-0.08-1.28v-36.864h48v34.752l0.08 0.64zM648.528 748.8h-68.256a85.328 85.328 0 1 1 0-170.672h88.848V397.616a11.248 11.248 0 0 1-0.08-1.28V336a48 48 0 0 1 48-48h71.232a48 48 0 0 1 48 48v23.472a48 48 0 0 1-48 48H716.8v273.056a68.272 68.272 0 0 1-68.272 68.272z m-67.2-122.704a37.344 37.344 0 0 0 0 74.688h71.504a16 16 0 0 0 16-16V626.08h-87.488zM716.912 336v23.568h71.36V336h-71.36z m-529.76-48H580.88c6.16 0 11.136 4.976 11.136 11.136v25.728A11.136 11.136 0 0 1 580.88 336H187.136A11.136 11.136 0 0 1 176 324.864v-25.728c0-6.16 4.976-11.136 11.136-11.136zM580.88 464c-15.84 0-29.328 9.984-34.56 24 5.232 14.016 18.72 24 34.56 24H187.136c15.84 0 29.328-9.984 34.56-24a36.88 36.88 0 0 0-34.56-24h393.728z m-393.728 0H580.88c6.16 0 11.136 4.976 11.136 11.136v25.728A11.136 11.136 0 0 1 580.88 512H187.136A11.136 11.136 0 0 1 176 500.864v-25.728c0-6.16 4.976-11.136 11.136-11.136z m0 192H404.88c6.16 0 11.136 4.976 11.136 11.136v25.728A11.136 11.136 0 0 1 404.88 704H187.136A11.136 11.136 0 0 1 176 692.864v-25.728c0-6.16 4.976-11.136 11.136-11.136z" /> </svg>
+                  <path
+                      d="M717.12 394.88v12.592h-0.32v218.656h-48v-48h0.32V397.616a11.248 11.248 0 0 1-0.08-1.28v-36.864h48v34.752l0.08 0.64zM648.528 748.8h-68.256a85.328 85.328 0 1 1 0-170.672h88.848V397.616a11.248 11.248 0 0 1-0.08-1.28V336a48 48 0 0 1 48-48h71.232a48 48 0 0 1 48 48v23.472a48 48 0 0 1-48 48H716.8v273.056a68.272 68.272 0 0 1-68.272 68.272z m-67.2-122.704a37.344 37.344 0 0 0 0 74.688h71.504a16 16 0 0 0 16-16V626.08h-87.488zM716.912 336v23.568h71.36V336h-71.36z m-529.76-48H580.88c6.16 0 11.136 4.976 11.136 11.136v25.728A11.136 11.136 0 0 1 580.88 336H187.136A11.136 11.136 0 0 1 176 324.864v-25.728c0-6.16 4.976-11.136 11.136-11.136zM580.88 464c-15.84 0-29.328 9.984-34.56 24 5.232 14.016 18.72 24 34.56 24H187.136c15.84 0 29.328-9.984 34.56-24a36.88 36.88 0 0 0-34.56-24h393.728z m-393.728 0H580.88c6.16 0 11.136 4.976 11.136 11.136v25.728A11.136 11.136 0 0 1 580.88 512H187.136A11.136 11.136 0 0 1 176 500.864v-25.728c0-6.16 4.976-11.136 11.136-11.136z m0 192H404.88c6.16 0 11.136 4.976 11.136 11.136v25.728A11.136 11.136 0 0 1 404.88 704H187.136A11.136 11.136 0 0 1 176 692.864v-25.728c0-6.16 4.976-11.136 11.136-11.136z"/> </svg>
             </span>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <el-drawer v-model="isShowSearchPanel" :with-header="false" :size="isPC?(screenHeight-80):(screenHeight-40) +'px'"
+               direction="btt" show-close>
+      <SearchMusic :addCloudMusic="addCloudMusic" :closeSearchPanel="closeSearchPanel"/>
+    </el-drawer>
   </el-container>
 </template>
 <script setup lang="ts">
-import {nextTick, onMounted, ref, computed} from 'vue';
+import {nextTick, onMounted, ref, computed, watch} from 'vue';
 import useTimestamp from "@/hooks/useTimestamp";
 import {ElMessage} from 'element-plus'
 import defaultAlbumArt from '@/assets/music/music.svg'
@@ -171,18 +186,22 @@ import useResponsive from "@/hooks/useResponsive";
 import {ResultData} from "@/types/global";
 import {CloudSongInfo, SongInfo} from "@/types/music";
 import SearchMusic from "@/pages/music/components/SearchMusic.vue";
-import {useMusicStore} from "@/store/music/useMusicStore";
+import {useMusicListStore} from "@/store/music/useMusicListStore";
 import {usePlayConfigStore} from '@/store/music/usePlayConfigStore'
 import VolumeComp from "@/components/smallComp/VolumeComp.vue";
 import PlayList from "@/pages/music/components/PlayList.vue";
 import {useRoute, useRouter} from "vue-router";
 import MusicList from "@/pages/music/components/MusicList.vue";
+import {Plus, Search} from "@element-plus/icons-vue";
+import Player from "@/pages/music/components/Player.vue";
+import {useMusicPlayStore} from "@/store/music/useMusicPlayStore";
 
-const musicStore = useMusicStore()
+const musicStore = useMusicListStore()
 const playConfigStore = usePlayConfigStore()
 
-const {isPC, elSize, containerHeight} = useResponsive()
+const {isPC, elSize, containerHeight, screenHeight} = useResponsive()
 const {formatMusicTime} = useTimestamp()
+const musicPlayStore=useMusicPlayStore()
 
 //是否显示
 const activeName = ref('4')
@@ -210,11 +229,20 @@ const audioElement = ref<HTMLAudioElement>()
 const musicName = ref<HTMLDivElement>()
 //音量控制
 let gainNode = audioContext.createGain()
-//显示音量控制面板
-const isShowVolumePanel = ref(false)
-
 //锁住播放器面板
 const isLock = ref(false)
+//显示音量控制面板
+const isShowVolumePanel = ref(false)
+//显示搜索面板
+const isShowSearchPanel = ref(false)
+//是否显示播放器
+const isShowPlayer = ref(true)
+
+
+const closeSearchPanel = () => {
+  isShowSearchPanel.value = false
+}
+
 
 let track = null
 
@@ -251,6 +279,12 @@ const playingIndex = computed({
 
 //当前播放模式的序号
 const modeIndex = computed(() => playConfigStore.modeIndex)
+
+//当前播放的歌曲信息
+const thisMusic = computed({
+  get: () => musicStore.thisMusic,
+  set: (val: CloudSongInfo) => musicStore.thisMusic = val
+})
 
 
 const newMusic = ref<SongInfo>({
@@ -295,9 +329,9 @@ const resetUrl = async (song: CloudSongInfo) => {
 }
 
 onMounted(async () => {
-  track = audioContext.createMediaElementSource(audioElement.value as HTMLAudioElement)
+/*  track = audioContext.createMediaElementSource(audioElement.value as HTMLAudioElement)
 
-  track.connect(gainNode).connect(audioContext.destination)
+  track.connect(gainNode).connect(audioContext.destination)*/
 
   //分享功能，从路径中获取音乐id，播放并清除路径参数
   const {cloud_music_id} = route.query
@@ -316,6 +350,8 @@ onMounted(async () => {
 
 //计算当前播放时长的定时器
 const timer1 = ref<NodeJS.Timeout>()
+
+const testData = ref()
 
 //播放和暂停
 //pause=true则必定暂停，pause默认则看isPlaying.value;isReplay=true则从头开始播放
@@ -338,7 +374,7 @@ function play({pause = false, isReplay = false}: { pause?: boolean, isReplay?: b
     infoBarActive.value = false
     controlPanelActive.value = false
     //关闭播放时间计时器
-    clearTimeout(timer1.value)
+    clearInterval(timer1.value)
     console.log('播放暂停')
   } else {//播放
     if (!audioElement.value) return
@@ -358,9 +394,12 @@ function play({pause = false, isReplay = false}: { pause?: boolean, isReplay?: b
     controlPanelActive.value = true
     isLoading.value = false
     nextTick(() => isScroll())
+
     duration.value = audioElement.value?.duration
+    //关闭播放时间计时器
+    if (timer1.value) clearInterval(timer1.value)
     //开启播放时间计时器,显示当前播放时长
-    timer1.value = setInterval(() => playing(), 500)
+    timer1.value = setInterval(() => playing(), 1000)
     console.log('播放开始')
   }
 }
@@ -368,8 +407,17 @@ function play({pause = false, isReplay = false}: { pause?: boolean, isReplay?: b
 //监听播放进度
 const playing = () => {
   currentTime.value = audioElement.value?.currentTime
+  if ("setPositionState" in navigator.mediaSession) {
+    testData.value = {
+      duration: duration.value || 0,        // 音频总时长
+      playbackRate: audioElement.value?.playbackRate || 1.0, // 播放速率
+      position: audioElement.value?.currentTime    // 当前播放进度
+    }
+    // console.log('当前播放时间', testData.value.position)
+    navigator.mediaSession.setPositionState(testData.value)
+  }
+  //切换下一首
   if (audioElement.value?.currentTime === duration.value) {
-//切换下一首
     toggleMusic({})
   }
 }
@@ -518,8 +566,6 @@ const addCloudMusic = async (id: number, isPlay = false) => {
 }
 
 
-// emitter.on('addCloudMusic',({id, isPlay = false}:{id: number, isPlay:boolean})=>addCloudMusic(id, isPlay))
-
 //获取音乐信息
 const addCloudMusicList = async (idList: number[]): Promise<{
   isError: boolean,
@@ -569,112 +615,126 @@ const addCloudMusicList = async (idList: number[]): Promise<{
     return {isError: true}
   }
 }
-//
-// //根据音乐id获取链接
-// async function getUrl(id: number) {
-//   try {
-//     if (!id) return ElMessage.error('音乐ID不能为空')
-//     const result = await axios({
-//       url: '/getCloudMusic',
-//       params: {id},
-//     })
-//     console.log(result)
-//     const {data} = result.data
-//
-//     return data.resultUrl
-//   } catch (err) {
-//     console.error('出错了', err)
-//     ElMessage.error('获取播放连接失败')
-//   }
-// }
 
-
-//region 播放buffer音频
-// 1. 创建 AudioContext
-// const audioContext2 = new window.AudioContext();
 //
-// // 2. 定义音频源变量
-// let audioBuffer;
-// let source; // 当前播放的音频源
-//
-// // 3. 加载并播放音频
-// async function loadAndPlayAudio(url: string) {
-//   // 如果当前有音频在播放，先停止它
-//   if (source) {
-//     source.stop()
-//   }
-//
-//   // 加载新的音频文件
-//   try {
-//     // 使用 fetch 进行异步获取音频文件
-//     const response = await fetch(url)
-//
-//     // 将响应转换为 ArrayBuffer
-//     const arrayBuffer = await response.arrayBuffer()
-//
-//     // 使用 AudioContext 解码音频数据, 将解码后的数据保存到 audioBuffer 中
-//     audioBuffer = await audioContext2.decodeAudioData(arrayBuffer)
-//
-//     // 播放音频
-//     playAudio();
-//   } catch (error) {
-//     console.error('音频加载错误:', error)
-//   }
-// }
-//
-// // 4. 播放音频
-// function playAudio() {
-//   // 创建新的 AudioBufferSourceNode
-//   source = audioContext2.createBufferSource();
-//   source.buffer = audioBuffer;
-//
-//   // 将音频源连接到 AudioContext 的目的地（扬声器）
-//   source.connect(audioContext2.destination);
-//
-//   // 开始播放音频
-//   source.start();
-// }
-
-// 5. 切换音频文件
-//loadAndPlayAudio(newUrl);
-//loadAndPlayAudio('https://music.163.com/song/media/outer/url?id=2129243576.mp3')
-//endregion
-
-
-// const getMusic = async (id:number) => {
-//   try {
-//     const result = await axios({
-//       url: 'https://music.163.com/api/song/lyric',
-//       params: {
-//         id,
-//         os: 'pc',
-//         lv: '-1', kv: '-1',
-//         tv: '-1'
+// //修改系统媒体控制的歌曲信息
+// const setMediaInfo = ({title, artist, album, pic_url}: Record<string, string>) => {
+//   navigator.mediaSession.metadata = new MediaMetadata({
+//     title,
+//     artist,
+//     album,
+//     artwork: [
+//       {
+//         src: pic_url,
+//         sizes: "96x96",
+//         type: "image/png",
 //       },
-//     })
-//     console.log(result)
-//     const {status, msg, data} = result.data
-//
-//   } catch (error) {
-//     console.log('发生错误：')
-//     console.dir(error)
-//   }
+//       {
+//         src: pic_url,
+//         sizes: "128x128",
+//         type: "image/png",
+//       },
+//       {
+//         src: pic_url,
+//         sizes: "192x192",
+//         type: "image/png",
+//       },
+//       {
+//         src: pic_url,
+//         sizes: "256x256",
+//         type: "image/png",
+//       },
+//       {
+//         src: pic_url,
+//         sizes: "384x384",
+//         type: "image/png",
+//       },
+//       {
+//         src: pic_url,
+//         sizes: "512x512",
+//         type: "image/png",
+//       },
+//     ],
+//   })
 // }
 //
-// getMusic(1430583016)
+// //监听歌曲切换
+// watch(playingIndex, (newVal, oldVal) => {
+//   if (newVal !== oldVal) {
+// //修改当前播放歌曲的信息
+//     thisMusic.value = playList.value[playingIndex.value]
+//     console.log('thisMusic', thisMusic.value)
+//     setMediaInfo({
+//       title: thisMusic.value.name,
+//       artist: thisMusic.value.artists.map(artist => artist.name).join('&') || '未知艺术家',
+//       album: thisMusic.value.album.name,
+//       pic_url: thisMusic.value.album.pic_url!
+//     })
+//
+//   }
+// })
+//
+// //如果浏览器支持
+// if ("mediaSession" in navigator) {
+//   //设置首次加载的音乐的信息
+//   setMediaInfo({
+//     title: thisMusic.value.name,
+//     artist: thisMusic.value.artists.map(artist => artist.name).join('&') || '未知艺术家',
+//     album: thisMusic.value.album.name,
+//     pic_url: thisMusic.value.album.pic_url!
+//   })
+//
+//   navigator.mediaSession.setActionHandler("play", () => {
+//     play({})
+//     navigator.mediaSession.playbackState = "playing";
+//   });
+//   navigator.mediaSession.setActionHandler("pause", () => {
+//     play({})
+//     navigator.mediaSession.playbackState = "paused";
+//   });
+//   navigator.mediaSession.setActionHandler("stop", () => {
+//     play({pause: true})
+//   });
+// //跳转到指定播放点
+//   // navigator.mediaSession.setActionHandler("seekto", () => {
+//   //     toggleMusic({isNext:false,isAuto:false})
+//   // });
+//   //上一首
+//   navigator.mediaSession.setActionHandler("previoustrack", () => {
+//     toggleMusic({isNext: false, isAuto: false})
+//   });
+//   //下一首
+//   navigator.mediaSession.setActionHandler("nexttrack", () => {
+//     toggleMusic({isNext: true, isAuto: false})
+//   });
+// }
 </script>
 
 <style scoped>
 .el-container {
-  background-color: var(--el-bg-color);
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(5px);
+  /*   backdrop-filter: blur(30px) saturate(125%);
+      background-color: rgb(217 200 200 / 16%);*/
+}
+
+.el-container::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
 }
 
 .el-header {
-  height: auto;
-  margin: 5px;
+  display: flex;
+  justify-content: space-between;
 }
+
 
 .footer {
   width: 100%;
@@ -939,11 +999,41 @@ const addCloudMusicList = async (idList: number[]): Promise<{
 
 }
 
+/*播放器隐藏动画*/
+@keyframes moveDownAndFadeOut {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(90px);
+    opacity: 0;
+  }
+}
+
+/* 向上移动并显示的动画 */
+@keyframes moveUpAndShow {
+  0% {
+    transform: translateY(90px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.hidePlayer {
+  animation: moveDownAndFadeOut 2s forwards;
+}
+
+.showPlayer {
+  animation: moveUpAndShow 2s forwards;
+}
+
+
 /*移动端布局*/
 @media (max-width: 780px) {
-  .el-main {
-    padding-top: 0;
-  }
 
   .footer {
     /* width: 100%;

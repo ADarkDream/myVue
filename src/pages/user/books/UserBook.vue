@@ -567,15 +567,6 @@ onBeforeUnmount(() => {
 </style>
 <style>
 /*全局样式*/
-.el-collapse-item__header {
-  padding: 0 10px;
-}
-
-.el-collapse-item__content {
-  padding: 0 5px;
-  /*首行空一个字符*/
-  text-indent: 1em
-}
 
 /*去除小圆点的影响*/
 .el-badge {

@@ -12,6 +12,7 @@ export const useMusicSearchStore = defineStore('music_search', () => {
     const searchConfig = reactive(
         {
             s: '',//搜索关键词
+            type:1,// 1: 单曲(默认), 10: 专辑, 100: 歌手, 1000: 歌单, 1002: 用户, 1004: MV, 1006: 歌词, 1009: 电台, 1014: 视频, 1018:综合
             limit: 10,//限制条数
             offset: 0//偏移量，是5则去掉前5条，是limit的N倍数则为第N页
         })

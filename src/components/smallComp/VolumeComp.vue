@@ -33,8 +33,12 @@
 
 <script setup lang="ts">
 import {ref} from 'vue';
+import {useMusicPlayStore} from "@/store/music/useMusicPlayStore";
 
-const {min, max, value, changeVolume} = defineProps(['min', 'max', 'value', 'changeVolume'])
+const musicPlayStore = useMusicPlayStore()
+
+const {min, max, value,changeVolume} = defineProps(['min', 'max', 'value','changeVolume'])
+// const {changeVolume} = musicPlayStore
 
 const volumeNum = ref(value)
 

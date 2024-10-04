@@ -1,13 +1,13 @@
 // 引入defineStore用于创建store
 import {defineStore} from 'pinia'
-import {computed, ref} from "vue";
+import {computed, reactive, ref} from "vue";
 import {useBaseUrlStore} from "@/store/useBaseUrlStore";
 import {CloudSongInfo} from "@/types/music";
 
 const {defaultUrl} = useBaseUrlStore()
 
 // 定义并暴露一个store
-export const useMusicStore = defineStore('music', () => {
+export const useMusicListStore = defineStore('music', () => {
     //播放列表
     const playList = ref<CloudSongInfo[]>([
         {
@@ -33,7 +33,7 @@ export const useMusicStore = defineStore('music', () => {
             comment_thread_id: "R_SO_4_505307631",
             mvid: 0,
             duration: 165.048,
-            src: null,
+            src: '',
             fee: 0,
             album: {
                 album_id: 36157973,
@@ -130,6 +130,13 @@ export const useMusicStore = defineStore('music', () => {
 //当前播放的歌的序号
     const playingIndex = ref(0)
 
+   //当前播放的歌曲信息
+    const thisMusic=reactive(playList.value[0])
+
+    // watch(playingIndex,(newVal,oldVal)=>{
+    //     if (newVal!==oldVal) Object.assign(thisMusic,playList.value[playingIndex.value])
+    // })
+
     //播放列表序号和id对应的对象,id为键，index为值
     const playListIndex = computed(() => {
         const obj = {} as Record<number, number>
@@ -177,5 +184,5 @@ export const useMusicStore = defineStore('music', () => {
     }
 
 
-    return {playList, isPlaying, isLoading, playListIndex,playingIndex, addMusicList, deleteMusic}
+    return {playList, isPlaying, isLoading, playListIndex,playingIndex,thisMusic, addMusicList, deleteMusic}
 })

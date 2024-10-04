@@ -260,11 +260,6 @@ const submitFeedback = async () => {
   text-align: left;
 }
 
-/*折叠面板标题栏样式*/
-:deep(.el-collapse-item__header:hover) {
-  color: var(--el-color-primary);
-}
-
 .friendLinks {
   display: flex;
   justify-content: left

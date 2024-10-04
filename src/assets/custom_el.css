@@ -1,0 +1,78 @@
+.el-header {
+    height: auto;
+    padding: 20px 20px 0 20px;
+}
+
+/*region给折叠面板加圆角边框*/
+.el-collapse {
+    border-radius: 5px;
+}
+
+/*第一个折叠面板的标题*/
+.el-collapse .el-collapse-item:first-child .el-collapse-item__header {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+/*最后一个折叠面板的标题(未激活时)*/
+.el-collapse .el-collapse-item:last-child .el-collapse-item__header {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/*最后一个折叠面板的标题(激活时)*/
+.el-collapse .el-collapse-item:last-child .el-collapse-item__header.is-active {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/*最后一个折叠面板的内容区(激活时)*/
+.el-collapse .el-collapse-item:last-child .el-collapse-item__wrap {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+/*endregion*/
+
+/*region给折叠面板的标题和内容区加间隙*/
+.el-collapse {
+    --el-collapse-content-bg-color: rgba(255, 255, 255, 0.2);
+
+}
+
+.el-collapse-item__header {
+    padding-left: 10px;
+    border: transparent;
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(30px);
+}
+
+.el-collapse-item__content {
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/*endregion*/
+
+/*给折叠面板的标题加颜色*/
+.el-collapse-item__header:hover {
+    /*    color: var(--el-color-primary);*/
+    font-weight: 600;
+}
+
+/*去除输入框焦点边框*/
+.el-input__wrapper.is-focus {
+    box-shadow: none;
+}
+
+
+/*移动端*/
+@media (max-width: 980px) {
+    .el-header, .el-main {
+        padding: 10px 10px 0 10px;
+    }
+
+}

@@ -138,16 +138,16 @@
     <el-col :span="8" class="title-left">
       <el-space spacer="">
         <!--侧边导航栏-->
-        <el-button size="small" @click="emitter.emit('showAsideBtn',2)" plain :icon="MoreFilled" v-if="isHome"/>
+        <el-button @click="emitter.emit('showAsideBtn',2)" plain :icon="MoreFilled" v-if="isHome"/>
         <!--重返未来1999-->
-        <el-button size="small" @click="goTo('download')" plain :icon="Download" v-if="isHome"/>
+        <el-button @click="goTo('download')" plain :icon="Download" v-if="isHome"/>
         <!--    返回键-->
-        <el-button size="small" :icon="ArrowLeftBold" @click="router.back()" plain v-if="!isHome"/>
+        <el-button :icon="ArrowLeftBold" @click="router.back()" plain v-if="!isHome"/>
         <!--首页-->
-        <el-button size="small" @click="goTo('home')" plain :icon="HomeFilled" v-if="!isHome"/>
+        <el-button @click="goTo('home')" plain :icon="HomeFilled" v-if="!isHome"/>
         <!--日夜切换-->
         <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日"
-                   :inactive-action-icon="Sunny" :active-action-icon="Moon" size="small"/>
+                   :inactive-action-icon="Sunny" :active-action-icon="Moon"/>
       </el-space>
 
     </el-col>
@@ -159,8 +159,15 @@
     <!--右上角登录和选项-->
     <el-col :span="8" class="title-right">
       <el-space>
+        <!--播放指示器-->
+        <el-button link>
+          <svg style="width: 20px; height: 20px;fill:white" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <path
+                d="M512 1024C229.239467 1024 0 794.760533 0 512S229.239467 0 512 0 1024 229.239467 1024 512 794.760533 1024 512 1024z m215.813689-682.552889v-106.0864c0-18.568533-15.746844-32.813511-33.268622-30.037333l-323.265423 51.268266c-13.425778 2.161778-23.369956 14.267733-23.369955 28.512712v338.602666a86.721422 86.721422 0 0 0-32.426667-6.257778c-48.5376 0-87.927467 39.867733-87.927466 89.065245 0 49.220267 39.367111 89.088 87.927466 89.088s87.881956-39.822222 87.881956-89.019733c0-1.547378-0.068267-3.094756-0.136534-4.642134h0.136534V392.942933l268.925155-42.689422v217.224533a87.4496 87.4496 0 0 0-32.540444-6.303288c-48.696889 0-88.064 39.867733-88.064 89.065244 0 49.220267 39.435378 89.088 88.064 89.088 48.605867 0 88.064-39.867733 88.064-89.088 0-2.412089-0.136533-4.824178-0.273067-7.259022V341.515378l0.273067-0.068267z"/>
+          </svg>
+        </el-button>
         <!--登录按钮-->
-        <el-button size="small" @click="showLoginDrawer" v-if="!isLogin">
+        <el-button @click="showLoginDrawer" v-if="!isLogin">
           <svg class="headIcon" viewBox="0 0 1024 1024">
             <path
                 d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"
@@ -170,16 +177,16 @@
                 fill="CurrentColor"></path>
           </svg>
         </el-button>
-        <el-button size="small" class="username " type="primary" v-else @click="goCenter">
+        <el-button class="username " type="primary" v-else @click="goCenter">
           <!--{{ username }}太窄了不够显示-->
           <el-image class="headIcon" :src="headImgUrl" alt="" :onerror="errorImage"/>
         </el-button>
         <!--论坛-->
-        <el-button size="small" @click="goTo('center')" plain :icon="Comment"/>
+        <el-button @click="goTo('center')" plain :icon="Comment"/>
         <!--选项下拉菜单-->
-        <el-dropdown size="small">
+        <el-dropdown>
           <span>
-            <el-button size="small" class="option" :icon="Operation"/>
+            <el-button class="option" :icon="Operation"/>
           </span>
           <template #dropdown>
             <el-dropdown-menu>

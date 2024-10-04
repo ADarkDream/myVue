@@ -2,9 +2,9 @@
 import {defineStore} from 'pinia'
 import {computed, ref} from "vue";
 import {useBaseUrlStore} from "@/store/useBaseUrlStore";
-import {useMusicStore} from "@/store/music/useMusicStore";
+import {useMusicListStore} from "@/store/music/useMusicListStore";
 
-const musicStore = useMusicStore()
+const musicStore = useMusicListStore()
 const playList = computed(() => musicStore.playList)
 //当前播放的歌的序号
 const playingIndex = computed({

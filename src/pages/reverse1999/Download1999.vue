@@ -793,11 +793,6 @@ console.log('isPC',isPC.value)
   padding-right: 0;
 }
 
-/*折叠面板标题栏样式*/
-:deep(.el-collapse-item__header:hover) {
-  color: var(--el-color-primary);
-}
-
 .roleSort {
   width: 100%;
   text-align: left;
