@@ -177,7 +177,7 @@
                 <el-text @click="showNotice()" type="success" title="点击反馈">反馈
                 </el-text>
                 向默默提出功能建议或BUG。
-                也欢迎来咱们九群玩（默默不是群主）
+                也欢迎来咱们九群玩（默默不是群主）<br>
                 <el-button link type="primary" target="_blank"
                            @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')"
                            title="点击前往QQ">

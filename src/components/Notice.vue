@@ -18,52 +18,54 @@
       <el-collapse v-model="showFlag.activeNum">
         <el-collapse-item title="网站介绍" name="1">
           <el-card class="notice">
-            <el-text>
+            <el-text tag="p">
               1.本站为社交化导航网站，提供
-              <el-button-group type="primary">
-                <el-button link title="首页导航" @click="router.push({name:'home'})">站点导航、</el-button>
-                <el-button link title="论坛文章" target="_blank" @click="router.push({name:'forum'})">论坛交流、
-                </el-button>
-                <el-button link title="重返未来相关界面" @click="router.push({name:'reverse1999'})">
-                  重返未来官图筛选和下载
-                </el-button>
-              </el-button-group>
-              等功能。<br>
-              2.
-              <el-button-group target="_blank" type="primary">
-                <el-button link
-                           @click="copyText('1005993749','QQ群号','https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V')"
-                           title="点击前往QQ">工具资源群：Resource sharing群、
-                </el-button>
-                <el-button link
-                           @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')"
-                           title="点击前往QQ">
-                  重返未来群：金兔子特供部门🐰
-                </el-button>
-              </el-button-group>
+              <el-button link title="首页导航" type="primary" @click="router.push({name:'home'})">站点导航</el-button>
+              、
+              <el-button link title="论坛文章" type="primary" target="_blank" @click="router.push({name:'forum'})">论坛交流
+              </el-button>
+              、
+              <el-button link title="重返未来相关界面" type="primary" @click="router.push({name:'reverse1999'})">
+                重返未来官图筛选和下载
+              </el-button>
+              、
+              <el-button link title="在线音乐播放" type="primary" @click="router.push({name:'music'})">
+                在线音乐播放
+              </el-button>
+              等功能。
+            </el-text>
+            <el-text tag="p">
+              2.工具资源群：
+              <el-button link target="_blank" type="primary"
+                         @click="copyText('1005993749','QQ群号','https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V')"
+                         title="点击前往QQ">Resource sharing群
+              </el-button>
+              、重返未来群：
+              <el-button link target="_blank" type="primary"
+                         @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')"
+                         title="点击前往QQ">
+                金兔子特供部门🐰
+              </el-button>
               ,
               <el-text style="color: orangered">资源来自网络,侵权请联系删除</el-text>
               。
             </el-text>
-            <br>
-            <el-text>
-              3.若首页导航网站无法访问，请使用Chrome、Edge、Firefox等浏览器或尝试VPN，也可能是因为该网站维护中。
+            <el-text tag="p">
+              3.若首页导航网站无法访问，请使用Chrome、Edge、Firefox等浏览器或尝试VPN，也可能是因为该网站维护中【也可能是网站已关闭，太久没校验了】。
             </el-text>
-            <br>
-            <el-text>4.你可以
-              <el-link target="_blank" type="success"
-                       href="https://mp-00526be3-cd12-41bd-84f7-bfbce63bb7d0.cdn.bspapp.com/test1/BookMarks_2023_8_15_2.zip"
-                       title="下载书签">下载
-              </el-link>
+            <el-text tag="p">4.你可以
+              <el-button link target="_blank" type="success"
+                         href="https://mp-00526be3-cd12-41bd-84f7-bfbce63bb7d0.cdn.bspapp.com/test1/BookMarks_2023_8_15_2.zip"
+                         title="下载书签">下载
+              </el-button>
               并解压出HTML文件，导入到自己的浏览器收藏夹。导入步骤可参考相关教程视频：
-              <el-link target="_blank" type="primary"
-                       href="https://www.bilibili.com/video/BV1rr4y1S79J/"
-                       title="B站教程视频">点击此处
-              </el-link>
+              <el-button link target="_blank" type="primary"
+                         href="https://www.bilibili.com/video/BV1rr4y1S79J/"
+                         title="B站教程视频">点击此处
+              </el-button>
               。
             </el-text>
-            <br>
-            <el-text>
+            <el-text tag="p">
               5.本站正在持续更新和适配移动端，如
               <el-text type="warning">UI错位</el-text>
               或
@@ -94,7 +96,7 @@
         </el-collapse-item>
         <el-collapse-item title="隐私政策" name="3">
           <el-card class="privacyStatement">
-            <el-text>
+            <el-text tag="p">
               本站与 Microsoft Clarity 合作，通过行为指标、热图和会话回放来捕捉您如何使用本站的网站并与之互动，以改进本站的产品和服务。网站使用数据是通过第一方和第三方
               Cookie 以及其他跟踪技术捕获的，以确定产品和服务的受欢迎程度和在线活动。此外，本站将这些信息用于网站优化。有关
               Microsoft 如何收集和使用您的数据的更多信息，请访问
@@ -102,8 +104,7 @@
               </el-link>
               。使用本站，即表示您同意本站和 Microsoft 可以收集和使用此数据。
             </el-text>
-            <br>
-            <el-text><b>
+            <el-text tag="p"><b>
               PS:根据国家法律法规，本站仅收集访问者IP等身份信息，使用Clarity收集访问者在本站的浏览轨迹以确定bug位置进行优化，相关的账号、密码等隐私信息均不会被采集。
             </b>
             </el-text>
@@ -127,8 +128,8 @@
             <el-timeline-item v-for="item in  updateNotes.slice().reverse()" :key="item.id" style="text-align: left"
                               :timestamp="item.time" placement="top">
               <el-card>
-                <b>{{ item.title }}</b><br>
-                <el-text> &ensp;{{ item.content }}</el-text>
+                <el-text tag="p">  {{ item.title }}</el-text>
+                <el-text tag="p" type="info"> &ensp;{{ item.content }}</el-text>
               </el-card>
             </el-timeline-item>
           </el-timeline>
@@ -153,12 +154,12 @@
         </el-collapse-item>
         <!--    留言反馈-->
         <el-collapse-item title="留言反馈" name="2">
-          <el-form style="margin: 0 5%">
-            <el-form-item label="联系方式：">
+          <el-form style="margin: 0 5%" >
+            <el-form-item>
               <el-input type="text" v-model.trim="contact" maxlength="30"
                         placeholder="[选填]可在此填写联系方式"></el-input>
             </el-form-item>
-            <el-form-item label="反馈内容：">
+            <el-form-item>
               <el-input type="textarea" v-model.trim="content" minlength="5" maxlength="200" :autosize="true"
                         show-word-limit
                         placeholder="[必填]可在此提交建议、bug反馈或其他内容"/>
@@ -274,6 +275,18 @@ const submitFeedback = async () => {
   justify-content: left;
   text-align: left;
 
+
+}
+
+p {
+  text-align: left;
+  text-indent: 1em;
+  word-spacing: 1px;
+
+  .el-button {
+    margin: 0;
+    word-spacing: 0;
+  }
 }
 
 /*

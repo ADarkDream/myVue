@@ -4,7 +4,7 @@
       <el-button :icon="Plus" @click="activeName='3'" >添加歌曲</el-button>
 <!--      <el-button :icon="Setting"></el-button>-->
       <el-button @click="activeName='2'">
-        <SVG_music_list class="el-icon" style="transform: scale(1.5)"/>播放列表
+        <SVG_music_list class="el-icon" style="transform: scale(1.5)"/>&ensp;播放列表
       </el-button>
       <el-button :icon="Search" @click="isShowSearchPanel=true">搜索</el-button>
     </el-header>
@@ -42,7 +42,7 @@
               </el-row>
             </el-form-item>
             <el-form-item prop="src" label="输入音频链接">
-              <el-row :gutter="24">
+              <el-row :gutter="24" class="add_music">
                 <el-col :span="16">
                   <el-input v-model="musicUrl" placeholder="输入音频链接"></el-input>
                 </el-col>

@@ -25,9 +25,14 @@
             }}-{{ item.cloud_music_id }}
           </el-text>&ensp;
           <el-text v-if="item.fee===1&&!item.src" type="danger">[VIP]</el-text>
-          <el-link v-else @click="addCloudMusic(item.cloud_music_id,true)" size="small" type="primary">
+          <el-button link v-else @click="addCloudMusic(item.cloud_music_id,true)" size="small" type="primary">
             点击播放
-          </el-link>
+          </el-button>
+          <el-button link v-if="item.cloud_music_id!==0&&item.fee!==1"
+                     @click="copyText('https://muxidream.cn/music?cloud_music_id='+item.cloud_music_id,'播放链接')"
+                     size="small" type="primary">
+            分享
+          </el-button>
         </div>
       </div>
       <div>
@@ -41,7 +46,7 @@
         </div>
       </div>
     </div>
-    <el-empty v-else description=" " image="src/assets/fool.png" image-size="400"></el-empty>
+    <el-empty v-else description=" " image="/fool.png" image-size="400"></el-empty>
   </div>
 
 </template>
@@ -52,11 +57,12 @@ import {useMusicSearchStore} from "@/store/music/useMusicSearchStore";
 import useResponsive from "@/hooks/useResponsive";
 import {ElMessage} from "element-plus";
 import {Back, Search} from "@element-plus/icons-vue";
+import useFunction from "@/hooks/useFunction";
 
 const searchStore = useMusicSearchStore()
 const {elSize} = useResponsive()
 const {addCloudMusic, closeSearchPanel} = defineProps(['addCloudMusic', 'closeSearchPanel'])
-
+const {copyText} = useFunction()
 
 const page = ref(0)
 const songCount = computed(() => searchStore.songCount)
@@ -175,28 +181,28 @@ const searchMusic = async (flag?: string) => {
 
 </style>
 <style>
-.el-input__wrapper {
+.searchDiv .el-input__wrapper {
   background: transparent;
   border: none;
   box-shadow: none;
 }
 
-.el-input {
+.searchDiv .el-input {
   border: none;
 }
 
 
-.el-input__wrapper:focus {
+.searchDiv .el-input__wrapper:focus {
   box-shadow: none;
   border: none;
 }
 
-.el-input__inner:focus {
+.searchDiv .el-input__inner:focus {
   box-shadow: none;
   border: none;
 }
 
-.el-input:focus {
+.searchDiv .el-input:focus {
   box-shadow: none;
   border: none;
 }
