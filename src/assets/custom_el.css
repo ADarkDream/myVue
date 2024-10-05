@@ -34,14 +34,20 @@
 
 /*endregion*/
 
-/*region给折叠面板的标题和内容区加间隙*/
+/*region给折叠面板的样式*/
 .el-collapse {
-    --el-collapse-content-bg-color: rgba(255, 255, 255, 0.2);
+    --el-collapse-content-bg-color: rgba(251, 251, 251, 0.25);
+
+}
+
+.dark .el-collapse {
+    --el-collapse-content-bg-color: black;
 
 }
 
 .el-collapse-item__header {
     padding-left: 10px;
+        font-size: 17px;
     border: transparent;
     background-color: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(30px);
@@ -49,7 +55,11 @@
 
 .el-collapse-item__content {
     padding: 10px;
-    background: rgba(255, 255, 255, 0.25);
+    font-family: 华文楷体, sans-serif;
+    word-spacing: 1px;
+    font-weight: 600;
+    font-size: 16px;
+    background: rgba(251, 251, 251, 0.25);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -68,6 +78,11 @@
     box-shadow: none;
 }
 
+/*el-button按钮插槽的自定义的SVG太小了，放大*/
+.custom_button_icon{
+    transform: scale(1.5)
+}
+
 
 /*移动端*/
 @media (max-width: 980px) {
@@ -75,4 +90,12 @@
         padding: 10px 10px 0 10px;
     }
 
+    .el-collapse-item__header {
+          font-size: 14px;
+    }
+
+    .el-collapse-item__content{
+     font-size: 15px;
+
+    }
 }

@@ -1,11 +1,11 @@
 // 引入defineStore用于创建store
 import {defineStore} from 'pinia'
-import {reactive, ref} from 'vue'
+
 import axios from "axios";
 
 
 // 定义并暴露一个store
-export const useBaseUrlStore = defineStore('baseUrl', () => {
+export const useBaseUrl = defineStore('baseUrl', () => {
     //配置axios基地址，根据本环境配置的DEV参数判断是生产环境还是开发环境
     const isLocal=import.meta.env.DEV===true
     axios.defaults.baseURL = isLocal ? 'http://127.0.0.1:9000' : 'https://muxidream.cn/api/'

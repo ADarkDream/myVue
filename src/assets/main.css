@@ -45,3 +45,7 @@ p {
 }
 
 /*endregion*/
+:root {
+    --svg-custom-width: 30px;
+    --svg-custom-fill: #fff;
+}

@@ -3,11 +3,11 @@
     <div class="header">
       <div class="searchDiv">
         <el-button :icon="Back" size="small" @click="closeSearchPanel()"></el-button>
-        <el-input v-model.trim="searchStore.searchConfig.s" @keyup.enter="searchMusic()" placeholder="歌曲名或歌手名"
-                  size="small"/>
+        <el-input class="search" v-model.trim="searchStore.searchConfig.s" @keyup.enter="searchMusic()"
+                  placeholder="歌曲名或歌手名"/>
         <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
       </div>
-      <el-radio-group v-if="true" v-model="searchStore.searchConfig.type" size="small">
+      <el-radio-group v-if="false" v-model="searchStore.searchConfig.type" size="small">
         <el-radio-button label="单曲" :value="1"/>
         <el-radio-button label="专辑" :value="10"/>
         <el-radio-button label="歌手" :value="100"/>
@@ -16,7 +16,6 @@
         <el-radio-button label="歌词" :value="1006"/>
       </el-radio-group>
     </div>
-    <!--    <el-drawer v-model="showResult" :show-close="false" direction="btt" size="75%" title="搜索结果">-->
     <div v-if="showResult">
       <div style="text-align: left">
         <div v-for="(item,index) in searchStore.searchResult" :key="index">
@@ -42,7 +41,7 @@
         </div>
       </div>
     </div>
-    <!--    </el-drawer>-->
+    <el-empty v-else description=" " image="src/assets/fool.png" image-size="400"></el-empty>
   </div>
 
 </template>
@@ -87,7 +86,7 @@ const searchMusic = async (flag?: string) => {
 <style scoped>
 .container {
   --timing: 0.3s;
-  --width-of-input: 250px;
+  --width-of-input: 80%;
   --height-of-input: 40px;
   --border-height: 2px;
   --input-bg: #e1e4ea;
@@ -95,6 +94,7 @@ const searchMusic = async (flag?: string) => {
   --border-radius: 30px;
   --after-border-radius: 1px;
   height: var(--height-of-input);
+
 }
 
 
@@ -106,12 +106,13 @@ const searchMusic = async (flag?: string) => {
 .searchDiv button {
   border: none;
   background: none;
-  color: #8b8ba7;
+  color: currentColor;
 }
 
 .header {
-  text-align: left;
+  margin: 0 auto;
 }
+
 
 .searchDiv {
   position: relative;
@@ -124,17 +125,7 @@ const searchMusic = async (flag?: string) => {
   transition: border-radius 0.5s ease;
   background: var(--input-bg, #fff);
   justify-content: space-between;
-}
-
-/* styling of Input */
-.input {
-  font-size: 0.9rem;
-  background-color: transparent;
-  width: 100%;
-  height: 100%;
-  padding-inline: 0.5em;
-  padding-block: 0.7em;
-  border: none;
+  margin: 0 auto;
 }
 
 /* styling of animated border */
@@ -152,41 +143,9 @@ const searchMusic = async (flag?: string) => {
   transition: transform var(--timing) ease;
 }
 
-/* Hover on Input */
-/*.searchDiv:focus-within {
-  border-radius: var(--after-border-radius);
-}*/
-
-input:focus {
+.search:focus {
   outline: none;
   border: none;
-}
-
-/*
-!* here is code of animated border *!
-.searchDiv:focus-within:before {
-  transform: scale(1);
-}*/
-
-/* styling of close button */
-/* == you can click the close button to remove text == */
-.reset {
-  border: none;
-  background: none;
-  opacity: 0;
-  visibility: hidden;
-}
-
-/* close button shown when typing */
-input:not(:placeholder-shown) ~ .reset {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* sizing svg icons */
-.searchDiv svg {
-  width: 17px;
-  margin-top: 3px;
 }
 
 
@@ -194,7 +153,8 @@ input:not(:placeholder-shown) ~ .reset {
 
 /*夜间模式*/
 .dark .searchDiv {
-  --input-bg: #b3aeb4;
+  /*  --input-bg: #b3aeb4;*/
+  --input-bg: #000;
 }
 
 /*移动端布局*/
@@ -206,7 +166,7 @@ input:not(:placeholder-shown) ~ .reset {
 
 
   .searchDiv {
-    right: 10px;
+    width: 95%;
     font-size: 7px;
   }
 
@@ -218,7 +178,13 @@ input:not(:placeholder-shown) ~ .reset {
 .el-input__wrapper {
   background: transparent;
   border: none;
+  box-shadow: none;
 }
+
+.el-input {
+  border: none;
+}
+
 
 .el-input__wrapper:focus {
   box-shadow: none;

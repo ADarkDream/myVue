@@ -1,10 +1,10 @@
 import {reactive, ref} from "vue";
 import {jwtDecode} from "jwt-decode";
 import {ElMessage} from "element-plus";
-import {useBaseUrlStore} from '@/store/useBaseUrlStore'
+import {useBaseUrl} from '@/hooks/useBaseUrl'
 
 export default function () {
-    const baseUrl = useBaseUrlStore()
+    const baseUrl = useBaseUrl()
     //获取本地存储的用户信息userInfo中的数据
     const imageSrc = baseUrl.qiniuHttpsUrl + '/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png'
     const userInfo = reactive(getLocalUserInfo())

@@ -1,10 +1,10 @@
 import {defineStore} from 'pinia'
 import {onMounted, reactive, ref} from 'vue'
 import {io} from "socket.io-client";
-import {useBaseUrlStore} from '@/store/useBaseUrlStore'
+import {useBaseUrl} from '@/hooks/useBaseUrl'
 import {ElMessage} from "element-plus";
 
-const baseUrl = useBaseUrlStore()
+const baseUrl = useBaseUrl()
 
 // 定义并暴露一个store
 export const useChatInfoStore = defineStore('chatInfo', () => {

@@ -9,6 +9,7 @@ import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 import legacy from "@vitejs/plugin-legacy"
 import compression from 'vite-plugin-compression';
 import VueDevTools from 'vite-plugin-vue-devtools'
+import svgLoader from 'vite-svg-loader'
 // https://vitejs.dev/config/
 
 export default defineConfig({
@@ -33,6 +34,8 @@ export default defineConfig({
                 compilerOptions: {isCustomElement: (tag) => tag.startsWith('wc-')}
             },
         }),
+        //SVG插件
+        svgLoader(),
         //调试插件,默认启动vscode
         VueDevTools({
             // launchEditor: 'webstorm',

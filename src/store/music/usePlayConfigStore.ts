@@ -1,7 +1,7 @@
 // 引入defineStore用于创建store
 import {defineStore} from 'pinia'
 import {computed, ref} from "vue";
-import {useBaseUrlStore} from "@/store/useBaseUrlStore";
+import {useBaseUrl} from "@/hooks/useBaseUrl";
 import {useMusicListStore} from "@/store/music/useMusicListStore";
 
 const musicStore = useMusicListStore()

@@ -1,7 +1,7 @@
 <template>
-  <label class="slider">
-    <input type="range" class="level" v-model="volumeNum" :min="min" :max="max" @change="changeVolume(volumeNum/100)">
-    <span class="volume">
+    <label class="slider">
+      <input type="range" class="level" v-model="volumeNum" :min="min" :max="max" @change="changeVolume(volumeNum/100)">
+      <span class="volume">
          <svg v-if="volumeNum==='0'" class="icon small_icon" viewBox="0 0 1024 1024"><path
              d="M128 420.576v200.864h149.12l175.456 140.064V284.288l-169.792 136.288H128z m132.256-64l204.288-163.968a32 32 0 0 1 52.032 24.96v610.432a32 32 0 0 1-51.968 24.992l-209.92-167.552H96a32 32 0 0 1-32-32v-264.864a32 32 0 0 1 32-32h164.256zM752 458.656L870.4 300.8a32 32 0 1 1 51.2 38.4L792 512l129.6 172.8a32 32 0 0 1-51.2 38.4l-118.4-157.856-118.4 157.856a32 32 0 0 1-51.2-38.4l129.6-172.8-129.6-172.8a32 32 0 0 1 51.2-38.4l118.4 157.856z"/></svg>
                <svg v-else class="icon small_icon"
@@ -28,7 +28,7 @@
   </svg>
 <span>{{ volumeNum }}</span>
       </span>
-  </label>
+    </label>
 </template>
 
 <script setup lang="ts">
@@ -37,8 +37,8 @@ import {useMusicPlayStore} from "@/store/music/useMusicPlayStore";
 
 const musicPlayStore = useMusicPlayStore()
 
-const {min, max, value,changeVolume} = defineProps(['min', 'max', 'value','changeVolume'])
-// const {changeVolume} = musicPlayStore
+const {min, max, value} = defineProps(['min', 'max', 'value'])
+const {changeVolume} = musicPlayStore
 
 const volumeNum = ref(value)
 
@@ -76,6 +76,8 @@ const volumeNum = ref(value)
   position: fixed;
   z-index: 999;
   right: 0;
+  top: 100px;
+  animation: all 1s linear;
 }
 
 .slider .volume {

@@ -6,17 +6,17 @@
       </el-text>&ensp;
       <el-text v-if="item.fee===1&&!item.src" type="danger">[VIP]</el-text>
       <div v-if="true">
-            <el-text  @click="toggleMusic({index})" size="small" type="primary">
-        点击播放{{index}}
-      </el-text>
-      <el-button text size="small" type="primary" @click="ElMessage.info('收藏功能开发中')">
-        收藏到歌单
-      </el-button>
-      <el-button text v-if="item.cloud_music_id!==0"
-                 @click="copyText('https://muxidream.cn/music?cloud_music_id='+item.cloud_music_id,'播放链接')"
-                 size="small" type="primary">
-        分享
-      </el-button>
+        <el-button link @click="toggleMusic({index})" size="small" type="primary">
+          点击播放
+        </el-button>
+        <el-button link size="small" type="primary" @click="ElMessage.info('收藏功能开发中')">
+          收藏到歌单
+        </el-button>
+        <el-button text v-if="item.cloud_music_id!==0"
+                   @click="copyText('https://muxidream.cn/music?cloud_music_id='+item.cloud_music_id,'播放链接')"
+                   size="small" type="primary">
+          分享
+        </el-button>
       </div>
 
     </div>
@@ -28,23 +28,27 @@ import {computed} from "vue";
 import {useMusicListStore} from "@/store/music/useMusicListStore";
 import useFunction from "@/hooks/useFunction";
 import {ElMessage} from "element-plus";
+import {useMusicPlayStore} from "@/store/music/useMusicPlayStore";
 
+const musicPlayStore = useMusicPlayStore()
 const musicStore = useMusicListStore()
-const playList = computed(() => musicStore.playList)
-const {toggleMusic} = defineProps(['toggleMusic'])
+
 const {copyText} = useFunction()
+const {toggleMusic} = musicPlayStore
+const playList = computed(() => musicStore.playList)
 
 </script>
 
 <style scoped>
-.musicDiv{
+.musicDiv {
   padding: 10px 15px;
+  text-align: left;
 }
 
-.musicDiv:hover{
-    background: rgba(255, 255, 255, 0.25);
-   transition: all 0.2s linear;
-cursor: pointer;
+.musicDiv:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transition: all 0.2s linear;
+  cursor: pointer;
 }
 
 </style>

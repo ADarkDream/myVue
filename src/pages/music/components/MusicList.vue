@@ -1,13 +1,13 @@
 <template>
   <div class="container">
-        <div  class="title"><span>歌单广场</span><el-button link icon="Refresh">{{isPC?'刷新':''}}</el-button> </div>
+        <div  class="title"><span>歌单广场</span><el-button link :icon="Refresh">{{isPC?'刷新':''}}</el-button> </div>
     <div class="openMusicList">
       <div v-for="item in musicLists" :key="item.music_list_id" class="musicList">
         <MusicListCoverComp :musicListInfo="item" @click="ElMessage.info('歌单功能开发中')"/>
       </div>
     </div>
     <el-divider></el-divider>
-    <div class="title"><span>我创建的歌单</span> <el-button link icon="Plus" @click="handleChangeDrawer" >{{isPC?'创建歌单':''}}</el-button></div>
+    <div class="title"><span>我创建的歌单</span> <el-button link :icon="Plus" @click="handleChangeDrawer" >{{isPC?'创建歌单':''}}</el-button></div>
     <div class="openMusicList">
       <el-button text type="primary" v-if="myMusicLists.length===0" style="margin: 0 auto">{{"暂无歌单"}}</el-button>
       <div v-for="item in myMusicLists" :key="item.music_list_id" class="musicList">
@@ -37,6 +37,13 @@ import AddMusicList from "@/pages/music/components/AddMusicList.vue";
 import {MusicList} from "@/types/music";
 import MusicListCoverComp from "@/pages/music/components/MusicListCoverComp.vue";
 import {ElMessage} from "element-plus";
+
+
+
+
+
+
+
 
 const {isPC} = useResponsive()
 const {isLogin, uid} = useUserInfo()

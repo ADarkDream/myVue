@@ -1,4 +1,8 @@
 /// <reference types="vite/client" />
+/// <reference types="vite-svg-loader" />
+
+
+
 //解决wangEditor在TS中引入报错的问题，但USerEdit已经解决TS检查了
 // declare module '@wangeditor/editor-for-vue' {
 // const Editor: any;

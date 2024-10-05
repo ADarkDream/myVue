@@ -14,6 +14,9 @@ export default function () {
     //控制PC和手机的dialog宽度
     const dialogWidth = ref<string>(isPC.value ? '50%' : '90%')
     const dialogWidth2 = ref<string>(isPC.value ? '40%' : '80%')
+    //抽屉高度
+    const drawerSize= ref<number>(isPC.value ? screenHeight.value-80 : screenHeight.value-40)
+
     //elSize已经在main.ts中定义了，可删除
     const elSize = ref<string>(isPC.value ? 'default' : 'small')
     // if (!isPC.value) {
@@ -78,6 +81,7 @@ export default function () {
         isForum,
         dialogWidth,
         dialogWidth2,
-        elSize
+        elSize,
+        drawerSize
     }
 }

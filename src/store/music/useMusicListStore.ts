@@ -1,13 +1,13 @@
 // 引入defineStore用于创建store
 import {defineStore} from 'pinia'
 import {computed, reactive, ref} from "vue";
-import {useBaseUrlStore} from "@/store/useBaseUrlStore";
+import {useBaseUrl} from "@/hooks/useBaseUrl";
 import {CloudSongInfo} from "@/types/music";
-
-const {defaultUrl} = useBaseUrlStore()
+import pinia from '@/store'
+const {defaultUrl} = useBaseUrl(pinia)
 
 // 定义并暴露一个store
-export const useMusicListStore = defineStore('music', () => {
+export const useMusicListStore = defineStore('music_list', () => {
     //播放列表
     const playList = ref<CloudSongInfo[]>([
         {

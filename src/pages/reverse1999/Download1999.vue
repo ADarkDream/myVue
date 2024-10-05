@@ -285,7 +285,7 @@ import useResponsive from "@/hooks/useResponsive";
 import useUserInfo from "@/hooks/useUserInfo";
 import {useRouter} from "vue-router";
 import useFunction from "@/hooks/useFunction";
-import {useBaseUrlStore} from '@/store/useBaseUrlStore'
+import {useBaseUrl} from '@/hooks/useBaseUrl'
 import logo from '@/assets/logo-small.png'
 import {emitter} from "@/utils/emitter";
 import DownloadNotice from "@/pages/reverse1999/components/DownloadNotice.vue";
@@ -294,7 +294,7 @@ const {copyText, deepEqual} = useFunction()
 const router = useRouter()
 const {isPC, elSize, screenWidth, containerHeight} = useResponsive()
 const {isLogin, updateLocalUserInfo} = useUserInfo()
-const baseUrl = useBaseUrlStore()
+const baseUrl = useBaseUrl()
 
 
 //用户查询的参数
@@ -789,8 +789,7 @@ console.log('isPC',isPC.value)
 <style scoped>
 .el-header {
   height: auto;
-  padding-left: 0;
-  padding-right: 0;
+  padding: 0;
 }
 
 .roleSort {

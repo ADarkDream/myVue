@@ -1,23 +1,56 @@
 <template>
-  <el-container>
-    <!--    顶部导航栏-->
-    <el-header class="shade">
-      <TitleDiv/>
-    </el-header>
-    <!-- 主要呈现部分(Home / Forum)-->
-    <el-main class="main">
-      <router-view/>
-    </el-main>
-  </el-container>
+  <el-config-provider :locale="locale" :size="isPC?'default':'small'">
+    <el-container class="app">
+
+      <!--    顶部导航栏-->
+      <el-header class="shade">
+        <TitleDiv/>
+      </el-header>
+      <!-- 主要呈现部分(Home / Forum)-->
+      <el-main class="main">
+        <router-view/>
+      </el-main>
+
+    </el-container>
+  </el-config-provider>
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
-import {ref} from "vue"
+import {computed, ref} from 'vue';
 import TitleDiv from "@/components/TitleDiv.vue";
 import {ElMessage} from "element-plus";
 import {jwtDecode} from "jwt-decode";
+import zhCn from 'element-plus/es/locale/lang/zh-cn' //elementPlus国际化
+import en from 'element-plus/es/locale/lang/en' //elementPlus国际化
 
+import {RouterView} from 'vue-router';
+
+const isPC = ref(true)
+
+// 判断是否是PC端
+window.addEventListener('resize', () => checkIsPC())
+
+function checkIsPC() {
+  console.log('屏幕变化了')
+  //获取当前屏幕宽度
+
+  isPC.value = document.body.clientWidth > 980;
+  // 调用函数判断设备类型
+  const userAgentInfo = navigator.userAgent
+  const agents = ['Android', 'iPhone', 'SymbianOS', 'Windows Phone', 'iPad', 'iPod']
+  for (let i = 0; i < agents.length; i++) {
+    if (userAgentInfo.includes(agents[i])) {
+      isPC.value = false
+      break
+    }
+  }
+}
+
+checkIsPC()
+
+const language = ref('zh-cn')
+const locale = computed(() => (language.value === 'zh-cn' ? zhCn : en))
 
 // console.log(route.path==='/')
 interface Token {
@@ -68,6 +101,8 @@ axios.interceptors.response.use((response) => {
   //获取响应的地址
   const baseURL = response.config.baseURL
   //获取响应的接口
+
+  //region第三方接口处理
   // const url = response.config.url
   // console.log('baseURL',response.config.baseURL)
   // console.log('url',response.config.url)
@@ -81,7 +116,12 @@ axios.interceptors.response.use((response) => {
     if (result.status === 200) return result
     else return Promise.reject(result)
   }
-//上面是第三方接口处理，下面是自己的接口
+
+  //endregion
+
+
+
+// 下面是自己的接口
   const result = response.data.data
 
   if (result.status === 200) return response.data
@@ -125,25 +165,17 @@ axios.interceptors.response.use((response) => {
 </script>
 
 <style scoped>
-
-aside {
-  margin-top: 50px;
-}
-
 .shade {
   /*会导致登录窗口被裁减
-   backdrop-filter: blur(30px);
+   backdrop-filter: blur(40px);
  */
   padding: 0;
   height: 40px;
   z-index: 100;
 }
-.el-main{
-  padding: 20px;
-}
 
 @media (max-width: 980px) {
-    .shade {
+  .shade {
     padding: 0;
     position: fixed;
     width: 100%;

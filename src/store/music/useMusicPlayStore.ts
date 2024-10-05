@@ -39,14 +39,13 @@ const playingIndex = computed({
     }
 )
 
-//当前播放模式的序号
-const modeIndex = computed(() => playConfigStore.modeIndex)
 
 //当前播放的歌曲信息
 const thisMusic = computed({
     get: () => musicStore.thisMusic,
     set: (val: CloudSongInfo) => musicStore.thisMusic = val
 })
+
 
 // 定义并暴露一个store
 export const useMusicPlayStore = defineStore('music_play', () => {
@@ -80,36 +79,38 @@ export const useMusicPlayStore = defineStore('music_play', () => {
 
 //锁住播放器面板
     const isLock = ref(false)
-//显示音量控制面板
-    const isShowVolumePanel = ref(false)
+
 
 //是否显示播放器
     const isShowPlayer = ref(true)
+    const timer_player = ref<NodeJS.Timeout>()
+    const time_player = ref(10)
 
-    const timer = ref<NodeJS.Timeout>()
-    const time = ref(10)
+//显示音量控制面板
+    const isShowVolumePanel = ref(false)
+    const timer_volume = ref<NodeJS.Timeout>()
+    const time_volume = ref(5)
 
-
-//切换播放器是否显示
+//切换播放器显示状态
     const togglePlayerVisible = () => {
         //如果有定时器，先重置防止重复
-        if (timer.value) clearInterval(timer.value)
+        if (timer_player.value) clearInterval(timer_player.value)
         //当前是可见的，且未锁住
         if (isShowPlayer.value && !isLock.value) {
             //重置倒计时
-            time.value = 10
+            time_player.value = 10
             //开启定时器
-            timer.value = setInterval(() => {
-                console.log(`还有${time.value}S隐藏播放器`)
-                time.value--
+            timer_player.value = setInterval(() => {
+                console.log(`还有${time_player.value}S隐藏播放器`)
+                time_player.value--
                 //倒计时为0
-                if (time.value <= 0) {
+                if (time_player.value <= 0) {
                     if (isShowPlayer.value && !isLock.value) {
                         isShowPlayer.value = false   //没锁住则隐藏
                     }
                     //如果是锁住的，则不隐藏播放器
                     //清除定时器
-                    clearInterval(timer.value)
+                    clearInterval(timer_player.value)
                 }
             }, 1000)
         } else if (!isShowPlayer.value) { //当前不可见，显示播放器并开启定时器
@@ -118,11 +119,43 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         }
     }
 
+    //切换音量控制面板显示状态
+    const toggleVolumePanelVisible = () => {
+        //如果有定时器，先重置防止重复
+        if (timer_volume.value) clearInterval(timer_volume.value)
+        //当前是可见的
+        if (isShowVolumePanel.value) {
+            //重置倒计时
+            time_volume.value = 5
+            //开启定时器
+            timer_volume.value = setInterval(() => {
+                console.log(`还有${time_volume.value}S隐藏音量控制面板`)
+                time_volume.value--
+                //倒计时为0
+                if (time_volume.value <= 0) {
+                    if (isShowVolumePanel.value) { //未隐藏则隐藏
+                        isShowVolumePanel.value = false
+                    }
+                    //清除定时器
+                    clearInterval(timer_volume.value)
+                }
+            }, 1000)
+        } else if (!isShowVolumePanel.value) { //当前不可见，显示播放器并开启定时器
+            isShowVolumePanel.value = true
+            toggleVolumePanelVisible()
+        }
+    }
+
+//锁定播放器使其不隐藏
     const lockThePlayer = () => {
         if (isLock.value) {
             isLock.value = false
+            ElMessage.info('取消锁定，10秒后自动隐藏')
             togglePlayerVisible()
-        } else isLock.value = true
+        } else {
+            isLock.value = true
+            ElMessage.success('播放器已锁定(取消自动隐藏)')
+        }
     }
 
 
@@ -228,11 +261,11 @@ export const useMusicPlayStore = defineStore('music_play', () => {
             toggleMusic({})
         }
     }
-
+    let gainNode = ref()
 //修改音量
     const changeVolume = (value: number) => {
         console.log('音量变化', value)
-        gainNode.gain.value = value
+        gainNode.value.gain.value = value
         volume.value = value
     }
 
@@ -319,8 +352,25 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         duration.value = audioElement.value.duration
     }
 
+//添加并播放新音乐(链接)
+    const addMusic = async (url: string) => {
+        // if (!newMusic.value.src) return ElMessage.error('音乐链接不能为空')
+        const reg = /(https?:\/\/)?(([0-9a-z.]+\.[a-z]+)|(([0-9]{1,3}\.){3}[0-9]{1,3}))(:[0-9]+)?(\/[0-9a-z%\/.\-_]*)?(\?[0-9a-z=&%_\-]*)?(#[0-9a-z=&%_\-]*)?/ig
+        if (!reg.test(newMusic.value.src)) return ElMessage.error('请输入一个网址链接')
+        //去除响应式
+        const songInfo = {
+            name: '',
+            artists: [{name: '', pic_url: ''}],
+            album: {name: '', pic_url: ''},
+            src: url
+        }
 
-//根据网易云音乐ID添加到播放列表
+        const index = musicStore.addMusicList([songInfo], {})
+        //切换到最后一首
+        await toggleMusic({index})
+    }
+
+//添加并播放新音乐(网易云音乐ID)
     const addCloudMusic = async (id: number, isPlay = false) => {
         try {
             if (!id) return
@@ -505,6 +555,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
     return {
         audioContext,
         audioElement,
+        gainNode,
         infoBarActive, controlPanelActive,
         nameScroll,
         transformX,
@@ -513,14 +564,17 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         isShowPlayer,
         isLock,
         isShowVolumePanel,
+        setAudioElement,
+        setNameElement,
         isScroll,
         lockThePlayer,
         togglePlayerVisible,
+        toggleVolumePanelVisible,
         play,
         changeVolume,
-        setAudioElement,
-        setNameElement,
         changeCurrentTime,
-        toggleMusic
+        toggleMusic,
+        addCloudMusic,
+        addMusic
     }
 })
