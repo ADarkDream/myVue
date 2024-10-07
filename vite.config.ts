@@ -26,6 +26,13 @@ export default defineConfig({
             //         // ws: true,                       //是否代理 websockets
             //         secure: true, //是否https接口
             //     }
+            // "/music_api": {
+            //     target: "http://127.0.0.1:4000",
+            //     changeOrigin: true, //是否跨域
+            //     rewrite: (path) => path.replace(/^\/music_api/, ""), //将代理的地址替换为目标地址
+            //     // ws: true,                       //是否代理 websockets
+            //     secure: false, //是否https接口
+            // }
         }
     },
     plugins: [

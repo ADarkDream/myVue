@@ -51,11 +51,7 @@
           <!--播放指示器-->
           <el-button link @click="togglePlayerVisible()" v-if="showPlayer">
             <el-tooltip content="显示播放器" placement="bottom" effect="light">
-              <svg class="musicIcon" :class="{paused:!isPlaying}" viewBox="0 0 1024 1024"
-                   xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M512 1024C229.239467 1024 0 794.760533 0 512S229.239467 0 512 0 1024 229.239467 1024 512 794.760533 1024 512 1024z m215.813689-682.552889v-106.0864c0-18.568533-15.746844-32.813511-33.268622-30.037333l-323.265423 51.268266c-13.425778 2.161778-23.369956 14.267733-23.369955 28.512712v338.602666a86.721422 86.721422 0 0 0-32.426667-6.257778c-48.5376 0-87.927467 39.867733-87.927466 89.065245 0 49.220267 39.367111 89.088 87.927466 89.088s87.881956-39.822222 87.881956-89.019733c0-1.547378-0.068267-3.094756-0.136534-4.642134h0.136534V392.942933l268.925155-42.689422v217.224533a87.4496 87.4496 0 0 0-32.540444-6.303288c-48.696889 0-88.064 39.867733-88.064 89.065244 0 49.220267 39.435378 89.088 88.064 89.088 48.605867 0 88.064-39.867733 88.064-89.088 0-2.412089-0.136533-4.824178-0.273067-7.259022V341.515378l0.273067-0.068267z"/>
-              </svg>
+              <SVG_music class="musicIcon" :class="{paused:!isPlaying}"/>
             </el-tooltip>
           </el-button>
           <!--登录按钮-->
@@ -106,13 +102,11 @@
                 <el-dropdown-item v-if="isLogin&&isAdmin" @click="exit(true)" :icon="SwitchButton">
                   退出管理员登录
                 </el-dropdown-item>
+                <!--更换壁纸-->
+                <el-dropdown-item v-if="!isHome" @click="changeBG(1)" :icon="Switch">更换壁纸</el-dropdown-item>
                 <!--新闻-->
                 <el-dropdown-item @click="goTo('news')">
-                  <svg class="el-icon" viewBox="0 0 1024 1024">
-                    <path
-                        d="M878.18 118.28l-732.3 0c-58.14 0-105.42 47.34-105.42 105.42l0 576.48c0 58.2 47.34 105.48 105.42 105.48l732.3 0c58.14 0 105.42-47.28 105.42-105.48l0-576.42c-0.06-58.14-47.34-105.48-105.42-105.48zM923.54 800.24c0 25.08-20.4 45.48-45.42 45.48l-732.24 0c-25.02 0-45.42-20.4-45.42-45.48l0-576.48c0-25.02 20.4-45.42 45.42-45.42l732.3 0c25.02 0 45.42 20.4 45.42 45.42l0 576.48zM181.04 264.08l661.86 0 0 61.86-661.86 0 0-61.86zM542 390.74l300.96 0 0 61.86-300.96 0 0-61.86zM542 516.08l300.96 0 0 88.74-300.96 0 0-88.74zM542 692l246.36 0 0 61.86-246.36 0 0-61.86zM181.04 391.64l285.96 0 0 362.16-285.96 0 0-362.16z"
-                        fill="CurrentColor"></path>
-                  </svg>
+                  <SVG_news class="el-icon"/>
                   &ensp;新闻
                 </el-dropdown-item>
                 <!--公告-->
@@ -125,11 +119,7 @@
                 </el-dropdown-item>
                 <!--音乐播放器-->
                 <el-dropdown-item @click="goTo('music')">
-                  <svg class="el-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200"
-                       height="200">
-                    <path
-                        d="M512 1024C229.239467 1024 0 794.760533 0 512S229.239467 0 512 0 1024 229.239467 1024 512 794.760533 1024 512 1024z m215.813689-682.552889v-106.0864c0-18.568533-15.746844-32.813511-33.268622-30.037333l-323.265423 51.268266c-13.425778 2.161778-23.369956 14.267733-23.369955 28.512712v338.602666a86.721422 86.721422 0 0 0-32.426667-6.257778c-48.5376 0-87.927467 39.867733-87.927466 89.065245 0 49.220267 39.367111 89.088 87.927466 89.088s87.881956-39.822222 87.881956-89.019733c0-1.547378-0.068267-3.094756-0.136534-4.642134h0.136534V392.942933l268.925155-42.689422v217.224533a87.4496 87.4496 0 0 0-32.540444-6.303288c-48.696889 0-88.064 39.867733-88.064 89.065244 0 49.220267 39.435378 89.088 88.064 89.088 48.605867 0 88.064-39.867733 88.064-89.088 0-2.412089-0.136533-4.824178-0.273067-7.259022V341.515378l0.273067-0.068267z"/>
-                  </svg>
+                  <SVG_music class="el-icon"/>
                   &ensp;音乐播放器demo
                 </el-dropdown-item>
                 <!--设置-->
@@ -171,11 +161,7 @@
       <el-space class="title-right">
         <!--播放指示器-->
         <el-button link @click="togglePlayerVisible()" v-if="showPlayer">
-          <svg class="musicIcon" :class="{paused:!isPlaying}" viewBox="0 0 1024 1024"
-               xmlns="http://www.w3.org/2000/svg">
-            <path
-                d="M512 1024C229.239467 1024 0 794.760533 0 512S229.239467 0 512 0 1024 229.239467 1024 512 794.760533 1024 512 1024z m215.813689-682.552889v-106.0864c0-18.568533-15.746844-32.813511-33.268622-30.037333l-323.265423 51.268266c-13.425778 2.161778-23.369956 14.267733-23.369955 28.512712v338.602666a86.721422 86.721422 0 0 0-32.426667-6.257778c-48.5376 0-87.927467 39.867733-87.927466 89.065245 0 49.220267 39.367111 89.088 87.927466 89.088s87.881956-39.822222 87.881956-89.019733c0-1.547378-0.068267-3.094756-0.136534-4.642134h0.136534V392.942933l268.925155-42.689422v217.224533a87.4496 87.4496 0 0 0-32.540444-6.303288c-48.696889 0-88.064 39.867733-88.064 89.065244 0 49.220267 39.435378 89.088 88.064 89.088 48.605867 0 88.064-39.867733 88.064-89.088 0-2.412089-0.136533-4.824178-0.273067-7.259022V341.515378l0.273067-0.068267z"/>
-          </svg>
+          <SVG_music class="musicIcon" :class="{paused:!isPlaying}"/>
         </el-button>
         <!--登录按钮-->
         <el-button @click="showLoginDrawer" v-if="!isLogin">
@@ -229,11 +215,7 @@
               </el-dropdown-item>
               <!--新闻-->
               <el-dropdown-item @click="goTo('news')">
-                <svg class="el-icon" viewBox="0 0 1024 1024">
-                  <path
-                      d="M878.18 118.28l-732.3 0c-58.14 0-105.42 47.34-105.42 105.42l0 576.48c0 58.2 47.34 105.48 105.42 105.48l732.3 0c58.14 0 105.42-47.28 105.42-105.48l0-576.42c-0.06-58.14-47.34-105.48-105.42-105.48zM923.54 800.24c0 25.08-20.4 45.48-45.42 45.48l-732.24 0c-25.02 0-45.42-20.4-45.42-45.48l0-576.48c0-25.02 20.4-45.42 45.42-45.42l732.3 0c25.02 0 45.42 20.4 45.42 45.42l0 576.48zM181.04 264.08l661.86 0 0 61.86-661.86 0 0-61.86zM542 390.74l300.96 0 0 61.86-300.96 0 0-61.86zM542 516.08l300.96 0 0 88.74-300.96 0 0-88.74zM542 692l246.36 0 0 61.86-246.36 0 0-61.86zM181.04 391.64l285.96 0 0 362.16-285.96 0 0-362.16z"
-                      fill="CurrentColor"></path>
-                </svg>
+                <SVG_news class="el-icon"/>
                 &ensp;新闻
               </el-dropdown-item>
               <!--公告-->
@@ -246,11 +228,7 @@
               </el-dropdown-item>
               <!--音乐播放器-->
               <el-dropdown-item @click="goTo('music')">
-                <svg class="el-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200"
-                     height="200">
-                  <path
-                      d="M512 1024C229.239467 1024 0 794.760533 0 512S229.239467 0 512 0 1024 229.239467 1024 512 794.760533 1024 512 1024z m215.813689-682.552889v-106.0864c0-18.568533-15.746844-32.813511-33.268622-30.037333l-323.265423 51.268266c-13.425778 2.161778-23.369956 14.267733-23.369955 28.512712v338.602666a86.721422 86.721422 0 0 0-32.426667-6.257778c-48.5376 0-87.927467 39.867733-87.927466 89.065245 0 49.220267 39.367111 89.088 87.927466 89.088s87.881956-39.822222 87.881956-89.019733c0-1.547378-0.068267-3.094756-0.136534-4.642134h0.136534V392.942933l268.925155-42.689422v217.224533a87.4496 87.4496 0 0 0-32.540444-6.303288c-48.696889 0-88.064 39.867733-88.064 89.065244 0 49.220267 39.435378 89.088 88.064 89.088 48.605867 0 88.064-39.867733 88.064-89.088 0-2.412089-0.136533-4.824178-0.273067-7.259022V341.515378l0.273067-0.068267z"/>
-                </svg>
+                <SVG_music class="el-icon"/>
                 &ensp;音乐播放器demo
               </el-dropdown-item>
               <!--设置-->
@@ -300,9 +278,9 @@
 
     </el-dialog>
 
-      <!--音量控制面板-->
+    <!--音量控制面板-->
     <Transition name="fade">
-      <VolumeComp v-if="isShowVolumePanel" :min="0" :max="100" :value="volume*100"  @click="toggleVolumePanelVisible"/>
+      <VolumeComp v-if="isShowVolumePanel" :min="0" :max="100" :value="volume*100" @click="toggleVolumePanelVisible"/>
     </Transition>
     <!--播放器-->
     <div class="music_div">
@@ -339,7 +317,8 @@ import {useMusicPlayStore} from "@/store/music/useMusicPlayStore";
 import {useMusicListStore} from "@/store/music/useMusicListStore";
 import {usePlayConfigStore} from '@/store/music/usePlayConfigStore'
 import VolumeComp from "@/components/smallComp/VolumeComp.vue";
-
+import SVG_music from '@/assets/music/music.svg?component'
+import SVG_news from '@/assets/TitleDiv/news.svg?component'
 
 const {isLogin, isAdmin, username, headImgUrl, bgUrl, errorImage} = useUserInfo()
 const {isDark, isPC, isHome, isForum} = useResponsive()
@@ -348,8 +327,8 @@ const router = useRouter()
 const route = useRoute()
 const musicPlayStore = useMusicPlayStore()
 const musicListStore = useMusicListStore()
-const playConfigStore=usePlayConfigStore()
-const {togglePlayerVisible,toggleVolumePanelVisible} = musicPlayStore
+const playConfigStore = usePlayConfigStore()
+const {togglePlayerVisible, toggleVolumePanelVisible} = musicPlayStore
 const {isShowVolumePanel} = toRefs(musicPlayStore)
 const {volume} = toRefs(playConfigStore)
 const {isPlaying} = toRefs(musicListStore)
@@ -560,6 +539,7 @@ const showFlag = reactive<NoticeActiveNum>({
 //切换公告页面
 const changePage = (showNum: string, activeNum = '1') => {
   showFlag.showNum = showNum
+  console.log('前往', showNum, activeNum)
   setTimeout(() => showFlag.activeNum = activeNum, 300)
 }
 
@@ -623,10 +603,6 @@ emitter.on('showNotice', (item: NoticeActiveNum) => {
   color: gray
 }
 
-.username:hover {
-  background-color: transparent;
-  color: #CFB53B;
-}
 
 /*导航栏头像*/
 .headIcon {
@@ -664,6 +640,13 @@ emitter.on('showNotice', (item: NoticeActiveNum) => {
   overflow-y: visible;
   position: fixed;
   bottom: 70px;
+}
+
+@media (hover: hover) {
+  .username:hover {
+    background-color: transparent;
+    color: #CFB53B;
+  }
 }
 
 @media (max-width: 980px) {

@@ -3,87 +3,83 @@
     padding: 20px 20px 0 20px;
 }
 
-/*region给折叠面板加圆角边框*/
-.el-collapse {
-    border-radius: 5px;
-}
-
-/*第一个折叠面板的标题*/
-.el-collapse .el-collapse-item:first-child .el-collapse-item__header {
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-}
-
-/*最后一个折叠面板的标题(未激活时)*/
-.el-collapse .el-collapse-item:last-child .el-collapse-item__header {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
-/*最后一个折叠面板的标题(激活时)*/
-.el-collapse .el-collapse-item:last-child .el-collapse-item__header.is-active {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
-/*最后一个折叠面板的内容区(激活时)*/
-.el-collapse .el-collapse-item:last-child .el-collapse-item__wrap {
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
-/*endregion*/
 
 /*region给折叠面板的样式*/
 .el-collapse {
-    --el-collapse-content-bg-color: rgba(251, 251, 251, 0.25);
+    border-radius: 5px;
 
-}
 
-.dark .el-collapse {
-    --el-collapse-content-bg-color: black;
+    /*第一个折叠面板的标题*/
 
-}
-
-.el-collapse-item__header {
-    padding-left: 15px;
-    font-size: 16px;
-    border: transparent;
-    background-color: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(30px);
-}
-
-.el-collapse-item__content {
-    padding: 10px;
-    font-family: 华文楷体, sans-serif;
-    word-spacing: 1px;
-    font-weight: 600;
-    --el-font-size-base: 15px;
-    background: rgba(251, 251, 251, 0.25);
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    /*小标题*/
-    --el-font-size-extra-small: 15px;
-    .el-form-item--small {
-        font-size: 15px;
+    .el-collapse-item:first-child .el-collapse-item__header {
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
     }
 
-    /*复选框文字内容*/
-    .el-checkbox.el-checkbox--small .el-checkbox__label {
-        font-size: 14px;
+    /*最后一个折叠面板的标题(未激活时)*/
+
+    .el-collapse-item:last-child .el-collapse-item__header {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+
+    /*最后一个折叠面板的标题(激活时)*/
+
+    .el-collapse-item:last-child .el-collapse-item__header.is-active {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    /*最后一个折叠面板的内容区(激活时)*/
+
+    .el-collapse-item:last-child .el-collapse-item__wrap {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+
+
+    .el-collapse-item__header {
+        padding-left: 15px;
+        font-size: 16px;
+    }
+
+    .el-collapse-item__content {
+        position: relative;
+        font-family: 华文楷体, sans-serif;
+        word-spacing: 1px;
         font-weight: 600;
+        --el-font-size-base: 15px;
+        padding: 10px;
+        /*小标题*/
+        --el-font-size-extra-small: 15px;
+
+        .el-form-item--small {
+            font-size: 15px;
+        }
+
+        /*复选框文字内容*/
+
+        .el-checkbox.el-checkbox--small, .el-checkbox__label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+    }
+
+
+    @media (hover: hover) {
+        /*折叠面板的标题*/
+        .el-collapse-item__header:hover {
+            /*    color: var(--el-color-primary);*/
+            font-weight: 600;
+        }
     }
 
 }
+
 
 /*endregion*/
 
-/*给折叠面板的标题加颜色*/
-.el-collapse-item__header:hover {
-    /*    color: var(--el-color-primary);*/
-    font-weight: 600;
-}
 
 /*去除输入框焦点边框*/
 .el-input__wrapper.is-focus {
@@ -93,6 +89,18 @@
 /*el-button按钮插槽的自定义的SVG太小了，放大*/
 .custom_button_icon {
     transform: scale(1.5)
+}
+
+.el-dialog__header.show-close {
+    padding-right: 5px;
+}
+
+.el-dialog header {
+    padding: 0 5px;
+}
+
+.el-tabs__content {
+    padding: 0 10px;
 }
 
 
@@ -110,4 +118,38 @@
         --el-font-size-base: 15px;
 
     }
+
+    .el-menu {
+        height: 40px
+    }
+
+    .el-card_body {
+        padding: 5px;
+    }
 }
+
+/*.music .el-collapse {*/
+/*  --el-collapse-content-bg-color: rgba(251, 251, 251, 0.25);*/
+
+/*  .el-collapse-item__header {*/
+/*    background-color: rgba(255, 255, 255, 0.5);*/
+/*    backdrop-filter: blur(3px);*/
+/*  }*/
+
+/*  .el-collapse-item__content:after {*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    left: 0;*/
+/*    top: 0;*/
+/*    z-index: -1;*/
+/*    background: rgba(251, 251, 251, 0.15);*/
+/*    backdrop-filter: blur(30px) saturate(1);*/
+/*    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);*/
+/*  }*/
+/*}*/
+/*夜间模式*/
+/*.dark .el-collapse {
+  --el-collapse-content-bg-color: black;
+}*/

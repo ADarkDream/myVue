@@ -49,6 +49,12 @@ function checkIsPC() {
 
 checkIsPC()
 
+
+
+
+
+
+
 const language = ref('zh-cn')
 const locale = computed(() => (language.value === 'zh-cn' ? zhCn : en))
 
@@ -83,7 +89,7 @@ const isErrorPrinted = ref(false)
 // 添加响应拦截器，对响应数据做点什么
 axios.interceptors.response.use((response) => {
   // 2xx 范围内的状态码都会触发该函数。
-
+  // console.log('response', response.config.baseURL, response)
   // console.log('App组件打印的response数据如下：')
   // console.log(response)
 
@@ -117,6 +123,11 @@ axios.interceptors.response.use((response) => {
     else return Promise.reject(result)
   }
 
+  // if (response.data.code) {//music_api返回的
+  //   if (response.data.code === 200) {
+  //     return response.data
+  //   }
+  // }
   //endregion
 
 

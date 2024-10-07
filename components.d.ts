@@ -68,6 +68,7 @@ declare module 'vue' {
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    LikeHeart: typeof import('./src/components/smallComp/LikeHeart.vue')['default']
     LoginFormComp: typeof import('./src/components/form/LoginFormComp.vue')['default']
     Notice: typeof import('./src/components/Notice.vue')['default']
     RegisterFormComp: typeof import('./src/components/form/RegisterFormComp.vue')['default']

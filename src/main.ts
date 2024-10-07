@@ -14,7 +14,9 @@ import pinia from '@/store'
 import '@/assets/custom_el.css'
 // 自定义动画样式
 import '@/assets/animation.css'
-
+/*调色盘*/
+import VSwatches from 'vue3-swatches'
+import 'vue3-swatches/dist/style.css'
 
 import hljsVuePlugin from "@highlightjs/vue-plugin";
 import 'highlight.js/lib/common';//直接加载常用代码语言
@@ -31,6 +33,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 app.use(router)
 app.use(ElementPlus)
+app.use(VSwatches)//调色盘
 app.use(hljsVuePlugin)//代码高亮，标签
 app.use(pinia)
 app.mount('#app')

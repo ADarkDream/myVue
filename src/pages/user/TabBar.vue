@@ -1,13 +1,13 @@
 <template>
   <div class="tabBar">
-    <!--    悬浮按钮-->
-    <!--    <div style="position: absolute;bottom: 60px;justify-content: space-evenly;">-->
-    <!--          <div > 123</div>-->
-    <!--           <div > 123</div>-->
-    <!--    </div>-->
+    <!--    做一个悬浮菜单按钮-->
+    <!--        <div style="position: absolute;bottom: 60px;justify-content: space-evenly;">
+                  <div > 123</div>
+                   <div > 123</div>
+            </div>-->
     <menu ref="menu" class="menu">
 
-      <div :class="activeIndex===0? 'menu__item active':'menu__item'" style="--bgColorItem: #ff8c00;"
+      <div :class="index===0? 'menu__item active':'menu__item'" style="--bgColorItem: #ff8c00;"
            @click="clickItem(0)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M3.8,6.6h16.4"/>
@@ -21,7 +21,7 @@
         </svg>
       </div>
 
-      <div :class="activeIndex===1? 'menu__item active':'menu__item'" style="--bgColorItem: #f54888;"
+      <div :class="index===1? 'menu__item active':'menu__item'" style="--bgColorItem: #f54888;"
            @click="clickItem(1)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M5.1,3.9h13.9c0.6,0,1.2,0.5,1.2,1.2v13.9c0,0.6-0.5,1.2-1.2,1.2H5.1c-0.6,0-1.2-0.5-1.2-1.2V5.1
@@ -33,14 +33,14 @@
       </div>
 
 
-      <div :class="activeIndex===2? 'menu__item active':'menu__item'" style="--bgColorItem: #65ddb7;"
+      <div :class="index===2? 'menu__item active':'menu__item'" style="--bgColorItem: #65ddb7;"
            @click="clickItem(2)">
         <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="100" height="100">
           <path d="M12,12H20M12,12V20M12,12V4M12,12H4"/>
         </svg>
       </div>
 
-      <div :class="activeIndex===3? 'menu__item active':'menu__item'" style="--bgColorItem: #7373fb;"
+      <div :class="index===3? 'menu__item active':'menu__item'" style="--bgColorItem: #7373fb;"
            @click="clickItem(3)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M3.4,11.9l8.8,4.4l8.4-4.4"/>
@@ -49,7 +49,7 @@
         </svg>
       </div>
 
-      <div :class="activeIndex===4? 'menu__item active':'menu__item'" style="--bgColorItem:#e0b115;"
+      <div :class="index===4? 'menu__item active':'menu__item'" style="--bgColorItem:#e0b115;"
            @click="clickItem(4)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M5.1,3.9h13.9c0.6,0,1.2,0.5,1.2,1.2v13.9c0,0.6-0.5,1.2-1.2,1.2H5.1c-0.6,0-1.2-0.5-1.2-1.2V5.1
@@ -76,83 +76,20 @@
 </template>
 
 <script setup lang="ts">
-//region
-import {ref, onMounted} from 'vue';
-import {useRouter} from 'vue-router';
+import {ref, onMounted, watch, defineProps, toRefs} from 'vue';
 
-const {change, index} = defineProps(['change', 'index'])
-const router = useRouter()
-//
-// onMounted(() => {
-//   nextTick(() => offsetMenuBorder(activeItem, menuBorder.value))
-//
-// const body = document.body;
-// const bgColorsBody = ["#ffb457", "#ff96bd", "#9999fb", "#ffe797", "#cffff1"];
-// let menu = ref(null)
-//
-// const menuItems = document.querySelectorAll(".menu__item")
-// const menuBorder = ref("menu__border")
-// let activeItem = document.querySelector(".active");
-//
-//
-// console.log('activeItem', activeItem)
-//
-// function clickItem(item, index) {
-//   nextTick(() => {
-//   })
-//   menu.value!.style.removeProperty("--timeOut");
-//
-//   if (activeItem == item) return;
-//
-//   if (activeItem) {
-//     activeItem.classList.remove("active");
-//   }
-//   item.classList.add("active");
-//   body.style.backgroundColor = bgColorsBody[index];
-//   activeItem = item;
-//   offsetMenuBorder(activeItem, menuBorder.value)
-// }
-//
-// function offsetMenuBorder(element, menuBorder) {
-//   console.log('menuBorder')
-//   console.log('menuBorder',menuBorder)
-//
-// // let offsetActiveItem
-// //  let left
-// //   nextTick(()=> {
-// //     offsetActiveItem = element.getBoundingClientRect()
-// //     left = Math.floor(offsetActiveItem.left - menu.offsetLeft - (menuBorder.offsetWidth - offsetActiveItem.width) / 2) + "px";
-// //   })
-//   const offsetActiveItem = element.getBoundingClientRect();
-//   const left = Math.floor(offsetActiveItem.left - menu.offsetLeft - (menuBorder.offsetWidth - offsetActiveItem.width) / 2) + "px";
-//   menuBorder.style.transform = `translate3d(${left}, 0 , 0)`;
-//
-// }
-//
-//
-// menuItems.forEach((item, index) => {
-//
-//   item.addEventListener("click", () => clickItem(item, index));
-//
-// })
-//
-// window.addEventListener("resize", () => {
-//   offsetMenuBorder(activeItem, menuBorder.value);
-//   menu.style.setProperty("--timeOut", "none");
-// });
-//
-// })
-
-
-//endregion
-// const bgColorsBody = ["#ffb457", "#ff96bd", "#9999fb", "#ffe797", "#cffff1"];
-
+const props = defineProps<{
+  change: Function,
+  index: number
+}>()
+const {change} = props
+const {index} = toRefs(props)
 //元素：tab菜单
 const menu = ref(null)
 //元素数组：按钮
 let menuItems = null
-//元素：当前选中的按钮元素
-const activeIndex = ref(index)
+
+
 const activeItem = ref(null)
 //元素：半圆背景
 const menuBorder = ref(null)
@@ -161,10 +98,9 @@ const menuBorder = ref(null)
 //点击按钮触发
 const clickItem = (id: number) => {
 //重复点击同一个按钮
-  if (activeIndex.value === id) return
+  if (index.value === id) return
   //跳转路由
   change(id)
-  activeIndex.value = id
   offsetMenuBorder(menuItems![id])
 }
 
@@ -172,7 +108,7 @@ const clickItem = (id: number) => {
 const offsetMenuBorder = (element: HTMLDivElement) => {
 
   const offsetActiveItem = element.getBoundingClientRect()
-  console.log('menuItems![index]', menuItems![index])
+  console.log('menuItems![index.value]', menuItems![index.value])
   console.log('offsetActiveItem', offsetActiveItem)
   const left = Math.floor(offsetActiveItem.left - menu.value.offsetLeft - (menuBorder.value.offsetWidth - offsetActiveItem.width) / 2) + "px"
   menuBorder.value.style.transform = `translate3d(${left}, 0, 0)`
@@ -180,26 +116,20 @@ const offsetMenuBorder = (element: HTMLDivElement) => {
 
 onMounted(() => {
   //跳转到某界面
-  change(index)
-  activeIndex.value = index
-  console.log('barindex', index)
+  change(index.value)
+  console.log('barindex', index.value)
   //获取按钮元素
   menuItems = menu.value.querySelectorAll(".menu__item");
-  console.log('menuItems[index]', menuItems[index])
-  offsetMenuBorder(menuItems[index]);
+  console.log('menuItems[index]', menuItems[index.value])
+  offsetMenuBorder(menuItems[index.value])
 
-  // menuItems.forEach((item) => {
-  //   item.addEventListener("click", () => {
-  //     clickItem(item)
-  //     console.log(item)
-  //   })
-  // })
-
-  // window.addEventListener("resize", () => {
-  //   offsetMenuBorder(menuItems[index]);
-  //   menu.value.style.setProperty("--timeOut", "none");
-  // })
 })
+
+
+watch(() => props.index, (newVal, oldVal) => {
+  console.log('index变了');
+  if (newVal !== oldVal) offsetMenuBorder(menuItems[index.value])
+});
 
 </script>
 

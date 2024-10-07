@@ -49,6 +49,12 @@ const playList = computed(() => musicStore.playList)
   background: rgba(255, 255, 255, 0.25);
   transition: all 0.2s linear;
   cursor: pointer;
+
 }
 
+.musicDiv button:hover {
+  color: currentColor;
+  transform: scale(1.1);
+  background-color: transparent;
+}
 </style>

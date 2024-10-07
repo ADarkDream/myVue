@@ -11,13 +11,13 @@
                 <el-link type="primary" title="Github 和 Gitee" @click="showUrl=!showUrl">
                   本项目开源地址
                 </el-link>
-                <Transition name="transition1">
+                <Transition name="horizontal_slide">
                   <el-link v-if="showUrl" type="primary" href="https://gitee.com/MuXi-Dream/download-reverse1999"
                            target="_blank">
                     Gitee
                   </el-link>
                 </Transition>
-                <Transition name="transition1">
+                <Transition name="horizontal_slide">
                   <el-link v-if="showUrl" type="primary" href="https://github.com/ADarkDream/Download-Reverse1999"
                            target="_blank">
                     Github
@@ -114,7 +114,7 @@
                   <el-icon style="margin:0 5px" @click="isShowNotice=!isShowNotice">
                     <InfoFilled/>
                   </el-icon>
-                  <Transition name="transition1">
+                  <Transition name="horizontal_slide">
                     <el-text v-show="isShowNotice">
                       <el-text type="primary">模糊查询会优先满足版本要求</el-text>
                       ，然后查询包含勾选的角色的图；
@@ -858,9 +858,14 @@ console.log('isPC',isPC.value)
 }
 
 @media (max-width: 980px) {
+  h1{
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
   .el-checkbox { /*缩短选项框右边距*/
     margin-right: 15px;
   }
+
 }
 
 
@@ -877,19 +882,7 @@ console.log('isPC',isPC.value)
 }
 
 
-.transition1-enter-active {
-  transition: all 0.3s ease-out;
-}
 
-.transition1-leave-active {
-  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.transition1-enter-from,
-.transition1-leave-to {
-  transform: translateX(20px);
-  opacity: 0;
-}
 
 .statement:hover {
   animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;

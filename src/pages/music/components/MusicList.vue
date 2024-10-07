@@ -1,17 +1,21 @@
 <template>
   <div class="container">
-        <div  class="title"><span>歌单广场</span><el-button link :icon="Refresh">{{isPC?'刷新':''}}</el-button> </div>
-    <div class="openMusicList">
+    <div class="title"><span>歌单广场</span>
+      <el-button link :icon="Refresh">{{ isPC ? '刷新' : '' }}</el-button>
+    </div>
+    <div class="openMusicList" @touchstart="stopTouch" @touchend="stopTouch">
       <div v-for="item in musicLists" :key="item.music_list_id" class="musicList">
-        <MusicListCoverComp :musicListInfo="item" @click="ElMessage.info('歌单功能开发中')"/>
+        <MusicListCoverComp :musicListInfo="item"/>
       </div>
     </div>
     <el-divider></el-divider>
-    <div class="title"><span>我创建的歌单</span> <el-button link :icon="Plus" @click="handleChangeDrawer" >{{isPC?'创建歌单':''}}</el-button></div>
-    <div class="openMusicList">
-      <el-button text type="primary" v-if="myMusicLists.length===0" style="margin: 0 auto">{{"暂无歌单"}}</el-button>
+    <div class="title"><span>我创建的歌单</span>
+      <el-button link :icon="Plus" @click="handleChangeDrawer">{{ isPC ? '创建歌单' : '' }}</el-button>
+    </div>
+    <div class="openMusicList" @touchstart="stopTouch" @touchend="stopTouch">
+      <el-button text type="primary" v-if="myMusicLists.length===0" style="margin: 0 auto">{{ "暂无歌单" }}</el-button>
       <div v-for="item in myMusicLists" :key="item.music_list_id" class="musicList">
-        <MusicListCoverComp :musicListInfo="item" @click="ElMessage.info('歌单功能开发中')"/>
+        <MusicListCoverComp :musicListInfo="item"/>
       </div>
     </div>
     <!--新建歌单的窗口-->
@@ -32,17 +36,11 @@ import useResponsive from "@/hooks/useResponsive";
 import useUserInfo from "@/hooks/useUserInfo";
 import axios from "axios";
 import {ref, onMounted} from "vue";
-import {Refresh,Plus} from "@element-plus/icons-vue";
+import {Refresh, Plus} from "@element-plus/icons-vue";
 import AddMusicList from "@/pages/music/components/AddMusicList.vue";
 import {MusicList} from "@/types/music";
 import MusicListCoverComp from "@/pages/music/components/MusicListCoverComp.vue";
 import {ElMessage} from "element-plus";
-
-
-
-
-
-
 
 
 const {isPC} = useResponsive()
@@ -51,7 +49,7 @@ const showAddMusicList = ref(false)
 
 
 onMounted(() => {
-  getMusicList()
+  // getMusicList()
   if (isLogin.value) getMyMusicList(uid.value)
 })
 const musicLists = ref<MusicList[]>([])
@@ -100,8 +98,8 @@ const closeDrawer = () => {
 }
 
 //打开创建歌单的抽屉
-const handleChangeDrawer=()=>{
-  if (isLogin.value) showAddMusicList.value=true
+const handleChangeDrawer = () => {
+  if (isLogin.value) showAddMusicList.value = true
   ElMessage.info('请先登录')
 }
 
@@ -112,10 +110,16 @@ const conplete = () => {
     addMusicListComp.value.addMusicList()
   }
 }
+
+
+//阻止左右滑动触发翻页
+const stopTouch = (e: TouchEvent) => {
+  e.stopPropagation()
+}
 </script>
 
 <style scoped>
-.title{
+.title {
   display: flex;
   justify-content: space-between;
 }

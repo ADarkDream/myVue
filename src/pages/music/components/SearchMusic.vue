@@ -3,11 +3,11 @@
     <div class="header">
       <div class="searchDiv">
         <el-button :icon="Back" size="small" @click="closeSearchPanel()"></el-button>
-        <el-input class="search" v-model.trim="searchStore.searchConfig.s" @keyup.enter="searchMusic()"
-                  placeholder="歌曲名或歌手名"/>
+        <el-input class="search" v-model.trim="searchConfig.s" @keyup.enter="searchMusic()"
+                  placeholder="歌曲名或歌手名" clearable/>
         <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
       </div>
-      <el-radio-group v-if="false" v-model="searchStore.searchConfig.type" size="small">
+      <el-radio-group v-if="false" v-model="searchConfig.type" size="small">
         <el-radio-button label="单曲" :value="1"/>
         <el-radio-button label="专辑" :value="10"/>
         <el-radio-button label="歌手" :value="100"/>
@@ -15,11 +15,12 @@
         <el-radio-button label="用户" :value="1002"/>
         <el-radio-button label="歌词" :value="1006"/>
       </el-radio-group>
+      <HotSearchWords/>
     </div>
     <div v-if="showResult">
       <div style="text-align: left">
-        <div v-for="(item,index) in searchStore.searchResult" :key="index">
-          <el-text>{{ page * 10 + index + 1 }}、{{ item.name || '未命名' }} -
+        <div v-for="(item,index) in searchResult" :key="index">
+          <el-text>{{ (page - 1) * 10 + index + 1 }}、{{ item.name || '未命名' }} -
             {{
               item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家'
             }}-{{ item.cloud_music_id }}
@@ -37,53 +38,62 @@
       </div>
       <div>
         <div style="width: 100%;display: flex;justify-content: space-between;margin-bottom: 100px">
-          <span>第{{ page + 1 }}页</span>
-          <el-button-group :size="elSize">
-            <el-button @click="searchMusic('-')">上一页</el-button>
-            <el-button @click="searchMusic('+')">下一页</el-button>
-          </el-button-group>
-          <span>共{{ songCount }}条搜索结果</span>
+          <el-pagination
+              v-model:current-page="page"
+              :page-size="10"
+              layout="prev, pager, next"
+              :total="songCount"
+              @current-change="searchMusic"
+          />
         </div>
       </div>
     </div>
-    <el-empty v-else description=" " image="/fool.png" image-size="400"></el-empty>
+    <el-empty v-else description=" " style="padding: 0" image="/fool.png" :image-size="350" ></el-empty>
   </div>
 
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from "vue";
+import {computed, ref, toRefs} from "vue";
 import {useMusicSearchStore} from "@/store/music/useMusicSearchStore";
-import useResponsive from "@/hooks/useResponsive";
+
 import {ElMessage} from "element-plus";
-import {Back, Search} from "@element-plus/icons-vue";
+import {Back} from "@element-plus/icons-vue";
 import useFunction from "@/hooks/useFunction";
 
+import HotSearchWords from "@/pages/music/components/HotSearchWords.vue";
+
 const searchStore = useMusicSearchStore()
-const {elSize} = useResponsive()
+
 const {addCloudMusic, closeSearchPanel} = defineProps(['addCloudMusic', 'closeSearchPanel'])
 const {copyText} = useFunction()
 
-const page = ref(0)
-const songCount = computed(() => searchStore.songCount)
-const showResult = ref(false)
+const {searchConfig, songCount} = toRefs(searchStore)
+const searchResult = computed(() => searchStore.searchResult)
 
-const searchMusic = async (flag?: string) => {
-  if (!searchStore.searchConfig.s) return
-  if (flag === '-') {
-    if (page.value === 0) return ElMessage.info('当前是第一页')
-    page.value--
-    searchStore.searchConfig.offset = page.value * 10
-    console.log('上一页搜索结果')
-  } else if (flag === '+') {
-    const offset = (page.value + 1) * 10
-    if (offset > songCount.value) return ElMessage.info('当前是最后一页')
-    page.value++
-    searchStore.searchConfig.offset = offset
-    console.log('下一页搜索结果')
+const {search} = searchStore
+const page = ref(1)
+// const songCount = computed(() => searchStore.songCount)
+const showResult = ref(false)
+//限制单次查询的条数，作为常量
+const limitNum = searchConfig.value.limit
+
+const searchMusic = async () => {
+//没有搜索值，返回
+  if (!searchConfig.value.s) return
+  const offset = (page.value - 1) * 10
+  if (offset < 0 || offset > songCount.value) return ElMessage.info('页码错误')
+  //最后一页不满limit的数量，需要额外处理
+  if (songCount.value) {
+    const restNum = songCount.value - offset
+    //设置本次查询的条数
+    searchConfig.value.limit = restNum < limitNum ? restNum : limitNum
   }
 
-  const result = await searchStore.search()
+//设置本次查询的偏移条数
+  searchConfig.value.offset = offset
+
+  const result = await search()
   showResult.value = true
   console.log('searchMusic', result)
 }
@@ -134,28 +144,11 @@ const searchMusic = async (flag?: string) => {
   margin: 0 auto;
 }
 
-/* styling of animated border */
-.searchDiv:before {
-  content: "";
-  position: absolute;
-  background: var(--border-color);
-  transform: scaleX(0);
-  transform-origin: center;
-  width: 100%;
-  height: var(--border-height);
-  left: 0;
-  bottom: 0;
-  border-radius: 1px;
-  transition: transform var(--timing) ease;
-}
-
 .search:focus {
   outline: none;
   border: none;
 }
 
-
-/*endregion*/
 
 /*夜间模式*/
 .dark .searchDiv {
@@ -175,7 +168,6 @@ const searchMusic = async (flag?: string) => {
     width: 95%;
     font-size: 7px;
   }
-
 }
 
 
