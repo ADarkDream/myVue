@@ -195,17 +195,18 @@ export const useMusicPlayStore = defineStore('music_play', () => {
 
 //播放和暂停
 //pause=true则必定暂停，pause默认则看isPlaying.value;isReplay=true则从头开始播放
-    function play({pause = false, isReplay = false}: { pause?: boolean, isReplay?: boolean }) {
+    async function play({pause = false, isReplay = false}: { pause?: boolean, isReplay?: boolean }) {
         const length = playList.value.length
         if (length === 0) return ElMessage.info('歌曲列表为空')
         else if (playingIndex.value < 0 || playingIndex.value > length) {
             playingIndex.value = 0
             ElMessage.info('歌曲不存在,已跳转到第一首')
         }
+        await resetUrl(playList.value[playingIndex.value])
 
-        // if (audioContext.state === "suspended") {
-        //     audioContext.resume()
-        // }
+        if (audioContext.state === "suspended") {
+            await audioContext.resume()
+        }
 
         console.log('是否强制暂停：', pause, '是否强制重新播放：', isReplay)
         if (pause || isPlaying.value) {//暂停
@@ -310,7 +311,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         audioElement.value.removeEventListener('canplay', handleCanPlay)
         //切换歌曲逻辑
         //定向切歌
-        if (index) {
+        if (Number.isInteger(index) && index >= 0) {//判断非负整数
             playingIndex.value = index
             console.log(`即将播放：${playList.value[index].name}`)
         }
@@ -331,18 +332,19 @@ export const useMusicPlayStore = defineStore('music_play', () => {
     }
 
 
-    const handleCanPlay = async () => {
+    const handleCanPlay = async (retryCount = 0) => {
         if (!audioElement.value) return
         // 播放新歌曲
+
         await audioElement.value.play().catch(async (err) => {
             if (retryCount < 5) { // 限制重试次数
                 console.error("播放失败，一秒后重试");
-                cosole.log(err)
+                console.log(err)
                 // 等待 1 秒
                 await new Promise(resolve => setTimeout(resolve, 1000));
 
                 // 递归再次尝试播放
-                tryPlay(retryCount + 1)
+                await handleCanPlay(retryCount + 1)
             } else {
                 ElMessage.error('多次播放失败，切换下一首');
                 await toggleMusic({})
@@ -388,22 +390,26 @@ export const useMusicPlayStore = defineStore('music_play', () => {
 
             //如果添加一首歌且选择播放
             if (songs.length === 1 && isPlay) {
-                const song = songs[0]
-
-                //获取播放链接
-                const result = await axios<ResultData<{ playInfo: { cloud_music_id: number, src: string } }>>({
-                    url: '/getPlayInfo',
-                    params: {cloud_music_id: song.cloud_music_id},
-                })
-                const {data} = result.data
-                if (data) {
-                    //合并歌曲信息和播放地址信息
-                    songs[0] = Object.assign(song, data.playInfo)
-                    const index = musicStore.addMusicList(songs, {isReplace: true})
+              const index = musicStore.addMusicList(songs, {isReplace: true})
                     console.log(`播放第${index + 1}首歌`)
                     //切换到添加的这首歌
                     await toggleMusic({index})
-                }
+                // const song = songs[0]
+                //
+                // //获取播放链接
+                // const result = await axios<ResultData<{ playInfo: { cloud_music_id: number, src: string } }>>({
+                //     url: '/getPlayInfo',
+                //     params: {cloud_music_id: song.cloud_music_id},
+                // })
+                // const {data} = result.data
+                // if (data) {
+                //     //合并歌曲信息和播放地址信息
+                //     songs[0] = Object.assign(song, data.playInfo)
+                //     const index = musicStore.addMusicList(songs, {isReplace: true})
+                //     console.log(`播放第${index + 1}首歌`)
+                //     //切换到添加的这首歌
+                //     await toggleMusic({index})
+                // }
                 //只添加不播放
             } else musicStore.addMusicList(songs, {isReplace: true})
 
@@ -437,7 +443,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
             return {isError}
         }
         try {
-            const result = await axios<ResultData<{ songsInfo: CloudSongInfo[] }>>({
+            const result = await axios<ResultData<{ songsInfo: CloudSongInfo[],errorIdList:string[] }>>({
                 url: '/getCloudMusic',
                 params: {idList},
             })
@@ -453,7 +459,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
                 const songs = data.songsInfo
                 //过滤地址不存在的歌
                 // const songs = data.songsInfo.filter(song => song.src !== undefined && song.src !== '')
-                return {isError, songs}
+                return {isError:false, songs}
             }
             return {isError: true}
 
@@ -580,6 +586,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         lockThePlayer,
         togglePlayerVisible,
         toggleVolumePanelVisible,
+        addCloudMusicList,
         play,
         changeVolume,
         changeCurrentTime,

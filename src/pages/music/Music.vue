@@ -11,25 +11,44 @@
         </template>
         <el-button type="success" :icon="Search" @click="isShowSearchPanel=true">搜索网易云音乐曲库</el-button>
         <el-form v-model="newMusic" label-width="auto" label-position="top"
-                 style="width: 100%;" :size="elSize">
+                 style="width: 100%;margin-top:20px" :size="elSize">
+          <el-form-item>
+            <template #label>输入歌单id&ensp;<el-icon @click="">
+              <InfoFilled/>
+            </el-icon>
+              <Transition name="horizontal_slide">
+                <el-text v-show="true">
+                  用户自行上传的歌曲不可见
+                </el-text>
+              </Transition>
+            </template>
+            <el-row :gutter="24">
+              <el-col :span="18">
+                <el-input v-model.trim.number="cloudMusicListID" placeholder="输入网易云歌单ID"></el-input>
+              </el-col>
+              <el-col :span="6">
+                <el-button @click="toggleToMusicList({cloud_id:cloudMusicListID})" type="success" plain>搜索</el-button>
+              </el-col>
+            </el-row>
+          </el-form-item>
           <el-form-item label="输入音乐ID获取音频链接(仅支持网易云免费音乐)">
             <el-row :gutter="24">
-              <el-col :span="16">
-                <el-input v-model.trim="cloudMusicID" placeholder="输入网易云音乐ID"></el-input>
+              <el-col :span="18">
+                <el-input v-model.trim.number="cloudMusicID" placeholder="输入网易云音乐ID"></el-input>
               </el-col>
-              <el-col :span="8">
+              <el-col :span="6">
                 <el-button @click="addCloudMusic(cloudMusicID,true)" type="primary" plain>添加并播放
                 </el-button>
               </el-col>
             </el-row>
           </el-form-item>
           <el-form-item prop="src" label="输入音频链接">
-            <el-row :gutter="24" class="add_music">
-              <el-col :span="16">
+            <el-row :gutter="24">
+              <el-col :span="18">
                 <el-input v-model="musicUrl" placeholder="输入音频链接"></el-input>
               </el-col>
-              <el-col :span="8">
-                <el-button @click="addMusic(musicUrl)" type="success" plain>添加并播放</el-button>
+              <el-col :span="6">
+                <el-button @click="addMusic(musicUrl)" type="primary" plain>添加并播放</el-button>
               </el-col>
             </el-row>
           </el-form-item>
@@ -38,20 +57,28 @@
       <el-tab-pane :name="1">
         <template #label>
           <el-text class="tab-label">
+            <SVG_music_list class="el-icon" style="transform: scale(1.5)"/>&ensp;歌单广场
+          </el-text>
+        </template>
+        <music-list-square :toggleToMusicList="toggleToMusicList"/>
+      </el-tab-pane>
+      <el-tab-pane :name="2">
+        <template #label>
+          <el-text class="tab-label">
             <SVG_music_list class="el-icon" style="transform: scale(1.5)"/>&ensp;歌单列表
           </el-text>
         </template>
-        <MusicList/>
+        <music-list :ids="ids"/>
       </el-tab-pane>
-      <el-tab-pane :name="2">
+      <el-tab-pane :name="3">
         <template #label>
           <el-text class="tab-label">
             <SVG_music_list class="el-icon" style="transform: scale(1.5)"/>&ensp;播放列表
           </el-text>
         </template>
-        <PlayList/>
+        <play-list :songs-list="playList"/>
       </el-tab-pane>
-      <el-tab-pane :name="3">
+      <el-tab-pane :name="4">
         <template #label>
           <el-text class="tab-label">
             <el-icon>
@@ -67,7 +94,7 @@
           <div>还没做呢</div>
         </div>
       </el-tab-pane>
-      <el-tab-pane :name="4">
+      <el-tab-pane :name="5">
         <template #label>
           <el-text class="tab-label">
             <el-icon>
@@ -97,22 +124,25 @@
 </template>
 <script setup lang="ts">
 import {computed, onMounted, onUnmounted, ref} from 'vue';
-import { Plus, Search, Setting, Tickets} from "@element-plus/icons-vue";
+import {InfoFilled, Plus, Search, Setting, Tickets} from "@element-plus/icons-vue";
 import {SongInfo} from "@/types/music";
 import SearchMusic from "@/pages/music/components/SearchMusic.vue";
 import PlayList from "@/pages/music/components/PlayList.vue";
-import MusicList from "@/pages/music/components/MusicList.vue";
+import MusicListSquare from "@/pages/music/components/MusicListSquare.vue";
 
 import useResponsive from "@/hooks/useResponsive";
 import {useRoute, useRouter} from "vue-router";
 import {useMusicPlayStore} from "@/store/music/useMusicPlayStore";
 import {useMusicConfigStore} from "@/store/music/useMusicConfigStore";
+import {useMusicListStore} from "@/store/music/useMusicListStore";
 import SVG_music_list from '@/assets/music/music_list.svg?component'
 import MusicSettings from "@/pages/music/components/MusicSettings.vue";
+import MusicList from "@/pages/music/components/MusicList.vue";
 
 
 const musicPlayStore = useMusicPlayStore()
 const musicConfigStore = useMusicConfigStore()
+const musicListStore = useMusicListStore()
 const {isPC, elSize, drawerSize, containerHeight, touchstart, positionComputed} = useResponsive()
 
 const {addCloudMusic, addMusic} = musicPlayStore
@@ -126,6 +156,8 @@ const router = useRouter()
 
 //页面背景配置
 const bgSettings = computed(() => musicConfigStore.bgSettings)
+const playList = computed(() => musicListStore.playList)
+const {getCloudMusicList,getMusicList} = musicListStore
 
 //是否显示搜索面板
 const isShowSearchPanel = ref(false)
@@ -143,17 +175,28 @@ const newMusic = ref<SongInfo>({
   src: ''
 })
 
+const cloudMusicListID = ref()
 const cloudMusicID = ref()
 const musicUrl = ref('')
+//歌单组件查询的id
+const ids = ref({
+  music_list_id: 36,
+  cloud_music_list_id: null
+})
 
-
+const toggleToMusicList = async ({cloud_id, id}: { cloud_id?: number, id?: number }) => {
+  if (!cloud_id && !id) return
+  if (cloud_id) await getCloudMusicList(cloud_id)
+  else if (id) await getMusicList(id)
+  activeName.value = 2
+}
 onMounted(async () => {
   //分享功能，从路径中获取音乐id，播放并清除路径参数
   const {cloud_music_id} = route.query
   if (cloud_music_id) {
     await addCloudMusic(Number(cloud_music_id), true)
     await router.replace({name: 'music'})
-    activeName.value=2
+    activeName.value = 2
   }
 
   if (!isPC.value && music.value) {
@@ -243,6 +286,10 @@ const touchend = (e: TouchEvent) => {
 }
 </style>
 <style>
+/*.music .el-tabs__content{
+  overflow-y: scroll;
+}*/
+
 /*移动端布局*/
 @media (max-width: 780px) {
   .searchDrawer .el-drawer__body {

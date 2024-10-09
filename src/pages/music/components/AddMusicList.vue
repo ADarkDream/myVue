@@ -23,14 +23,14 @@
 import {ElMessage} from "element-plus";
 import {reactive, ref,defineExpose} from "vue";
 import axios from "axios";
-import {MusicList} from "@/types/music";
+import {MusicListInfo} from "@/types/music";
 
 const {close} = defineProps(['close'])
 
 
 const isOpen = ref(false)
 
-const formData = reactive<MusicList>({
+const formData = reactive<MusicListInfo>({
   name: '',
   pic_url: '',
   status:1

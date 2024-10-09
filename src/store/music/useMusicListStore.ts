@@ -2,7 +2,9 @@
 import {defineStore} from 'pinia'
 import {computed, reactive, ref} from "vue";
 import {useBaseUrl} from "@/hooks/useBaseUrl";
-import {CloudSongInfo} from "@/types/music";
+import {CloudSongInfo, MusicListInfo} from "@/types/music";
+import axios from "axios";
+import {ResultData} from "@/types/global";
 import pinia from '@/store'
 const {defaultUrl} = useBaseUrl(pinia)
 
@@ -29,7 +31,7 @@ export const useMusicListStore = defineStore('music_list', () => {
         },
         {
             cloud_music_id: 505307631,
-           name: "call of silence（Cover Piano）",
+            name: "call of silence（Cover Piano）",
             comment_thread_id: "R_SO_4_505307631",
             mvid: 0,
             duration: 165.048,
@@ -37,21 +39,21 @@ export const useMusicListStore = defineStore('music_list', () => {
             fee: 0,
             album: {
                 album_id: 36157973,
-               name: "进击的巨人",
+                name: "进击的巨人",
                 pic_url: "https://p1.music.126.net/Hkn1zp8PDoMuVOYhS593rw==/109951163022600482.jpg",
                 publish_time: "2017-09-10T09:54:43.000Z"
             },
             artists: [
                 {
                     cloud_artist_id: 12383184,
-                   name: "向晚丶",
+                    name: "向晚丶",
                     pic_url: "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg"
                 }
             ]
         },
         {
             cloud_music_id: 2123822354,
-           name: "我要你 (我要你在我身旁)",
+            name: "我要你 (我要你在我身旁)",
             comment_thread_id: "R_SO_4_2123822354",
             mvid: 0,
             duration: 193.648,
@@ -59,21 +61,21 @@ export const useMusicListStore = defineStore('music_list', () => {
             fee: 8,
             album: {
                 album_id: 185077517,
-               name: "TA·说",
+                name: "TA·说",
                 pic_url: "https://p1.music.126.net/d_AC9BDLrl98XyLDWrfbWg==/109951169311058334.jpg",
                 publish_time: "2024-02-08T16:00:00.000Z"
             },
             artists: [
                 {
                     cloud_artist_id: 1054159,
-                   name: "任素汐",
+                    name: "任素汐",
                     pic_url: "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg"
                 }
             ]
         },
         {
             cloud_music_id: 2604907727,
-           name: "会开花的云 (Live版)",
+            name: "会开花的云 (Live版)",
             comment_thread_id: "R_SO_4_2604907727",
             mvid: 0,
             duration: 241.616,
@@ -81,26 +83,26 @@ export const useMusicListStore = defineStore('music_list', () => {
             fee: 8,
             album: {
                 album_id: 241207097,
-               name: "天赐的声音第五季 第11期",
+                name: "天赐的声音第五季 第11期",
                 pic_url: "https://p1.music.126.net/yokTdCD6kPIyJJyUIXa7mw==/109951169749390081.jpg",
                 publish_time: "2024-07-04T16:00:00.000Z"
             },
             artists: [
                 {
                     cloud_artist_id: 9939,
-                   name: "弦子",
+                    name: "弦子",
                     pic_url: "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg"
                 },
                 {
                     cloud_artist_id: 33709222,
-                   name: "姚晓棠",
+                    name: "姚晓棠",
                     pic_url: "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg"
                 }
             ]
         },
         {
             cloud_music_id: 1981095072,
-           name: "神姬",
+            name: "神姬",
             duration: 223.69,
             comment_thread_id: "R_SO_4_1981095072",
             src: "",
@@ -109,29 +111,36 @@ export const useMusicListStore = defineStore('music_list', () => {
             artists: [
                 {
                     cloud_artist_id: 13037895,
-                   name: "EinWil",
+                    name: "EinWil",
                     pic_url: "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg"
                 },
                 {
                     cloud_artist_id: 12361498,
-                   name: "Jayx",
+                    name: "Jayx",
                     pic_url: "https://p1.music.126.net/6y-UleORITEDbvrOLV0Q8A==/5639395138885805.jpg"
                 }
             ],
             album: {
                 album_id: 151519735,
-               name: "神姬",
+                name: "神姬",
                 pic_url: "https://p1.music.126.net/_pFAZXzV7zKYSfnvHHNj6w==/109951167874823513.jpg",
                 publish_time: "2022-09-13T13:23:24.252Z"
             }
         }
     ])
 
+    //歌单信息
+    const musicListInfo = ref<MusicListInfo>()
+
+    //歌单列表
+    const musicList = ref<CloudSongInfo[]>()
+
+
 //当前播放的歌的序号
     const playingIndex = ref(0)
 
-   //当前播放的歌曲信息
-    const thisMusic=reactive(playList.value[0])
+    //当前播放的歌曲信息
+    const thisMusic = reactive(playList.value[0])
 
     // watch(playingIndex,(newVal,oldVal)=>{
     //     if (newVal!==oldVal) Object.assign(thisMusic,playList.value[playingIndex.value])
@@ -183,6 +192,41 @@ export const useMusicListStore = defineStore('music_list', () => {
         playList.value.splice(playListIndex.value[id], 1)
     }
 
+    //搜索数据库的歌单及音乐信息
+    const getMusicList = async (music_list_id) => {
+        try {
+            const result = await axios<ResultData<{ songsInfo: CloudSongInfo[], musicListInfo: MusicListInfo }>>({
+                url: '/getMusicList',
+                params: {music_list_id},
+            })
+            console.log(result)
+            const {status, msg, data} = result.data
+            musicListInfo.value = data!.musicListInfo
+            musicList.value = data!.songsInfo
 
-    return {playList, isPlaying, isLoading, playListIndex,playingIndex,thisMusic, addMusicList, deleteMusic}
-})
+        } catch (error) {
+            console.log('发生错误：')
+            console.dir(error)
+        }
+    }
+
+    //搜索网易云的歌单及音乐信息
+    const getCloudMusicList = async (cloud_music_list_id) => {
+        try {
+            const result = await axios<ResultData<{ songsInfo: CloudSongInfo[], musicListInfo: MusicListInfo }>>({
+                url: '/getCloudMusicList',
+                params: {cloud_music_list_id},
+            })
+            console.log(result)
+            const {status, msg, data} = result.data
+            musicListInfo.value = data!.musicListInfo
+            musicList.value = data!.songsInfo
+
+        } catch (error) {
+            console.log('发生错误：')
+            console.dir(error)
+        }
+    }
+
+    return {playList, isPlaying, isLoading, playListIndex, playingIndex, thisMusic,musicListInfo,musicList, addMusicList, deleteMusic,getMusicList,getCloudMusicList}
+}, {persist: true})

@@ -1,17 +1,17 @@
 <template>
   <div class="hotWords">
     <el-text type="primary">搜索热词：</el-text>
-    <el-button text type="info" @click="searchConfig.s=word" v-for="word in hotWords" :key="word">{{ word }}</el-button>
+    <el-button text type="info" @click="changeKeyWords(word)" v-for="word in hotWords" :key="word">{{ word }}</el-button>
   </div>
 </template>
 
 <script setup lang="ts">
 import {useMusicSearchStore} from "@/store/music/useMusicSearchStore";
-import {toRefs} from "vue";
+import {toRefs,defineProps} from "vue";
 
 const searchStore = useMusicSearchStore()
 const {hotWords, searchConfig} = toRefs(searchStore)
-
+const {changeKeyWords}=defineProps(['changeKeyWords'])
 </script>
 
 <style scoped>

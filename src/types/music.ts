@@ -13,15 +13,21 @@ interface Album {
     publish_time?: string
 }
 
-//歌单信息
-interface MusicList {
+//歌单的信息
+interface MusicListInfo {
     music_list_id?: number,
     name: string,
     uid?: number,
     pic_url: string,
     status?: number,
     created_time?: string,
-    updated_time?:string,
+    updated_time?: string,
+}
+
+//歌单的数据结构
+interface MusicList {
+    musicListInfo: MusicListInfo,
+    songsInfo: CloudSongInfo[]
 }
 
 
@@ -43,7 +49,7 @@ interface SongInfo {
     name: string,
     // duration: number,//音乐时长
     src: string,//播放地址
-    artists: { name: string , pic_url: string}[],//艺术家
+    artists: { name: string, pic_url: string }[],//艺术家
     album: { name: string, pic_url: string }
 }
 
@@ -54,4 +60,4 @@ interface SearchResult {
     songCount: number
 }
 
-export type {CloudSongInfo,MusicList, SearchResult,SongInfo}
+export type {CloudSongInfo, SongInfo, SearchResult, MusicListInfo, MusicList}

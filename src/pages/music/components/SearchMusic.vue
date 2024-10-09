@@ -3,7 +3,7 @@
     <div class="header">
       <div class="searchDiv">
         <el-button :icon="Back" size="small" @click="closeSearchPanel()"></el-button>
-        <el-input class="search" v-model.trim="searchConfig.s" @keyup.enter="searchMusic()"
+        <el-input class="search" v-model.trim="keyWords" @keyup.enter="searchMusic()"
                   placeholder="歌曲名或歌手名" clearable/>
         <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
       </div>
@@ -15,40 +15,23 @@
         <el-radio-button label="用户" :value="1002"/>
         <el-radio-button label="歌词" :value="1006"/>
       </el-radio-group>
-      <HotSearchWords/>
+      <HotSearchWords :changeKeyWords="changeKeyWords"/>
     </div>
     <div v-if="showResult">
-      <div style="text-align: left">
-        <div v-for="(item,index) in searchResult" :key="index">
-          <el-text>{{ (page - 1) * 10 + index + 1 }}、{{ item.name || '未命名' }} -
-            {{
-              item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家'
-            }}-{{ item.cloud_music_id }}
-          </el-text>&ensp;
-          <el-text v-if="item.fee===1&&!item.src" type="danger">[VIP]</el-text>
-          <el-button link v-else @click="addCloudMusic(item.cloud_music_id,true)" size="small" type="primary">
-            点击播放
-          </el-button>
-          <el-button link v-if="item.cloud_music_id!==0&&item.fee!==1"
-                     @click="copyText('https://muxidream.cn/music?cloud_music_id='+item.cloud_music_id,'播放链接')"
-                     size="small" type="primary">
-            分享
-          </el-button>
-        </div>
-      </div>
+      <play-list :songsList="searchResult" :height="searchDivHeight"/>
       <div>
-        <div style="width: 100%;display: flex;justify-content: space-between;margin-bottom: 100px">
+        <div style="width: 100%;display: flex;justify-content: center;margin-bottom: 100px">
           <el-pagination
               v-model:current-page="page"
               :page-size="10"
-              layout="prev, pager, next"
+              :layout="isPC?'prev, pager, next,total':'prev, pager, next'"
               :total="songCount"
               @current-change="searchMusic"
           />
         </div>
       </div>
     </div>
-    <el-empty v-else description=" " style="padding: 0" image="/fool.png" :image-size="350" ></el-empty>
+    <el-empty v-else description=" " style="padding: 0" image="/fool.png" :image-size="350"></el-empty>
   </div>
 
 </template>
@@ -56,17 +39,23 @@
 <script setup lang="ts">
 import {computed, ref, toRefs} from "vue";
 import {useMusicSearchStore} from "@/store/music/useMusicSearchStore";
-
+import {useMusicPlayStore} from "@/store/music/useMusicPlayStore";
 import {ElMessage} from "element-plus";
 import {Back} from "@element-plus/icons-vue";
 import useFunction from "@/hooks/useFunction";
-
+import useResponsive from "@/hooks/useResponsive";
 import HotSearchWords from "@/pages/music/components/HotSearchWords.vue";
+import PlayList from "@/pages/music/components/PlayList.vue";
 
 const searchStore = useMusicSearchStore()
+const musicPlayStore = useMusicPlayStore()
+const {addCloudMusic} = musicPlayStore
 
-const {addCloudMusic, closeSearchPanel} = defineProps(['addCloudMusic', 'closeSearchPanel'])
+const {closeSearchPanel} = defineProps(['closeSearchPanel'])
+const {isPC, drawerSize} = useResponsive()
 const {copyText} = useFunction()
+
+const searchDivHeight = ref(drawerSize.value - 180)
 
 const {searchConfig, songCount} = toRefs(searchStore)
 const searchResult = computed(() => searchStore.searchResult)
@@ -77,11 +66,22 @@ const page = ref(1)
 const showResult = ref(false)
 //限制单次查询的条数，作为常量
 const limitNum = searchConfig.value.limit
+//搜索关键词
+const keyWords = ref('')
 
+const changeKeyWords = (newWords: string) => {
+  keyWords.value = newWords
+  searchMusic()
+}
+
+//搜索前预检查
 const searchMusic = async () => {
 //没有搜索值，返回
-  if (!searchConfig.value.s) return
-  const offset = (page.value - 1) * 10
+  if (!keyWords.value) return ElMessage.info('搜索不能为空')
+  else if (keyWords.value === searchConfig.value.s) return
+  searchConfig.value.s = keyWords.value
+
+  const offset = (page.value - 1) * limitNum
   if (offset < 0 || offset > songCount.value) return ElMessage.info('页码错误')
   //最后一页不满limit的数量，需要额外处理
   if (songCount.value) {

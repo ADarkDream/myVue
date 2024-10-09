@@ -110,7 +110,7 @@
   <el-drawer v-model="isShowPlayList" :with-header="false" :size="drawerSize+'px'"
              direction="btt" show-close>
     <h3 style="margin: 0;">播放列表</h3>
-    <PlayList/>
+    <play-list :songsList="playList"/>
   </el-drawer>
 </template>
 <script setup lang="ts">

@@ -8,7 +8,7 @@
     </div>
     <div class="text">
       <p class="title">{{ musicListInfo.name }}</p>
-      <p class="info"> 6 Video - 40 min </p>
+      <p class="info" v-if="isPC"><span>歌曲数：{{musicListInfo.songsCount }}</span><span>上次更新：{{formatDate(musicListInfo.lastTime)}}</span></p>
     </div>
   </div>
 </template>
@@ -18,7 +18,8 @@ import defaultAlbumArt from "@/assets/music/music.svg";
 import {ref} from 'vue'
 import useResponsive from "@/hooks/useResponsive";
 import LikeHeart from "@/components/smallComp/LikeHeart.vue";
-
+import useTimestamp from "@/hooks/useTimestamp";
+const {formatDate}=useTimestamp()
 const {isPC} = useResponsive()
 const isLike = ref(false)
 
@@ -96,6 +97,8 @@ const toggleLike = () => {
   font-family: 'Lucida Sans', sans-serif;
   color: #999;
   font-size: 13px;
+  display: flex;
+  justify-content: space-between;
 }
 
 /*支持hover才触发*/

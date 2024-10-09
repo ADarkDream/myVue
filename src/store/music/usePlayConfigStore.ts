@@ -3,8 +3,8 @@ import {defineStore} from 'pinia'
 import {computed, ref} from "vue";
 import {useMusicListStore} from "@/store/music/useMusicListStore";
 import {ElMessage} from "element-plus";
-
-const musicStore = useMusicListStore()
+import pinia from '@/store'
+const musicStore = useMusicListStore(pinia)
 const playList = computed(() => musicStore.playList)
 //当前播放的歌的序号
 const playingIndex = computed({
