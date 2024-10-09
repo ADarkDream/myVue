@@ -33,6 +33,11 @@ export default defineConfig({
             //     // ws: true,                       //是否代理 websockets
             //     secure: false, //是否https接口
             // }
+        },
+        warmup:{
+            clientFiles:[
+                '/src/components/TitleDiv.vue'
+            ]
         }
     },
     plugins: [

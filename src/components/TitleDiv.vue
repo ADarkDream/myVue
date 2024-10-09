@@ -532,21 +532,21 @@ watch(router.currentRoute, (newValue, oldValue) => {
 
 //公告列表面板序号
 const showFlag = reactive<NoticeActiveNum>({
-  showNum: '1',
-  activeNum: '1'
+  show_num: 1,
+  active_num: 1
 })
 
 //切换公告页面
-const changePage = (showNum: string, activeNum = '1') => {
-  showFlag.showNum = showNum
+const changePage = (showNum: number, activeNum =1) => {
+  showFlag.show_num = showNum
   console.log('前往', showNum, activeNum)
-  setTimeout(() => showFlag.activeNum = activeNum, 300)
+  setTimeout(() => showFlag.active_num = activeNum, 300)
 }
 
 //打开公告列表
 emitter.on('showNotice', (item: NoticeActiveNum) => {
   showNotice.value = true
-  changePage(item.showNum, item.activeNum)
+  changePage(item.show_num, item.active_num)
 })
 
 </script>

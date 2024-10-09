@@ -36,8 +36,8 @@ const router = useRouter()
 
 //noWrap=true  移动端换行且用 | 隔开，默认为没有竖线隔开
 const {noWrap} = defineProps(['noWrap'])
-const showContact = () => emitter.emit('showNotice', {showNum: '3', activeNum: '1'})
-const showFeedback = () => emitter.emit('showNotice', {showNum: '3', activeNum: '2'})
+const showContact = () => emitter.emit('showNotice', {show_num: 3, active_num: 1})
+const showFeedback = () => emitter.emit('showNotice', {show_num: 3, active_num: 2})
 const gotoDownload = () => router.push({name: 'download'})
 const gotoChat = () => router.push({name: 'hall'})
 const gotoMusic = () => router.push({name: 'music'})

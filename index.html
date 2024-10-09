@@ -157,12 +157,17 @@
 <script type="module" src="./src/main.ts"></script>
 <script type="text/javascript">
     //动画的黑夜模式设置
+    //首次加载，根据是否是深色偏好设置夜间模式
     const isDark = sessionStorage.getItem('isDark') === '1' || window.matchMedia('(prefers-color-scheme: dark)').matches
+    if (isDark) sessionStorage.setItem('isDark', '1')
+    else sessionStorage.setItem('isDark', '0')
+    //获取加载遮罩
     const mask = document.querySelector('#loading-mask')
-    //根据当前是否是黑夜模式更换加载动画背景颜色
-    mask.style.backgroundColor = isDark ? '#000' : '#FFF'
-    //加载事件
+
+    //加载事件，每次加载页面触发
     document.onreadystatechange = function () {
+        //根据当前是否是黑夜模式更换加载动画背景颜色
+        mask.style.backgroundColor = isDark ? '#000' : '#FFF'
         // 页面正在加载
         if (document.readyState === 'loading') mask.style.display = 'block'
         // 页面加载完毕

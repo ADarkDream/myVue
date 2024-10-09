@@ -226,11 +226,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
                 audioElement.value.load()
                 // 绑定新的 `canplay` 事件监听器，确保加载完成后再播放
                 audioElement.value.addEventListener('canplay', handleCanPlay);
-            } else audioElement.value.play().catch(err => {
-                ElMessage.error('播放失败，切换到下一首')
-                setTimeout(() => toggleMusic({}), 500)
-                console.error("播放失败：", err)
-            })
+            } else handleCanPlay()
 
             isLoading.value = false
             nextTick(() => isScroll())
@@ -335,14 +331,22 @@ export const useMusicPlayStore = defineStore('music_play', () => {
     }
 
 
-    const handleCanPlay = () => {
+    const handleCanPlay = async () => {
         if (!audioElement.value) return
-
         // 播放新歌曲
-        audioElement.value.play().catch(err => {
-            ElMessage.error('播放失败')
-            setTimeout(() => toggleMusic({}), 500)
-            console.error("播放失败：", err)
+        await audioElement.value.play().catch(async (err) => {
+            if (retryCount < 5) { // 限制重试次数
+                console.error("播放失败，一秒后重试");
+                cosole.log(err)
+                // 等待 1 秒
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // 递归再次尝试播放
+                tryPlay(retryCount + 1)
+            } else {
+                ElMessage.error('多次播放失败，切换下一首');
+                await toggleMusic({})
+            }
         })
         isLoading.value = false
         // 解绑 `canplay` 事件监听器，防止多次触发
@@ -400,6 +404,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
                     //切换到添加的这首歌
                     await toggleMusic({index})
                 }
+                //只添加不播放
             } else musicStore.addMusicList(songs, {isReplace: true})
 
         } catch (error) {
@@ -516,6 +521,11 @@ export const useMusicPlayStore = defineStore('music_play', () => {
 
         }
     })
+
+    //重试播放函数
+    function tryPlay(retryCount = 0) {
+
+    }
 
 //如果浏览器支持
     if ("mediaSession" in navigator) {

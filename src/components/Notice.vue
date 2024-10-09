@@ -1,14 +1,11 @@
 <template>
   <el-scrollbar class="notice">
-    <el-tabs v-model="showFlag.showNum">
+    <el-tabs v-model="showFlag.show_num" @tab-click="tabClick">
       <!--       网站介绍区-->
-      <el-tab-pane name="1">
-        <template #label>
-          <div style="width: 100%" @click="changePage('1','1')">网站介绍</div>
-        </template>
+      <el-tab-pane :name="1" label="网站介绍">
         <el-collapse-transition>
-          <el-collapse v-model="showFlag.activeNum" v-show="showFlag.showNum==='1'" accordion>
-            <el-collapse-item title="网站介绍" name="1">
+          <el-collapse v-model="showFlag.active_num" accordion>
+            <el-collapse-item title="网站介绍" :name="1">
               <el-card class="introduction">
                 <el-text tag="p">
                   1.本站为社交化导航网站，提供
@@ -48,15 +45,15 @@
                   3.若首页导航网站无法访问，请使用Chrome、Edge、Firefox等浏览器或尝试VPN，也可能是因为该网站维护中【也可能是网站已关闭，太久没校验了】。
                 </el-text>
                 <el-text tag="p">4.你可以
-                  <el-button link target="_blank" type="success"
-                             href="https://mp-00526be3-cd12-41bd-84f7-bfbce63bb7d0.cdn.bspapp.com/test1/BookMarks_2023_8_15_2.zip"
-                             title="下载书签">下载
-                  </el-button>
+                  <el-text tag="a" type="success"
+                           href="https://mp-00526be3-cd12-41bd-84f7-bfbce63bb7d0.cdn.bspapp.com/test1/BookMarks_2023_8_15_2.zip"
+                           title="下载书签">下载
+                  </el-text>
                   并解压出HTML文件，导入到自己的浏览器收藏夹。导入步骤可参考相关教程视频：
-                  <el-button link target="_blank" type="primary"
-                             href="https://www.bilibili.com/video/BV1rr4y1S79J/"
-                             title="B站教程视频">点击此处
-                  </el-button>
+                  <el-text tag="a" target="_blank" type="primary"
+                           href="https://www.bilibili.com/video/BV1rr4y1S79J/"
+                           title="B站教程视频">点击此处
+                  </el-text>
                   。
                 </el-text>
                 <el-text tag="p">
@@ -70,7 +67,7 @@
                 </el-text>
               </el-card>
             </el-collapse-item>
-            <el-collapse-item title="友情链接" name="2">
+            <el-collapse-item title="友情链接" :name="2">
               <template class="friendLinks">
                 <el-link target="_blank"
                          href="https://letsgofishing5.github.io/lsgfish-resource-sharing/"
@@ -88,7 +85,7 @@
                 </el-link>
               </template>
             </el-collapse-item>
-            <el-collapse-item title="隐私政策" name="3">
+            <el-collapse-item title="隐私政策" :name="3">
               <el-card class="privacyStatement">
                 <el-text tag="p">
                   本站与 Microsoft Clarity 合作，通过行为指标、热图和会话回放来捕捉您如何使用本站的网站并与之互动，以改进本站的产品和服务。网站使用数据是通过第一方和第三方
@@ -108,21 +105,18 @@
         </el-collapse-transition>
       </el-tab-pane>
       <!--    更新相关-->
-      <el-tab-pane name="2">
-        <template #label>
-          <div @click="changePage('2','2')">更新相关</div>
-        </template>
+      <el-tab-pane :name="2" label="更新相关">
         <el-collapse-transition>
-          <el-collapse v-model="showFlag.activeNum" accordion v-show="showFlag.showNum==='2'"
+          <el-collapse v-model="showFlag.active_num" accordion
                        style="border: none;text-align: left">
             <!--    待更新的功能-->
-            <el-collapse-item title="待更新的功能" name="1">
+            <el-collapse-item title="待更新的功能" :name="1">
               <template v-for="item in noUpdated" :key="item.id">
                 <el-button text :icon="Edit">{{ item.content }}</el-button>
                 <br>
               </template>
             </el-collapse-item>
-            <el-collapse-item title="已更新的公告" name="2">
+            <el-collapse-item title="已更新的公告" :name="2">
               <el-timeline style="padding-left: 0"><br>
                 <el-timeline-item v-for="item in  updateNotes.slice().reverse()" :key="item.id" style="text-align: left"
                                   :timestamp="item.time" placement="top">
@@ -137,14 +131,11 @@
         </el-collapse-transition>
       </el-tab-pane>
       <!--联系和反馈-->
-      <el-tab-pane name="3">
-        <template #label>
-          <div @click="changePage('3','2')">联系和反馈</div>
-        </template>
+      <el-tab-pane :name="3" label="联系和反馈">
         <el-collapse-transition>
-          <el-collapse v-model="showFlag.activeNum" v-show="showFlag.showNum==='3'" accordion style="border: none">
+          <el-collapse v-model="showFlag.active_num" v-show="showFlag.show_num===3" accordion style="border: none">
             <!--联系方式-->
-            <el-collapse-item title="联系方式" name="1">
+            <el-collapse-item title="联系方式" :name="1">
               <template style="display: flex;justify-content: space-around">
                 <el-button link tag="a" type="primary"
                            @click="copyText('50011502001039','QQ号','tencent://message/?uin=1224021291')">QQ
@@ -156,7 +147,7 @@
 
             </el-collapse-item>
             <!--    留言反馈-->
-            <el-collapse-item title="留言反馈" name="2">
+            <el-collapse-item title="留言反馈" :name="2">
               <el-form style="margin: 0 5%">
                 <el-form-item>
                   <el-input type="text" v-model.trim="contact" maxlength="30"
@@ -184,7 +175,7 @@
 import axios from "axios";
 import {onMounted, reactive, ref} from "vue";
 import {Edit} from "@element-plus/icons-vue";
-import {ElCollapseTransition, ElMessage} from 'element-plus'
+import {ElCollapseTransition, ElMessage, TabsPaneContext} from 'element-plus'
 import useTimeStamp from "@/hooks/useTimestamp";
 import useFunction from "@/hooks/useFunction";
 import {useRouter} from "vue-router";
@@ -208,6 +199,11 @@ onMounted(() => {
   getNotices()//获取公告
 })
 
+/*点击tabs标签时触发*/
+const tabClick = (pane: TabsPaneContext, ev: Event) => {
+  if (pane.paneName === 1) changePage(1, 1)
+  else changePage(pane.paneName, 2)
+}
 
 //获取已发布公告
 const getNotices = async () => {

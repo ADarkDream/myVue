@@ -9,6 +9,21 @@
   opacity: 0;
 }
 
+.horizontal_slide-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.horizontal_slide-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.horizontal_slide-enter-from,
+.horizontal_slide-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+
 
 /*专辑图旋转动画*/
 @keyframes rotation {

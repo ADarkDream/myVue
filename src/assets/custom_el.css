@@ -1,3 +1,14 @@
+.primary{
+  color:var(--el-color-primary);
+}
+.warning{
+  color:var(--el-color-warning);
+}
+
+.success{
+    color:var(--el-color-success);
+}
+
 .el-header {
     height: auto;
     padding: 20px 20px 0 20px;
@@ -49,6 +60,7 @@
         word-spacing: 1px;
         font-weight: 600;
         --el-font-size-base: 15px;
+        font-size: 15px;
         padding: 10px;
         /*小标题*/
         --el-font-size-extra-small: 15px;
@@ -116,7 +128,7 @@
 
     .el-collapse-item__content {
         --el-font-size-base: 15px;
-
+        font-size: 13px;
     }
 
     .el-menu {

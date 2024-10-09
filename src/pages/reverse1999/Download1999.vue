@@ -32,7 +32,7 @@
                   百度网盘下载地址
                 </el-link>
                 <el-button link type="primary" target="_blank"
-                           @click="showNotice('3','1');copyText('1224021291','默默的联系方式(QQ)','https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
+                           @click="showNotice(3,'1');copyText('1224021291','默默的联系方式(QQ)','https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
                            title="点击前往API文档(无偿但不公开)">
                   API接口文档(需要密码请联系默默)
                 </el-button>
@@ -262,7 +262,7 @@
              style="z-index: 100"
              destroy-on-close>
     <template #header><span style="font-size: 24px">下载须知</span></template>
-    <DownloadNotice :showFlag="showFlag" :showPayCodePanel="showPayCodePanel"/>
+    <DownloadNotice :showFlag="showFlag" :showPayCodePanel="showPayCodePanel" :downloadLimitNum="downloadLimitNum"/>
   </el-dialog>
 </template>
 
@@ -289,6 +289,7 @@ import {useBaseUrl} from '@/hooks/useBaseUrl'
 import logo from '@/assets/logo-small.png'
 import {emitter} from "@/utils/emitter";
 import DownloadNotice from "@/pages/reverse1999/components/DownloadNotice.vue";
+import {Notice, NoticeActiveNum} from "@/types/global";
 
 const {copyText, deepEqual} = useFunction()
 const router = useRouter()
@@ -346,6 +347,8 @@ const autoFlag = ref(true)    //是否开启自动布局
 const isChoose = ref(0)   //是否是批量选择状态
 const showPayCode = ref(false)//是否显示收款码
 const fee = ref(0)
+//单次最大下载数量
+const downloadLimitNum = ref(25)
 
 onMounted(() => {
   getVersion()
@@ -443,7 +446,7 @@ function reset() {
 function getVersion() {
   axios({
     url: '/getVersion',
-    params: {version:true,role: 'diff'}
+    params: {version: true, role: 'diff'}
   }).then(result => {
     console.log(result)
     const {versionList, roleList} = result.data.data
@@ -759,19 +762,19 @@ function autoCol() {
   console.log('视口宽度', screenWidth.value)
   console.log('计算的图片列数', Math.floor(screenWidth.value / 250))
   colNum.value = Number(Math.floor(screenWidth.value / 250))
-  if (previewImgList.length <= 10 && isPC.value) colNum.value = Number((previewImgList.length / 2).toFixed(0)) //PC端如果图片不大于10张，则有x张就分x/2列(去除小数)
+  if (previewImgList.length <= downloadLimitNum.value && isPC.value) colNum.value = Number((previewImgList.length / 2).toFixed(0)) //PC端如果图片不大于downloadLimitNum张，则有x张就分x/2列(去除小数)
 }
 
 
 //endregion
 //呼出公告面板
-const showNotice = (showNum = '3', activeNum = '2') => emitter.emit('showNotice', {showNum, activeNum})
+const showNotice = (show_num = 3, active_num = 2) => emitter.emit('showNotice', {show_num, active_num})
 
 
 //下载须知面板序号
 const showFlag = reactive<NoticeActiveNum>({
-  showNum: '1',
-  activeNum: '1'
+  show_num: 1,
+  active_num: 1,
 })
 //呼出下载须知面板
 const showDownloadNotice = (item?: NoticeActiveNum) => {
@@ -784,7 +787,7 @@ const showPayCodePanel = () => {
   isShowDownloadNotice.value = false
   activeIndex.value = '5'
 }
-console.log('isPC',isPC.value)
+console.log('isPC', isPC.value)
 </script>
 <style scoped>
 .el-header {
@@ -858,10 +861,11 @@ console.log('isPC',isPC.value)
 }
 
 @media (max-width: 980px) {
-  h1{
+  h1 {
     font-size: 24px;
     margin-bottom: 10px;
   }
+
   .el-checkbox { /*缩短选项框右边距*/
     margin-right: 15px;
   }
@@ -880,8 +884,6 @@ console.log('isPC',isPC.value)
   opacity: 0;
   transform: translateY(30px);
 }
-
-
 
 
 .statement:hover {
@@ -912,5 +914,6 @@ console.log('isPC',isPC.value)
     transform: translate3d(4px, 0, 0);
   }
 }
+
 /*endregion*/
 </style>
