@@ -1,22 +1,22 @@
 <template>
   <div class="container">
-    <div class="title"><span>歌单广场[暂时只显示最近游客查询的至多五个歌单]</span>
+    <div class="title"><span>歌单广场[暂时只显示最近十个歌单]</span>
       <el-button link :icon="Refresh" @click="getMusicList()">{{ isPC ? '刷新' : '' }}</el-button>
     </div>
     <div class="openMusicList" @touchstart="stopTouch" @touchend="stopTouch">
       <div v-for="item in musicLists" :key="item.music_list_id" class="musicList"
-           @click="toggleToMusicList({id:item.music_list_id})">
+           @click="toggleToMusicList({music_list_id:item.music_list_id})">
         <MusicListCoverComp :musicListInfo="item"/>
       </div>
     </div>
-    <el-divider></el-divider>
+    <el-divider/>
     <div class="title"><span>我创建的歌单</span>
       <el-button link :icon="Plus" @click="handleChangeDrawer">{{ isPC ? '创建歌单' : '' }}</el-button>
     </div>
     <div class="openMusicList" @touchstart="stopTouch" @touchend="stopTouch">
       <el-button text type="primary" v-if="myMusicLists.length===0" style="margin: 0 auto">{{ "暂无歌单" }}</el-button>
       <div v-for="item in myMusicLists" :key="item.music_list_id" class="musicList"
-           @click="toggleToMusicList({id:item.music_list_id})">
+           @click="toggleToMusicList({music_list_id:item.music_list_id})">
         <MusicListCoverComp :musicListInfo="item"/>
       </div>
     </div>
@@ -70,6 +70,7 @@ const getMusicList = async (user_id?: number, music_list_id?: number) => {
     console.log(result.data)
     const {status, msg, data} = result.data
     musicLists.value = data.music_lists
+    ElMessage.success('获取最新歌单成功')
   } catch (error) {
     console.log('发生错误：')
     console.dir(error)

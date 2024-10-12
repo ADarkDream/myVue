@@ -3,7 +3,7 @@
   <div class="player" :class="{hidePlayer:!isShowPlayer,showPlayer:isShowPlayer}" @click="togglePlayerVisible()">
     <audio ref="audioEl" crossOrigin='anonymous' :src='playList[playingIndex].src' type="audio/mpeg"/>
     <div class="play-panel" :class="{ active: infoBarActive }">
-            <span ref="musicName" class="name" :class="{ scroll: nameScroll }" :style="transformX">{{
+            <span ref="musicName" class="name" :class="{ scroll: isScrollName }" :style="transformX">{{
                 isLoading ? '加载中' : playList[playingIndex].name || '未命名'
               }}——<span class="artist">
               {{
@@ -150,7 +150,7 @@ const {
   audioContext, audioElement, gainNode,
   infoBarActive,
   controlPanelActive,
-  nameScroll,
+  isScrollName,
   isLock,
   isShowPlayer,
   transformX, currentTime, duration
@@ -309,6 +309,7 @@ if ("mediaSession" in navigator) {
   --infoColor: rgba(107, 179, 250, 0.44);
   --btnColor: #eee;
   --scrollNamePosition: -50%;
+  --customAnimation:scroll 5s linear infinite;
   /*播放音乐的信息*/
 
   .play-panel {
@@ -323,6 +324,7 @@ if ("mediaSession" in navigator) {
     border-radius: 15px;
     transition: all .5s ease;
     box-shadow: 2px 1px 2px 1px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
 
     .name {
       color: #222;
@@ -330,6 +332,7 @@ if ("mediaSession" in navigator) {
       white-space: nowrap; /*文字不换行*/
       font-size: 14px;
       margin-bottom: 5px;
+       animation: var();
     }
 
     /*播放时音乐名称太长，开始滚动*/

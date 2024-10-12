@@ -14,7 +14,7 @@
     //非空检查
     "strictNullChecks": true,
     //函数类型检查
-    "strictFunctionChecks": true,
+    "strictFunctionTypes": true,
     //属性初始化检查
     "strictPropertyInitialization": true,
     //未使用变量检查

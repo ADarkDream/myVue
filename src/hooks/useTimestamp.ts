@@ -6,10 +6,10 @@ export default function () {
         return value
     }
 
-//处理时间戳,返回毫秒级(13位)时间戳
-    function formatTimestamp(timestamp: string | number) {
+    //处理时间戳,返回毫秒级(13位)时间戳
+    function formatTimestamp(timestamp: string | number | Date) {
         //如果是ISO时间戳
-        if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(timestamp) || /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(timestamp)) {
+        if (/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(timestamp.toString()) || /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(timestamp.toString())) {
             return (new Date(timestamp)).getTime()
         }
         //时间戳若不是13位  补全为13位
@@ -19,17 +19,17 @@ export default function () {
                 timestampStr += '0'
             }
             return Number(timestampStr)
-        } else return timestamp
+        } else return Number(timestamp)
     }
 
-//获取两个时间戳的插值(正常返回正负数)
+    //获取两个时间戳的插值(正常返回正负数)
     function getDiffTimestamp(timestampVal: string | number) {
         let timestamp = formatTimestamp(timestampVal)  //处理时间戳,返回毫秒级(13位)时间戳
         const now = new Date().getTime()
         return now - timestamp
     }
 
-//日期比较函数，返回距今时间
+    //日期比较函数，返回距今时间
     function getDiffTime(timestampVal: string | number) {
         let timestamp = formatTimestamp(timestampVal)  //处理时间戳,返回毫秒级(13位)时间戳
 
@@ -80,7 +80,7 @@ export default function () {
     }
 
 
-//需要一个时间戳,否则默认给出当前时间
+    //需要一个时间戳,否则默认给出当前时间
     function getTime(timestamp: string | number = Date.now()) {
         let d = new Date(timestamp)
         let month = addZero(d.getMonth() + 1)
@@ -116,14 +116,14 @@ export default function () {
     }
 
     //格式化时间,用于获取音乐播放的时常
-function formatMusicTime(duration=0) {
-    const totalSeconds = Math.floor(duration); // 去掉小数部分，不四舍五入
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${addZero(minutes)}:${addZero(seconds)}`;
-}
+    function formatMusicTime(duration = 0) {
+        const totalSeconds = Math.floor(duration); // 去掉小数部分，不四舍五入
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${addZero(minutes)}:${addZero(seconds)}`;
+    }
 
     // 向外暴露
-    return {getTime, getDiffTime, getDiffTimestamp,formatDate,formatMusicTime}
+    return { getTime, getDiffTime, getDiffTimestamp, formatDate, formatMusicTime }
 }
 

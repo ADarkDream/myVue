@@ -1,13 +1,12 @@
 // 引入defineStore用于创建store
 import {defineStore} from 'pinia'
 
-import {CloudSongInfo, SearchResult} from "@/types/music";
-import axios from "axios";
-import {ResultData} from "@/types/global";
-import {ref, computed, watch, nextTick} from 'vue';
+import {CloudSongInfo} from "@/types/music"
+import {ref, computed, watch, nextTick} from 'vue'
 import {ElMessage} from 'element-plus'
-import {useMusicListStore} from "@/store/music/useMusicListStore";
+import {useMusicListStore} from "@/store/music/useMusicListStore"
 import {usePlayConfigStore} from '@/store/music/usePlayConfigStore'
+import useMusicPlay from '@/hooks/music/useMusicPlay'
 
 const musicStore = useMusicListStore()
 const playConfigStore = usePlayConfigStore()
@@ -68,7 +67,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
     }
 
 //是否滚动歌名
-    const nameScroll = ref(false)
+    const isScrollName = ref(false)
     //滚动距离
     const transformX = ref('--scrollNamePosition:-50%')
 
@@ -91,7 +90,18 @@ export const useMusicPlayStore = defineStore('music_play', () => {
     const timer_volume = ref<NodeJS.Timeout>()
     const time_volume = ref(5)
 
-//切换播放器显示状态
+//播放进度
+    const currentTime = ref(audioElement.value?.currentTime)
+//音乐总时长
+    const duration = ref(audioElement.value?.duration)
+//计算当前播放时长的定时器
+    const timer1 = ref<NodeJS.Timeout>()
+
+    const testData = ref()
+    let gainNode = ref()
+
+
+//切换播放器显示状态【定时器】
     const togglePlayerVisible = () => {
         //如果有定时器，先重置防止重复
         if (timer_player.value) clearInterval(timer_player.value)
@@ -119,7 +129,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         }
     }
 
-    //切换音量控制面板显示状态
+    //切换音量控制面板显示状态【定时器】
     const toggleVolumePanelVisible = () => {
         //如果有定时器，先重置防止重复
         if (timer_volume.value) clearInterval(timer_volume.value)
@@ -159,43 +169,28 @@ export const useMusicPlayStore = defineStore('music_play', () => {
     }
 
 
-//播放进度
-    const currentTime = ref(audioElement.value?.currentTime)
-//音乐总时长
-    const duration = ref(audioElement.value?.duration)
-
-
 //如果音乐有id没地址，则要通过id获取最新的src，然后重新赋值
     const resetUrl = async (song: CloudSongInfo) => {
         if (song.src) return
         //获取播放链接
-        const result = await axios<ResultData<{ playInfo: { cloud_music_id: number, src: string } }>>({
-            url: '/getPlayInfo',
-            params: {cloud_music_id: song.cloud_music_id, fee: song.fee},
-        })
-        const {data} = result.data
-        if (data) {
-            //合并歌曲信息和播放地址信息
-            const newSong = Object.assign(song, data.playInfo)
-            console.log('newSong', [newSong])
+        const newSong = await useMusicPlay().getMusicUrl(song)
+        if (newSong) {
             const index = musicStore.addMusicList([newSong], {isReplace: true})
             console.log(`播放第${index + 1}首歌：${playList.value[index].name}`)
             ElMessage.info(`播放：${playList.value[index].name}`)
             //切换到添加的这首歌
             // await toggleMusic({index})
         } else return ElMessage.warning('暂不支持VIP音乐')
-
     }
 
 
-//计算当前播放时长的定时器
-    const timer1 = ref<NodeJS.Timeout>()
-
-    const testData = ref()
-
 //播放和暂停
-//pause=true则必定暂停，pause默认则看isPlaying.value;isReplay=true则从头开始播放
-    async function play({pause = false, isReplay = false}: { pause?: boolean, isReplay?: boolean }) {
+//pause=true则必定暂停，pause默认则看isPlaying.valueisReplay=true则从头开始播放
+    async function play({pause = false, isReplay = false, isStop = false}: {
+        pause?: boolean,
+        isReplay?: boolean,
+        isStop?: boolean
+    }) {
         const length = playList.value.length
         if (length === 0) return ElMessage.info('歌曲列表为空')
         else if (playingIndex.value < 0 || playingIndex.value > length) {
@@ -208,7 +203,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
             await audioContext.resume()
         }
 
-        console.log('是否强制暂停：', pause, '是否强制重新播放：', isReplay)
+        console.log('是否强制暂停：', pause, '是否强制重新播放：', isReplay, '是否强制停止播放：', isStop)
         if (pause || isPlaying.value) {//暂停
             isPlaying.value = false
             audioElement.value?.pause()
@@ -226,23 +221,38 @@ export const useMusicPlayStore = defineStore('music_play', () => {
             if (isReplay) {
                 audioElement.value.load()
                 // 绑定新的 `canplay` 事件监听器，确保加载完成后再播放
-                audioElement.value.addEventListener('canplay', handleCanPlay);
-            } else handleCanPlay()
+                audioElement.value.addEventListener('canplay', handleCanPlay)
+            } else await handleCanPlay()
 
-            isLoading.value = false
-            nextTick(() => isScroll())
 
-            duration.value = audioElement.value?.duration
-            //关闭播放时间计时器
-            if (timer1.value) clearInterval(timer1.value)
-            //开启播放时间计时器,显示当前播放时长
-            timer1.value = setInterval(() => playing(), 1000)
-            console.log('播放开始')
+            if (isStop) {//停止播放，播放进度重置并暂停
+                if (!audioElement.value) return
+                infoBarActive.value = false
+                controlPanelActive.value = false
+                isPlaying.value = false
+                audioElement.value.currentTime = 0
+                duration.value = 0
+                //关闭播放时间计时器
+                if (timer1.value) clearInterval(timer1.value)
+                audioElement.value.pause()
+                ElMessage.info('停止播放')
+            } else {//暂停或播放
+                isLoading.value = false
+                await nextTick(() => isScroll())
+
+                duration.value = audioElement.value?.duration
+                //关闭播放时间计时器
+                if (timer1.value) clearInterval(timer1.value)
+                //开启播放时间计时器,显示当前播放时长
+                timer1.value = setInterval(() => playing(), 1000)
+                console.log('播放开始')
+            }
+
         }
     }
 
 //监听播放进度
-    const playing = () => {
+    const playing = async () => {
         currentTime.value = audioElement.value?.currentTime
         if ("setPositionState" in navigator.mediaSession) {
             testData.value = {
@@ -255,10 +265,10 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         }
         //切换下一首
         if (audioElement.value?.currentTime === duration.value) {
-            toggleMusic({})
+            await toggleMusic({})
         }
     }
-    let gainNode = ref()
+
 //修改音量
     const changeVolume = (value: number) => {
         console.log('音量变化', value)
@@ -278,11 +288,14 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         if (musicName.value) {//歌曲名滚动
             const nameSW = musicName.value.scrollWidth
             const nameCW = musicName.value.clientWidth
-            nameScroll.value = nameSW > nameCW
-            console.log('歌曲名是否超出容器', nameScroll.value, nameSW, nameCW)
+            isScrollName.value = nameSW > nameCW
+            console.log('歌曲名是否超出容器', isScrollName.value, nameSW, nameCW)
             //如果超出了，修改滚动距离
-            if (nameScroll.value) {
-                transformX.value = `--scrollNamePosition:${nameCW - nameSW - 20}px`
+            if (isScrollName.value) {
+                transformX.value = {
+                    '--scrollNamePosition': nameCW - nameSW - 20 + 'px',
+                    '--customAnimation': `scroll ${1}s linear infinite`
+                }
             }
         }
     }
@@ -328,7 +341,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         await resetUrl(song)
 
         //如果当前不是播放状态，则播放
-        if (!isPlaying.value) play({isReplay: true})
+        if (!isPlaying.value) await play({isReplay: true})
     }
 
 
@@ -338,7 +351,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
 
         await audioElement.value.play().catch(async (err) => {
             if (retryCount < 5) { // 限制重试次数
-                console.error("播放失败，一秒后重试");
+                console.error("播放失败，一秒后重试")
                 console.log(err)
                 // 等待 1 秒
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -346,7 +359,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
                 // 递归再次尝试播放
                 await handleCanPlay(retryCount + 1)
             } else {
-                ElMessage.error('多次播放失败，切换下一首');
+                ElMessage.error('多次播放失败，切换下一首')
                 await toggleMusic({})
             }
         })
@@ -377,41 +390,21 @@ export const useMusicPlayStore = defineStore('music_play', () => {
     }
 
 //添加并播放新音乐(网易云音乐ID)
-    const addCloudMusic = async (id: number, isPlay = false) => {
+    const addCloudMusic = async (cloud_music_id: number, isPlay = false) => {
         try {
-            if (!id) return
-            const {isError, songs} = await addCloudMusicList([id])
+            if (!cloud_music_id) return
+            const {isError, songs} = await addCloudMusicList([cloud_music_id])
             console.log('songs', isError, songs)
             if (isError) return
             //songs为空，addCloudMusicList过滤时
             if (!songs?.length) return // ElMessage.warning('添加的音乐需要VIP，暂不支持')
 
             //添加到播放列表
-
-            //如果添加一首歌且选择播放
+            const index = musicStore.addMusicList(songs, {isReplace: true})
+            //如果添加一首歌且选择播放，切换到添加的这首歌
             if (songs.length === 1 && isPlay) {
-              const index = musicStore.addMusicList(songs, {isReplace: true})
-                    console.log(`播放第${index + 1}首歌`)
-                    //切换到添加的这首歌
-                    await toggleMusic({index})
-                // const song = songs[0]
-                //
-                // //获取播放链接
-                // const result = await axios<ResultData<{ playInfo: { cloud_music_id: number, src: string } }>>({
-                //     url: '/getPlayInfo',
-                //     params: {cloud_music_id: song.cloud_music_id},
-                // })
-                // const {data} = result.data
-                // if (data) {
-                //     //合并歌曲信息和播放地址信息
-                //     songs[0] = Object.assign(song, data.playInfo)
-                //     const index = musicStore.addMusicList(songs, {isReplace: true})
-                //     console.log(`播放第${index + 1}首歌`)
-                //     //切换到添加的这首歌
-                //     await toggleMusic({index})
-                // }
-                //只添加不播放
-            } else musicStore.addMusicList(songs, {isReplace: true})
+                await toggleMusic({index})
+            }
 
         } catch (error) {
             console.log('发生错误：')
@@ -420,7 +413,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
     }
 
 
-//获取音乐信息
+//批量获取音乐信息
     const addCloudMusicList = async (idList: number[]): Promise<{
         isError: boolean,
         songs?: CloudSongInfo[]
@@ -442,32 +435,18 @@ export const useMusicPlayStore = defineStore('music_play', () => {
             ElMessage.error('含有不合法的id,id应为纯数字')
             return {isError}
         }
-        try {
-            const result = await axios<ResultData<{ songsInfo: CloudSongInfo[],errorIdList:string[] }>>({
-                url: '/getCloudMusic',
-                params: {idList},
-            })
-            console.log(result)
-            const {data} = result.data
-            console.log('获取的音乐信息：', data)
-            //清洗掉返回数据中没有播放地址的歌曲信息
-            // 过滤掉src不存在的song
-            if (data) {
-                // console.log(!data.songsInfo, data.songsInfo)
-                if (!data.songsInfo) return {isError: true}
+        const data = await useMusicPlay().getCloudMusic(idList)
+        //清洗掉返回数据中没有播放地址的歌曲信息（过滤掉src不存在的song）
+        if (data) {
+            // console.log(!data.songsInfo, data.songsInfo)
+            if (!data.songsInfo) return {isError: true}
 
-                const songs = data.songsInfo
-                //过滤地址不存在的歌
-                // const songs = data.songsInfo.filter(song => song.src !== undefined && song.src !== '')
-                return {isError:false, songs}
-            }
-            return {isError: true}
-
-        } catch (error) {
-            console.log('发生错误：')
-            console.dir(error)
-            return {isError: true}
+            const songs = data.songsInfo
+            //过滤地址不存在的歌
+            // const songs = data.songsInfo.filter(song => song.src !== undefined && song.src !== '')
+            return {isError: false, songs}
         }
+        return {isError: true}
     }
 
 
@@ -528,10 +507,6 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         }
     })
 
-    //重试播放函数
-    function tryPlay(retryCount = 0) {
-
-    }
 
 //如果浏览器支持
     if ("mediaSession" in navigator) {
@@ -543,29 +518,29 @@ export const useMusicPlayStore = defineStore('music_play', () => {
             pic_url: thisMusic.value.album.pic_url!
         })
 
-        navigator.mediaSession.setActionHandler("play", () => {
-            play({})
-            navigator.mediaSession.playbackState = "playing";
-        });
-        navigator.mediaSession.setActionHandler("pause", () => {
-            play({})
-            navigator.mediaSession.playbackState = "paused";
-        });
-        navigator.mediaSession.setActionHandler("stop", () => {
-            play({pause: true})
-        });
+        navigator.mediaSession.setActionHandler("play", async () => {
+            await play({})
+            navigator.mediaSession.playbackState = "playing"
+        })
+        navigator.mediaSession.setActionHandler("pause", async () => {
+            await play({})
+            navigator.mediaSession.playbackState = "paused"
+        })
+        navigator.mediaSession.setActionHandler("stop", async () => {
+            await play({pause: true})
+        })
 //跳转到指定播放点
         // navigator.mediaSession.setActionHandler("seekto", () => {
         //     toggleMusic({isNext:false,isAuto:false})
-        // });
+        // })
         //上一首
-        navigator.mediaSession.setActionHandler("previoustrack", () => {
-            toggleMusic({isNext: false, isAuto: false})
-        });
+        navigator.mediaSession.setActionHandler("previoustrack", async () => {
+            await toggleMusic({isNext: false, isAuto: false})
+        })
         //下一首
-        navigator.mediaSession.setActionHandler("nexttrack", () => {
-            toggleMusic({isNext: true, isAuto: false})
-        });
+        navigator.mediaSession.setActionHandler("nexttrack", async () => {
+            await toggleMusic({isNext: true, isAuto: false})
+        })
     }
 
     return {
@@ -573,7 +548,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         audioElement,
         gainNode,
         infoBarActive, controlPanelActive,
-        nameScroll,
+        isScrollName,
         transformX,
         currentTime,
         duration,

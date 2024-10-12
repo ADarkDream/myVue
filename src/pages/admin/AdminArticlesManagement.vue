@@ -173,7 +173,7 @@ import {ElMessage, ElMessageBox, type TableColumnCtx, type TableInstance} from "
 import {onMounted, reactive, ref} from "vue";
 import useTimeStamp from '@/hooks/useTimestamp'
 import {useRouter} from "vue-router"
-import {Article} from "@/types/articles"
+import type {Article} from "@/types/articles"
 
 const router = useRouter()
 const goArticle = (item: Article, isEdit: number) => {

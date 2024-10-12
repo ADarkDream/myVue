@@ -1,30 +1,32 @@
 <!--专辑封面-->
 <template>
   <div class="card">
-    <div class="img" :style="'--bgImage:'+`url(${musicListInfo.pic_url || defaultAlbumArt})`">
+    <div class="img" :style="'--bgImage:' + `url(${musicListInfo.pic_url || defaultAlbumArt})`">
       <div class="save" @click="toggleLike()">
-        <LikeHeart :isLike="isLike"/>
+        <LikeHeart :isLike="isLike" />
       </div>
     </div>
     <div class="text">
       <p class="title">{{ musicListInfo.name }}</p>
-      <p class="info" v-if="isPC"><span>歌曲数：{{musicListInfo.songsCount }}</span><span>上次更新：{{formatDate(musicListInfo.lastTime)}}</span></p>
+      <p class="info" v-if="isPC"><span>上次更新：{{ formatDate(musicListInfo.lastTime) }}</span><span>{{
+        musicListInfo.songsCount
+          }}首</span></p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import defaultAlbumArt from "@/assets/music/music.svg";
-import {ref} from 'vue'
+import { ref } from 'vue'
 import useResponsive from "@/hooks/useResponsive";
 import LikeHeart from "@/components/smallComp/LikeHeart.vue";
 import useTimestamp from "@/hooks/useTimestamp";
-const {formatDate}=useTimestamp()
-const {isPC} = useResponsive()
+const { formatDate } = useTimestamp()
+const { isPC } = useResponsive()
 const isLike = ref(false)
 
 
-const {musicListInfo} = defineProps(['musicListInfo'])
+const { musicListInfo } = defineProps(['musicListInfo'])
 
 const toggleLike = () => {
   isLike.value = !isLike.value
@@ -38,7 +40,7 @@ const toggleLike = () => {
   height: 265px;
   background: white;
   box-shadow: 2px 2px 5px #bebebe,
-  -2px -2px 5px #bebebe;
+    -2px -2px 5px #bebebe;
   transition: 0.2s ease-in-out;
   --bgImage: url('@/assets/music/music.svg');
   --borderRadius: 30px;
@@ -137,5 +139,4 @@ const toggleLike = () => {
         margin-left: 5px;*/
   }
 }
-
 </style>

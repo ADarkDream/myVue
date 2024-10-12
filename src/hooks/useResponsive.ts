@@ -1,5 +1,5 @@
-import {ref,reactive,Ref} from "vue";
-import {useRouter} from "vue-router";
+import { ref, reactive, type Ref } from "vue";
+import { useRouter } from "vue-router";
 
 export default function () {
     const router = useRouter()
@@ -15,7 +15,7 @@ export default function () {
     const dialogWidth = ref<string>(isPC.value ? '50%' : '90%')
     const dialogWidth2 = ref<string>(isPC.value ? '40%' : '80%')
     //抽屉高度
-    const drawerSize = ref<number>(isPC.value ? screenHeight.value - 80 : screenHeight.value - 40)
+    const drawerSize = ref<number>(isPC.value ? screenHeight.value - 70 : screenHeight.value - 30)
 
     //elSize已经在main.ts中定义了，可删除
     const elSize = ref<string>(isPC.value ? 'default' : 'small')
@@ -54,8 +54,8 @@ export default function () {
     }
 
     //是否允许页面纵向滚动,仅限PC端,true为允许，false溢出隐藏，null清除样式
-    function isScroll(flag?) {
-        const bodyStyle = document.querySelector('body').style
+    function isScroll(flag?: boolean) {
+        const bodyStyle = (document.querySelector('body') as HTMLBodyElement).style
         if (flag) {  /*全局样式，当前页面及子页面在PC端禁止滚动*/
             bodyStyle.overflowY = 'visible'
             // bodyStyle.overflowX = 'hidden'
@@ -68,7 +68,7 @@ export default function () {
         }
     }
 
-//region移动端计算滑动距离来实现左右翻页
+    //region移动端计算滑动距离来实现左右翻页
     //移动端鼠标滑动
     const direction = reactive({
         start_x: 0,
@@ -77,7 +77,7 @@ export default function () {
         end_y: 0
     })
 
-//根据起点终点返回方向 1向上滑动 2向下滑动 3向左滑动 4向右滑动 0点击事件
+    //根据起点终点返回方向 1向上滑动 2向下滑动 3向左滑动 4向右滑动 0点击事件
     function getDirection() {
         const ang_x = direction.end_x - direction.start_x
         const ang_y = direction.end_y - direction.start_y
@@ -102,13 +102,13 @@ export default function () {
         return result
     }
 
-//手指接触屏幕
+    //手指接触屏幕
     const touchstart = (e: TouchEvent) => {
         console.log('触摸屏幕')
         direction.start_x = e.touches[0].pageX
         direction.start_y = e.touches[0].pageY
     }
-//计算移动距离并修改activeName
+    //计算移动距离并修改activeName
     const positionComputed = (e: TouchEvent, activeName: Ref<number>, minNum = 0, maxNum: number) => {
         direction.end_x = e.changedTouches[0].pageX
         direction.end_y = e.changedTouches[0].pageY
@@ -143,7 +143,7 @@ export default function () {
         }
     }
 
-//endregion
+    //endregion
     // 向外暴露
     return {
         screen,

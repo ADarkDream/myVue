@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import {ElMessage} from "element-plus";
-import {reactive, ref,defineExpose} from "vue";
+import {reactive, ref} from "vue";
 import axios from "axios";
 import {MusicListInfo} from "@/types/music";
 

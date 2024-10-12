@@ -1,15 +1,22 @@
 // 引入defineStore用于创建store
 import {defineStore} from 'pinia'
 import {computed, ref} from "vue";
+
 import {useMusicListStore} from "@/store/music/useMusicListStore";
+import {useMusicPlayStore} from "@/store/music/useMusicPlayStore";
 import {ElMessage} from "element-plus";
 import pinia from '@/store'
-const musicStore = useMusicListStore(pinia)
-const playList = computed(() => musicStore.playList)
+
+
+const musicListStore = useMusicListStore(pinia)
+// const musicPlayStore = useMusicPlayStore()
+
+
+const playList = computed(() => musicListStore.playList)
 //当前播放的歌的序号
 const playingIndex = computed({
-        get: () => musicStore.playingIndex,
-        set: (val: number) => musicStore.playingIndex = val
+        get: () => musicListStore.playingIndex,
+        set: (val: number) => musicListStore.playingIndex = val
     }
 )
 
@@ -43,15 +50,15 @@ export const usePlayConfigStore = defineStore('play_config', () => {
     const volume = ref(1)
 
     //切换模式
-    function toggleMode  ()  {
+    function toggleMode() {
         //此为最后一个模式，切换回第一个
-        if (modeIndex.value >= modeList.length-1) {
+        if (modeIndex.value >= modeList.length - 1) {
             modeIndex.value = 0
         } else modeIndex.value++
     }
 
     //按模式切歌
-    function togglePlayingIndex  (isNext, isAuto)  {
+    function togglePlayingIndex(isNext, isAuto) {
         if (modeIndex.value === 0) {
             listLoop(isNext)
         } else if (modeIndex.value === 1) {
@@ -65,7 +72,7 @@ export const usePlayConfigStore = defineStore('play_config', () => {
 
 
     //列表循环
-    function listLoop  (isNext: boolean)  {
+    function listLoop(isNext: boolean) {
         if (isNext) playingIndex.value++
         else playingIndex.value--
         //下一首，此为最后一首
@@ -79,13 +86,14 @@ export const usePlayConfigStore = defineStore('play_config', () => {
     }
 
     //顺序播放
-    function sequentialPlay  (isNext: boolean) {
+    async function sequentialPlay(isNext: boolean) {
         if (isNext) playingIndex.value++
         else playingIndex.value--
         //下一首，此为最后一首或上一首，此为第一首
         if (playingIndex.value >= playList.value.length) {
             //换成默认的信息，空白信息
-            playingIndex.value--
+            playingIndex.value=0
+            await useMusicPlayStore().play({isStop: true})
             return //ElMessage.info('当前是最后一首')
         } else if (playingIndex.value <= 0) {
             playingIndex.value++
@@ -96,7 +104,7 @@ export const usePlayConfigStore = defineStore('play_config', () => {
     }
 
 //随机播放
-    function randomPlay  ()  {
+    function randomPlay() {
         const randomNum = Math.floor(Math.random() * (playList.value.length))
         if (playingIndex.value === randomNum && playList.value.length !== 1) return randomPlay
         playingIndex.value = randomNum
@@ -104,7 +112,7 @@ export const usePlayConfigStore = defineStore('play_config', () => {
     }
 
 //单曲循环
-    function singleLoop  (isNext: boolean, isAuto: boolean)  {
+    function singleLoop(isNext: boolean, isAuto: boolean) {
         //自动切换，循环当前音乐
         if (isAuto) {
             // if (audioElement.value) audioElement.value.currentTime = 0
@@ -122,13 +130,15 @@ export const usePlayConfigStore = defineStore('play_config', () => {
         toggleMode,
         togglePlayingIndex,
     }
-}, {  persist: [
-    {
-      pick: ['modeIndex'],
-      storage: localStorage,
-    },
-    {
-      pick: ['volume'],
-      storage: localStorage,
-    },
-  ],})
+}, {
+    persist: [
+        {
+            pick: ['modeIndex'],
+            storage: localStorage,
+        },
+        {
+            pick: ['volume'],
+            storage: localStorage,
+        },
+    ],
+})

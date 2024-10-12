@@ -15,13 +15,16 @@ interface Album {
 
 //歌单的信息
 interface MusicListInfo {
-    music_list_id?: number,
+    music_list_id: number,
+    cloud_music_list_id?: number,
     name: string,
-    uid?: number,
+    uid: number,
     pic_url: string,
-    status?: number,
-    created_time?: string,
-    updated_time?: string,
+    status: number,
+    latest_time?: Date,//最新一首歌的时间
+    songsCount: number,
+    created_time: Date,
+    updated_time: Date,
 }
 
 //歌单的数据结构
@@ -30,6 +33,21 @@ interface MusicList {
     songsInfo: CloudSongInfo[]
 }
 
+//请求数据库歌单数据的结构
+interface QueryMusicList {
+    music_list_id: number,
+    limit?: number,
+    offset?: number,
+}
+
+//请求网易云歌单数据的结构
+interface QueryCloudMusicList {
+    music_list_id?: number,
+    cloud_music_list_id: number,
+    limit?: number,
+    offset?: number,
+    latest?: number
+}
 
 //网易云音乐信息(筛选后)
 interface CloudSongInfo {
@@ -60,4 +78,4 @@ interface SearchResult {
     songCount: number
 }
 
-export type {CloudSongInfo, SongInfo, SearchResult, MusicListInfo, MusicList}
+export type { CloudSongInfo, SongInfo, SearchResult, MusicListInfo, MusicList, QueryMusicList, QueryCloudMusicList }

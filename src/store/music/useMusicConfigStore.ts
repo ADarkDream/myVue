@@ -1,6 +1,6 @@
 // 引入defineStore用于创建store
 import {defineStore} from 'pinia'
-import {reactive} from "vue";
+import {reactive,ref} from "vue";
 
 
 // 定义并暴露一个store
@@ -13,6 +13,13 @@ export const useMusicConfigStore = defineStore('music_config', () => {
         '--music-bg-saturate': 1, /*背景饱和度*/
     })
 
+    //当前面板序号
+    const activePanelIndex=ref(1)
 
-    return {bgSettings}
+    //切换面板
+    const changePanelIndex=(index:number)=>{
+        activePanelIndex.value=index
+    }
+
+    return {bgSettings,activePanelIndex,changePanelIndex}
 }, {persist: true})

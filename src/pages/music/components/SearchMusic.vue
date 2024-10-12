@@ -18,7 +18,7 @@
       <HotSearchWords :changeKeyWords="changeKeyWords"/>
     </div>
     <div v-if="showResult">
-      <play-list :songsList="searchResult" :height="searchDivHeight"/>
+      <music-list-songs-list :songsList="searchResult" :height="searchDivHeight"/>
       <div>
         <div style="width: 100%;display: flex;justify-content: center;margin-bottom: 100px">
           <el-pagination
@@ -45,7 +45,7 @@ import {Back} from "@element-plus/icons-vue";
 import useFunction from "@/hooks/useFunction";
 import useResponsive from "@/hooks/useResponsive";
 import HotSearchWords from "@/pages/music/components/HotSearchWords.vue";
-import PlayList from "@/pages/music/components/PlayList.vue";
+import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
 
 const searchStore = useMusicSearchStore()
 const musicPlayStore = useMusicPlayStore()
