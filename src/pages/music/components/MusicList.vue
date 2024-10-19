@@ -3,29 +3,33 @@
   <div class="musicList">
     <el-empty v-if="!musicList?.length" description="请先搜索或选择歌单"></el-empty>
 
-    <div v-if="musicList?.length" class="infoDiv">
-      <el-image v-show="!isHidden" :src="musicListInfo?.pic_url" class="cover"/>
+    <div v-else class="infoDiv">
+      <el-image v-show="!isHidden" :src="musicListInfo?.pic_url" class="cover" />
       <div class="music_list_info" :class="{ hide: isHidden }">
         <p class="title">
-          {{ musicListInfo?.name }}
+          {{ musicListInfo?.name }} <el-button link type="warning" :icon="ArrowUpBold" v-show="!isHidden"
+            @click="toggleInfoVisible">
+            {{ '收起' }}
+          </el-button>
         </p>
         <div v-show="!isHidden">
           <p>歌单状态：
             <el-text :type="musicListInfo?.status === 1 ? 'primary' : 'success'">{{
-                musicListInfo?.status === 1 ? '私有' : '公开'
-              }}
+              musicListInfo?.status === 1 ? '私有' : '公开'
+            }}
             </el-text>
           </p>
-          <p>歌曲数：{{musicListInfo.songsCount}}<el-button text type="primary" @click="" disabled>刷新</el-button></p>
+          <p>歌曲数：{{ musicListInfo?.songsCount }}<el-button link size="small" plain type="primary"
+              @click="refresh({ cloud_music_list_id: musicListInfo?.cloud_music_list_id! })">刷新</el-button></p>
           <p>介绍：
             <el-text type="info">暂无介绍</el-text>
           </p>
           <p>上次更新时间：
-            <el-text type="info">{{ getTime(musicListInfo?.latest_time!) }}</el-text>
+            <el-text type="info">{{ getTime(musicListInfo!.updated_time) }}</el-text>
           </p>
         </div>
 
-        <el-button-group class="btnGroup" type="primary" v-if="isPC||!isHidden">
+        <el-button-group class="btnGroup" size="small" type="primary" v-if="isPC || !isHidden">
           <el-button @click="addTheList(true)">播放</el-button>
           <el-button @click="addTheList()">添加</el-button>
           <el-button disabled>收藏</el-button>
@@ -34,46 +38,46 @@
           </el-button>
         </el-button-group>
 
-        <el-button class="toggleBtn" link type="warning" :icon="isHidden ? ArrowDownBold : ArrowUpBold"
-                   @click="toggleInfoVisible">
-          {{ isHidden ? '显示' : '收起' }}
+        <el-button class="toggleBtn" link type="warning" :icon="ArrowDownBold" v-show="isHidden"
+          @click="toggleInfoVisible">
+          {{ '显示' }}
         </el-button>
 
       </div>
     </div>
 
-    <music-list-songs-list :songsList="musicList" :height="drawerSize - 80 - height"/>
+    <music-list-songs-list :songsList="musicList" :height="drawerSize - 80 - height" />
   </div>
 
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from "vue";
+import { computed, ref } from "vue";
 import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
-import {useMusicListStore} from "@/store/music/useMusicListStore";
-import {useMusicPlayStore} from "@/store/music/useMusicPlayStore";
+import { useMusicListStore } from "@/store/music/useMusicListStore";
+import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 import useTimestamp from "@/hooks/useTimestamp";
 import useFunction from "@/hooks/useFunction";
-import {ArrowDownBold, ArrowUpBold} from "@element-plus/icons-vue";
-import {ElMessage} from "element-plus";
+import { ArrowDownBold, ArrowUpBold } from "@element-plus/icons-vue";
+import { ElMessage } from "element-plus";
 import useResponsive from "@/hooks/useResponsive";
 
 const musicListStore = useMusicListStore()
 const musicPlayStore = useMusicPlayStore()
-const {getTime} = useTimestamp()
-const {copyText} = useFunction()
+const { getTime } = useTimestamp()
+const { copyText } = useFunction()
 
 const musicList = computed(() => musicListStore.musicList)
 const musicListInfo = computed(() => musicListStore.musicListInfo)
-const {addMusicList} = musicListStore
-const {toggleMusic} = musicPlayStore
+const { addMusicList, getCloudMusicList } = musicListStore
+const { toggleMusic } = musicPlayStore
 const isHidden = ref(false)
 
-const {drawerSize, isPC} = useResponsive()
+const { drawerSize, isPC } = useResponsive()
 
 const height = ref(isPC.value ? 200 : 125)
 
-
+//歌单信息的显示与隐藏
 const toggleInfoVisible = () => {
   if (isHidden.value) {
     isHidden.value = false
@@ -84,16 +88,24 @@ const toggleInfoVisible = () => {
   }
 }
 
+//刷新歌单
+const refresh = async ({ cloud_music_list_id }: { cloud_music_list_id: number }) => {
+  const { status, msg } = await getCloudMusicList({ cloud_music_list_id: cloud_music_list_id, latest: 1 })
+  if (status === 1) ElMessage.success('刷新成功')
+  else ElMessage.info(msg)
+}
+
+
 
 //将歌曲添加到播放列表，剔除会员歌曲
 const addTheList = async (isPlay = false) => {
   const newList = musicList.value.filter(songInfo => songInfo.fee !== 1)
   ElMessage.warning('已过滤会员歌曲并添加到播放列表')
 
-  const index = await addMusicList(newList, {isReplace: true})
+  const index = await addMusicList(newList, { isReplace: true })
   //如果要播放，跳转到这个歌单的第一首歌
   if (isPlay) {
-    await toggleMusic({index: index - newList.length + 1})
+    await toggleMusic({ index: index - newList.length + 1 })
   }
   //面板激活序号
 
@@ -136,7 +148,7 @@ const addTheList = async (isPlay = false) => {
   }
 
   p {
-    padding: 5px 0;
+    padding: 3px 0;
   }
 
   .toggleBtn {
@@ -183,7 +195,7 @@ const addTheList = async (isPlay = false) => {
   }
 
   .music_list_info {
-    padding-left: 0;
+    padding-left: 5px;
 
     .title {
       font-size: 20px;

@@ -1,9 +1,9 @@
 // 引入defineStore用于创建store
-import {defineStore} from 'pinia'
-import {reactive, ref} from "vue";
-import {CloudSongInfo, SearchResult} from "@/types/music";
+import { defineStore } from 'pinia'
+import { reactive, ref } from "vue";
+import type { CloudSongInfo, SearchResult } from "@/types/music";
 import axios from "axios";
-import {ResultData} from "@/types/global";
+import type { ResultData } from "@/types/global";
 
 
 // 定义并暴露一个store
@@ -31,7 +31,7 @@ export const useMusicSearchStore = defineStore('music_search', () => {
                 url: '/music_api/search/hot',
             })
             console.log(result)
-            const {status, msg, data} = result.data
+            const { status, msg, data } = result.data
             hotWords.value = data!.hots
         } catch (error) {
             console.log('发生错误：')
@@ -47,7 +47,7 @@ export const useMusicSearchStore = defineStore('music_search', () => {
                 url: '/searchCloudMusic',
                 params: searchConfig
             })
-            const {data} = result.data
+            const { data } = result.data
             if (data) {
                 searchResult.value = data.songs
                 songCount.value = data.songCount
@@ -60,5 +60,5 @@ export const useMusicSearchStore = defineStore('music_search', () => {
     }
 
 
-    return {hotWords, searchConfig, searchResult, songCount, search, getHotWords}
+    return { hotWords, searchConfig, searchResult, songCount, search, getHotWords }
 })

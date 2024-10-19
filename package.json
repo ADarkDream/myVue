@@ -31,6 +31,7 @@
     "socket.io-client": "^4.7.5",
     "spark-md5": "^3.0.2",
     "vue": "^3.4.21",
+    "vue-intersect": "^3.0.0",
     "vue-router": "^4.3.0",
     "vue3-swatches": "^1.2.4",
     "wc-flow-layout": "^0.0.5"

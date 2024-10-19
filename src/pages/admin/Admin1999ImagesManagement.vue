@@ -317,7 +317,7 @@ const getVersion = async () => {
   try {
     const result = await axios({
       url: '/getVersion',
-      params: {role: 'all'}
+      params: {version: true,role: 'all'}
     })
     console.log('getVersion', result)
     const {versionList, roleList}: { versionList: VersionInfo[], roleList: Role[] } = result.data.data

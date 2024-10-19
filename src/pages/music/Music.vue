@@ -1,6 +1,6 @@
 <template>
   <div ref="music" class="music" :style="{ height: containerHeight + 'px', ...bgSettings }">
-    <el-tabs class="tabs" v-model="activeName">
+    <el-tabs class="tabs" v-model="activePanelIndex">
       <el-tab-pane :name="0">
         <template #label>
           <el-text class="tab-label">
@@ -70,7 +70,7 @@
             <SVG_music_list class="el-icon" style="transform: scale(1.5)" />&ensp;歌单列表
           </el-text>
         </template>
-        <music-list :ids="ids" />
+        <music-list />
       </el-tab-pane>
       <el-tab-pane :name="3">
         <template #label>
@@ -110,11 +110,15 @@
           <div>2、七牛云链接后加上?avinfo可以获得音频源数据</div>
           <div>3、用第三方库 lyric-parser 进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。</div>
           <div>4、歌单界面和歌词界面</div>
-          <div>5、歌名长度滚动速率没改完</div>
+          <div>5、<del>歌名长度滚动速率没改完</del>√</div>
           <div>6、重复播放同一首换成暂停和播放，或者做出提醒</div>
-          <div>7、播放设置和播放列表存本地</div>
+          <div>7、<del>播放设置和播放列表存本地</del>√</div>
           <div>8、播放失败的重试函数待测试是否有效</div>
-          <div>8、歌单列表歌曲数、刷新功能尚未支持，移动端的按钮组可能因为太长了UI出错</div>
+          <div>9、移动端的歌单信息按钮组可能因为太长了，UI出错</div>
+          <div>10、浏览器媒体界面，列表最后一首到第一首会出错，播放时间不归位</div>
+          <div>11、通过id添加会员歌曲会添加成功但是无法播放，然后出bug</div>
+          <div>12、部分歌曲歌手id冲突（举例id=28162967）,无法添加</div>
+          <div>13、歌单查询的歌曲排序有问题</div>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -126,7 +130,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, toRefs } from 'vue';
 import { InfoFilled, Plus, Search, Setting, Tickets } from "@element-plus/icons-vue";
 import { SongInfo } from "@/types/music";
 import SearchMusic from "@/pages/music/components/SearchMusic.vue";
@@ -143,25 +147,27 @@ import MusicSettings from "@/pages/music/components/MusicSettings.vue";
 import MusicList from "@/pages/music/components/MusicList.vue";
 import { ElMessage } from 'element-plus';
 
-
+const route = useRoute()
+const router = useRouter()
 const musicPlayStore = useMusicPlayStore()
 const musicConfigStore = useMusicConfigStore()
 const musicListStore = useMusicListStore()
 const { isPC, elSize, drawerSize, containerHeight, touchstart, positionComputed } = useResponsive()
 
-const { addCloudMusic, addMusic } = musicPlayStore
+const { getLocalMusicList, addCloudMusic, addMusic } = musicPlayStore
+//页面背景配置
+const { activePanelIndex } = toRefs(musicConfigStore)
+const { bgSettings, changePanelIndex } = musicConfigStore
+const playList = computed(() => musicListStore.playList)
+const { getCloudMusicList, getMusicList } = musicListStore
+
 
 const music = ref<HTMLDivElement>()
 
-//是否显示
-const activeName = ref(1)
-const route = useRoute()
-const router = useRouter()
 
-//页面背景配置
-const bgSettings = computed(() => musicConfigStore.bgSettings)
-const playList = computed(() => musicListStore.playList)
-const { getCloudMusicList, getMusicList } = musicListStore
+
+
+
 
 //是否显示搜索面板
 const isShowSearchPanel = ref(false)
@@ -182,11 +188,7 @@ const newMusic = ref<SongInfo>({
 const cloudMusicListID = ref()
 const cloudMusicID = ref()
 const musicUrl = ref('')
-//歌单组件查询的id
-const ids = ref({
-  music_list_id: 36,
-  cloud_music_list_id: null
-})
+
 
 
 //校验分享链接或歌单、歌曲id，进行搜索
@@ -214,8 +216,11 @@ const search_song_or_list = async (str: string, isSong: boolean) => {
   //判断id是不是一个正常的正整数
   if (Number.isInteger(id) && id > 0) {
     if (isSong) await addCloudMusic(id, true)
-    else await getCloudMusicList({ cloud_music_list_id: id })
-    activeName.value = isSong ? 3 : 2
+    else {
+      const { status } = await getCloudMusicList({ cloud_music_list_id: id })
+      if (status === 0) return
+    }
+    changePanelIndex(isSong ? 3 : 2)
   } else ElMessage.error(`请输入有效的${isSong ? '歌曲' : '歌单'}id或分享链接`)
 }
 
@@ -227,12 +232,19 @@ const toggleToMusicList = async ({ cloud_music_list_id, music_list_id, latest }:
 }) => {
 
   if (!cloud_music_list_id && !music_list_id) return
-  if (cloud_music_list_id) { await getCloudMusicList({ cloud_music_list_id, latest }) }
-  else if (music_list_id) await getMusicList({ music_list_id, limit: 50, offset: 0 })
-  activeName.value = 2
+  if (cloud_music_list_id) {
+    const { status } = await getCloudMusicList({ cloud_music_list_id, latest })
+    if (status === 0) return
+  }
+  else if (music_list_id) await getMusicList({ music_list_id, limit: undefined, offset: 0 })
+  changePanelIndex(2)
 }
 
 onMounted(async () => {
+  //获取本地播放列表
+  await getLocalMusicList()
+
+
   //分享功能，从路径中获取网易云音乐id，播放并清除路径参数
   //跳转到播放列表
   let { c_id, ml_id } = route.query
@@ -240,16 +252,16 @@ onMounted(async () => {
   const music_list_id = Number(ml_id)
 
   if (Number.isInteger(cloud_music_id) && cloud_music_id > 0) {
-    await addCloudMusic(cloud_music_id, true)
+    await addCloudMusic(cloud_music_id, isPC.value) //移动端不自动播放，没有优化
     await router.replace({ name: 'music' })
-    activeName.value = 3
+    changePanelIndex(3)
   }
 
   //跳转到歌单列表
   if (Number.isInteger(music_list_id) && music_list_id > 0) {
     await getMusicList({ music_list_id })
     await router.replace({ name: 'music' })
-    activeName.value = 2
+    changePanelIndex(2)
   }
 
   //如果是移动端，监听左右滑动
@@ -273,7 +285,7 @@ onUnmounted(() => {
 //手指离开屏幕
 const touchend = (e: TouchEvent) => {
   console.log('离开屏幕')
-  positionComputed(e, activeName, 0, 4)
+  positionComputed(e, activePanelIndex, 0, 4)
 }
 
 </script>
@@ -350,8 +362,8 @@ const touchend = (e: TouchEvent) => {
 
 /*移动端布局*/
 @media (max-width: 780px) {
-  .searchDrawer .el-drawer__body {
-    padding: 5px 0;
+  .el-drawer__body {
+    padding: 5px;
   }
 
   .music .tabs {

@@ -8,9 +8,8 @@
     </div>
     <div class="text">
       <p class="title">{{ musicListInfo.name }}</p>
-      <p class="info" v-if="isPC"><span>上次更新：{{ formatDate(musicListInfo.lastTime) }}</span><span>{{
-        musicListInfo.songsCount
-          }}首</span></p>
+      <p class="info" v-if="isPC"><span>上次更新：{{ formatDate(new Date(musicListInfo.updated_time)) }}</span><span>{{
+        musicListInfo.songsCount }}首</span></p>
     </div>
   </div>
 </template>
@@ -21,12 +20,13 @@ import { ref } from 'vue'
 import useResponsive from "@/hooks/useResponsive";
 import LikeHeart from "@/components/smallComp/LikeHeart.vue";
 import useTimestamp from "@/hooks/useTimestamp";
+import type { MusicListInfo } from "@/types/music";
 const { formatDate } = useTimestamp()
 const { isPC } = useResponsive()
 const isLike = ref(false)
 
 
-const { musicListInfo } = defineProps(['musicListInfo'])
+const { musicListInfo } = defineProps(['musicListInfo']) as { musicListInfo: MusicListInfo }
 
 const toggleLike = () => {
   isLike.value = !isLike.value

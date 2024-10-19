@@ -135,8 +135,8 @@
         height: 40px
     }
 
-    .el-card_body {
-        padding: 5px;
+    .el-card {
+        --el-card-padding: 5px;
     }
 }
 

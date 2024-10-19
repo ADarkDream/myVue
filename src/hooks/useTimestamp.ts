@@ -81,26 +81,26 @@ export default function () {
 
 
     //需要一个时间戳,否则默认给出当前时间
-    function getTime(timestamp: string | number = Date.now()) {
-        let d = new Date(timestamp)
-        let month = addZero(d.getMonth() + 1)
-        let day = addZero(d.getDate())
-        let date = (d.getFullYear() - 2000) + '/' + month + '/' + day
-        let hour = addZero(d.getHours())
-        let minute = addZero(d.getMinutes())
-        // let ss = d.getSeconds() < 10 ? '0' + d.getSeconds() : d.getSeconds()
-        // let time = date + ' ' + hour + ':' + minute + ':' + ss
+    function getTime(timestamp: string | Date | number = Date.now()) {
+        const d = new Date(formatTimestamp(timestamp))
+        const month = addZero(d.getMonth() + 1)
+        const day = addZero(d.getDate())
+        const date = (d.getFullYear() - 2000) + '/' + month + '/' + day
+        const hour = addZero(d.getHours())
+        const minute = addZero(d.getMinutes())
+        // const ss = d.getSeconds() < 10 ? '0' + d.getSeconds() : d.getSeconds()
+        // const time = date + ' ' + hour + ':' + minute + ':' + ss
         // if (hour.)
         return date + ' ' + hour + ':' + minute
     }
 
     function getDate(timestamp: string | number = Date.now()) {
-        let d = new Date(timestamp)
-        let month = addZero(d.getMonth() + 1)
-        let day = addZero(d.getDate())
-        let date = (d.getFullYear() - 2000) + '/' + month + '/' + day
-        let hour = addZero(d.getHours())
-        let minute = addZero(d.getMinutes())
+        const d = new Date(formatTimestamp(timestamp))
+        const month = addZero(d.getMonth() + 1)
+        const day = addZero(d.getDate())
+        const date = (d.getFullYear() - 2000) + '/' + month + '/' + day
+        const hour = addZero(d.getHours())
+        const minute = addZero(d.getMinutes())
         // let ss = d.getSeconds() < 10 ? '0' + d.getSeconds() : d.getSeconds()
         // let time = date + ' ' + hour + ':' + minute + ':' + ss
         // if (hour.)
@@ -114,6 +114,7 @@ export default function () {
         const day = String(date.getDate()).padStart(2, '0'); // 日期补0
         return `${year}-${month}-${day}`;
     }
+
 
     //格式化时间,用于获取音乐播放的时常
     function formatMusicTime(duration = 0) {

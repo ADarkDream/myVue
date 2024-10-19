@@ -21,7 +21,6 @@ interface MusicListInfo {
     uid: number,
     pic_url: string,
     status: number,
-    latest_time?: Date,//最新一首歌的时间
     songsCount: number,
     created_time: Date,
     updated_time: Date,
@@ -32,6 +31,14 @@ interface MusicList {
     musicListInfo: MusicListInfo,
     songsInfo: CloudSongInfo[]
 }
+
+//请求数据库歌单列表信息的结构
+interface QueryMusicLists {
+    isLogin: boolean,
+    user_id?: number,
+    music_list_id?: number
+}
+
 
 //请求数据库歌单数据的结构
 interface QueryMusicList {
@@ -51,6 +58,7 @@ interface QueryCloudMusicList {
 
 //网易云音乐信息(筛选后)
 interface CloudSongInfo {
+    id: number,
     cloud_music_id: number,
     name: string,
     duration?: number,//音乐时长
@@ -58,6 +66,7 @@ interface CloudSongInfo {
     fee?: number,//1为VIP，8为免费
     mvid?: number,//MV的id
     src: string,//播放地址
+    status: 0 | 1,//0代表网易云音乐，1代表上传的音乐
     artists: Artist[],//艺术家
     album: Album
 }
@@ -78,4 +87,4 @@ interface SearchResult {
     songCount: number
 }
 
-export type { CloudSongInfo, SongInfo, SearchResult, MusicListInfo, MusicList, QueryMusicList, QueryCloudMusicList }
+export type { CloudSongInfo, SongInfo, SearchResult, MusicListInfo, MusicList, QueryMusicLists, QueryMusicList, QueryCloudMusicList }

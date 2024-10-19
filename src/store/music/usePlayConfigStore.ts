@@ -1,10 +1,10 @@
 // 引入defineStore用于创建store
-import {defineStore} from 'pinia'
-import {computed, ref} from "vue";
+import { defineStore } from 'pinia'
+import { computed, ref } from "vue";
 
-import {useMusicListStore} from "@/store/music/useMusicListStore";
-import {useMusicPlayStore} from "@/store/music/useMusicPlayStore";
-import {ElMessage} from "element-plus";
+import { useMusicListStore } from "@/store/music/useMusicListStore";
+import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
+import { ElMessage } from "element-plus";
 import pinia from '@/store'
 
 
@@ -15,50 +15,65 @@ const musicListStore = useMusicListStore(pinia)
 const playList = computed(() => musicListStore.playList)
 //当前播放的歌的序号
 const playingIndex = computed({
-        get: () => musicListStore.playingIndex,
-        set: (val: number) => musicListStore.playingIndex = val
-    }
+    get: () => musicListStore.playingIndex,
+    set: (val: number) => musicListStore.playingIndex = val
+}
 )
 
 // 定义并暴露一个store
 export const usePlayConfigStore = defineStore('play_config', () => {
-//播放模式
+    //播放模式
     const modeList = [
         {
             index: 0,
             name: 'listLoop',
+            c_name: '列表循环',
             img: '',
         },
         {
             index: 1,
             name: 'sequentialPlay',
+            c_name: '顺序播放',
             img: '',
         },
         {
             index: 2,
             name: 'randomPlay',
+            c_name: '随机播放',
             img: '',
         },
         {
             index: 3,
             name: 'singleLoop',
+            c_name: '单曲循环',
             img: '',
-        }]
-//当前播放模式的序号
+        }
+    ]
+    //当前播放模式的序号
     const modeIndex = ref(0)
-//音量0~2，1为100%
-    const volume = ref(1)
+
+    //获取本地的播放模式设置
+    const setModeIndex = () => {
+        const index = Number(localStorage.getItem('music_mode_index'))
+        //判断是否是整数且在模式列表范围内
+        if (index && Number.isInteger(index) && (index >= 0 || index <= modeList.length)) {
+            modeIndex.value = index
+        }
+    }
+    setModeIndex()
 
     //切换模式
     function toggleMode() {
         //此为最后一个模式，切换回第一个
         if (modeIndex.value >= modeList.length - 1) {
             modeIndex.value = 0
-        } else modeIndex.value++
+        } else modeIndex.value = modeIndex.value + 1
+        localStorage.setItem('music_mode_index', modeIndex.value.toString())
+        ElMessage.info(`当前是${modeList[modeIndex.value].c_name}模式`)
     }
 
     //按模式切歌
-    function togglePlayingIndex(isNext, isAuto) {
+    function togglePlayingIndex(isNext: boolean, isAuto: boolean) {
         if (modeIndex.value === 0) {
             listLoop(isNext)
         } else if (modeIndex.value === 1) {
@@ -92,8 +107,8 @@ export const usePlayConfigStore = defineStore('play_config', () => {
         //下一首，此为最后一首或上一首，此为第一首
         if (playingIndex.value >= playList.value.length) {
             //换成默认的信息，空白信息
-            playingIndex.value=0
-            await useMusicPlayStore().play({isStop: true})
+            playingIndex.value = 0
+            await useMusicPlayStore().play({ isStop: true })
             return //ElMessage.info('当前是最后一首')
         } else if (playingIndex.value <= 0) {
             playingIndex.value++
@@ -103,7 +118,7 @@ export const usePlayConfigStore = defineStore('play_config', () => {
         // console.log('顺序播放', playingIndex.value, playList.value[playingIndex.value])
     }
 
-//随机播放
+    //随机播放
     function randomPlay() {
         const randomNum = Math.floor(Math.random() * (playList.value.length))
         if (playingIndex.value === randomNum && playList.value.length !== 1) return randomPlay
@@ -111,7 +126,7 @@ export const usePlayConfigStore = defineStore('play_config', () => {
         // console.log('顺序播放', playingIndex.value, playList.value[playingIndex.value])
     }
 
-//单曲循环
+    //单曲循环
     function singleLoop(isNext: boolean, isAuto: boolean) {
         //自动切换，循环当前音乐
         if (isAuto) {
@@ -126,19 +141,11 @@ export const usePlayConfigStore = defineStore('play_config', () => {
     return {
         modeList,
         modeIndex,
-        volume,
+        // volume,
         toggleMode,
         togglePlayingIndex,
     }
 }, {
-    persist: [
-        {
-            pick: ['modeIndex'],
-            storage: localStorage,
-        },
-        {
-            pick: ['volume'],
-            storage: localStorage,
-        },
-    ],
-})
+    persist: true
+}
+)

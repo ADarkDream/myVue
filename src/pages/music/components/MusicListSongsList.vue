@@ -1,5 +1,5 @@
 <template>
-  <el-scrollbar :height="height || (drawerSize - 80)">
+  <el-scrollbar ref="containerRef" :height="height || (drawerSize - 80)" @scroll="handleScroll">
     <template v-for="(item, index) in songsList" :key="index">
       <div class="musicDiv">
         <el-text :type="item.fee === 1 ? 'info' : ''">{{ index + 1 }}、{{ item.name || '未命名' }} -
@@ -11,7 +11,7 @@
           <el-button link @click="playTheMusic(item, index)" size="small" type="primary">
             点击播放
           </el-button>
-          <el-button link @click="addCloudMusic(item.cloud_music_id, false)" size="small" type="primary">
+          <el-button link @click="musicListStore.addMusicList([item], { isReplace: true })" size="small" type="primary">
             添加到播放列表
           </el-button>
           <el-button link size="small" type="primary" @click="ElMessage.info('收藏功能开发中')">
@@ -23,7 +23,6 @@
             分享
           </el-button>
         </div>
-
       </div>
     </template>
   </el-scrollbar>
@@ -36,19 +35,33 @@ import { ElMessage } from "element-plus";
 import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 import { CloudSongInfo } from "@/types/music";
 import useResponsive from "@/hooks/useResponsive";
+import { useMusicListStore } from "@/store/music/useMusicListStore";
+import { ref } from "vue";
 
 const musicPlayStore = useMusicPlayStore()
+const musicListStore = useMusicListStore()
 
 const { drawerSize, isPC } = useResponsive()
 const { copyText } = useFunction()
 const { addCloudMusic, toggleMusic } = musicPlayStore
 const { songsList, height } = defineProps(['songsList', 'height']) as { songsList: CloudSongInfo[], height: number }
 
+const containerRef = ref()
+
 const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   //有网易云音乐id，获取播放链接并播放
   if (musicInfo.cloud_music_id) addCloudMusic(musicInfo.cloud_music_id, true)
   //没有网易云音乐id(自己添加的)，直接播放【暂时是播放列表】
   else toggleMusic({ index })
+}
+
+
+const handleScroll = () => {
+  // const container = containerRef.value
+  // if (container.scrollTop + container.clientHeight >= height || (drawerSize.value - 80)) {
+  //   // loadMore()
+  //   console.log('到底了');
+  // }
 }
 
 </script>

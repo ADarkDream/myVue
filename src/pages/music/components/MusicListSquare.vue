@@ -1,23 +1,23 @@
 <template>
   <div class="container">
     <div class="title"><span>歌单广场[暂时只显示最近十个歌单]</span>
-      <el-button link :icon="Refresh" @click="getMusicList()">{{ isPC ? '刷新' : '' }}</el-button>
+      <el-button link :icon="Refresh" @click="getAllMusicListsInfo()">{{ isPC ? '刷新' : '' }}</el-button>
     </div>
     <div class="openMusicList" @touchstart="stopTouch" @touchend="stopTouch">
       <div v-for="item in musicLists" :key="item.music_list_id" class="musicList"
-           @click="toggleToMusicList({music_list_id:item.music_list_id})">
-        <MusicListCoverComp :musicListInfo="item"/>
+        @click="toggleToMusicList({ music_list_id: item.music_list_id })">
+        <MusicListCoverComp :musicListInfo="item" />
       </div>
     </div>
-    <el-divider/>
+    <el-divider />
     <div class="title"><span>我创建的歌单</span>
       <el-button link :icon="Plus" @click="handleChangeDrawer">{{ isPC ? '创建歌单' : '' }}</el-button>
     </div>
     <div class="openMusicList" @touchstart="stopTouch" @touchend="stopTouch">
-      <el-button text type="primary" v-if="myMusicLists.length===0" style="margin: 0 auto">{{ "暂无歌单" }}</el-button>
+      <el-button text type="primary" v-if="myMusicLists.length === 0" style="margin: 0 auto">{{ "暂无歌单" }}</el-button>
       <div v-for="item in myMusicLists" :key="item.music_list_id" class="musicList"
-           @click="toggleToMusicList({music_list_id:item.music_list_id})">
-        <MusicListCoverComp :musicListInfo="item"/>
+        @click="toggleToMusicList({ music_list_id: item.music_list_id })">
+        <MusicListCoverComp :musicListInfo="item" />
       </div>
     </div>
     <!--新建歌单的窗口-->
@@ -28,7 +28,7 @@
           <el-button link @click="conplete">完成</el-button>
         </div>
       </template>
-      <AddMusicList ref="addMusicListComp" :close="closeDrawer"/>
+      <AddMusicList ref="addMusicListComp" :close="closeDrawer" />
     </el-drawer>
   </div>
 </template>
@@ -36,65 +36,49 @@
 <script setup lang="ts">
 import useResponsive from "@/hooks/useResponsive";
 import useUserInfo from "@/hooks/useUserInfo";
-import axios from "axios";
-import {ref, onMounted} from "vue";
-import {Refresh, Plus} from "@element-plus/icons-vue";
+import { ref, onMounted } from "vue";
+import { Refresh, Plus } from "@element-plus/icons-vue";
 import AddMusicList from "@/pages/music/components/AddMusicList.vue";
-import {MusicListInfo} from "@/types/music";
+import type { QueryMusicLists, MusicListInfo } from "@/types/music";
 import MusicListCoverComp from "@/pages/music/components/MusicListCoverComp.vue";
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
+import { useMusicListStore } from "@/store/music/useMusicListStore";
 
-
-const {isPC} = useResponsive()
-const {isLogin, uid} = useUserInfo()
+const { isPC } = useResponsive()
+const { isLogin, uid } = useUserInfo()
 const showAddMusicList = ref(false)
-const {toggleToMusicList} = defineProps(['toggleToMusicList'])
+const { toggleToMusicList } = defineProps(['toggleToMusicList'])
+const musicListStore = useMusicListStore()
 
-
-onMounted(() => {
-  getMusicList()
-  if (isLogin.value) getMyMusicList(uid.value)
+onMounted(async () => {
+  await getAllMusicListsInfo()
 })
 const musicLists = ref<MusicListInfo[]>([])
 const myMusicLists = ref<MusicListInfo[]>([])
 
 // 获取公开歌单列表
-const getMusicList = async (user_id?: number, music_list_id?: number) => {
+const getMusicLists = async ({ isLogin, user_id, music_list_id }: QueryMusicLists) => {
   try {
-    const result = await axios({
-      url: '/getMusicListInfo',
-      params: {
-        user_id, music_list_id
-      }
-    })
-    console.log(result.data)
-    const {status, msg, data} = result.data
-    musicLists.value = data.music_lists
-    ElMessage.success('获取最新歌单成功')
+    const { status, list, msg } = await musicListStore.getMusicListsInfo({ isLogin, user_id, music_list_id }, true)
+    if (status === 0 || !list) return ElMessage.error(msg)
+    if (!isLogin) musicLists.value = list
+    else myMusicLists.value = list
   } catch (error) {
     console.log('发生错误：')
     console.dir(error)
   }
 }
 
-// 获取用户自己的歌单列表
-const getMyMusicList = async (user_id?: number, music_list_id?: number) => {
-  try {
-    const result = await axios({
-      url: '/getMyMusicListInfo',
-      params: {
-        user_id, music_list_id
-      }
-    })
-    console.log(result.data)
-    const {status, msg, data} = result.data
-    myMusicLists.value = data.music_lists
 
-  } catch (error) {
-    console.log('发生错误：')
-    console.dir(error)
-  }
+//获取公开歌单列表和用户个人的歌单列表
+const getAllMusicListsInfo = async () => {
+  //获取公开歌单列表
+  await getMusicLists({ isLogin: false })
+  //如果用户登录了，获取个人歌单列表
+  if (isLogin.value) await getMusicLists({ isLogin: true, user_id: uid.value })
+  ElMessage.success('获取最新歌单成功')
 }
+
 
 //关闭创建歌单的抽屉
 const closeDrawer = () => {
@@ -150,8 +134,6 @@ const stopTouch = (e: TouchEvent) => {
   color: currentColor;
   font-size: 18px;
 }
-
-
 </style>
 
 <style>
