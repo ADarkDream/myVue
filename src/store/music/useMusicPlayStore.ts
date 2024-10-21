@@ -342,10 +342,10 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         //获取要播放的这一首歌
         const song = playList.value[playingIndex.value]
         console.log('即将播放', song)
-        if (song?.fee === 1 && !song.src) {
-            musicListStore.deleteMusicFromPlayList(song.cloud_music_id)
-            return ElMessage.warning('暂不支持VIP音乐')
-        }
+        // if (song?.fee === 1 && !song.src) {
+        //     musicListStore.deleteMusicFromPlayList(song.cloud_music_id)
+        //     return ElMessage.warning('暂不支持VIP音乐')
+        // }
         await resetUrl(song)
 
         //如果当前不是播放状态，则播放

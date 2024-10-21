@@ -8,11 +8,11 @@
     <el-scrollbar :height="(height || (drawerSize - 80)) - 40">
       <template v-for="(item, index) in songsList" :key="index">
         <div class="musicDiv">
-          <el-text :type="item.fee === 1 ? 'info' : ''">{{ index + 1 }}、{{ item.name || '未命名' }} -
+          <el-text>{{ index + 1 }}、{{ item.name || '未命名' }} -
             {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }}
           </el-text>&ensp;
           <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text>
-          <div v-if="item.fee !== 1">
+          <div>
             <el-button link @click="toggleMusic({ index })" size="small" type="primary">
               点击播放
             </el-button>
