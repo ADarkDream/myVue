@@ -22,7 +22,7 @@
           <p>歌曲数：{{ musicListInfo?.songsCount }}<el-button link size="small" plain type="primary"
               @click="refresh({ cloud_music_list_id: musicListInfo?.cloud_music_list_id! })">刷新</el-button></p>
           <p>介绍：
-            <el-text type="info">暂无介绍</el-text>
+            <el-text type="info" v-html="musicListInfo?.description || '暂无介绍'"></el-text>
           </p>
           <p>上次更新时间：
             <el-text type="info">{{ getTime(musicListInfo!.updated_time) }}</el-text>

@@ -14,7 +14,7 @@ export const useMusicConfigStore = defineStore('music_config', () => {
     })
 
     //当前面板序号
-    const activePanelIndex = ref(2)
+    const activePanelIndex = ref(1)
 
     //切换面板
     const changePanelIndex = (index: number) => {

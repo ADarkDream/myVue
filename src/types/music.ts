@@ -20,6 +20,7 @@ interface MusicListInfo {
     name: string,
     uid: number,
     pic_url: string,
+    description?: string,
     status: number,
     songsCount: number,
     created_time: Date,
