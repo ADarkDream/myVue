@@ -2,15 +2,15 @@
 
   <el-form :model="formData">
     <el-form-item>
-      <el-input placeholder="歌单命名" v-model.trim="formData.name" @keyup.enter="addMusicList"/>
+      <el-input placeholder="歌单命名" v-model.trim="formData.name" @keyup.enter="createMusicList" />
     </el-form-item>
     <el-form-item>
-      <label class="container" :class="{active:isOpen}">
+      <label class="container" :class="{ active: isOpen }">
         <input type="checkbox" v-model="isOpen">
         <svg viewBox="0 0 64 64">
           <path
-              d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-              pathLength="575.0541381835938" class="path"></path>
+            d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+            pathLength="575.0541381835938" class="path"></path>
         </svg>
         <span>公开</span>
       </label>
@@ -20,41 +20,29 @@
 </template>
 
 <script setup lang="ts">
-import {ElMessage} from "element-plus";
-import {reactive, ref} from "vue";
-import axios from "axios";
-import {MusicListInfo} from "@/types/music";
-
-const {close} = defineProps(['close'])
+import { ElMessage } from "element-plus";
+import { reactive, ref } from "vue";
+import musicList from "@/utils/music/musicList";
+const { close } = defineProps(['close'])
 
 
 const isOpen = ref(false)
 
-const formData = reactive<MusicListInfo>({
+const formData = reactive({
   name: '',
   pic_url: '',
-  status:1
+  status: isOpen.value ? 2 : 1
 })
 
 
 
 
-const addMusicList = async () => {
+const createMusicList = async () => {
   try {
-    if (!formData.name) return ElMessage.info('歌单名称不能为空')
-    const result = await axios({
-      url: '/addMusicList',
-      method: 'post',
-      data: {
-        ...formData,
-        status: isOpen.value === true ? 2 : 1
-      }
-    })
-    console.log(result)
-    const {status, msg, data} = result.data
-    if (status===200){
-      ElMessage.success(msg+'music_list_id为：'+data.music_list_id)
-          close()
+    const { status, msg, data } = await musicList.createMusicList(formData)
+    if (status === 200) {
+      ElMessage.success(msg + 'music_list_id为：' + data.music_list_id)
+      close()
     }
 
   } catch (error) {
@@ -62,8 +50,7 @@ const addMusicList = async () => {
     console.dir(error)
   }
 }
-
-defineExpose({addMusicList})
+defineExpose({ addMusicList: createMusicList })
 </script>
 
 <style scoped>
@@ -104,7 +91,7 @@ defineExpose({addMusicList})
   stroke-dashoffset: 0;
 }
 
-.container input:checked ~ svg .path {
+.container input:checked~svg .path {
   stroke-dasharray: 70.5096664428711 9999999;
   stroke-dashoffset: -262.2723388671875;
 }
@@ -116,6 +103,4 @@ defineExpose({addMusicList})
   display: flex;
   justify-content: center;
 }
-
-
 </style>

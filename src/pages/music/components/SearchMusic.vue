@@ -34,21 +34,18 @@
 <script setup lang="ts">
 import { computed, ref, toRefs } from "vue";
 import { useMusicSearchStore } from "@/store/music/useMusicSearchStore";
-import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 import { ElMessage } from "element-plus";
 import { Back } from "@element-plus/icons-vue";
-import useFunction from "@/hooks/useFunction";
 import useResponsive from "@/hooks/useResponsive";
 import HotSearchWords from "@/pages/music/components/HotSearchWords.vue";
 import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
 
 const searchStore = useMusicSearchStore()
-const musicPlayStore = useMusicPlayStore()
-const { addCloudMusic } = musicPlayStore
+
 
 const { closeSearchPanel } = defineProps(['closeSearchPanel'])
 const { isPC, drawerSize } = useResponsive()
-const { copyText } = useFunction()
+
 
 const searchDivHeight = ref(drawerSize.value - 180)
 

@@ -4,7 +4,7 @@ import { computed, reactive, ref } from "vue";
 import { useBaseUrl } from "@/hooks/useBaseUrl";
 import type { CloudSongInfo, MusicList, MusicListInfo, QueryCloudMusicList, QueryMusicList, QueryMusicLists, SongInfo } from "@/types/music";
 import pinia from '@/store'
-import useMusicList from "@/hooks/music/useMusicList";
+import musicListUtils from "@/utils/music/musicList";
 import { ElMessage } from "element-plus";
 
 
@@ -147,7 +147,7 @@ export const useMusicListStore = defineStore('music_list', () => {
         }
 
         //查询多个歌单，或查询最新的情况(不要缓存)下
-        const { status, list, msg } = await useMusicList().getMusicListsInfo({ isLogin, user_id, music_list_id })
+        const { status, list, msg } = await musicListUtils.getMusicListsInfo({ isLogin, user_id, music_list_id })
         //处理请求后的信息
         if (status === 1) list?.forEach(MusicListInfo => {
             const { music_list_id, cloud_music_list_id } = MusicListInfo
@@ -184,14 +184,14 @@ export const useMusicListStore = defineStore('music_list', () => {
 
         if (localInfo && localList) return
         console.log(`本地缓存没有歌单${music_list_id}的信息,查询服务器`)
-        const data = await useMusicList().getMusicList({ music_list_id, limit, offset })
+        const data = await musicListUtils.getMusicList({ music_list_id, limit, offset })
         //处理请求后的信息
         if (data) set_and_save_data(data, music_list_id)
     }
 
     //搜索网易云的歌单及音乐信息
     const getCloudMusicList = async ({ cloud_music_list_id, limit, offset, latest }: QueryCloudMusicList) => {
-        const { status, data, msg } = await useMusicList().getCloudMusicList({ cloud_music_list_id, limit, offset, latest }) as { status: number, data?: MusicList, msg: string }
+        const { status, data, msg } = await musicListUtils.getCloudMusicList({ cloud_music_list_id, limit, offset, latest }) as { status: number, data?: MusicList, msg: string }
         //处理请求后的信息
         if (status === 1 && data) {
             const music_list_id = data.musicListInfo.music_list_id

@@ -328,7 +328,6 @@ const musicPlayStore = useMusicPlayStore()
 const musicListStore = useMusicListStore()
 const { togglePlayerVisible, toggleVolumePanelVisible } = musicPlayStore
 const { isShowVolumePanel, volume } = toRefs(musicPlayStore)
-// const { volume } = toRefs(playConfigStore)
 const { isPlaying } = toRefs(musicListStore)
 
 const showPlayer = ref(false)

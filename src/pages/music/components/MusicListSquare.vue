@@ -25,7 +25,7 @@
       <template #header>
         <div style="display: flex;justify-content: space-between">
           <el-button link @click="closeDrawer">取消</el-button>
-          <el-button link @click="conplete">完成</el-button>
+          <el-button link @click="complete">完成</el-button>
         </div>
       </template>
       <AddMusicList ref="addMusicListComp" :close="closeDrawer" />
@@ -93,9 +93,9 @@ const handleChangeDrawer = () => {
 
 const addMusicListComp = ref<typeof AddMusicList>()
 
-const conplete = () => {
+const complete = () => {
   if (addMusicListComp.value) {
-    addMusicListComp.value.addMusicList()
+    addMusicListComp.value.createMusicList()
   }
 }
 

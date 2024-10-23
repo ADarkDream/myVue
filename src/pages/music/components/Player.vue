@@ -78,6 +78,7 @@ import defaultAlbumArt from '@/assets/music/music.svg'
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { usePlayConfigStore } from '@/store/music/usePlayConfigStore'
 import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
+import usePlayConfig from '@/hooks/music/usePlayConfig'
 import useResponsive from "@/hooks/useResponsive";
 import SVG_music_list from '@/assets/music/music_list.svg?component'
 import SVG_pre from '@/assets/music/pre.svg?component'
@@ -91,7 +92,7 @@ import SVG_list_loop from '@/assets/music/list_loop.svg?component'
 import SVG_sequential_play from '@/assets/music/sequential_play.svg?component'
 import SVG_random_play from '@/assets/music/random_play.svg?component'
 import SVG_single_loop from '@/assets/music/single_loop.svg?component'
-
+import useMusicPlay from "@/hooks/music/useMusicPlay";
 const { drawerSize } = useResponsive()
 const musicListStore = useMusicListStore()
 const playConfigStore = usePlayConfigStore()
@@ -110,8 +111,8 @@ const playList = computed(() => musicListStore.playList)
 
 //播放设置
 const { modeIndex } = toRefs(playConfigStore)
-const { toggleMode } = playConfigStore
-
+// const { toggleMode } = playConfigStore
+const { toggleMode } = usePlayConfig()
 
 //播放器
 const {
@@ -127,11 +128,13 @@ const {
 const {
   lockThePlayer,
   togglePlayerVisible,
-  play,
+
   changeCurrentTime,
-  toggleMusic,
+
   toggleVolumePanelVisible
 } = musicPlayStore
+
+const { play, toggleMusic } = useMusicPlay()
 
 togglePlayerVisible()
 
@@ -219,7 +222,7 @@ const setMediaInfo = ({ title, artist, album, pic_url }: Record<string, string>)
 watch(playingIndex, (newVal, oldVal) => {
   if (newVal !== oldVal) {
     //修改当前播放歌曲的信息
-    thisMusic.value = playList.value[playingIndex.value]
+    // thisMusic.value = playList.value[playingIndex.value]
     console.log('thisMusic', thisMusic.value)
     setMediaInfo({
       title: thisMusic.value.name,

@@ -88,14 +88,7 @@
             </el-icon>&ensp;设置
           </el-text>
         </template>
-        <div>
-          <p>面板设置(夜间模式下无效)</p>
-          <MusicSettings />
-        </div>
-        <div style="height: 200px">
-          <p>播放器设置</p>
-          <div>还没做呢</div>
-        </div>
+        <MusicSettings />
       </el-tab-pane>
       <el-tab-pane :name="5">
         <template #label>
@@ -120,7 +113,7 @@
           <div>12、<del>部分歌曲歌手id冲突（举例id=28162967）,无法添加</del></div>
           <div>13、歌单查询的歌曲排序有问题</div>
           <div>14、播放状态和列表不要持久化，否则下次加载会出问题</div>
-          <div>15、thisMusic有问题</div>
+          <div>15、<del>thisMusic有问题</del></div>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -141,22 +134,21 @@ import MusicListSquare from "@/pages/music/components/MusicListSquare.vue";
 
 import useResponsive from "@/hooks/useResponsive";
 import { useRoute, useRouter } from "vue-router";
-import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import SVG_music_list from '@/assets/music/music_list.svg?component'
 import MusicSettings from "@/pages/music/components/MusicSettings.vue";
 import MusicList from "@/pages/music/components/MusicList.vue";
 import { ElMessage } from 'element-plus';
-
+import useMusicPlay from "@/hooks/music/useMusicPlay";
 const route = useRoute()
 const router = useRouter()
-const musicPlayStore = useMusicPlayStore()
+
 const musicConfigStore = useMusicConfigStore()
 const musicListStore = useMusicListStore()
 const { isPC, elSize, drawerSize, containerHeight, touchstart, positionComputed } = useResponsive()
 
-const { getLocalMusicList, addCloudMusic, addMusic } = musicPlayStore
+const { getLocalMusicList, addCloudMusic, addMusic } = useMusicPlay()
 //页面背景配置
 const { activePanelIndex } = toRefs(musicConfigStore)
 const { bgSettings, changePanelIndex } = musicConfigStore

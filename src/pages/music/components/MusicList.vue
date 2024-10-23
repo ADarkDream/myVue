@@ -53,24 +53,23 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
-import { useMusicListStore } from "@/store/music/useMusicListStore";
-import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
-import useTimestamp from "@/hooks/useTimestamp";
-import useFunction from "@/hooks/useFunction";
 import { ArrowDownBold, ArrowUpBold } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
+import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
+import { useMusicListStore } from "@/store/music/useMusicListStore";
+import useTimestamp from "@/hooks/useTimestamp";
+import useFunction from "@/hooks/useFunction";
 import useResponsive from "@/hooks/useResponsive";
+import useMusicPlay from "@/hooks/music/useMusicPlay";
 
 const musicListStore = useMusicListStore()
-const musicPlayStore = useMusicPlayStore()
 const { getTime } = useTimestamp()
 const { copyText } = useFunction()
 
 const musicList = computed(() => musicListStore.musicList)
 const musicListInfo = computed(() => musicListStore.musicListInfo)
 const { addMusicList, getCloudMusicList } = musicListStore
-const { toggleMusic } = musicPlayStore
+const { toggleMusic } = useMusicPlay()
 const isHidden = ref(false)
 
 const { drawerSize, isPC } = useResponsive()

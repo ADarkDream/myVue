@@ -12,6 +12,8 @@ export const useMusicConfigStore = defineStore('music_config', () => {
         '--music-bg-filter': 3, /*背景模糊度*/
         '--music-bg-saturate': 1, /*背景饱和度*/
     })
+    //播放设置
+    const is_show_player_before_play = ref(true)
 
     //当前面板序号
     const activePanelIndex = ref(1)
@@ -21,15 +23,19 @@ export const useMusicConfigStore = defineStore('music_config', () => {
         activePanelIndex.value = index
     }
 
-    return { bgSettings, activePanelIndex, changePanelIndex }
+    return { bgSettings, activePanelIndex, is_show_player_before_play, changePanelIndex }
 }, {
     persist: [
         {
-            paths: ['bgSettings'],
+            pick: ['bgSettings'],
             storage: localStorage
         },
         {
-            paths: ['activePanelIndex'],
+            pick: ['is_show_player_before_play'],
+            storage: localStorage
+        },
+        {
+            pick: ['activePanelIndex'],
             storage: sessionStorage
         }]
 })

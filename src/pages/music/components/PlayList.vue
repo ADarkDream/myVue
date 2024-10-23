@@ -37,17 +37,16 @@
 <script setup lang="ts">
 import useFunction from "@/hooks/useFunction";
 import { ElMessage } from "element-plus";
-import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { CloudSongInfo } from "@/types/music";
 import useResponsive from "@/hooks/useResponsive";
-import { Plus, Delete } from "@element-plus/icons-vue";
+import {  Delete } from "@element-plus/icons-vue";
+import useMusicPlay from "@/hooks/music/useMusicPlay";
 
-const musicPlayStore = useMusicPlayStore()
 const musicListStore = useMusicListStore()
 const { drawerSize } = useResponsive()
 const { copyText } = useFunction()
-const { addCloudMusic, toggleMusic } = musicPlayStore
+const {  toggleMusic } = useMusicPlay()
 const { songsList, height } = defineProps(['songsList', 'height']) as { songsList: CloudSongInfo[], height: number }
 const { deleteMusicFromPlayList, clearPlayList } = musicListStore
 
