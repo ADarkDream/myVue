@@ -2,6 +2,9 @@
 import axios from "axios";
 import type { ResultData } from "@/types/global";
 import type { CloudSongInfo } from "@/types/music";
+import useFunction from "@/hooks/useFunction";
+const { copyText } = useFunction()
+import { ElMessage } from "element-plus";
 
 const musicPlay = {
     //如果音乐有id没src，则要通过id获取最新的src，然后重新赋值
@@ -71,6 +74,14 @@ const musicPlay = {
             console.error(error)
             return { status: 0, msg: '发生错误' }
         }
+    },
+    //分享音乐链接
+    shareMusicLink: (songInfo: CloudSongInfo) => {
+        if (songInfo.cloud_music_id) {
+            copyText('https://muxidream.cn/music?c_id=' + songInfo.cloud_music_id, '播放链接')
+        } else if (songInfo.id) {
+            copyText('https://muxidream.cn/music?id=' + songInfo.id, '播放链接')
+        } else ElMessage.info('歌曲信息错误')
     }
 }
 export default musicPlay

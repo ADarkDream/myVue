@@ -50,8 +50,6 @@
   </div>
   <div style="height: 200px">
     <p>播放器设置</p>
-    <!--!设置的持久化失效了  -->
-    设置的持久化失效了
     <div>播放前显示播放器<el-switch v-model="is_show_player_before_play" /></div>
   </div>
 

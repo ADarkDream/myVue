@@ -6,34 +6,36 @@ import { useMusicPlayStore } from "@/store/music/useMusicPlayStore"
 import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
 import usePlayConfig from '@/hooks/music/usePlayConfig'
 import useMusicPlay from '@/utils/music/musicPlay'
+import musicList from "@/utils/music/musicList";
 
 
-const useMusicConfig = useMusicConfigStore()
-const musicListStore = useMusicListStore()
-const musicPlayStore = useMusicPlayStore()
-const { togglePlayingIndex } = usePlayConfig()
-
-//是否正在播放的标志
-const playList = computed({
-    get: () => musicListStore.playList,
-    set: (val: CloudSongInfo[]) => musicListStore.playList = val
-})
-
-const playIdList = computed({
-    get: () => musicListStore.playIdList,
-    set: (val: number[]) => musicListStore.playIdList = val
-})
-
-const { isPlaying, isLoading, playingIndex } = toRefs(musicListStore)
-const { is_show_player_before_play } = toRefs(useMusicConfig)
-
-const { audioContext, audioElement, musicName, isScrollName, transformX, infoBarActive, controlPanelActive, volume,
-    currentTime, duration, gainNode, timer1,
-} = toRefs(musicPlayStore)
-
-const { togglePlayerVisible } = musicPlayStore
 
 export default function () {
+
+    const useMusicConfig = useMusicConfigStore()
+    const musicListStore = useMusicListStore()
+    const musicPlayStore = useMusicPlayStore()
+    const { togglePlayingIndex } = usePlayConfig()
+
+    //是否正在播放的标志
+    const playList = computed({
+        get: () => musicListStore.playList,
+        set: (val: CloudSongInfo[]) => musicListStore.playList = val
+    })
+
+    const playIdList = computed({
+        get: () => musicListStore.playIdList,
+        set: (val: number[]) => musicListStore.playIdList = val
+    })
+
+    const { isPlaying, isLoading, playingIndex } = toRefs(musicListStore)
+    const { is_show_player_before_play } = toRefs(useMusicConfig)
+
+    const { audioContext, audioElement, musicName, isScrollName, transformX, infoBarActive, controlPanelActive, volume,
+        currentTime, duration, gainNode, timer1,
+    } = toRefs(musicPlayStore)
+
+    const { togglePlayerVisible } = musicPlayStore
     //如果音乐有id没地址，则要通过id获取最新的src，然后重新赋值
     const resetUrl = async (song: CloudSongInfo) => {
         if (song.src) return
@@ -185,7 +187,8 @@ export default function () {
         audioElement.value.removeEventListener('canplay', handleCanPlay)
         //切换歌曲逻辑
         //定向切歌
-        if (index && Number.isInteger(index) && index >= 0) {//判断非负整数
+        index = Number(index)
+        if (Number.isInteger(index) && index >= 0) {//判断非负整数
             playingIndex.value = index
             console.log(`即将播放：${playList.value[index].name}`)
         }
@@ -196,7 +199,7 @@ export default function () {
         const song = playList.value[playingIndex.value]
         console.log('即将播放', song)
         // if (song?.fee === 1 && !song.src) {
-        //     musicListStore.deleteMusicFromPlayList(song.cloud_music_id)
+        //     musicListStore.deleteMusicFromPlayList(song.id)
         //     return ElMessage.warning('暂不支持VIP音乐')
         // }
         await resetUrl(song)
@@ -257,11 +260,11 @@ export default function () {
         await toggleMusic({ index })
     }
 
-    //添加并播放新音乐(网易云音乐ID)
-    const addCloudMusic = async (cloud_music_id: number, isPlay = false) => {
+    //添加并播放新音乐(网易云音乐ID或者上传的音乐id)
+    const addMusicToPlay = async (id: number, isPlay = false, isCustom = false) => {
         try {
-            if (!cloud_music_id) return
-            const { isError, songs } = await addCloudMusicList([cloud_music_id])
+            if (!id) return
+            const { isError, songs } = await addCloudMusicList([id], isCustom)
             console.log('songs', isError, songs)
             if (isError) return
             //songs为空，addCloudMusicList过滤时
@@ -282,34 +285,22 @@ export default function () {
 
 
     //批量获取音乐信息
-    const addCloudMusicList = async (idList: number[]): Promise<{
+    const addCloudMusicList = async (idList: number[], isCustom = false): Promise<{
         isError: boolean,
         songs?: CloudSongInfo[]
     }> => {
-        let isError = false
-        if (idList.length === 0) {
-            ElMessage.error('请求的idList不能为空')
-            return { isError }
-        }
-        idList.forEach(id => {
-            // 尝试将id转换为数字
-            const num = Number(id)
-            // 检查是否成功转换为数字，并且是一个正整数
-            if (isNaN(num) || !Number.isInteger(num) || num < 0) {
-                console.log(num, isNaN(num), !Number.isInteger(num), num <= 0);
-
-                isError = true
-            }
-        }
-        )
+        const isError = !musicList.checkIdList(idList)
         if (isError) {
-            console.log(idList);
-
-            ElMessage.error('含有不合法的id,id应为纯数字')
             return { isError }
         }
+        let result
+        if (isCustom) {
+            result = await useMusicPlay.getPlayList(idList)
+        } else {
+            result = await useMusicPlay.getCloudMusic(idList)
+        }
 
-        const { status, data, msg } = await useMusicPlay.getCloudMusic(idList)
+        const { status, data, msg } = result
         //清洗掉返回数据中没有播放地址的歌曲信息（过滤掉src不存在的song）
 
         if (status === 1 && data) {
@@ -349,7 +340,7 @@ export default function () {
         addCloudMusicList,
         play,
         toggleMusic,
-        addCloudMusic,
+        addMusicToPlay,
         addMusic
     }
 }

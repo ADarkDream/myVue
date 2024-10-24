@@ -1,25 +1,26 @@
 //音乐播放相关的方法
 import { computed, toRefs } from "vue";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
-import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 import { usePlayConfigStore } from "@/store/music/usePlayConfigStore";
+import useMusicPlay from "@/hooks/music/useMusicPlay";
 import { ElMessage } from "element-plus";
 
-const musicListStore = useMusicListStore()
-// const musicPlayStore = useMusicPlayStore()
-const playConfigStore = usePlayConfigStore()
-
-const playList = computed(() => musicListStore.playList)
-
-//当前播放的歌的序号
-const { playingIndex } = toRefs(musicListStore)
-//播放
-// const { play } = musicPlayStore
-
-//当前播放模式的序号
-const { modeIndex } = toRefs(playConfigStore)
 
 export default function () {
+
+    const musicListStore = useMusicListStore()
+    // const musicPlayStore = useMusicPlayStore()
+    const playConfigStore = usePlayConfigStore()
+
+    const playList = computed(() => musicListStore.playList)
+
+    //当前播放的歌的序号
+    const { playingIndex } = toRefs(musicListStore)
+    //播放
+
+
+    //当前播放模式的序号
+    const { modeIndex } = toRefs(playConfigStore)
     //播放模式
     const modeList = [
         {
@@ -50,14 +51,14 @@ export default function () {
 
 
     //获取本地的播放模式设置
-    const setModeIndex = () => {
-        const index = Number(localStorage.getItem('music_mode_index'))
-        //判断是否是整数且在模式列表范围内
-        if (index && Number.isInteger(index) && (index >= 0 || index <= modeList.length)) {
-            modeIndex.value = index
-        }
-    }
-    setModeIndex()
+    // const setModeIndex = () => {
+    //     const index = Number(localStorage.getItem('music_mode_index'))
+    //     //判断是否是整数且在模式列表范围内
+    //     if (index && Number.isInteger(index) && (index >= 0 || index <= modeList.length)) {
+    //         modeIndex.value = index
+    //     }
+    // }
+    // setModeIndex()
 
     //切换模式
     function toggleMode() {
@@ -65,7 +66,7 @@ export default function () {
         if (modeIndex.value >= modeList.length - 1) {
             modeIndex.value = 0
         } else modeIndex.value = modeIndex.value + 1
-        localStorage.setItem('music_mode_index', modeIndex.value.toString())
+        // localStorage.setItem('music_mode_index', modeIndex.value.toString())
         ElMessage.info(`当前是${modeList[modeIndex.value].c_name}模式`)
     }
 
@@ -105,7 +106,7 @@ export default function () {
         if (playingIndex.value >= playList.value.length) {
             //换成默认的信息，空白信息
             playingIndex.value = 0
-            await useMusicPlayStore().play({ isStop: true })
+            await useMusicPlay().play({ isStop: true })
             return //ElMessage.info('当前是最后一首')
         } else if (playingIndex.value <= 0) {
             playingIndex.value++

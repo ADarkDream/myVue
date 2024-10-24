@@ -5,6 +5,23 @@ import type { ResultData } from "@/types/global";
 import type { MusicListInfo, QueryCloudMusicList, MusicList, QueryMusicList, QueryMusicLists } from "@/types/music";
 
 const musicList = {
+    checkIdList: (idList: number[]) => {
+        if (idList.length === 0) {
+            ElMessage.error('请求的idList不能为空')
+            return false
+        }
+        idList.forEach(id => {
+            // 尝试将id转换为数字
+            const num = Number(id)
+            // 检查是否成功转换为数字，并且是一个正整数
+            if (isNaN(num) || !Number.isInteger(num) || num < 0) {
+                console.log('idList的id:' + id + '不是有效id');
+                ElMessage.error('含有不合法的id,id应为纯数字')
+                return false
+            }
+        })
+        return true
+    },
     //搜索数据库歌单的歌
     getMusicList: async ({ music_list_id, limit, offset }: QueryMusicList) => {
         try {

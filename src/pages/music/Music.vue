@@ -9,7 +9,7 @@
             </el-icon>&ensp;添加歌曲
           </el-text>
         </template>
-        <el-button type="success" :icon="Search" @click="isShowSearchPanel = true">搜索网易云音乐曲库</el-button>
+        <el-button type="success" class="button" :icon="Search" @click="isShowSearchPanel = true">搜索网易云音乐曲库</el-button>
         <el-form v-model="newMusic" label-width="auto" label-position="top" style="width: 100%;margin-top:20px"
           :size="elSize">
           <el-form-item>
@@ -99,28 +99,32 @@
           </el-text>
         </template>
         <div style="text-align: left">
-          <span>1、会员歌曲和播放失败的不能自动跳过,在resetUrl里面改逻辑</span>
-          <div>2、七牛云链接后加上?avinfo可以获得音频源数据</div>
-          <div>3、用第三方库 lyric-parser 进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。</div>
-          <div>4、歌单界面和歌词界面</div>
-          <div>5、<del>歌名长度滚动速率没改完</del>√</div>
-          <div>6、重复播放同一首换成暂停和播放，或者做出提醒</div>
-          <div>7、<del>播放设置和播放列表存本地</del>√</div>
-          <div>8、播放失败的重试函数待测试是否有效</div>
-          <div>9、移动端的歌单信息按钮组可能因为太长了，UI出错</div>
-          <div>10、浏览器媒体界面，列表最后一首到第一首会出错，播放时间不归位</div>
-          <div>11、<del>通过id添加会员歌曲会添加成功但是无法播放，然后出bug</del></div>
-          <div>12、<del>部分歌曲歌手id冲突（举例id=28162967）,无法添加</del></div>
-          <div>13、歌单查询的歌曲排序有问题</div>
-          <div>14、播放状态和列表不要持久化，否则下次加载会出问题</div>
-          <div>15、<del>thisMusic有问题</del></div>
+          <el-text tag="p" type="info">1、<del>会员歌曲和播放失败的不能自动跳过,在resetUrl里面改逻辑</del></el-text>
+          <el-text tag="p" style="bold">2、七牛云链接后加上?avinfo可以获得音频源数据</el-text>
+          <el-text tag="p">3、用第三方库 lyric-parser 进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。</el-text>
+          <el-text tag="p" type="info">4、<del>歌单界面和</del><el-text>歌词界面</el-text></el-text>
+          <el-text tag="p" type="info">5、<del>歌名长度滚动速率没改完</del></el-text>
+          <el-text tag="p" type="info">6、<del>重复播放同一首换成暂停和播放，或者做出提醒</del></el-text>
+          <el-text tag="p" type="info">7、<del>播放设置和播放列表存本地</del></el-text>
+          <el-text tag="p">8、播放失败的重试函数待测试是否有效</el-text>
+          <el-text tag="p" type="info">9、<del>移动端的歌单信息按钮组可能因为太长了，UI出错</del></el-text>
+          <el-text tag="p">10、浏览器媒体界面，列表最后一首到第一首会出错，播放时间不归位</el-text>
+          <el-text tag="p" type="info">11、<del>通过id添加会员歌曲会添加成功但是无法播放，然后出bug</del></el-text>
+          <el-text tag="p" type="info">12、<del>部分歌曲歌手id冲突（举例id=28162967）,无法添加</del></el-text>
+          <el-text tag="p">13、歌单查询的歌曲排序有问题</el-text>
+          <el-text tag="p" type="info">14、<del>播放状态和列表不要持久化，否则下次加载会出问题</del></el-text>
+          <el-text tag="p" type="info">15、<del>thisMusic有问题</del></el-text>
+          <el-text
+            tag="p">16、music_list_store需要重构，手动持久化和自动持久化冲突，thisMusic需要playingIndex和PlayList同时持久化才能使用，否则会出错，但PlayList持久化会导致音乐链接过期，playidList无效</el-text>
+          <el-text tag="p">17、清空播放列表清空不了，刷新后又出现</el-text>
+
         </div>
       </el-tab-pane>
     </el-tabs>
     <el-drawer class="searchDrawer" v-model="isShowSearchPanel" :with-header="false"
       :size="drawerSize - (isPC ? 39 : 39) + 'px'" @touchstart="(e: TouchEvent) => e.stopPropagation()"
       @touchend="(e: TouchEvent) => e.stopPropagation()" direction="btt" show-close>
-      <SearchMusic :addCloudMusic="addCloudMusic" :closeSearchPanel="closeSearchPanel" />
+      <SearchMusic :closeSearchPanel="closeSearchPanel" />
     </el-drawer>
   </div>
 </template>
@@ -148,7 +152,7 @@ const musicConfigStore = useMusicConfigStore()
 const musicListStore = useMusicListStore()
 const { isPC, elSize, drawerSize, containerHeight, touchstart, positionComputed } = useResponsive()
 
-const { getLocalMusicList, addCloudMusic, addMusic } = useMusicPlay()
+const { getLocalMusicList, addMusicToPlay, addMusic } = useMusicPlay()
 //页面背景配置
 const { activePanelIndex } = toRefs(musicConfigStore)
 const { bgSettings, changePanelIndex } = musicConfigStore
@@ -209,7 +213,7 @@ const search_song_or_list = async (str: string, isSong: boolean) => {
   console.log(isSong ? '是歌曲' : '是歌单', ',ID为：', id)
   //判断id是不是一个正常的正整数
   if (Number.isInteger(id) && id > 0) {
-    if (isSong) await addCloudMusic(id, true)
+    if (isSong) await addMusicToPlay(id, true)
     else {
       const { status } = await getCloudMusicList({ cloud_music_list_id: id })
       if (status === 0) return
@@ -240,13 +244,18 @@ onMounted(async () => {
 
 
   //分享功能，从路径中获取网易云音乐id，播放并清除路径参数
-  //跳转到播放列表
-  let { c_id, ml_id } = route.query
+  let { id, c_id, ml_id } = route.query
+  const music_id = Number(id)
   const cloud_music_id = Number(c_id) || Number(route.query.cloud_music_id)
   const music_list_id = Number(ml_id)
 
-  if (Number.isInteger(cloud_music_id) && cloud_music_id > 0) {
-    await addCloudMusic(cloud_music_id, isPC.value) //移动端不自动播放，没有优化
+  //跳转到播放列表
+  if (Number.isInteger(music_id) && music_id > 0) {
+    await addMusicToPlay(music_id, isPC.value, true) //移动端不自动播放，没有优化
+    await router.replace({ name: 'music' })
+    changePanelIndex(3)
+  } else if (Number.isInteger(cloud_music_id) && cloud_music_id > 0) {
+    await addMusicToPlay(cloud_music_id, isPC.value) //移动端不自动播放，没有优化
     await router.replace({ name: 'music' })
     changePanelIndex(3)
   }
@@ -322,6 +331,68 @@ const touchend = (e: TouchEvent) => {
   }
 }
 
+/*region 按钮样式 */
+.dark .button {
+  background-color: transparent;
+}
+
+.button {
+  --color: #00A97F;
+  padding: 0.8em 1.7em;
+  background-color: #e9dee7;
+  border-radius: .3em;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: .5s;
+  font-weight: 400;
+  font-size: 17px;
+  border: 1px solid;
+  font-family: inherit;
+  text-transform: uppercase;
+  color: var(--color);
+  z-index: 1;
+}
+
+.button::before,
+.button::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 50px;
+  transform: translate(-50%, -50%);
+  position: absolute;
+  border-radius: 50%;
+  z-index: -1;
+  background-color: var(--color);
+  transition: 1s ease;
+}
+
+.button::before {
+  top: -1em;
+  left: -1em;
+}
+
+.button::after {
+  left: calc(100% + 1em);
+  top: calc(100% + 1em);
+}
+
+.button:hover::before,
+.button:hover::after {
+  height: 410px;
+  width: 410px;
+}
+
+.button:hover {
+  color: rgb(10, 25, 30);
+}
+
+.button:active {
+  filter: brightness(.8);
+}
+
+/*endregion*/
 
 /*移动端布局*/
 @media (max-width: 780px) {

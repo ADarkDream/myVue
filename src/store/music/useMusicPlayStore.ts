@@ -176,5 +176,8 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         changeCurrentTime,
     }
 }, {
-    persist: true
+    persist: [{
+        pick: ['volume', 'isLock'],
+        storage: localStorage
+    }]
 })

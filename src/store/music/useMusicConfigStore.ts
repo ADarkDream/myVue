@@ -25,17 +25,12 @@ export const useMusicConfigStore = defineStore('music_config', () => {
 
     return { bgSettings, activePanelIndex, is_show_player_before_play, changePanelIndex }
 }, {
-    persist: [
-        {
-            pick: ['bgSettings'],
-            storage: localStorage
-        },
-        {
-            pick: ['is_show_player_before_play'],
-            storage: localStorage
-        },
-        {
-            pick: ['activePanelIndex'],
-            storage: sessionStorage
-        }]
+    persist: [{
+        pick: ['bgSettings', 'is_show_player_before_play'],
+        storage: localStorage
+    },
+    {
+        pick: ['activePanelIndex'],
+        storage: sessionStorage
+    }]
 })

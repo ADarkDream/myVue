@@ -11,20 +11,19 @@
           <el-text>{{ index + 1 }}、{{ item.name || '未命名' }} -
             {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }}
           </el-text>&ensp;
-          <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text>
+          <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text><el-text
+            v-show="item.id === musicListStore.thisMusic.id">播放中</el-text>
           <div>
-            <el-button link @click="toggleMusic({ index })" size="small" type="primary">
+            <el-button link @click="playTheMusic(item, index)" size="small" type="primary">
               点击播放
             </el-button>
             <el-button link size="small" type="primary" @click="ElMessage.info('收藏功能开发中')">
               收藏到歌单
             </el-button>
-            <el-button link v-if="item.cloud_music_id !== 0"
-              @click="copyText('https://muxidream.cn/music?c_id=' + item.cloud_music_id, '播放链接')" size="small"
+            <el-button link v-if="item.cloud_music_id !== 0" @click="musicPlay.shareMusicLink(item)" size="small"
               type="primary">
               分享
-            </el-button><el-button link type="danger"
-              @click="deleteMusicFromPlayList(item.cloud_music_id)">删除</el-button>
+            </el-button><el-button link type="danger" @click="deleteMusicFromPlayList(item.id)">删除</el-button>
           </div>
         </div>
       </template>
@@ -35,20 +34,27 @@
 </template>
 
 <script setup lang="ts">
-import useFunction from "@/hooks/useFunction";
 import { ElMessage } from "element-plus";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
-import { CloudSongInfo } from "@/types/music";
+import type { CloudSongInfo } from "@/types/music";
 import useResponsive from "@/hooks/useResponsive";
-import {  Delete } from "@element-plus/icons-vue";
+import { Delete } from "@element-plus/icons-vue";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
+import musicPlay from "@/utils/music/musicPlay";
 
 const musicListStore = useMusicListStore()
 const { drawerSize } = useResponsive()
-const { copyText } = useFunction()
-const {  toggleMusic } = useMusicPlay()
+
+const { toggleMusic, play } = useMusicPlay()
 const { songsList, height } = defineProps(['songsList', 'height']) as { songsList: CloudSongInfo[], height: number }
 const { deleteMusicFromPlayList, clearPlayList } = musicListStore
+
+const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
+  //如果是当前播放的歌曲，则暂停
+  if (musicInfo.id === musicListStore.thisMusic.id) {
+    play({})
+  } else toggleMusic({ index })
+}
 
 </script>
 

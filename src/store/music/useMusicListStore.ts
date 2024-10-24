@@ -8,10 +8,10 @@ import musicListUtils from "@/utils/music/musicList";
 import { ElMessage } from "element-plus";
 
 
-const { defaultUrl } = useBaseUrl(pinia)
 
 // 定义并暴露一个store
 export const useMusicListStore = defineStore('music_list', () => {
+    const { defaultUrl } = useBaseUrl()
     //默认播放列表
     const defaultPlayList = ref<CloudSongInfo[]>([
         {
@@ -73,7 +73,7 @@ export const useMusicListStore = defineStore('music_list', () => {
     //播放列表序号和id对应的对象,id为键，index为值
     const playListIndex = computed(() => {
         const obj = {} as Record<number, number>
-        playList.value.forEach((song, index) => obj[song.cloud_music_id] = index)
+        playList.value.forEach((song, index) => obj[song.id] = index)
         return obj
     })
 
@@ -98,8 +98,8 @@ export const useMusicListStore = defineStore('music_list', () => {
 
         newMusicList.forEach(song => {
             //如果新添加的歌曲已经在播放列表中存在
-            if (idList.includes(song.cloud_music_id.toString())) {
-                index = playListIndex.value[song.cloud_music_id]
+            if (idList.includes(song.id.toString())) {
+                index = playListIndex.value[song.id]
                 //isReplace=true,将同id的歌替换掉
                 if (isReplace) {
                     playList.value[index] = song
@@ -131,9 +131,8 @@ export const useMusicListStore = defineStore('music_list', () => {
         setLocalMusicIdList()
     }
 
-    //删除播放列表中指定id的歌
+    //清空播放列表
     const clearPlayList = () => {
-        //清空播放列表
         playList.value = defaultPlayList.value
         setLocalMusicIdList()
     }
@@ -255,7 +254,7 @@ export const useMusicListStore = defineStore('music_list', () => {
             })
         }
     }
-    get_session_and_set_data()
+    // get_session_and_set_data()
 
 
     const setLocalMusicIdList = () => {
@@ -263,7 +262,7 @@ export const useMusicListStore = defineStore('music_list', () => {
         // 会乱序
         // playIdList.value = Object.keys(playListIndex.value).map(Number)
         playIdList.value = playList.value.map(song => song.id)
-        localStorage.setItem('music_id_list', JSON.stringify(playIdList.value))
+        // localStorage.setItem('music_id_list', JSON.stringify(playIdList.value))
     }
 
 
@@ -290,5 +289,13 @@ export const useMusicListStore = defineStore('music_list', () => {
         getCloudMusicList
     }
 }, {
-    persist: true
+    persist: [{
+        // 'playList', 'playingIndex',
+        pick: ['playIdList', 'playListIndex', 'musicListInfo', 'musicList'],
+        storage: localStorage
+    },
+    {
+        pick: ['connectionObj', 'musicListInfoObj', 'musicListObj',],
+        storage: sessionStorage
+    }]
 })
