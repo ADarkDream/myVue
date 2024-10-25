@@ -6,8 +6,9 @@
           {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }}
         </el-text>
         <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text><el-text v-if="isPC" type="info"
-          style="margin-left:30px ;">[专辑]{{ item.album.name }}</el-text> <el-text
-          v-show="item.id === musicListStore.thisMusic.id">播放中</el-text>
+          style="margin-left:30px ;">[专辑]{{ item.album.name }}</el-text>
+        <SVG_music_playing_indicator style="fill: skyblue;height: 20px;margin-left: 20px;"
+          v-show="item.id === musicListStore.thisMusic.id" />
         <div>
           <el-button link @click="playTheMusic(item, index)" size="small" type="primary">
             点击播放
@@ -25,8 +26,8 @@
         </div>
       </div>
     </template>
+    <div style="height: 150px;" v-if="!isPC && songsList.length > 5"></div>
   </el-scrollbar>
-
 </template>
 
 <script setup lang="ts">
@@ -37,6 +38,7 @@ import useMusicPlay from "@/hooks/music/useMusicPlay";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { ref } from "vue";
 import musicPlay from "@/utils/music/musicPlay";
+import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.svg?component'
 
 const musicListStore = useMusicListStore()
 

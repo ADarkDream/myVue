@@ -60,7 +60,7 @@ interface QueryCloudMusicList {
 //网易云音乐信息(筛选后)
 interface CloudSongInfo {
     id: number,
-    cloud_music_id: number,
+    cloud_music_id?: number,
     name: string,
     duration?: number,//音乐时长
     comment_thread_id?: string,//获取评论时的参数

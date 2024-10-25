@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
-    <link rel="manifest" href="/manifest.json"/>
+    <link rel="manifest" href="/manifest.json" />
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <!--下一行删掉之后移动端会丢失响应式-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <meta name="baidu-site-verification" content="codeva-A4yk8FKcSI"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="baidu-site-verification" content="codeva-A4yk8FKcSI" />
     <link rel="apple-touch-icon-precomposed" href="/favicon_144x144.png">
-    <meta content="默默" name="author"/>
-    <meta content="一个社交化导航网站，致力于资源分享，及重返未来1999游戏资源站。社区建设中..." name="description"/>
+    <meta content="默默" name="author" />
+    <meta content="一个社交化导航网站，致力于资源分享，及重返未来1999游戏资源站。社区建设中..." name="description" />
     <title>默默的小站</title>
     <style>
         body {
@@ -75,14 +76,14 @@
             overflow: hidden;
         }
 
-        #loading-mask > svg {
+        #loading-mask>svg {
             height: 30%;
             width: 100%;
             margin: 20% 0;
             overflow: hidden;
         }
 
-        #loading-mask > svg > text {
+        #loading-mask>svg>text {
             text-anchor: middle;
             dominant-baseline: middle;
             text-transform: uppercase;
@@ -99,16 +100,19 @@
                 stroke-dasharray: 0 50%;
                 stroke-width: 0.8;
             }
+
             50% {
                 fill: rgba(72, 138, 20, 0);
                 stroke: rgba(54, 95, 160, 1);
                 stroke-width: 1.2;
             }
+
             70% {
                 fill: rgba(72, 138, 20, 0);
                 stroke: rgba(54, 95, 160, 1);
                 stroke-width: 1.5;
             }
+
             90%,
             100% {
                 fill: rgba(72, 138, 204, 1);
@@ -120,11 +124,11 @@
         }
 
         @media (max-width: 980px) {
-            #loading-mask > svg > text {
+            #loading-mask>svg>text {
                 font-size: 100px;
             }
 
-            #loading-mask > svg {
+            #loading-mask>svg {
                 width: 80%;
                 margin: 20% 10%
             }
@@ -133,26 +137,29 @@
         /*endregion*/
     </style>
     <script type="text/javascript"> //必应的网站分析验证
-    // (function (c, l, a, r, i, t, y) {
-    //     c[a] = c[a] || function () {
-    //         (c[a].q = c[a].q || []).push(arguments)
-    //     }
-    //     t = l.createElement(r)
-    //     t.async = 1
-    //     t.src = "https://www.clarity.ms/tag/" + i
-    //     y = l.getElementsByTagName(r)[0]
-    //     y.parentNode.insertBefore(t, y)
-    // })(window, document, "clarity", "script", "nl63h6oui7")
+        // (function (c, l, a, r, i, t, y) {
+        //     c[a] = c[a] || function () {
+        //         (c[a].q = c[a].q || []).push(arguments)
+        //     }
+        //     t = l.createElement(r)
+        //     t.async = 1
+        //     t.src = "https://www.clarity.ms/tag/" + i
+        //     y = l.getElementsByTagName(r)[0]
+        //     y.parentNode.insertBefore(t, y)
+        // })(window, document, "clarity", "script", "nl63h6oui7")
     </script>
+    <!-- CSS动画 -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" /> -->
 </head>
+
 <body>
-<!--    以下是网站加载动画的样式-->
-<div id="loading-mask">
-    <svg viewBox="0 0 400 200">
-        <text x="200" y="100">MOMO</text>
-    </svg>
-</div>
-<div id="app"></div>
+    <!--    以下是网站加载动画的样式-->
+    <div id="loading-mask">
+        <svg viewBox="0 0 400 200">
+            <text x="200" y="100">MOMO</text>
+        </svg>
+    </div>
+    <div id="app"></div>
 </body>
 <script type="module" src="./src/main.ts"></script>
 <script type="text/javascript">
@@ -175,4 +182,5 @@
     }
 </script>
 <!--<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>-->
+
 </html>

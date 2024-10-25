@@ -23,12 +23,8 @@ export default function () {
         set: (val: CloudSongInfo[]) => musicListStore.playList = val
     })
 
-    const playIdList = computed({
-        get: () => musicListStore.playIdList,
-        set: (val: number[]) => musicListStore.playIdList = val
-    })
 
-    const { isPlaying, isLoading, playingIndex } = toRefs(musicListStore)
+    const { isPlaying, isLoading, playingIndex, thisMusic } = toRefs(musicListStore)
     const { is_show_player_before_play } = toRefs(useMusicConfig)
 
     const { audioContext, audioElement, musicName, isScrollName, transformX, infoBarActive, controlPanelActive, volume,
@@ -210,13 +206,18 @@ export default function () {
 
     const reTry = async (retryCount = 0) => {
         if (!audioElement.value) return
+        //可能是播放链接失效了，重新获取
+        if (retryCount === 1) {
+            const song = thisMusic.value
+            song.src = ''
+            await resetUrl(song)
+        }
         await audioElement.value.play().catch(async (err) => {
             if (retryCount < 5) { // 限制重试次数
                 console.error("播放失败，一秒后重试")
                 console.log(err)
                 // 等待 1 秒
                 await new Promise(resolve => setTimeout(resolve, 1000));
-
                 // 递归再次尝试播放
                 await reTry(retryCount + 1)
             } else {
@@ -314,29 +315,8 @@ export default function () {
     }
 
 
-    //获取本地的播放列表备份
-    const getLocalMusicList = async () => {
-        let list = localStorage.getItem('music_id_list')
-        //判断是否是整数且在模式列表范围内
-        if (!!list) {
-            playIdList.value = JSON.parse(list) || []
-            // const { isError, songs } = await addCloudMusicList(playIdList.value)
-
-            const { status, data, msg } = await useMusicPlay.getPlayList(playIdList.value)
-            if (status === 1 && data?.songsInfo) {
-                //重新排序
-                // const newSongsInfo = data.songsInfo.map(song)
-                playList.value = data.songsInfo
-
-                return
-            } else playIdList.value = []
-        }
-        playList.value.forEach(song => playIdList.value.push(song.id))
-    }
-
 
     return {
-        getLocalMusicList,
         addCloudMusicList,
         play,
         toggleMusic,

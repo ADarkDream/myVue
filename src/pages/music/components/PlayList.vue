@@ -11,8 +11,9 @@
           <el-text>{{ index + 1 }}、{{ item.name || '未命名' }} -
             {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }}
           </el-text>&ensp;
-          <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text><el-text
-            v-show="item.id === musicListStore.thisMusic.id">播放中</el-text>
+          <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text>
+          <SVG_music_playing_indicator style="fill: skyblue;height: 30px;"
+            v-show="item.id === musicListStore.thisMusic.id" />
           <div>
             <el-button link @click="playTheMusic(item, index)" size="small" type="primary">
               点击播放
@@ -41,7 +42,7 @@ import useResponsive from "@/hooks/useResponsive";
 import { Delete } from "@element-plus/icons-vue";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import musicPlay from "@/utils/music/musicPlay";
-
+import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.svg?component'
 const musicListStore = useMusicListStore()
 const { drawerSize } = useResponsive()
 

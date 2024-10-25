@@ -24,7 +24,7 @@
             </template>
             <el-row :gutter="24">
               <el-col :span="18">
-                <el-input v-model.trim.number="cloudMusicListID" placeholder="输入网易云歌单ID或分享链接"></el-input>
+                <el-input v-model.trim.number="cloudMusicListID" placeholder="输入网易云歌单ID或分享链接" />
               </el-col>
               <el-col :span="6">
                 <el-button @click="search_song_or_list(cloudMusicListID, false)" type="success" plain>
@@ -99,24 +99,16 @@
           </el-text>
         </template>
         <div style="text-align: left">
-          <el-text tag="p" type="info">1、<del>会员歌曲和播放失败的不能自动跳过,在resetUrl里面改逻辑</del></el-text>
-          <el-text tag="p" style="bold">2、七牛云链接后加上?avinfo可以获得音频源数据</el-text>
-          <el-text tag="p">3、用第三方库 lyric-parser 进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。</el-text>
-          <el-text tag="p" type="info">4、<del>歌单界面和</del><el-text>歌词界面</el-text></el-text>
-          <el-text tag="p" type="info">5、<del>歌名长度滚动速率没改完</del></el-text>
-          <el-text tag="p" type="info">6、<del>重复播放同一首换成暂停和播放，或者做出提醒</del></el-text>
-          <el-text tag="p" type="info">7、<del>播放设置和播放列表存本地</del></el-text>
-          <el-text tag="p">8、播放失败的重试函数待测试是否有效</el-text>
-          <el-text tag="p" type="info">9、<del>移动端的歌单信息按钮组可能因为太长了，UI出错</del></el-text>
-          <el-text tag="p">10、浏览器媒体界面，列表最后一首到第一首会出错，播放时间不归位</el-text>
-          <el-text tag="p" type="info">11、<del>通过id添加会员歌曲会添加成功但是无法播放，然后出bug</del></el-text>
-          <el-text tag="p" type="info">12、<del>部分歌曲歌手id冲突（举例id=28162967）,无法添加</del></el-text>
-          <el-text tag="p">13、歌单查询的歌曲排序有问题</el-text>
-          <el-text tag="p" type="info">14、<del>播放状态和列表不要持久化，否则下次加载会出问题</del></el-text>
-          <el-text tag="p" type="info">15、<del>thisMusic有问题</del></el-text>
-          <el-text
-            tag="p">16、music_list_store需要重构，手动持久化和自动持久化冲突，thisMusic需要playingIndex和PlayList同时持久化才能使用，否则会出错，但PlayList持久化会导致音乐链接过期，playidList无效</el-text>
-          <el-text tag="p">17、清空播放列表清空不了，刷新后又出现</el-text>
+          <h2>待完善：</h2>
+          <el-text tag="p">1、七牛云链接后加上?avinfo可以获得音频源数据</el-text>
+          <el-text tag="p">2、歌词界面:用第三方库 lyric-parser 进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。</el-text>
+          <el-text tag="p">3、歌曲收藏到歌单</el-text>
+          <el-text tag="p">4、上传自定义歌曲</el-text>
+          <el-text tag="p">5、重构歌曲播放样式</el-text>
+          <h2>问题：</h2>
+          <el-text tag="p">1、播放失败的重试函数待测试是否有效</el-text>
+          <el-text tag="p">2、浏览器媒体界面，列表最后一首到第一首会出错，播放时间不归位</el-text>
+          <el-text tag="p">3、歌单查询的歌曲排序有问题</el-text>
 
         </div>
       </el-tab-pane>
@@ -130,21 +122,25 @@
 </template>
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, toRefs } from 'vue';
+import { ElMessage } from 'element-plus';
 import { InfoFilled, Plus, Search, Setting, Tickets } from "@element-plus/icons-vue";
-import { SongInfo } from "@/types/music";
+import type { SongInfo } from "@/types/music";
 import SearchMusic from "@/pages/music/components/SearchMusic.vue";
 import PlayList from "@/pages/music/components/PlayList.vue";
 import MusicListSquare from "@/pages/music/components/MusicListSquare.vue";
+import MusicSettings from "@/pages/music/components/MusicSettings.vue";
+import MusicList from "@/pages/music/components/MusicList.vue";
 
-import useResponsive from "@/hooks/useResponsive";
 import { useRoute, useRouter } from "vue-router";
 import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
-import SVG_music_list from '@/assets/music/music_list.svg?component'
-import MusicSettings from "@/pages/music/components/MusicSettings.vue";
-import MusicList from "@/pages/music/components/MusicList.vue";
-import { ElMessage } from 'element-plus';
+import useResponsive from "@/hooks/useResponsive";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
+import useMusicList from "@/hooks/music/useMusicList";
+
+import SVG_music_list from '@/assets/music/music_list.svg?component'
+
+
 const route = useRoute()
 const router = useRouter()
 
@@ -152,20 +148,14 @@ const musicConfigStore = useMusicConfigStore()
 const musicListStore = useMusicListStore()
 const { isPC, elSize, drawerSize, containerHeight, touchstart, positionComputed } = useResponsive()
 
-const { getLocalMusicList, addMusicToPlay, addMusic } = useMusicPlay()
+const { addMusicToPlay, addMusic } = useMusicPlay()
+const { getCloudMusicList, getMusicList } = useMusicList()
 //页面背景配置
 const { activePanelIndex } = toRefs(musicConfigStore)
 const { bgSettings, changePanelIndex } = musicConfigStore
 const playList = computed(() => musicListStore.playList)
-const { getCloudMusicList, getMusicList } = musicListStore
-
 
 const music = ref<HTMLDivElement>()
-
-
-
-
-
 
 //是否显示搜索面板
 const isShowSearchPanel = ref(false)
@@ -239,8 +229,6 @@ const toggleToMusicList = async ({ cloud_music_list_id, music_list_id, latest }:
 }
 
 onMounted(async () => {
-  //获取本地播放列表
-  await getLocalMusicList()
 
 
   //分享功能，从路径中获取网易云音乐id，播放并清除路径参数

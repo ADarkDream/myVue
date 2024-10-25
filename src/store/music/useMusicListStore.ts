@@ -2,8 +2,7 @@
 import { defineStore } from 'pinia'
 import { computed, reactive, ref } from "vue";
 import { useBaseUrl } from "@/hooks/useBaseUrl";
-import type { CloudSongInfo, MusicList, MusicListInfo, QueryCloudMusicList, QueryMusicList, QueryMusicLists, SongInfo } from "@/types/music";
-import pinia from '@/store'
+import type { CloudSongInfo, MusicList, MusicListInfo, QueryCloudMusicList, QueryMusicList, QueryMusicLists } from "@/types/music";
 import musicListUtils from "@/utils/music/musicList";
 import { ElMessage } from "element-plus";
 
@@ -43,9 +42,6 @@ export const useMusicListStore = defineStore('music_list', () => {
             src: defaultUrl + '/music/files/%E6%9C%AA%E5%91%BD%E5%90%8D-%E5%B7%9D%E5%B7%9D%E5%B0%BE%E5%B7%B4%E5%B0%8F%E5%BF%83%E4%B8%8D%E8%A6%81%E8%A2%AB%E6%89%AF%E6%8E%89%E4%BA%86.m4a'
         }
     ])
-
-    //播放列表的数据库音乐id数组
-    const playIdList = ref<number[]>([])
 
     //数据库歌单id（key）和网易云歌单id（value）键值对
     const connectionObj = reactive<{ [key: number]: number }>({})
@@ -90,7 +86,6 @@ export const useMusicListStore = defineStore('music_list', () => {
         //isCover=true或播放列表为空，将整个播放列表替换为新的
         if (isCover || !playList.value?.length) {
             playList.value = newMusicList
-            setLocalMusicIdList()
             return index = 0
         }
         //获取播放列表中所有歌曲的id值
@@ -109,7 +104,6 @@ export const useMusicListStore = defineStore('music_list', () => {
                 index = playList.value.length - 1
             }
         })
-        setLocalMusicIdList()
         return index
     }
 
@@ -128,149 +122,17 @@ export const useMusicListStore = defineStore('music_list', () => {
             console.warn('删除的是播放歌曲之前的歌')
         }
         playList.value.splice(index, 1)
-        setLocalMusicIdList()
     }
 
     //清空播放列表
     const clearPlayList = () => {
         playList.value = defaultPlayList.value
-        setLocalMusicIdList()
     }
-
-    //根据用户uid或歌单id，获取单个或多个歌单信息的信息
-    const getMusicListsInfo = async ({ isLogin, user_id, music_list_id }: QueryMusicLists, latest = false) => {
-        //如果查询单个歌单，且歌单对象中有这个歌单的信息，且不要最新的(用缓存)
-        if (!latest && music_list_id && Object.keys(musicListInfoObj).includes(music_list_id.toString())) {
-            console.log(`已加载本地缓存的歌单${music_list_id}的信息`)
-            return { status: 1, list: [musicListInfoObj[music_list_id.toString()]], msg: `已加载本地缓存的歌单${music_list_id}的信息` }
-        }
-
-        //查询多个歌单，或查询最新的情况(不要缓存)下
-        const { status, list, msg } = await musicListUtils.getMusicListsInfo({ isLogin, user_id, music_list_id })
-        //处理请求后的信息
-        if (status === 1) list?.forEach(MusicListInfo => {
-            const { music_list_id, cloud_music_list_id } = MusicListInfo
-            //添加两个歌单的id键值对信息
-            connectionObj[music_list_id] = cloud_music_list_id!
-            //向信息对象中添加
-            musicListInfoObj[music_list_id] = MusicListInfo
-
-        })
-        //存入本地
-        sessionStorage.setItem('connectionObj', JSON.stringify(connectionObj))
-        sessionStorage.setItem('musicListInfoObj', JSON.stringify(musicListInfoObj))
-        return { status, list, msg }
-    }
-
-
-
-
-    //搜索数据库的歌单及音乐信息
-    const getMusicList = async ({ music_list_id, limit, offset }: QueryMusicList) => {
-        let localInfo = false
-        let localList = false
-        //如果歌单对象中有这个歌单的信息
-        if (Object.keys(musicListInfoObj).includes(music_list_id.toString())) {
-            musicListInfo.value = musicListInfoObj[music_list_id.toString()]
-            localInfo = true
-            console.log(`已加载本地缓存的歌单${music_list_id}的信息`)
-        }
-        if (Object.keys(musicListObj).includes(music_list_id.toString())) {
-            musicList.value = musicListObj[music_list_id.toString()]
-            localList = true
-            console.log(`已加载本地缓存的歌单${music_list_id}的音乐列表`)
-        }
-
-        if (localInfo && localList) return
-        console.log(`本地缓存没有歌单${music_list_id}的信息,查询服务器`)
-        const data = await musicListUtils.getMusicList({ music_list_id, limit, offset })
-        //处理请求后的信息
-        if (data) set_and_save_data(data, music_list_id)
-    }
-
-    //搜索网易云的歌单及音乐信息
-    const getCloudMusicList = async ({ cloud_music_list_id, limit, offset, latest }: QueryCloudMusicList) => {
-        const { status, data, msg } = await musicListUtils.getCloudMusicList({ cloud_music_list_id, limit, offset, latest }) as { status: number, data?: MusicList, msg: string }
-        //处理请求后的信息
-        if (status === 1 && data) {
-            const music_list_id = data.musicListInfo.music_list_id
-            set_and_save_data(data, music_list_id)
-        }
-        return { status, msg }
-    }
-
-    //处理请求后的歌单信息或歌曲列表，存入对象，更新当前，并存入sessionStorage
-    const set_and_save_data = ({ musicListInfo: ml_info, songsInfo }: MusicList, music_list_id: number) => {
-        //如果存在
-        if (ml_info && music_list_id) {
-            //添加两个歌单的id键值对信息
-            connectionObj[music_list_id] = ml_info.cloud_music_list_id!
-            //向信息对象中添加
-            musicListInfoObj[music_list_id] = ml_info
-            //更新当前
-            musicListInfo.value = ml_info
-            //存入本地
-            sessionStorage.setItem('connectionObj', JSON.stringify(connectionObj))
-            sessionStorage.setItem('musicListInfoObj', JSON.stringify(musicListInfoObj))
-        }
-        if (songsInfo) {
-            //向信息对象中添加
-            musicListObj[music_list_id] = songsInfo
-            //更新当前
-            musicList.value = songsInfo
-            //存入本地
-            sessionStorage.setItem('musicListInfoObj', JSON.stringify(musicListInfoObj))
-        }
-    }
-
-    //读取sessionStorage存储的数据并设置
-    const get_session_and_set_data = () => {
-        //如果本地存了歌单信息，读取并设置
-        const ml_info_obj = sessionStorage.getItem('musicListInfoObj')
-        if (ml_info_obj) {
-            const obj = JSON.parse(ml_info_obj)
-            // console.log('musicListInfoObj', obj)
-            const keys = Object.keys(obj)
-            keys.forEach(key => {
-                musicListInfoObj[key] = obj[key]
-            })
-        }
-        const ml_obj = sessionStorage.getItem('musicListObj')
-        if (ml_obj) {
-            const obj = JSON.parse(ml_obj)
-            // console.log('musicListObj', obj)
-            const keys = Object.keys(obj)
-            keys.forEach(key => {
-                musicListObj[key] = obj[key]
-            })
-        }
-        const c_obj = sessionStorage.getItem('connectionObj')
-        if (c_obj) {
-            const obj = JSON.parse(c_obj)
-            // console.log('connectionObj', obj)
-            const keys = Object.keys(obj)
-            keys.forEach(key => {
-                connectionObj[Number(key)] = obj[key]
-            })
-        }
-    }
-    // get_session_and_set_data()
-
-
-    const setLocalMusicIdList = () => {
-        //获取播放列表中所有歌曲的id值
-        // 会乱序
-        // playIdList.value = Object.keys(playListIndex.value).map(Number)
-        playIdList.value = playList.value.map(song => song.id)
-        // localStorage.setItem('music_id_list', JSON.stringify(playIdList.value))
-    }
-
 
 
     return {
         defaultPlayList,
         playList,
-        playIdList,
         isPlaying,
         isLoading,
         playListIndex,
@@ -284,18 +146,14 @@ export const useMusicListStore = defineStore('music_list', () => {
         addMusicList,
         deleteMusicFromPlayList,
         clearPlayList,
-        getMusicList,
-        getMusicListsInfo,
-        getCloudMusicList
     }
 }, {
     persist: [{
-        // 'playList', 'playingIndex',
-        pick: ['playIdList', 'playListIndex', 'musicListInfo', 'musicList'],
+        pick: ['playList', 'playingIndex', 'playListIndex', 'musicListInfo', 'musicList', 'connectionObj'],
         storage: localStorage
     },
     {
-        pick: ['connectionObj', 'musicListInfoObj', 'musicListObj',],
+        pick: ['musicListInfoObj', 'musicListObj',],
         storage: sessionStorage
     }]
 })

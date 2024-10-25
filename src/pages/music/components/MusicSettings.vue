@@ -48,9 +48,10 @@
 
     </el-form>
   </div>
+  <el-divider />
   <div style="height: 200px">
     <p>播放器设置</p>
-    <div>播放前显示播放器<el-switch v-model="is_show_player_before_play" /></div>
+    <div style="text-align: left;">播放前显示播放器<el-switch v-model="is_show_player_before_play" /></div>
   </div>
 
 </template>

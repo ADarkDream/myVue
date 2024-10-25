@@ -42,13 +42,11 @@ import AddMusicList from "@/pages/music/components/AddMusicList.vue";
 import type { QueryMusicLists, MusicListInfo } from "@/types/music";
 import MusicListCoverComp from "@/pages/music/components/MusicListCoverComp.vue";
 import { ElMessage } from "element-plus";
-import { useMusicListStore } from "@/store/music/useMusicListStore";
-
+import useMusicList from "@/hooks/music/useMusicList";
 const { isPC } = useResponsive()
 const { isLogin, uid } = useUserInfo()
 const showAddMusicList = ref(false)
 const { toggleToMusicList } = defineProps(['toggleToMusicList'])
-const musicListStore = useMusicListStore()
 
 onMounted(async () => {
   await getAllMusicListsInfo()
@@ -59,7 +57,7 @@ const myMusicLists = ref<MusicListInfo[]>([])
 // 获取公开歌单列表
 const getMusicLists = async ({ isLogin, user_id, music_list_id }: QueryMusicLists) => {
   try {
-    const { status, list, msg } = await musicListStore.getMusicListsInfo({ isLogin, user_id, music_list_id }, true)
+    const { status, list, msg } = await useMusicList().getMusicListsInfo({ isLogin, user_id, music_list_id }, true)
     if (status === 0 || !list) return ElMessage.error(msg)
     if (!isLogin) musicLists.value = list
     else myMusicLists.value = list

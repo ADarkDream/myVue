@@ -1,18 +1,22 @@
 <!--歌单列表-->
 <template>
   <div class="musicList">
-    <el-empty v-if="!musicList?.length" description="请先搜索或选择歌单"></el-empty>
-
-    <div v-else class="infoDiv">
-      <el-image v-show="!isHidden" :src="musicListInfo?.pic_url" class="cover" />
-      <div class="music_list_info" :class="{ hide: isHidden }">
+    <el-empty v-if="!musicList?.length" class="emptyDiv" description=" ">
+      <template #default>
+        <p>请先搜索或选择歌单</p>
+        <el-link type="primary" @click="changePanelIndex(1)">前往歌单广场</el-link>
+      </template>
+    </el-empty>
+    <div v-else class="infoDiv" :class="{ hide: isHidden }">
+      <img :src="musicListInfo?.pic_url" class="cover">
+      <div class="music_list_info">
         <p class="title">
-          {{ musicListInfo?.name }} <el-button link type="warning" :icon="ArrowUpBold" v-show="!isHidden"
-            @click="toggleInfoVisible">
+          {{ musicListInfo?.name }}
+          <el-button link type="warning" :icon="ArrowUpBold" v-show="!isHidden" @click="toggleInfoVisible">
             {{ '收起' }}
           </el-button>
         </p>
-        <div v-show="!isHidden">
+        <div class="info">
           <p>歌单状态：
             <el-text :type="musicListInfo?.status === 1 ? 'primary' : 'success'">{{
               musicListInfo?.status === 1 ? '私有' : '公开'
@@ -38,15 +42,12 @@
           </el-button>
         </el-button-group>
 
-        <el-button class="toggleBtn" link type="warning" :icon="ArrowDownBold" v-show="isHidden"
-          @click="toggleInfoVisible">
+        <el-button link type="warning" :icon="ArrowDownBold" v-show="isHidden" @click="toggleInfoVisible">
           {{ '显示' }}
         </el-button>
-
       </div>
     </div>
-
-    <music-list-songs-list :songsList="musicList" :height="drawerSize - 80 - height" />
+    <music-list-songs-list :songsList="musicList" :height="drawerSize - 80 - height" v-show="musicList.length !== 0" />
   </div>
 
 </template>
@@ -57,22 +58,28 @@ import { ArrowDownBold, ArrowUpBold } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
+import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
 import useTimestamp from "@/hooks/useTimestamp";
 import useFunction from "@/hooks/useFunction";
 import useResponsive from "@/hooks/useResponsive";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
+import useMusicList from "@/hooks/music/useMusicList";
 
 const musicListStore = useMusicListStore()
+const musicConfigStore = useMusicConfigStore()
 const { getTime } = useTimestamp()
 const { copyText } = useFunction()
 
 const musicList = computed(() => musicListStore.musicList)
 const musicListInfo = computed(() => musicListStore.musicListInfo)
-const { addMusicList, getCloudMusicList } = musicListStore
+const { addMusicList } = musicListStore
+const { changePanelIndex } = musicConfigStore
 const { toggleMusic } = useMusicPlay()
+const { getCloudMusicList } = useMusicList()
+const { drawerSize, isPC } = useResponsive()
+
 const isHidden = ref(false)
 
-const { drawerSize, isPC } = useResponsive()
 
 const height = ref(isPC.value ? 200 : 125)
 
@@ -117,16 +124,21 @@ const addTheList = async (isPlay = false) => {
 .musicList {
   .el-empty {
     margin-top: 50px;
+    font-size: 18px;
+
+    .el-link {
+      padding-top: 10px;
+      font-size: 18px;
+    }
   }
 
   .infoDiv {
     display: flex;
     text-align: left;
     overflow: hidden;
-    height: auto;
-    animation: height 1s linear;
-
-
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 5px;
+    border-radius: 15px;
   }
 }
 
@@ -142,7 +154,7 @@ const addTheList = async (isPlay = false) => {
   position: relative;
 
   .title {
-    font-size: 28px;
+    font-size: 20px;
     color: var(--el-color-primary);
   }
 
@@ -160,23 +172,33 @@ const addTheList = async (isPlay = false) => {
 }
 
 .hide {
-  display: flex;
   height: 30px;
-  justify-content: space-between;
-  width: 100%;
-  line-height: 30px;
 
-  .title {
-    padding: 0;
-    font-size: 20px;
+  .cover,
+  .info {
+    display: none;
   }
 
+  .music_list_info {
+    padding-left: 0;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    line-height: 30px;
 
-  .toggleBtn {
-    position: relative;
-    margin: 0;
+    .title {
+      padding: 0;
+    }
+
+
+    .toggleBtn {
+      position: relative;
+      margin: 0;
+    }
   }
+
 }
+
 
 /*移动端布局*/
 @media (max-width: 780px) {
@@ -185,19 +207,17 @@ const addTheList = async (isPlay = false) => {
   .infoDiv {
     justify-content: space-around;
 
-
-  }
-
-  .cover {
-    width: 125px;
-    height: 125px;
+    .cover {
+      width: 115px;
+      height: 115px;
+    }
   }
 
   .music_list_info {
     padding-left: 5px;
 
     .title {
-      font-size: 20px;
+      font-size: 16px;
     }
 
     .btnGroup {

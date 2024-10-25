@@ -156,10 +156,11 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         audioElement,
         gainNode,
         musicName,
+        transformX,
         infoBarActive,
         controlPanelActive,
         isScrollName,
-        transformX,
+
         currentTime,
         duration,
         volume,
