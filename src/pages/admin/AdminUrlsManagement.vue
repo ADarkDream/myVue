@@ -4,33 +4,33 @@
   </el-header>
   <div class="header2">
     <el-col :span="3">
-      <el-button type="primary" @click="dialogVisible=true">发布新导航</el-button>
+      <el-button type="primary" @click="dialogVisible = true">发布新导航</el-button>
     </el-col>
     <el-col :span="3">
-      <el-input v-model.trim="searchUrl.name" placeholder="网站名" clearable :prefix-icon="Search"/>
+      <el-input v-model.trim="searchUrl.name" placeholder="网站名" clearable :prefix-icon="Search" />
     </el-col>
     <el-col :span="3">
-      <el-input v-model.trim="searchUrl.detail" placeholder="网站简介" clearable :prefix-icon="Search"/>
+      <el-input v-model.trim="searchUrl.detail" placeholder="网站简介" clearable :prefix-icon="Search" />
     </el-col>
     <el-col :span="3" v-if="false">
-      <el-input v-model.trim="searchUrl.uid" placeholder="上传者uid" clearable :prefix-icon="Search"/>
+      <el-input v-model.trim="searchUrl.uid" placeholder="上传者uid" clearable :prefix-icon="Search" />
     </el-col>
     <el-col :span="3">
       <el-select v-model.trim="searchUrl.status" placeholder="All">
-        <el-option label="网站状态(全选)" :value="2"/>
-        <el-option label="正在使用" :value="1"/>
-        <el-option label="待审核" :value="0"/>
+        <el-option label="网站状态(全选)" :value="2" />
+        <el-option label="正在使用" :value="1" />
+        <el-option label="待审核" :value="0" />
       </el-select>
     </el-col>
     <el-col :span="3">
 
       <el-select v-model.trim="searchUrl.sort" placeholder="All">
-        <el-option label="网站分类(全选)" value=""/>
-        <el-option v-for="item in sort" :label="item.text" :value="item.value"/>
+        <el-option label="网站分类(全选)" value="" />
+        <el-option v-for="item in sort" :label="item.text" :value="item.value" />
       </el-select>
     </el-col>
     <el-col :span="3" v-if="false">
-      <el-input v-model.trim="searchUrl.tags" placeholder="网站标签" clearable :prefix-icon="Search"/>
+      <el-input v-model.trim="searchUrl.tags" placeholder="网站标签" clearable :prefix-icon="Search" />
     </el-col>
     <el-col :span="5">
       <el-button @click="filterChange" type="primary">筛选查找</el-button>
@@ -46,40 +46,39 @@
     </el-form>
 
     <el-table ref="tableRef" :data="tableData" style="width: 100%" max-height="500" stripe border highlight-current-row
-              table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }"
-              @sort-change="handleSortChange">
+      table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }" @sort-change="handleSortChange">
       <!--              @filter-change="filterChange">-->
-      <el-table-column fixed prop="id" label="ID" width="70" align="center" sortable/>
+      <el-table-column fixed prop="id" label="ID" width="70" align="center" sortable />
       <el-table-column prop="img" label="图标" width="60" align="center">
         <template #default="scope">
-          <el-input v-if="isEditRow===scope.$index" v-model="newUrl.img"/>
-          <el-image v-else :src="scope.row.img" style="width: 20px" lazy/>
+          <el-input v-if="isEditRow === scope.$index" v-model="newUrl.img" />
+          <el-image v-else :src="scope.row.img" style="width: 20px" lazy />
         </template>
       </el-table-column>
       <el-table-column prop="name" label="网站名" width="150">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input v-model="newUrl.name"/>
+          <div v-if="isEditRow === scope.$index">
+            <el-input v-model="newUrl.name" />
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="detail" label="网站简介" width="150">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input v-model="newUrl.detail"/>
+          <div v-if="isEditRow === scope.$index">
+            <el-input v-model="newUrl.detail" />
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="url" label="网站地址" width="300">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input type="text" v-model="newUrl.url"/>
+          <div v-if="isEditRow === scope.$index">
+            <el-input type="text" v-model="newUrl.url" />
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="uid" label="上传用户uid" width="120" align="center">
         <template #default="scope">
-          <el-button text v-if="scope.row.uid===0">管理员</el-button>
+          <el-button text v-if="scope.row.uid === 0">管理员</el-button>
           <el-button text v-else type="primary">{{ scope.row.uid }}</el-button>
 
         </template>
@@ -88,15 +87,15 @@
         <!--                       :filters="[ {text: '待审核', value: 0},{text: '正在使用', value: 1}]" column-key="status">-->
         <!--                       :filter-method="filterHandler">-->
         <template #default="scope">
-          <template v-if="isEditRow===scope.$index">
+          <template v-if="isEditRow === scope.$index">
             <el-select placeholder="待审核" v-model="newUrl.status" default-first-option>
-              <el-option label="待审核" :value="0"/>
-              <el-option label="正在使用" :value="1"/>
+              <el-option label="待审核" :value="0" />
+              <el-option label="正在使用" :value="1" />
             </el-select>
           </template>
           <template v-else>
-            <el-button text v-if="scope.row.status===1">正在使用</el-button>
-            <el-button text type="primary" v-else-if="scope.row.status===0">待审核</el-button>
+            <el-button text v-if="scope.row.status === 1">正在使用</el-button>
+            <el-button text type="primary" v-else-if="scope.row.status === 0">待审核</el-button>
           </template>
         </template>
       </el-table-column>
@@ -104,9 +103,9 @@
         <!--                       :filters="sort" :column-key="'sort'">-->
         <!--                       :filter-method="filterHandler">-->
         <template #default="scope">
-          <template v-if="isEditRow===scope.$index">
+          <template v-if="isEditRow === scope.$index">
             <el-select placeholder="选择分类(默认为更新说明)" v-model="newUrl.sort" default-first-option>
-              <el-option v-for="item in sort" :label="item.text" :value="item.value"/>
+              <el-option v-for="item in sort" :label="item.text" :value="item.value" />
             </el-select>
           </template>
           <template v-for="item in sort" v-else>
@@ -114,23 +113,23 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="tags" label="标签" width="120" align="center" v-if="false"/>
+      <el-table-column prop="tags" label="标签" width="120" align="center" v-if="false" />
 
       <el-table-column prop="updated_time" label="更新时间" width="150" align="center">
         <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="100" align="center">
         <template #default="scope">
-          <div v-if="isEditRow!==scope.$index">
+          <div v-if="isEditRow !== scope.$index">
             <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row.id)">
+            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row.id)">
               删除
             </el-button>
           </div>
           <div v-else>
             <el-button link type="primary" size="small" @click="handleCancel">取消
             </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newUrl,scope.row)">
+            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newUrl, scope.row)">
               更新
             </el-button>
           </div>
@@ -138,15 +137,9 @@
       </el-table-column>
     </el-table>
     <div class="pageMenu">
-      <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :page-sizes="[10, 25, 50, 100]"
-          :layout="total/pageSize>10? 'total, sizes, prev, pager, next,jumper' :'total, sizes, prev, pager, next'"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-      />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 25, 50, 100]"
+        :layout="total / pageSize > 10 ? 'total, sizes, prev, pager, next,jumper' : 'total, sizes, prev, pager, next'"
+        :total="total" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
     </div>
 
 
@@ -154,32 +147,27 @@
 
   <!--添加导航网站-->
   <el-dialog v-model="dialogVisible" :show-close="false" title="发布新网址">
-    <AddUrl/>
+    <AddUrl />
   </el-dialog>
 
 </template>
 
 
 <script setup lang="ts">
-import AddUrl from "@/components/AddUrl.vue";
-import {useRouter} from 'vue-router'
+import { reactive, ref, watch } from 'vue'
 import axios from "axios";
-import {ElMessage, ElMessageBox} from "element-plus";
-import type {TableInstance} from "element-plus";
-import {reactive, ref, watch} from 'vue'
+import { Search } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import type { TableInstance } from "element-plus";
+//hooks
 import useTimeStamp from "@/hooks/useTimestamp";
 import useFunction from "@/hooks/useFunction";
+//components
+import AddUrl from "@/components/AddUrl.vue";
 
-const {getTime} = useTimeStamp()
-const {diffObj} = useFunction()
-const router = useRouter()
 
-//管理员登录判断
-import useUserInfo from "@/hooks/useUserInfo";
-import {Search} from "@element-plus/icons-vue";
-
-const {isAdmin} = useUserInfo()
-if (!isAdmin.value) router.replace({name: 'home'})
+const { getTime } = useTimeStamp()
+const { diffObj } = useFunction()
 
 
 //添加导航网站面板的显示与隐藏
@@ -313,16 +301,16 @@ interface Sort {
 }
 
 let sort = reactive<Sort[]>([
-  {text: '软件下载', value: 'tool'},
-  {text: '在线工具', value: 'onlineTool'},
-  {text: '机器人', value: 'robot'},
-  {text: 'HTML', value: 'html'},
-  {text: '观影', value: 'video'},
-  {text: '电子书', value: 'book'},
-  {text: '教程', value: 'tutorial'},
-  {text: '虚拟机', value: 'vm'},
-  {text: '杂项', value: 'other'},
-  {text: '娱乐', value: 'webGame'},
+  { text: '软件下载', value: 'tool' },
+  { text: '在线工具', value: 'onlineTool' },
+  { text: '机器人', value: 'robot' },
+  { text: 'HTML', value: 'html' },
+  { text: '观影', value: 'video' },
+  { text: '电子书', value: 'book' },
+  { text: '教程', value: 'tutorial' },
+  { text: '虚拟机', value: 'vm' },
+  { text: '杂项', value: 'other' },
+  { text: '娱乐', value: 'webGame' },
 ])
 
 
@@ -334,7 +322,7 @@ function getAllUrlList() {
     url: '/getAllUrlList',
   }).then(result => {
     console.log(result)
-    const {msg, urlList} = result.data
+    const { msg, urlList } = result.data
     ElMessage.success(msg)
     total.value = urlList.length
 
@@ -394,7 +382,7 @@ function updateRow(data: Url, id: number, oldData: Url) {
     }
   }).then(result => {
     // console.log(result)
-    const {msg} = result.data
+    const { msg } = result.data
     //更新修订时间为当前时间
     data.updated_time = new Date().toISOString()
     //将修改后的信息显示出来
@@ -412,24 +400,24 @@ function updateRow(data: Url, id: number, oldData: Url) {
 
 const deleteRow = (index: number, id: number) => {
   ElMessageBox.confirm(
-      '确认删除该导航网站吗?',
-      'Warning',
-      {
-        confirmButtonText: '确认删除',
-        cancelButtonText: '取消删除',
-        type: 'warning',
-        showClose: false
-      }
+    '确认删除该导航网站吗?',
+    'Warning',
+    {
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消删除',
+      type: 'warning',
+      showClose: false
+    }
   )
-      .then(() => {
-        deleteUrl(index, id)
+    .then(() => {
+      deleteUrl(index, id)
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '删除操作已取消',
       })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '删除操作已取消',
-        })
-      })
+    })
 }
 
 //删除网址
@@ -437,7 +425,7 @@ const deleteUrl = (index: number, id: number) => {
   axios({
     url: '/deleteUrl',
     method: 'delete',
-    params: {id}
+    params: { id }
   }).then((result) => {
     // console.log(result)
     ElMessage.success(result.data.msg)
@@ -456,7 +444,7 @@ const deleteUrl = (index: number, id: number) => {
 
 
 <style scoped>
-.demo-pagination-block + .demo-pagination-block {
+.demo-pagination-block+.demo-pagination-block {
   margin-top: 10px;
 }
 

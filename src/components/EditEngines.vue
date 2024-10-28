@@ -1,46 +1,50 @@
 <template>
-  <el-scrollbar :height="isPC? '400':''">
-    <el-switch v-model="searchFlag" @click="changeSearchFlag()" active-text="在新窗口打开搜索结果"
-               inactive-text="在当前页打开搜索结果"/>
+  <el-scrollbar :height="isPC ? '400' : ''">
+    <el-switch v-model="searchFlag" @click="changeSearchFlag()" active-text="在新窗口打开搜索结果" inactive-text="在当前页打开搜索结果" />
     <el-divider>默认搜索引擎</el-divider>
-    <el-card v-for="item in searchEngines" v-show="item.id!==engineId" :key="item.id" class="engineOption">
+    <el-card v-for="item in searchEngines" v-show="item.id !== engineId" :key="item.id" class="engineOption">
       <el-button text><img :src="item.src" alt="" class="searchEngine  ">{{ item.name }}</el-button>
-      <el-switch v-model="item.isShow" @click="hideEngine(item)" inline-prompt active-text="显示"
-                 inactive-text="隐藏"/>
+      <el-switch v-model="item.isShow" @click="hideEngine(item)" inline-prompt active-text="显示" inactive-text="隐藏" />
     </el-card>
     <el-divider>自定义搜索引擎</el-divider>
-    <el-card v-for="item in userEngines" v-show="item.id!==engineId" :key="item.id" class="engineOption">
+    <el-card v-for="item in userEngines" v-show="item.id !== engineId" :key="item.id" class="engineOption">
       <el-button text><img :src="item.src" alt="" class="searchEngine  ">{{ item.name }}</el-button>
       <el-space>
         <el-switch v-model="item.isShow" @click="hideUserEngine(item)" inline-prompt active-text="显示"
-                   inactive-text="隐藏"/>
-        <el-button type="danger" :icon="Delete" :size="elSize" @click="deleteEngine(item.id)" circle/>
+          inactive-text="隐藏" />
+        <el-button type="danger" :icon="Delete" :size="elSize" @click="deleteEngine(item.id)" circle />
       </el-space>
     </el-card>
   </el-scrollbar>
   <br>
-  <el-button plain type="primary" @click="addEngineFlag=!addEngineFlag">添加自定义搜索引擎</el-button>
+  <el-button plain type="primary" @click="addEngineFlag = !addEngineFlag">添加自定义搜索引擎</el-button>
   <el-button type="primary" @click="closeEngineOption">确认修改</el-button>
 
   <!-- 用户添加或上传自定义搜索引擎-->
   <el-dialog v-model="addEngineFlag" title="添加搜索引擎" :width="dialogWidth2" :show-close="false">
-    <AddSearchEngine :getEngineList="getEngineList" :closeDialog="closeDialog"/>
+    <AddSearchEngine :getEngineList="getEngineList" :closeDialog="closeDialog" />
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import {useLocalEnginesStore} from "@/store/useLocalEnginesStore";
-import {Delete} from "@element-plus/icons-vue";
-import {ref} from "vue";
-import AddSearchEngine from "@/components/AddSearchEngine.vue";
-import {EngineData} from "@/types/url";
+import { ref, toRefs } from "vue";
 import axios from "axios";
-import {ElMessage} from "element-plus";
-import useUserInfo from "@/hooks/useUserInfo";
+import { ElMessage } from "element-plus";
+import { Delete } from "@element-plus/icons-vue";
+//stores
+import { useLocalEnginesStore } from "@/store/useLocalEnginesStore";
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
+//components
+import AddSearchEngine from "@/components/AddSearchEngine.vue";
+//types
+import { EngineData } from "@/types/url";
 
-const {isLogin} = useUserInfo()
-const {dialogWidth2, elSize,isPC} = useResponsive()
+
+const userInfoStore = useUserInfoStore()
+const { isLogin } = toRefs(userInfoStore)
+const { dialogWidth2, elSize, isPC } = useResponsive()
 
 
 const {
@@ -52,7 +56,7 @@ const {
   closeEngineOption
 } = defineProps(['userEngines', 'engineId', 'getEngineList', 'hideList', 'hideUserEngine', 'closeEngineOption'])
 
-const {searchEngines} = useLocalEnginesStore()
+const { searchEngines } = useLocalEnginesStore()
 
 const searchFlag = ref(localStorage.getItem('searchFlag') !== '0')//控制搜索结果是否在新窗口打开
 const changeSearchFlag = () => {
@@ -71,10 +75,10 @@ function deleteEngine(id: number) {
     axios({
       url: '/deleteEngine',
       method: 'delete',
-      params: {id}
+      params: { id }
     }).then(result => {
       // console.log(result)
-      const {msg} = result.data
+      const { msg } = result.data
       const newEngines = userEngines.filter((item: EngineData) => item.id !== id)
       userEngines.splice(0, userEngines.length)
       newEngines.forEach((item: EngineData) => {
@@ -105,7 +109,7 @@ function deleteEngine(id: number) {
 
 //隐藏默认搜索引擎
 function hideEngine(engine: EngineData) {
-  hideList[engine.index!] = {id: engine.id, isShow: engine.isShow}
+  hideList[engine.index!] = { id: engine.id, isShow: engine.isShow }
   console.log(hideList)
   localStorage.setItem('hideList', JSON.stringify(hideList))
 }

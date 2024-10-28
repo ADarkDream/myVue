@@ -1,14 +1,14 @@
 <template>
-  <el-config-provider :locale="locale" :size="isPC?'default':'small'">
+  <el-config-provider :locale="locale" :size="isPC ? 'default' : 'small'">
     <el-container class="app">
 
       <!--    顶部导航栏-->
       <el-header class="shade">
-        <TitleDiv/>
+        <TitleDiv />
       </el-header>
       <!-- 主要呈现部分(Home / Forum)-->
       <el-main class="main">
-        <router-view/>
+        <router-view />
       </el-main>
 
     </el-container>
@@ -16,15 +16,20 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref, toRefs } from 'vue';
+import { RouterView } from 'vue-router';
 import axios from "axios";
-import {computed, ref} from 'vue';
-import TitleDiv from "@/components/TitleDiv.vue";
-import {ElMessage} from "element-plus";
-import {jwtDecode} from "jwt-decode";
+import { ElMessage } from "element-plus";
 import zhCn from 'element-plus/es/locale/lang/zh-cn' //elementPlus国际化
 import en from 'element-plus/es/locale/lang/en' //elementPlus国际化
+//components
+import TitleDiv from "@/components/TitleDiv.vue";
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 
-import {RouterView} from 'vue-router';
+const userInfoStore = useUserInfoStore()
+const { token } = toRefs(userInfoStore)
+const { setTokenByType, checkLocalToken } = userInfoStore
 
 const isPC = ref(true)
 
@@ -48,7 +53,7 @@ function checkIsPC() {
 }
 
 checkIsPC()
-
+checkLocalToken()
 
 
 
@@ -58,12 +63,7 @@ checkIsPC()
 const language = ref('zh-cn')
 const locale = computed(() => (language.value === 'zh-cn' ? zhCn : en))
 
-// console.log(route.path==='/')
-interface Token {
-  value: {
-    isAdmin?: string
-  }
-}
+
 
 // axios 公共配置,请求拦截器和响应拦截器
 
@@ -75,8 +75,8 @@ interface Token {
 axios.interceptors.request.use(function (config) {
   // console.log('当前服务器基地址是：'+axios.defaults.baseURL)
   // 统一携带 token 令牌字符串在请求头上
-  let token = sessionStorage.getItem('token') || localStorage.getItem('token')
-  token && (config.headers.Authorization = `Bearer ${token}`)
+  if (token.value)
+    config.headers.Authorization = `Bearer ${token.value}`
   return config;
 }, function (error) {
   // 对请求错误做些什么
@@ -96,12 +96,7 @@ axios.interceptors.response.use((response) => {
   //从响应头里面获取最新token
   if (response.headers.authorization !== undefined) {
     const newToken = response.headers.authorization
-    if (!!newToken) {
-      const token = jwtDecode(newToken) as Token
-      console.log('token', token)
-      if (token.value.isAdmin === '1') sessionStorage.setItem('token', newToken)
-      else localStorage.setItem('token', newToken)
-    }
+    setTokenByType(newToken)
   }
 
   //获取响应的地址
@@ -132,11 +127,11 @@ axios.interceptors.response.use((response) => {
 
 
 
-// 下面是自己的接口
+  // 下面是自己的接口
   const result = response.data.data
 
   if (result.status === 200) return response.data
-      // 超出 2xx 范围的状态码都会触发该函数。
+  // 超出 2xx 范围的状态码都会触发该函数。
   // 对响应错误做点什么，例如：统一对 401 身份验证失败情况做出处理
   else if (result.status > 299 && result.status < 400) {
     ElMessage.info(result.msg)
@@ -199,6 +194,4 @@ axios.interceptors.response.use((response) => {
 
 
 }
-
-
 </style>

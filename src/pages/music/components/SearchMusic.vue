@@ -1,55 +1,62 @@
 <template>
-  <div class="container">
-    <div class="header">
-      <div class="searchDiv">
-        <el-button :icon="Back" size="small" @click="closeSearchPanel()"></el-button>
-        <el-input class="search" v-model.trim="keyWords" @keyup.enter="searchMusic()" placeholder="歌曲名或歌手名" clearable />
-        <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
+  <el-drawer class="updateMusicDrawer" v-model="isShowSearchPanel" :with-header="false"
+    :size="drawerSize - (isPC ? 39 : 39) + 'px'" @touchstart="(e: TouchEvent) => e.stopPropagation()"
+    @touchend="(e: TouchEvent) => e.stopPropagation()" direction="btt" show-close>
+    <div class="container">
+      <div class="header">
+        <div class="searchDiv">
+          <el-button :icon="Back" size="small" @click="isShowSearchPanel = false"></el-button>
+          <el-input class="search" v-model.trim="keyWords" @keyup.enter="searchMusic()" placeholder="歌曲名或歌手名"
+            clearable />
+          <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
+        </div>
+        <el-radio-group v-model="searchConfig.type" size="small">
+          <el-radio-button label="单曲" :value="1" />
+          <el-radio-button label="专辑" :value="10" />
+          <el-radio-button label="歌手" :value="100" />
+          <el-radio-button label="歌单" :value="1000" />
+          <el-radio-button label="用户" :value="1002" />
+          <el-radio-button label="歌词" :value="1006" />
+        </el-radio-group>
+        <HotSearchWords :changeKeyWords="changeKeyWords" />
       </div>
-      <el-radio-group v-if="false" v-model="searchConfig.type" size="small">
-        <el-radio-button label="单曲" :value="1" />
-        <el-radio-button label="专辑" :value="10" />
-        <el-radio-button label="歌手" :value="100" />
-        <el-radio-button label="歌单" :value="1000" />
-        <el-radio-button label="用户" :value="1002" />
-        <el-radio-button label="歌词" :value="1006" />
-      </el-radio-group>
-      <HotSearchWords :changeKeyWords="changeKeyWords" />
-    </div>
-    <div v-if="showResult">
-      <music-list-songs-list :songsList="searchResult" :height="searchDivHeight" />
-      <div>
-        <div style="width: 100%;display: flex;justify-content: center;margin-bottom: 100px">
-          <el-pagination v-model:current-page="page" :page-size="10"
-            :layout="isPC ? 'prev, pager, next,total' : 'prev, pager, next'" :total="songCount"
-            @current-change="searchMusic()" />
+      <div v-if="showResult">
+        <music-list-songs-list :songsList="searchResult" :height="searchDivHeight" :isSearchList="true" />
+        <div>
+          <div style="width: 100%;display: flex;justify-content: center;margin-bottom: 100px">
+            <el-pagination v-model:current-page="page" :page-size="10"
+              :layout="isPC ? 'prev, pager, next,total' : 'prev, pager, next'" :total="songCount"
+              @current-change="searchMusic()" />
+          </div>
         </div>
       </div>
+      <el-empty v-else description=" " style="padding: 0" image="/fool.png" :image-size="350"></el-empty>
     </div>
-    <el-empty v-else description=" " style="padding: 0" image="/fool.png" :image-size="350"></el-empty>
-  </div>
+  </el-drawer>
 
 </template>
 
 <script setup lang="ts">
 import { computed, ref, toRefs } from "vue";
-import { useMusicSearchStore } from "@/store/music/useMusicSearchStore";
 import { ElMessage } from "element-plus";
 import { Back } from "@element-plus/icons-vue";
+//stores
+import { useMusicSearchStore } from "@/store/music/useMusicSearchStore";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
+//components
 import HotSearchWords from "@/pages/music/components/HotSearchWords.vue";
 import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
 
 const searchStore = useMusicSearchStore()
 
 
-const { closeSearchPanel } = defineProps(['closeSearchPanel'])
 const { isPC, drawerSize } = useResponsive()
 
 
 const searchDivHeight = ref(drawerSize.value - 180)
 
-const { searchConfig, songCount } = toRefs(searchStore)
+const { isShowSearchPanel, searchConfig, songCount } = toRefs(searchStore)
 const searchResult = computed(() => searchStore.searchResult)
 
 const { search } = searchStore

@@ -72,14 +72,21 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref, computed, watch, toRefs } from 'vue';
-import useTimestamp from "@/hooks/useTimestamp";
-import PlayList from "@/pages/music/components/PlayList.vue";
-import defaultAlbumArt from '@/assets/music/music.svg'
+
+
+//stores
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { usePlayConfigStore } from '@/store/music/usePlayConfigStore'
 import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
+//hooks
+import useTimestamp from "@/hooks/useTimestamp";
 import usePlayConfig from '@/hooks/music/usePlayConfig'
 import useResponsive from "@/hooks/useResponsive";
+import useMusicPlay from "@/hooks/music/useMusicPlay";
+//components
+import PlayList from "@/pages/music/components/PlayList.vue";
+//files
+import defaultAlbumArt from '@/assets/music/music.svg'
 import SVG_music_list from '@/assets/music/music_list.svg?component'
 import SVG_pre from '@/assets/music/pre.svg?component'
 import SVG_play from '@/assets/music/play.svg?component'
@@ -92,7 +99,7 @@ import SVG_list_loop from '@/assets/music/list_loop.svg?component'
 import SVG_sequential_play from '@/assets/music/sequential_play.svg?component'
 import SVG_random_play from '@/assets/music/random_play.svg?component'
 import SVG_single_loop from '@/assets/music/single_loop.svg?component'
-import useMusicPlay from "@/hooks/music/useMusicPlay";
+
 const { drawerSize } = useResponsive()
 const musicListStore = useMusicListStore()
 const playConfigStore = usePlayConfigStore()

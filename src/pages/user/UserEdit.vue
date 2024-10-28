@@ -5,45 +5,26 @@
     </el-header>
     <el-form :inline="true" class="form" :model="data">
       <el-form-item label="文章标题" required>
-        <el-input v-model="data.title" placeholder="填写文章标题" clearable/>
+        <el-input v-model="data.title" placeholder="填写文章标题" clearable />
       </el-form-item>
       <el-form-item label="发布板块" required>
-        <el-select
-            v-model="data.area"
-            placeholder="选择发布板块"
-            clearable
-        >
-          <el-option label="文章" value="文章"/>
-          <el-option label="教程" value="教程"/>
+        <el-select v-model="data.area" placeholder="选择发布板块" clearable>
+          <el-option label="文章" value="文章" />
+          <el-option label="教程" value="教程" />
         </el-select>
       </el-form-item>
       <el-form-item label="标签设置" required>
-        <el-select
-            v-model="data.tags"
-            placeholder="选择文章标签"
-            clearable
-        >
-          <el-option label="散文" value="散文"/>
-          <el-option label="小说" value="小说"/>
-          <el-option label="前端" value="前端"/>
-          <el-option label="教程" value="教程"/>
-          <el-option label="其他" value="其他"/>
+        <el-select v-model="data.tags" placeholder="选择文章标签" clearable>
+          <el-option label="散文" value="散文" />
+          <el-option label="小说" value="小说" />
+          <el-option label="前端" value="前端" />
+          <el-option label="教程" value="教程" />
+          <el-option label="其他" value="其他" />
         </el-select>
       </el-form-item>
-      <Toolbar
-          style="margin: 0 10px;width: 100% "
-          :editor="editorRef"
-          :defaultConfig="toolbarConfig"
-          :mode="mode"
-      />
-      <Editor
-          class="editor"
-          :style="{height:screenHeight-500+'px'}"
-          v-model="valueHtml"
-          :defaultConfig="editorConfig"
-          :mode="mode"
-          @onCreated="handleCreated"
-      />
+      <Toolbar style="margin: 0 10px;width: 100% " :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
+      <Editor class="editor" :style="{ height: screenHeight - 500 + 'px' }" v-model="valueHtml"
+        :defaultConfig="editorConfig" :mode="mode" @onCreated="handleCreated" />
 
       <el-footer style="margin: 20px 0 40px 0;display: flex;justify-content: space-evenly">
         <el-button @click="addDraft">保存为草稿</el-button>
@@ -55,17 +36,20 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, shallowRef, onUnmounted} from 'vue'
-import {ElMessage, ElLoading} from "element-plus";
-import {IToolbarConfig, IEditorConfig} from '@wangeditor/editor'
+import { ref, reactive, shallowRef, onUnmounted } from 'vue'
+import { useRoute, useRouter } from "vue-router";
+import { ElMessage, ElLoading } from "element-plus";
+import { IToolbarConfig, IEditorConfig } from '@wangeditor/editor'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
-import {Editor, Toolbar} from '@wangeditor/editor-for-vue'
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import axios from "axios";
-import {useRoute, useRouter} from "vue-router";
-import {emitter} from "@/utils/emitter";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
+//utils
+import { emitter } from "@/utils/emitter";
 
-const {isPC, screenHeight} = useResponsive()
+
+const { isPC, screenHeight } = useResponsive()
 //region 表单
 const data = reactive({
   id: '',
@@ -99,7 +83,7 @@ const editorRef = shallowRef()
 // const valueHtml = ref('<p>有bug，刷新时路由没变，标题变了</p>')
 const valueHtml = ref('')
 const toolbarConfig: Partial<IToolbarConfig> = {}
-const editorConfig: Partial<IEditorConfig> = {placeholder: '请输入要发布的内容...', autoFocus: false}
+const editorConfig: Partial<IEditorConfig> = { placeholder: '请输入要发布的内容...', autoFocus: false }
 
 // 组件销毁时，清除监听器，销毁编辑器
 onUnmounted(() => {
@@ -161,7 +145,7 @@ interface Article {
 const route = useRoute()
 const router = useRouter()
 // console.log(route.params.id)
-const {id, title, area, tags, html, isDraft} = route.query as unknown as Article
+const { id, title, area, tags, html, isDraft } = route.query as unknown as Article
 if (isDraft !== null) {
   data.title = title
   data.area = area
@@ -177,7 +161,7 @@ function submit() {
     if (id !== null && isDraft === '0') data.id = id.toString()
     data.text = text.value
     console.log(data)
-//控制全屏加载动画的显示
+    //控制全屏加载动画的显示
     const loading = ElLoading.service({
       lock: true,
       text: '正在审核中，请稍后...',
@@ -188,13 +172,13 @@ function submit() {
       method: 'post',
       data
     }).then(result => {
-      const {status, msg} = result.data
+      const { status, msg } = result.data
       loading.close()
       if (status === 200) {
         ElMessage.success(msg)
         setTimeout(() => {
           emitter.emit('pageRender', 2)
-          router.push({name: 'userManagement'})
+          router.push({ name: 'userManagement' })
         }, 1500)
       }
     }).catch(error => {
@@ -221,7 +205,7 @@ function addDraft() {
       method: 'post',
       data
     }).then(result => {
-      const {status, msg} = result.data
+      const { status, msg } = result.data
       if (status === 200) {
         ElMessage.success(msg)
         setTimeout(() => {

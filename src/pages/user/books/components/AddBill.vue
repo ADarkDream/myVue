@@ -1,50 +1,39 @@
 <template>
-  <el-form
-      ref="addBillFormRef"
-      :model="addBillForm"
-      label-width="auto"
-      :size="elSize"
-      :style="isPC? 'margin:0 5%':''"
-  >
+  <el-form ref="addBillFormRef" :model="addBillForm" label-width="auto" :size="elSize"
+    :style="isPC ? 'margin:0 5%' : ''">
     <el-form-item prop="name" label="账单条目">
-      <el-input v-model="addBillForm.name" maxlength="10" placeholder="输入账单条目"/>
+      <el-input v-model="addBillForm.name" maxlength="10" placeholder="输入账单条目" />
     </el-form-item>
     <el-row>
-      <el-col :span="isPC? 11: 11">
+      <el-col :span="isPC ? 11 : 11">
         <el-form-item prop="price" label="账单花费">
           <el-input-number v-model="addBillForm.price" :precision="2" :step="0.1" :min="0" :max="1000"
-                           controls-position="right" placeholder="输入账单花费金额"/>
+            controls-position="right" placeholder="输入账单花费金额" />
         </el-form-item>
       </el-col>
-      <el-col :span="1"/>
-      <el-col :span="isPC? 8: 12">
+      <el-col :span="1" />
+      <el-col :span="isPC ? 8 : 12">
         <el-form-item prop="bill_date" label="账单日期">
-          <el-date-picker
-              v-model="addBillForm.bill_date"
-              type="date"
-              placeholder="选择账单日期"
-              :default-value="new Date()"
-              :disabled-date="disabledDate"
-              value-format="YYYY-MM-DD"
-          />
+          <el-date-picker v-model="addBillForm.bill_date" type="date" placeholder="选择账单日期" :default-value="new Date()"
+            :disabled-date="disabledDate" value-format="YYYY-MM-DD" />
         </el-form-item>
       </el-col>
     </el-row>
     <el-form-item prop="desc" label="账单备注">
-      <el-input v-model="addBillForm.desc" placeholder="输入账单备注" maxlength="30"/>
+      <el-input v-model="addBillForm.desc" placeholder="输入账单备注" maxlength="30" />
     </el-form-item>
     <el-form-item prop="type" label="账单类型">
-      <el-input v-model="addBillForm.type" placeholder="输入账单类型" maxlength="30"/>
+      <el-input v-model="addBillForm.type" placeholder="输入账单类型" maxlength="30" />
     </el-form-item>
     <el-row>
       <el-col :span="12">
         <el-form-item label="合并账单">
-          <el-switch v-model="isChild" active-text="合并" inactive-text="独立" inline-prompt/>
+          <el-switch v-model="isChild" active-text="合并" inactive-text="独立" inline-prompt />
         </el-form-item>
       </el-col>
       <el-col :span="10">
         <el-form-item prop="gid" label="账单组别">
-          <el-input-number :disabled="!isChild" v-model="addBillForm.gid" :min="0" controls-position="right"/>
+          <el-input-number :disabled="!isChild" v-model="addBillForm.gid" :min="0" controls-position="right" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -55,28 +44,32 @@
     <div class="btn">
       <el-button @click="reset(addBillFormRef)">重置</el-button>
       <el-button type="primary" @click="submit('/addBill')">{{
-          isChild ? '新增合并账单' : '新增账单'
-        }}
+        isChild ? '新增合并账单' : '新增账单'
+      }}
       </el-button>
-      <el-button type="primary" v-if="addBillForm.id!==0" @click="submit('/updateBill'  )">修改账单</el-button>
+      <el-button type="primary" v-if="addBillForm.id !== 0" @click="submit('/updateBill')">修改账单</el-button>
     </div>
   </el-form>
 </template>
 
 <script setup lang="ts">
-import {onMounted, reactive, ref, watch} from 'vue'
-import {ElMessage, type FormInstance} from "element-plus";
+import { onMounted, reactive, ref, watch } from 'vue'
+import { ElMessage, type FormInstance } from "element-plus";
 import axios from "axios";
-import {Bill, NewBill} from "@/types/books";
-import {useBookStore} from "@/store/useBookStore";
+//stores
+import { useBookStore } from "@/store/useBookStore";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
-import {ResultData} from "@/types/global";
 import useTimestamp from '@/hooks/useTimestamp'
+//types
+import { Bill, NewBill } from "@/types/books";
+import { ResultData } from "@/types/global";
 
-const {formatDate} = useTimestamp()
+
+const { formatDate } = useTimestamp()
 const bookData = useBookStore()
-const {cancelAddBill, thisBill, url} = defineProps(['cancelAddBill', 'thisBill', 'url'])
-const {isPC, elSize} = useResponsive()
+const { cancelAddBill, thisBill, url } = defineProps(['cancelAddBill', 'thisBill', 'url'])
+const { isPC, elSize } = useResponsive()
 
 const addBillFormRef = ref<FormInstance>()
 const addBillForm = reactive<NewBill>({
@@ -134,20 +127,20 @@ const submit = async (url: string) => {
       Data.gid = Data.id //还原gid
     }
     //去除多余的status，这里不修改status，防止干扰销账功能
-      delete Data.status
+    delete Data.status
     Data.bill_date = formatDate(new Date(Data.bill_date))
 
     console.log('新增账单或加入修改账单', Data)
     //对比原数据检查是否有修改，如果没有修改则返回
-// addBillForm.bill_date=addBillForm.bill_date.getDate()
-//     return console.log('addBillForm', addBillForm)
+    // addBillForm.bill_date=addBillForm.bill_date.getDate()
+    //     return console.log('addBillForm', addBillForm)
     const result = await axios<ResultData<{ newBill: Bill[] }>>({
       url,
       method: 'post',
       data: Data
     })
     console.log(result)
-    const {msg, data} = result.data
+    const { msg, data } = result.data
     ElMessage.success(msg)
     //返回新增或修改的数据
 
@@ -174,6 +167,4 @@ const disabledDate = (time: Date) => {
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

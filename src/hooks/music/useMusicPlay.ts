@@ -1,12 +1,20 @@
-import type { CloudSongInfo } from "@/types/music";
 import { computed, nextTick, toRefs } from 'vue'
 import { ElMessage } from 'element-plus'
+//stores
 import { useMusicListStore } from "@/store/music/useMusicListStore"
 import { useMusicPlayStore } from "@/store/music/useMusicPlayStore"
 import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
+//hooks
 import usePlayConfig from '@/hooks/music/usePlayConfig'
+//utils
 import useMusicPlay from '@/utils/music/musicPlay'
-import musicList from "@/utils/music/musicList";
+import musicList from "@/utils/music/musicList"
+//types
+import type { CloudSongInfo } from "@/types/music"
+
+
+
+
 
 
 

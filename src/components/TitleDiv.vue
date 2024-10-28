@@ -95,11 +95,11 @@
                 <!--                前往账本-->
                 <!--              </el-dropdown-item>-->
                 <!--退出登录-->
-                <el-dropdown-item v-if="isLogin" @click="exit()" :icon="SwitchButton">
+                <el-dropdown-item v-if="isLogin" @click="loginOut()" :icon="SwitchButton">
                   退出登录
                 </el-dropdown-item>
                 <!--退出登录 -->
-                <el-dropdown-item v-if="isLogin && isAdmin" @click="exit(true)" :icon="SwitchButton">
+                <el-dropdown-item v-if="isLogin && isAdmin" @click="loginOut(true)" :icon="SwitchButton">
                   退出管理员登录
                 </el-dropdown-item>
                 <!--更换壁纸-->
@@ -200,11 +200,11 @@
               <!--                前往账本-->
               <!--              </el-dropdown-item>-->
               <!--退出登录-->
-              <el-dropdown-item v-if="isLogin" @click="exit()" :icon="SwitchButton">
+              <el-dropdown-item v-if="isLogin" @click="loginOut()" :icon="SwitchButton">
                 退出登录
               </el-dropdown-item>
               <!--退出登录 -->
-              <el-dropdown-item v-if="isLogin && isAdmin" @click="exit(true)" :icon="SwitchButton">
+              <el-dropdown-item v-if="isLogin && isAdmin" @click="loginOut(true)" :icon="SwitchButton">
                 退出管理员登录
               </el-dropdown-item>
               <!--更换壁纸-->
@@ -303,23 +303,32 @@ import {
   UserFilled
 } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import Notice from "@/components/Notice.vue";
-import useUserInfo from '@/hooks/useUserInfo'
 import { useRouter, useRoute } from "vue-router";
-import useResponsive from "@/hooks/useResponsive";
-import useFunction from "@/hooks/useFunction";
-import { emitter } from "@/utils/emitter";
-import { NoticeActiveNum } from "@/types/global";
-import LoginFormComp from "@/components/form/LoginFormComp.vue";
-import RegisterFormComp from "@/components/form/RegisterFormComp.vue";
-import Player from "@/pages/music/components/Player.vue";
+//stores
 import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
+import useResponsive from "@/hooks/useResponsive";
+import useFunction from "@/hooks/useFunction";
+//components
+import Notice from "@/components/Notice.vue";
+import Player from "@/pages/music/components/Player.vue";
+import LoginFormComp from "@/components/form/LoginFormComp.vue";
+import RegisterFormComp from "@/components/form/RegisterFormComp.vue";
 import VolumeComp from "@/components/smallComp/VolumeComp.vue";
+//utils
+import { emitter } from "@/utils/emitter";
+//types
+import { NoticeActiveNum } from "@/types/global";
+//files
 import SVG_music from '@/assets/music/music.svg?component'
 import SVG_news from '@/assets/TitleDiv/news.svg?component'
 
-const { isLogin, isAdmin, username, headImgUrl, bgUrl, errorImage } = useUserInfo()
+const userInfoStore = useUserInfoStore()
+
+const { isLogin, isAdmin, username, headImgUrl, localBgUrl, errorImage } = toRefs(userInfoStore)
+const { loginOut } = userInfoStore
 const { isDark, isPC, isHome, isForum } = useResponsive()
 const { getBG } = useFunction()
 const router = useRouter()
@@ -332,9 +341,7 @@ const { isPlaying } = toRefs(musicListStore)
 
 const showPlayer = ref(false)
 
-//获取背景图,有用户的且选择使用则使用用户的图，没有则使用默认图
-if (localStorage.getItem('useUserBGUrl') !== '1') bgUrl.value = ''
-if (bgUrl.value === '') bgUrl.value = localStorage.getItem('bgUrl')
+
 
 //控制头像的显示
 const showHeadImg = ref(isLogin.value)
@@ -356,7 +363,7 @@ const goTo = (name: string) => router.push({ name })
 //网页初次渲染函数
 onMounted(() => {
   //如果本地壁纸为空
-  if (!bgUrl.value) //{//如果背景图不存在
+  if (!localBgUrl.value) //{//如果背景图不存在
     //响应式布局,判断是电脑则用横屏背景图
     changeBG(isPC.value ? 1 : 0)
   // } else {
@@ -384,7 +391,7 @@ function light() {
     // console.log('当前为夜间模式')
   } else {
     html.classList.remove('dark')
-    body.style.backgroundImage = `url(${bgUrl.value})`
+    body.style.backgroundImage = `url(${localBgUrl.value})`
     // darkStr.value = '日间模式'
     sessionStorage.setItem('isDark', '0')
     // console.log('当前为日间模式')
@@ -406,10 +413,10 @@ watch(isDark, (newValue, oldValue) => {
 //更换壁纸,1为横屏，0为竖屏
 async function changeBG(number: number) {
   const resImgList = await getBG(number)
-  bgUrl.value = resImgList[0].imgUrl
-  console.log('当前背景图片地址是：' + bgUrl.value + '\r\n如需更多壁纸请前往重返未来1999官网：' + 'https://re.bluepoch.com/home/detail.html#wallpaper')
-  if (!isDark.value) body.style.backgroundImage = `url(${bgUrl.value})`
-  localStorage.setItem('bgUrl', bgUrl.value)
+  localBgUrl.value = !!resImgList ? resImgList[0].imgUrl : ''
+  console.log('当前背景图片地址是：' + localBgUrl.value + '\r\n如需更多壁纸请前往重返未来1999官网：' + 'https://re.bluepoch.com/home/detail.html#wallpaper')
+  if (!isDark.value) body.style.backgroundImage = `url(${localBgUrl.value})`
+  localStorage.setItem('localBgUrl', localBgUrl.value)
   localStorage.setItem('useUserBGUrl', '0') //取消用户个人信息的背景设置
 }
 
@@ -421,29 +428,7 @@ function goCenter() {
 }
 
 
-//退出登录
-function exit(isAdmin = false) {
-  if (isAdmin) {
-    sessionStorage.removeItem('token')
-    sessionStorage.removeItem('userInfo')
-    sessionStorage.removeItem('isAdmin')
-    ElMessage.info('已退出管理员登录')
-  } else {
-    localStorage.removeItem('token')
-    localStorage.removeItem('userInfo')
-    localStorage.removeItem('userEngines')
-    localStorage.removeItem('useUserBGUrl')
-    localStorage.removeItem('userBGUrl')
-    // 清除所有sessionStorage
-    sessionStorage.clear()
-    ElMessage.info('已退出登录,本地的用户数据已清除')
-    ElMessage.info('部分本地信息会保留，如需清除请在右上角选择“选项“→”设置”→“清除全部本地缓存信息”')
-  }
 
-  setTimeout(() => {
-    location.href = '/'
-  }, 2500)
-}
 
 //清除全部本地缓存信息
 function clearAll() {

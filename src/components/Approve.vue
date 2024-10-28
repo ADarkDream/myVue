@@ -3,18 +3,17 @@
     <div>
       <transition-group name="list">
         <template v-for="item in noticeList" :key="item.id">
-          <el-button v-if="item.id===activeItemNum" link type="primary" @click="item.fun">{{ item.str }}</el-button>
+          <el-button v-if="item.id === activeItemNum" link type="primary" @click="item.fun">{{ item.str }}</el-button>
         </template>
       </transition-group>
       <br>
       <el-button link tag="a" type="info"
-                 @click="copyText('50011502001039','备案号','https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
-        <el-image src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败"/>
+        @click="copyText('50011502001039', '备案号', 'https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
+        <el-image src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败" />
         &ensp;渝公网安备50011502001039
       </el-button>
       <el-text type="info" v-if="noWrap || isPC" style="margin: 0 1px">|</el-text>
-      <el-button link tag="a" type="info"
-                 @click="copyText('渝ICP备2024030473号','备案号','http://beian.miit.gov.cn/')">
+      <el-button link tag="a" type="info" @click="copyText('渝ICP备2024030473号', '备案号', 'http://beian.miit.gov.cn/')">
         渝ICP备2024030473号
       </el-button>
 
@@ -24,23 +23,26 @@
 </template>
 
 <script setup lang="ts">
+import { onUnmounted, reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
-import {emitter} from "@/utils/emitter";
-import {onUnmounted, reactive, ref} from "vue";
-import {useRouter} from "vue-router";
+//utils
+import titleDiv from '@/utils/titleDiv';
 
-const {isPC} = useResponsive()
-const {copyText} = useFunction()
+const { isPC } = useResponsive()
+const { copyText } = useFunction()
+const { showNotice } = titleDiv
 const router = useRouter()
 
 //noWrap=true  移动端换行且用 | 隔开，默认为没有竖线隔开
-const {noWrap} = defineProps(['noWrap'])
-const showContact = () => emitter.emit('showNotice', {show_num: 3, active_num: 1})
-const showFeedback = () => emitter.emit('showNotice', {show_num: 3, active_num: 2})
-const gotoDownload = () => router.push({name: 'download'})
-const gotoChat = () => router.push({name: 'hall'})
-const gotoMusic = () => router.push({name: 'music'})
+const { noWrap } = defineProps(['noWrap'])
+const showContact = () => showNotice({ show_num: 3, active_num: 1 })
+const showFeedback = () => showNotice({ show_num: 3, active_num: 2 })
+const gotoDownload = () => router.push({ name: 'download' })
+const gotoChat = () => router.push({ name: 'hall' })
+const gotoMusic = () => router.push({ name: 'music' })
 const activeItemNum = ref(0)//当前展示的文本序号
 const noticeList = reactive([//底部轮播
   {
@@ -77,7 +79,8 @@ onUnmounted(() => clearInterval(timer))
 </script>
 
 <style scoped>
-.list-move, /* 对移动中的元素应用的过渡 */
+.list-move,
+/* 对移动中的元素应用的过渡 */
 .list-enter-active,
 .list-leave-active {
   transition: all 1s ease;

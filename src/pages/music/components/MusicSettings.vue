@@ -59,8 +59,9 @@
 <script setup lang="ts">
 import { ref, toRefs } from "vue";
 import { VSwatches } from "vue3-swatches";
-import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
 import { InfoFilled } from "@element-plus/icons-vue";
+//stores
+import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
 
 const useMusicConfig = useMusicConfigStore()
 

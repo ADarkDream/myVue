@@ -119,8 +119,12 @@
 
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
-const router = useRouter()
+//components
 import Slider from '@/pages/Slider.vue'
+
+const router = useRouter()
+
+
 </script>
 <style scoped>
 .el-container {

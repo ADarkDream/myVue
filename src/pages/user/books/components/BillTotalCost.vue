@@ -30,6 +30,7 @@
 </template>
 
 <script setup lang="ts">
+//types
 import {SpanMethodProps} from "@/types/global";
 
 const {totalCostList} = defineProps(['totalCostList'])

@@ -16,7 +16,7 @@
     <div class="openMusicList" @touchstart="stopTouch" @touchend="stopTouch">
       <el-button text type="primary" v-if="myMusicLists.length === 0" style="margin: 0 auto">{{ "暂无歌单" }}</el-button>
       <div v-for="item in myMusicLists" :key="item.music_list_id" class="musicList"
-        @click="toggleToMusicList({ music_list_id: item.music_list_id })">
+        @click="toggleToMusicList({ music_list_id: item.music_list_id }, isLogin)">
         <MusicListCoverComp :musicListInfo="item" />
       </div>
     </div>
@@ -34,17 +34,23 @@
 </template>
 
 <script setup lang="ts">
-import useResponsive from "@/hooks/useResponsive";
-import useUserInfo from "@/hooks/useUserInfo";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, toRefs } from "vue";
 import { Refresh, Plus } from "@element-plus/icons-vue";
-import AddMusicList from "@/pages/music/components/AddMusicList.vue";
-import type { QueryMusicLists, MusicListInfo } from "@/types/music";
-import MusicListCoverComp from "@/pages/music/components/MusicListCoverComp.vue";
 import { ElMessage } from "element-plus";
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
+import useResponsive from "@/hooks/useResponsive";
 import useMusicList from "@/hooks/music/useMusicList";
+//components
+import AddMusicList from "@/pages/music/components/AddMusicList.vue";
+import MusicListCoverComp from "@/pages/music/components/MusicListCoverComp.vue";
+//types
+import type { QueryMusicLists, MusicListInfo } from "@/types/music";
+
 const { isPC } = useResponsive()
-const { isLogin, uid } = useUserInfo()
+const userInfoStore = useUserInfoStore()
+const { isLogin, uid } = toRefs(userInfoStore)
 const showAddMusicList = ref(false)
 const { toggleToMusicList } = defineProps(['toggleToMusicList'])
 
@@ -55,11 +61,11 @@ const musicLists = ref<MusicListInfo[]>([])
 const myMusicLists = ref<MusicListInfo[]>([])
 
 // 获取公开歌单列表
-const getMusicLists = async ({ isLogin, user_id, music_list_id }: QueryMusicLists) => {
+const getMusicLists = async ({ is_login, user_id, music_list_id }: QueryMusicLists) => {
   try {
-    const { status, list, msg } = await useMusicList().getMusicListsInfo({ isLogin, user_id, music_list_id }, true)
+    const { status, list, msg } = await useMusicList().getMusicListsInfo({ is_login, user_id, music_list_id }, true)
     if (status === 0 || !list) return ElMessage.error(msg)
-    if (!isLogin) musicLists.value = list
+    if (!is_login) musicLists.value = list
     else myMusicLists.value = list
   } catch (error) {
     console.log('发生错误：')
@@ -71,9 +77,9 @@ const getMusicLists = async ({ isLogin, user_id, music_list_id }: QueryMusicList
 //获取公开歌单列表和用户个人的歌单列表
 const getAllMusicListsInfo = async () => {
   //获取公开歌单列表
-  await getMusicLists({ isLogin: false })
+  await getMusicLists({ is_login: false })
   //如果用户登录了，获取个人歌单列表
-  if (isLogin.value) await getMusicLists({ isLogin: true, user_id: uid.value })
+  if (isLogin.value) await getMusicLists({ is_login: true, user_id: uid.value })
   ElMessage.success('获取最新歌单成功')
 }
 

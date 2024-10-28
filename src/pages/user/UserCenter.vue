@@ -1,5 +1,5 @@
 <template>
-  <el-container class="container" :style="'height:'+containerHeight+'px'">
+  <el-container class="container" :style="'height:' + containerHeight + 'px'">
     <el-aside width="200px" v-if="isPC">
       <el-scrollbar>
         <el-menu :default-active="index.toString()">
@@ -11,30 +11,39 @@
         </el-menu>
       </el-scrollbar>
     </el-aside>
-       <div class="mobileUserCenter" ref="mobileUserCenter" style="width: 100%;">
-    <el-main>
-       <router-view/>
+    <div class="mobileUserCenter" ref="mobileUserCenter" style="width: 100%;">
+      <el-main>
+        <router-view />
 
 
-        <TabBar v-if="!isPC" :change="change" :index="index"/>
+        <TabBar v-if="!isPC" :change="change" :index="index" />
 
-    </el-main>     </div>
+      </el-main>
+    </div>
   </el-container>
 </template>
 
 <script lang="ts" setup>
-import {onBeforeUnmount, onMounted, ref} from 'vue'
-import {useRoute, useRouter} from "vue-router";
-import useUserInfo from "@/hooks/useUserInfo";
-import {emitter} from "@/utils/emitter";
+import { onBeforeUnmount, onMounted, ref, toRefs } from 'vue'
+import { useRoute, useRouter } from "vue-router";
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
+//components
 import TabBar from "@/pages/user/TabBar.vue";
+//utils
+import { emitter } from "@/utils/emitter";
+
+
 //屏幕高度
-const {isPC, containerHeight, touchstart, positionComputed} = useResponsive()
+const { isPC, containerHeight, touchstart, positionComputed } = useResponsive()
 const route = useRoute()
 const router = useRouter()
-const {isLogin} = useUserInfo()
-const mobileUserCenter=ref<HTMLDivElement>()
+const userInfoStore = useUserInfoStore()
+
+const { isLogin } = toRefs(userInfoStore)
+const mobileUserCenter = ref<HTMLDivElement>()
 
 const index = ref(Number(sessionStorage.getItem('activeNumber')) || 0)
 
@@ -45,7 +54,7 @@ function change(num: number) {
   index.value = num
   sessionStorage.setItem('activeNumber', num.toString())
   console.log(num, routers[num])
-  router.replace({name: routers[num]})
+  router.replace({ name: routers[num] })
 }
 
 
@@ -76,12 +85,12 @@ onMounted(() => {
   //用户登录判断
   if (!isLogin.value) {
     if (document.referrer.includes('muxidream')) return router.back()
-    return router.push({name: 'home'})
+    return router.push({ name: 'home' })
   }
   pageRender()
   emitter.on('pageRender', pageRender)
   console.log('开启了pageRender的emitter监听')
-  if (!isPC.value&&mobileUserCenter.value) {
+  if (!isPC.value && mobileUserCenter.value) {
     console.log('开启了滑动翻页监听')
     mobileUserCenter.value.addEventListener("touchstart", touchstart, false)
     //手指离开屏幕
@@ -103,7 +112,7 @@ const touchend = (e: TouchEvent) => {
   console.log('离开屏幕')
   positionComputed(e, index, 0, 4)
   console.log(index.value)
-    router.replace({name: routers[index.value]})
+  router.replace({ name: routers[index.value] })
 }
 
 //endregion
@@ -202,5 +211,4 @@ a {
 .active {
   color: var(--el-color-primary);
 }
-
 </style>

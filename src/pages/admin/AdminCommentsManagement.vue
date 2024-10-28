@@ -8,31 +8,31 @@
   </div>
   <el-main style="padding-bottom:0;padding-top: 0 ">
     <el-table ref="tableRef" :data="tableData" style="width: 100%" max-height="500" stripe border highlight-current-row
-              table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }">
-      <el-table-column fixed prop="id" label="ID" width="100" sortable/>
+      table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }">
+      <el-table-column fixed prop="id" label="ID" width="100" sortable />
       <el-table-column prop="articleId" label="文章ID" width="100">
         <template #default="scope">
           <el-button text type="primary" @click="goArticle(scope.row.articleId)">{{ scope.row.articleId }}</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="uid" label="用户ID" width="100"/>
-      <el-table-column prop="comment" label="评论内容" width="400"/>
+      <el-table-column prop="uid" label="用户ID" width="100" />
+      <el-table-column prop="comment" label="评论内容" width="400" />
       <el-table-column prop="status" label="状态" width="120" :filters="[
         { text: '未过审', value: 0 },
-         { text: '已发布', value: 1 },
-          { text: '待审核', value: 2 },
+        { text: '已发布', value: 1 },
+        { text: '待审核', value: 2 },
       ]" :filter-method="filterHandler">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
+          <div v-if="isEditRow === scope.$index">
             <el-select placeholder="选择状态(默认为发布中)" v-model="newComment.status" default-first-option>
-              <el-option label="已发布" :value="1"/>
-              <el-option label="未过审" :value="0"/>
-              <el-option label="待审核" :value="2"/>
+              <el-option label="已发布" :value="1" />
+              <el-option label="未过审" :value="0" />
+              <el-option label="待审核" :value="2" />
             </el-select>
           </div>
-          <el-button text type="info" v-else-if="scope.row.status===1">已发布</el-button>
-          <el-button text type="danger" v-else-if="scope.row.status===0">未过审</el-button>
-          <el-button text type="primary" v-else-if="scope.row.status===2">待审核</el-button>
+          <el-button text type="info" v-else-if="scope.row.status === 1">已发布</el-button>
+          <el-button text type="danger" v-else-if="scope.row.status === 0">未过审</el-button>
+          <el-button text type="primary" v-else-if="scope.row.status === 2">待审核</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="created_time" label="创建时间" width="150">
@@ -43,16 +43,16 @@
       <!--      </el-table-column>-->
       <el-table-column fixed="right" label="操作" width="150" align="center">
         <template #default="scope">
-          <div v-if="isEditRow!==scope.$index">
+          <div v-if="isEditRow !== scope.$index">
             <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row.id)">
+            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row.id)">
               删除
             </el-button>
           </div>
           <div v-else>
-            <el-button link type="primary" size="small" @click="isEditRow=-1">取消
+            <el-button link type="primary" size="small" @click="isEditRow = -1">取消
             </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newComment,scope.row)">
+            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newComment, scope.row)">
               更新
             </el-button>
           </div>
@@ -64,26 +64,26 @@
 
 
 <script setup lang="ts">
-import {useRouter} from 'vue-router'
+import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from "axios";
-import {ElMessage, ElMessageBox} from "element-plus";
-import type {TableColumnCtx, TableInstance} from "element-plus";
-import {onMounted, reactive, ref} from 'vue'
+import { ElMessage, ElMessageBox } from "element-plus";
+import type { TableColumnCtx, TableInstance } from "element-plus";
+//hooks
 import useTimeStamp from "@/hooks/useTimestamp";
-import {Comment} from "@/types/articles"
 import useFunction from "@/hooks/useFunction";
-const {getTime} = useTimeStamp()
-const {diffObj}=useFunction()
+//types
+import { Comment } from "@/types/articles"
+
+
+
+const { getTime } = useTimeStamp()
+const { diffObj } = useFunction()
 const router = useRouter()
 const goArticle = (id: number) => {
-  router.push({path: '/forum/article', query: {id, isEdit: 1}})
+  router.push({ path: '/forum/article', query: { id, isEdit: 1 } })
 }
 
-//管理员登录判断
-import useUserInfo from "@/hooks/useUserInfo";
-
-const {isAdmin} = useUserInfo()
-if (!isAdmin.value) router.replace({name: 'home'})
 
 const tableRef = ref<TableInstance>()
 let tableData: Comment[] = reactive([])
@@ -95,9 +95,9 @@ const clearFilter = () => {
 
 //筛选器
 const filterHandler = (
-    value: string,
-    row: Comment,
-    column: TableColumnCtx<Comment>
+  value: string,
+  row: Comment,
+  column: TableColumnCtx<Comment>
 ) => {
   const property = column['property'] as keyof Comment //断言property是Comment中的键名
   return row[property] === value
@@ -117,13 +117,13 @@ const filterHandler = (
 
 
 const newComment = reactive<Comment>({
-      id: 0,
-      uid: 0,
-      articleId: 0,
-      comment: '',
-      status: 0,
-      created_time: '',
-    }
+  id: 0,
+  uid: 0,
+  articleId: 0,
+  comment: '',
+  status: 0,
+  created_time: '',
+}
 )
 
 //获取全部评论
@@ -134,9 +134,9 @@ onMounted(async () => {
 
 const getComment = async () => {
   try {
-    const result = await axios({url: '/getComments',})
+    const result = await axios({ url: '/getComments', })
     console.log(result)
-    const {msg, data} = result.data
+    const { msg, data } = result.data
     ElMessage.success(msg)
     tableData.splice(0, tableData.length)
     data.forEach((item: Comment) => {
@@ -184,7 +184,7 @@ function updateRow(data: Comment, oldData: Comment) {
     }
   }).then(result => {
     // console.log(result)
-    const {msg} = result.data
+    const { msg } = result.data
     //更新修订时间为当前时间
     data.created_time = new Date().toISOString()
     //将修改后的信息显示出来
@@ -203,25 +203,25 @@ function updateRow(data: Comment, oldData: Comment) {
 //确认删除评论
 const deleteRow = (index: number, id: number) => {
   ElMessageBox.confirm(
-      '确认删除该评论吗?',
-      'Warning',
-      {
-        confirmButtonText: '确认删除',
-        cancelButtonText: '取消删除',
-        type: 'warning',
-        showClose: false
-      }
+    '确认删除该评论吗?',
+    'Warning',
+    {
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消删除',
+      type: 'warning',
+      showClose: false
+    }
   )
-      .then(() => {
-        deleteComment(index, id)
-        console.log(index, id)
+    .then(() => {
+      deleteComment(index, id)
+      console.log(index, id)
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '删除操作已取消',
       })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '删除操作已取消',
-        })
-      })
+    })
 }
 
 //删除评论
@@ -229,7 +229,7 @@ const deleteComment = (index: number, id: number) => {
   axios({
     url: '/deleteComment',
     method: 'delete',
-    params: {id}
+    params: { id }
   }).then((result) => {
     // console.log(result)
     ElMessage.success(result.data.msg)
@@ -242,6 +242,4 @@ const deleteComment = (index: number, id: number) => {
 </script>
 
 
-<style scoped>
-
-</style>
+<style scoped></style>

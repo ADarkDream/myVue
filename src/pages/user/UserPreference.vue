@@ -5,37 +5,45 @@
   <el-main>
 
     <el-card header="我的背景图">
-          <el-text>图片上传之后会审核30S左右,请稍后刷新。若图片没有成功加载,可能是<el-text type="warning">图片违规</el-text>或<el-text type="danger">服务器错误</el-text></el-text><br>
+      <el-text>图片上传之后会审核30S左右,请稍后刷新。若图片没有成功加载,可能是<el-text type="warning">图片违规</el-text>或<el-text
+          type="danger">服务器错误</el-text></el-text><br>
       <el-space>
-        <el-switch v-model="isOpen" inline-prompt active-text="应用" inactive-text="去除" size="large" v-if="isShow"/>
-        <el-button :size="elSize" type="primary" @click="dialogVisible=!dialogVisible" :icon="UploadFilled">上传</el-button>
+        <el-switch v-model="isOpen" inline-prompt active-text="应用" inactive-text="去除" size="large" v-if="isShow" />
+        <el-button :size="elSize" type="primary" @click="dialogVisible = !dialogVisible"
+          :icon="UploadFilled">上传</el-button>
         <el-button :size="elSize" type="danger" :icon="Delete" @click="deleteRow" v-if="isShow">删除</el-button>
       </el-space>
       <template #footer>
-        <el-image :src="bgUrl"/>
+        <el-image :src="bgUrl" />
       </template>
     </el-card>
   </el-main>
 
 
   <!--图片上传框-->
-  <el-dialog v-model="dialogVisible" :width="isPC? '':'wide:100%'" :show-close="false" title="上传图片">
-    <UploadImage/>
+  <el-dialog v-model="dialogVisible" :width="isPC ? '' : 'wide:100%'" :show-close="false" title="上传图片">
+    <UploadImage />
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-
-import UploadImage from "@/components/UploadImage.vue";
-import useUserInfo from '@/hooks/useUserInfo'
-import useResponsive from "@/hooks/useResponsive";
-import {ref, watch} from "vue";
-import {ElMessage, ElMessageBox} from "element-plus";
-import {Delete, UploadFilled} from "@element-plus/icons-vue";
+import { ref, watch, toRefs } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { Delete, UploadFilled } from "@element-plus/icons-vue";
 import axios from "axios";
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
+import useResponsive from "@/hooks/useResponsive";
+//components
+import UploadImage from "@/components/UploadImage.vue";
+
+
+const userInfoStore = useUserInfoStore()
+
 //获取本地存储的用户信息
-const {bgUrl, updateLocalUserInfo} = useUserInfo()
-const {isPC,elSize} = useResponsive()
+const { bgUrl } = toRefs(userInfoStore)
+const { isPC, elSize } = useResponsive()
 const dialogVisible = ref(false)
 const isShow = ref(false)
 const isOpen = ref(false)
@@ -64,23 +72,23 @@ watch(isOpen, (newVal, oldVal) => {
 //删除文章确认
 const deleteRow = () => {
   ElMessageBox.confirm(
-      `注意：该图片不会从服务器删除，只是不会在你的背景图列表显示。`,
-      '确认删除该背景图吗?',
-      {
-        confirmButtonText: '确认删除',
-        cancelButtonText: '取消删除',
-        type: 'warning',
-        showClose: false
-      }
+    `注意：该图片不会从服务器删除，只是不会在你的背景图列表显示。`,
+    '确认删除该背景图吗?',
+    {
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消删除',
+      type: 'warning',
+      showClose: false
+    }
   ).then(() => {
     deleteBGImage()
   })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '删除操作已取消',
-        })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '删除操作已取消',
       })
+    })
 }
 
 
@@ -91,11 +99,10 @@ function deleteBGImage() {
     data: {}
   }).then(result => {
     console.log(result)
-    const {msg} = result.data
+    const { msg } = result.data
     ElMessage.success(msg)
     localStorage.removeItem('useUserBGUrl')
     localStorage.removeItem('userBGUrl')
-    updateLocalUserInfo({bgUrl: ''})
     bgUrl.value = ''
     isShow.value = false
     body.style.backgroundImage = `url(${localStorage.getItem('bgUrl')})`
@@ -107,6 +114,4 @@ function deleteBGImage() {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

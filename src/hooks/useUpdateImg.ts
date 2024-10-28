@@ -1,24 +1,24 @@
-import {ref} from "vue";
-import {ElMessage, UploadFile} from "element-plus";
+import { ref } from "vue";
+import { ElMessage, type UploadFile } from "element-plus";
 import * as SparkMD5 from "spark-md5";//ts中这么导入
 import axios from "axios";
 
 export default function () {
-//计算图片的MD5值
+    //计算图片的MD5值
     const md5 = ref(sessionStorage.getItem('md5') || '')
     //显示的图片文件
-    const imgUrl=ref()
+    const imgUrl = ref()
 
-//用户上传的头像文件
+    //用户上传的头像文件
     const avatarFile = ref()
-//上传到服务器的头像文件
+    //上传到服务器的头像文件
     const avatar = ref()
-//控制头像上传按钮是否显示
+    //控制头像上传按钮是否显示
     const changeHeadImgBtnFlag = ref(false)
 
-const headImgDialogVisible=ref(false)
+    const headImgDialogVisible = ref(false)
 
-//当用户选择图片之后开始解析图片和计算md5
+    //当用户选择图片之后开始解析图片和计算md5
     function fileChange(file: UploadFile) {
         changeHeadImgBtnFlag.value = true
         let fileReader = new FileReader()
@@ -40,7 +40,7 @@ const headImgDialogVisible=ref(false)
         // updateAvatar(file.raw)
     }
 
-//头像上传函数
+    //头像上传函数
     const updateAvatar = (file: File) => {
         if (file === null) return ElMessage.info('请先选择图片再上传')
         if (['image/png', 'image/jpeg', 'image/jpg'].indexOf(file.type) === -1) return ElMessage.error('仅支持PNG/JPEG/JPG格式')
@@ -58,7 +58,7 @@ const headImgDialogVisible=ref(false)
             data: param
         }).then(result => {
             // console.log(result)
-            const {msg, imgUrl} = result.data as { status: number, msg: string, imgUrl: string }
+            const { msg, imgUrl } = result.data as { status: number, msg: string, imgUrl: string }
             ElMessage.success(msg)
             console.log('获取成功：', imgUrl)
             setTimeout(() => {
@@ -69,14 +69,14 @@ const headImgDialogVisible=ref(false)
         })
 
     };
-//取消上传
-function cancel() {
-  //还原成默认头像头像
-  headImgUrl.value = getLocalUserInfo('headImgUrl')
-  avatarFile.value = ''
-  avatar.value = ''
-  headImgDialogVisible.value = false
-}
+    //取消上传
+    function cancel() {
+        //还原成默认头像头像
+        headImgUrl.value = getLocalUserInfo('headImgUrl')
+        avatarFile.value = ''
+        avatar.value = ''
+        headImgDialogVisible.value = false
+    }
 
-    return {fileChange, updateAvatar,cancel,imgUrl,changeHeadImgBtnFlag,headImgDialogVisible}
+    return { fileChange, updateAvatar, cancel, imgUrl, changeHeadImgBtnFlag, headImgDialogVisible }
 }

@@ -2,41 +2,44 @@
   <el-container>
     <!--  侧边栏-->
     <el-aside direction="vertical">
-      <Aside :showContent="showContent"/>
+      <Aside :showContent="showContent" />
     </el-aside>
     <el-main>
       <!--首页时钟-->
-      <Time :class="timeClass" @click="showContent(true)"/>
+      <Time :class="timeClass" @click="showContent(true)" />
       <!--搜索框区域-->
-      <SearchEngine/>
+      <SearchEngine />
       <!--内容区域-->
       <el-collapse-transition v-show="isShow" class="content">
-        <Content :showContent="showContent"/>
+        <Content :showContent="showContent" />
       </el-collapse-transition>
     </el-main>
     <el-footer>
-<!--      <div :class="{'footer':true,'sticky':isSticky}">-->
-        <!--      <el-button type="primary" link id="jinrishici-sentence">-->
-        <!--        命里有时终须有，命里无时梦里有。-->
-        <!--      </el-button><br>-->
-        <!--备案号-->
-        <Approve :noWrap="true"  :class="{'footer':true,'sticky':isSticky}" />
-<!--      </div>-->
+      <!--      <div :class="{'footer':true,'sticky':isSticky}">-->
+      <!--      <el-button type="primary" link id="jinrishici-sentence">-->
+      <!--        命里有时终须有，命里无时梦里有。-->
+      <!--      </el-button><br>-->
+      <!--备案号-->
+      <Approve :noWrap="true" :class="{ 'footer': true, 'sticky': isSticky }" />
+      <!--      </div>-->
     </el-footer>
   </el-container>
 
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
-import {ElCollapseTransition} from "element-plus";
+import { ref } from "vue";
+import { ElCollapseTransition } from "element-plus";
+//hooks
+import useResponsive from "@/hooks/useResponsive";
+//components
 import Aside from "@/components/Aside.vue";
+import Approve from "@/components/Approve.vue";
 import SearchEngine from "@/pages/home/SearchEngine.vue";
 import Content from "@/pages/home/Content.vue";
-import Approve from "@/components/Approve.vue";
-import useResponsive from "@/hooks/useResponsive";
 
-const {isScroll, isPC} = useResponsive()
+
+const { isScroll, isPC } = useResponsive()
 
 const isSticky = ref(false)
 
@@ -98,6 +101,7 @@ Aside {
   from {
     font-size: 120px
   }
+
   to {
     transform: translateY(-200px);
     font-size: 0
@@ -196,5 +200,4 @@ Aside {
     width: 100%;
   }
 }
-
 </style>

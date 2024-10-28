@@ -22,7 +22,10 @@
 <script setup lang="ts">
 import { ElMessage } from "element-plus";
 import { reactive, ref } from "vue";
+//utils
 import musicList from "@/utils/music/musicList";
+
+
 const { close } = defineProps(['close'])
 
 

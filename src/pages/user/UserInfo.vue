@@ -3,13 +3,13 @@
     <el-header class="header1" v-if="isPC">
       用户信息
     </el-header>
-    <div class="user" :style="isPC? 'right: 0;':''">
+    <div class="user" :style="isPC ? 'right: 0;' : ''">
       <!--头像框-->
-      <el-avatar :size="isPC ? 150:75" title="更换头像" :src="headImgUrl" @error="errorImage"
-                 @click="dialogVisible=true"/>
+      <el-avatar :size="isPC ? 150 : 75" title="更换头像" :src="headImgUrl" @error="errorImage"
+        @click="dialogVisible = true" />
       <div>
-        <div :style="isPC ?'':'text-align:left'">
-          <el-button  text v-show="isDisabled" @click="isDisabled = false" title="修改昵称" :icon="Edit">
+        <div :style="isPC ? '' : 'text-align:left'">
+          <el-button text v-show="isDisabled" @click="isDisabled = false" title="修改昵称" :icon="Edit">
             {{
               username
             }}
@@ -17,15 +17,14 @@
           <el-text :size="elSize" type="info" v-if="isDisabled" style="border: 1px solid #b5b7ba;padding: 0 2px">未实名
           </el-text>
           <el-input v-model.trim="newName" @keyup.enter="checkNewName(newName)" @blur="isUpdateName"
-                    v-show="!isDisabled"
-                    :placeholder="username" minlength="2" maxlength="10" show-word-limit/>
+            v-show="!isDisabled" :placeholder="username" minlength="2" maxlength="10" show-word-limit />
         </div>
         <el-button-group :size="elSize" class="account">
-          <el-button @click="showEditForm( '修改邮箱')">修改邮箱</el-button>
-          <el-button @click="showEditForm( '修改密码')">修改密码</el-button>
+          <el-button @click="showEditForm('修改邮箱')">修改邮箱</el-button>
+          <el-button @click="showEditForm('修改密码')">修改密码</el-button>
           <br v-if="isPC">
           <el-button @click="getUserInfo" type="primary">刷新信息</el-button>
-          <el-button shadow="hover" type="danger" @click="showEditForm( '注销账户')">
+          <el-button shadow="hover" type="danger" @click="showEditForm('注销账户')">
             注销账号
           </el-button>
         </el-button-group>
@@ -63,10 +62,10 @@
       <el-card class="textareaDiv" shadow="hover">
         <template #header>个人简介</template>
         <el-input class="textarea" v-model="newSignature" @blur="isUpdateSignature" @keyup.enter="editSignature"
-                  type="textarea" maxlength="50" show-word-limit placeholder="这千千万万个故事里，许会有一颗与你我一般无二的心。"/>
+          type="textarea" maxlength="50" show-word-limit placeholder="这千千万万个故事里，许会有一颗与你我一般无二的心。" />
       </el-card>
       <div style="margin: 5px auto">试用性功能[无需登录]：
-        <el-button @click="router.push({name:'chat'})" :size="elSize" type="info">聊天室</el-button>
+        <el-button @click="router.push({ name: 'chat' })" :size="elSize" type="info">聊天室</el-button>
       </div>
     </el-main>
 
@@ -74,14 +73,9 @@
 
   <!-- 用户昵称修改框-->
   <el-dialog v-model="editNameFormVisible" title="修改昵称" width="500" class="change">
-    <el-form
-        style="max-width: 600px"
-        status-icon
-        label-width="auto"
-        label-position="left"
-    >
+    <el-form style="max-width: 600px" status-icon label-width="auto" label-position="left">
       <el-form-item>
-        <el-input v-model="newName" @keyup.enter="checkNewName(newName)" placeholder="输入新的昵称"/>
+        <el-input v-model="newName" @keyup.enter="checkNewName(newName)" placeholder="输入新的昵称" />
       </el-form-item>
 
       <div class="btn">
@@ -93,97 +87,94 @@
 
   <!-- 用户修改框-->
   <el-dialog v-model="dialogFormVisible" :title="titleStr" width="500" :fullscreen="!isPC" :before-close="handleClose"
-             class="change">
-    <el-form
-        ref="ruleFormRef"
-        style="max-width: 600px"
-        :model="ruleForm"
-        status-icon
-        :rules="(Rules)"
-        label-width="auto"
-        label-position="left"
-    >
+    class="change">
+    <el-form ref="ruleFormRef" style="max-width: 600px" :model="ruleForm" status-icon :rules="(Rules)"
+      label-width="auto" label-position="left">
       <el-text type="warning" v-if="deleteUserFlag">
         请注意，注销账户仅会删除你的账号邮箱、密码等信息，而不会删除您在本站发布和保存的其他内容。
       </el-text>
       <el-form-item prop="email" label="输入邮箱：">
-        <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱"/>
+        <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" />
       </el-form-item>
       <el-form-item prop="password" label="输入密码：">
-        <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码"/>
+        <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码" />
       </el-form-item>
       <!--      修改邮箱-->
-      <el-form-item prop="newEmail" label="输入新邮箱：" :rules="[{validator: checkNewEmail, trigger: 'blur'}]"
-                    v-if="editEmailBtnFlag">
-        <el-input v-model.lazy.trim="ruleForm.newEmail" placeholder="输入新邮箱"/>
+      <el-form-item prop="newEmail" label="输入新邮箱：" :rules="[{ validator: checkNewEmail, trigger: 'blur' }]"
+        v-if="editEmailBtnFlag">
+        <el-input v-model.lazy.trim="ruleForm.newEmail" placeholder="输入新邮箱" />
       </el-form-item>
       <!--      修改密码-->
-      <el-form-item prop="newPassword" label="输入新密码：" :rules="[{validator: checkNewPassword, trigger: 'blur'}]"
-                    v-if="editPasswordBtnFlag">
-        <el-input v-model.lazy.trim="ruleForm.newPassword" type="password" autocomplete="off" placeholder="输入新密码"/>
+      <el-form-item prop="newPassword" label="输入新密码：" :rules="[{ validator: checkNewPassword, trigger: 'blur' }]"
+        v-if="editPasswordBtnFlag">
+        <el-input v-model.lazy.trim="ruleForm.newPassword" type="password" autocomplete="off" placeholder="输入新密码" />
       </el-form-item>
       <!--      注销账户-->
-      <el-form-item prop="checkPassword" label="确认密码：" :rules="[{validator: validatePassword2, trigger: 'blur'}]"
-                    v-if="deleteUserFlag">
-        <el-input v-model.lazy.trim="ruleForm.checkPassword" type="password" autocomplete="off" placeholder="确认密码"/>
+      <el-form-item prop="checkPassword" label="确认密码：" :rules="[{ validator: validatePassword2, trigger: 'blur' }]"
+        v-if="deleteUserFlag">
+        <el-input v-model.lazy.trim="ruleForm.checkPassword" type="password" autocomplete="off" placeholder="确认密码" />
       </el-form-item>
       <div class="btn">
         <el-button plain @click="hideForm">取消</el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef,0)" :loading="loading" v-if="editEmailBtnFlag">
+        <el-button type="primary" @click="submitForm(ruleFormRef, 0)" :loading="loading" v-if="editEmailBtnFlag">
           修改邮箱
         </el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef,1)" :loading="loading" v-if="editPasswordBtnFlag">
+        <el-button type="primary" @click="submitForm(ruleFormRef, 1)" :loading="loading" v-if="editPasswordBtnFlag">
           修改密码
         </el-button>
-        <el-button type="danger" @click="submitForm(ruleFormRef,2)" :loading="loading" v-if="deleteUserFlag">
+        <el-button type="danger" @click="submitForm(ruleFormRef, 2)" :loading="loading" v-if="deleteUserFlag">
           注销
         </el-button>
       </div>
     </el-form>
   </el-dialog>
   <!--图片上传框-->
-  <el-dialog v-model="dialogVisible" :width="isPC? '':'wide:100%'" :show-close="false" title="上传图片">
-    <UploadImage/>
+  <el-dialog v-model="dialogVisible" :width="isPC ? '' : 'wide:100%'" :show-close="false" title="上传图片">
+    <UploadImage />
   </el-dialog>
 </template>
 
 <script setup lang="ts">
+import { ref, reactive, onMounted, toRefs } from 'vue';
+import { useRouter } from "vue-router";
+import { ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus";
+import { Edit } from "@element-plus/icons-vue";
 import axios from "axios";
-import {emitter} from "@/utils/emitter";
-import {ElMessage, ElMessageBox, FormInstance, FormRules} from "element-plus";
-import {Edit} from "@element-plus/icons-vue";
-import {ref, reactive, onMounted} from 'vue';
-import {useRouter} from "vue-router";
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
-import useUserInfo from '@/hooks/useUserInfo'
+//components
 import UploadImage from "@/components/UploadImage.vue";
+//utils
+import { emitter } from "@/utils/emitter";
 
 
-const {isPC, elSize} = useResponsive()
+const { isPC, elSize } = useResponsive()
 const router = useRouter()
+const userInfoStore = useUserInfoStore()
+
 //获取本地存储的用户信息
 const {
-  getLocalUserInfo,
-  updateLocalUserInfo,
   errorImage,
   signature,
   email,
   username,
   headImgUrl
-} = useUserInfo()
+} = toRefs(userInfoStore)
 
 
 function goArticleManagement() {
   emitter.emit('pageRender', 2)
-  router.push({name: 'userManagement'})
+  router.push({ name: 'userManagement' })
 }
 
 //获取用户信息
 const getUserInfo = async () => {
   try {
-    const result = await axios({url: '/getUserInfo'})
+    const result = await axios({ url: '/getUserInfo' })
     console.log(result)
-    const {status, userInfo, msg} = result.data
+    const { status, userInfo, msg } = result.data
     if (status === 200) ElMessage.success(msg)
     // console.log(userInfo)
     localStorage.setItem('userInfo', JSON.stringify(userInfo))
@@ -216,9 +207,9 @@ const draftNum = ref(0)
 //获取用户评论信息
 const getUserComments = async () => {
   try {
-    const result = await axios({url: '/getTheComments'})
+    const result = await axios({ url: '/getTheComments' })
     console.log(result)
-    const {status, data, msg} = result.data
+    const { status, data, msg } = result.data
     commentNum.value = data.length
   } catch (error) {
     console.log('发生错误：')
@@ -256,7 +247,7 @@ const getArticleList = async () => {
 //获取用户草稿列表
 const getDraftList = async () => {
   try {
-    const result = await axios({url: '/getDraftList'})
+    const result = await axios({ url: '/getDraftList' })
     console.log(result)
     if (result.data.list !== undefined) draftNum.value = result.data.list.length
     else draftNum.value = 0
@@ -281,11 +272,11 @@ const editSignature = async () => {
     const result = await axios({
       url: '/updateSignature',
       method: 'post',
-      data: {signature: newSignature.value.trim()}
+      data: { signature: newSignature.value?.trim() }
     })
     console.log(result)
-    const {data} = result.data
-    updateLocalUserInfo({signature: data})
+    const { data } = result.data
+    signature.value = data
     newSignature.value = data
   } catch (error) {
     console.log('发生错误：')
@@ -295,49 +286,49 @@ const editSignature = async () => {
 
 //确认是否修改个性签名
 const isUpdateSignature = () => {
-  if (newSignature.value === getLocalUserInfo('signature')) return
+  if (newSignature.value === signature.value) return
   ElMessageBox.alert(
-      '是否上传修改之后的个性签名？',
-      '请确认',
-      {
-        cancelButtonText: '取消修改',
-        confirmButtonText: '上传更新',
-        type: 'info',
-        showCancelButton: true,
-        showClose: false
-      }
+    '是否上传修改之后的个性签名？',
+    '请确认',
+    {
+      cancelButtonText: '取消修改',
+      confirmButtonText: '上传更新',
+      type: 'info',
+      showCancelButton: true,
+      showClose: false
+    }
   )
-      .then(() => {
-        editSignature()
-      })
-      .catch(() => {
-        newSignature.value = signature.value
-        ElMessage.info('个性签名已还原')
-      })
+    .then(() => {
+      editSignature()
+    })
+    .catch(() => {
+      newSignature.value = signature.value
+      ElMessage.info('个性签名已还原')
+    })
 }
 
 //确认是否修改昵称
 const isUpdateName = () => {
-  if (newName.value === getLocalUserInfo('username')) return isDisabled.value = true
+  if (newName.value === username.value) return isDisabled.value = true
   ElMessageBox.alert(
-      '是否上传修改之后的昵称？',
-      '请确认',
-      {
-        cancelButtonText: '取消修改',
-        confirmButtonText: '上传更新',
-        type: 'info',
-        showCancelButton: true,
-        showClose: false
-      }
+    '是否上传修改之后的昵称？',
+    '请确认',
+    {
+      cancelButtonText: '取消修改',
+      confirmButtonText: '上传更新',
+      type: 'info',
+      showCancelButton: true,
+      showClose: false
+    }
   )
-      .then(() => {
-        checkNewName(newName.value)
-      })
-      .catch(() => {
-        isDisabled.value = true
-        newName.value = getLocalUserInfo('username')
-        ElMessage.info('昵称已还原')
-      })
+    .then(() => {
+      checkNewName(newName.value)
+    })
+    .catch(() => {
+      isDisabled.value = true
+      newName.value = username.value
+      ElMessage.info('昵称已还原')
+    })
 }
 //region修改用户账号信息
 const newName = ref(username.value)
@@ -398,7 +389,7 @@ const checkNewName = (value: string) => {
   else if (reg.test(value) || value.length > 10 || value.length < 2)
     return ElMessage.error('请输入2-10位中文、字母、或数字！')
   else
-    return updateUser({username: newName.value}, '/updateUserName')
+    return updateUser({ username: newName.value }, '/updateUserName')
 }
 //修改：新邮箱
 const checkNewEmail = (rule: any, value: any, callback: any) => {
@@ -437,8 +428,8 @@ const validatePassword2 = (rule: any, value: any, callback: any) => {
 
 //表单验证规则
 const Rules = reactive<FormRules<typeof ruleForm>>({
-  email: [{validator: checkEmail, trigger: 'blur'}],
-  password: [{validator: validatePassword, trigger: 'blur'}],
+  email: [{ validator: checkEmail, trigger: 'blur' }],
+  password: [{ validator: validatePassword, trigger: 'blur' }],
 })
 
 
@@ -479,16 +470,16 @@ const updateUser = async (changeData: AccountChange, url: string) => {
       data: changeData
     })
     console.log(result)
-    const {msg, flag, data} = result.data
+    const { msg, flag, data } = result.data
     ElMessage.success(msg)
     //修改昵称，刷新页面
     if (flag === 0) {
-      updateLocalUserInfo({username: data})
+      username.value = data
       location.reload()
     }
     //修改邮箱或密码，重新登录
     else if (flag === 1) {
-      updateLocalUserInfo({email: data})
+      email.value = data
       setTimeout(() => {
         sessionStorage.setItem('isLogin', '0')
         localStorage.removeItem('token')
@@ -503,7 +494,7 @@ const updateUser = async (changeData: AccountChange, url: string) => {
 
 //注销账号
 const deleteUser = async () => {
-  const {email, password} = ruleForm
+  const { email, password } = ruleForm
   try {
     const result = await axios({
       url: '/deleteUser',
@@ -544,13 +535,13 @@ const deleteUserFlag = ref(false)
 //关闭修改窗口时调用
 const handleClose = (done: () => void) => {
   ElMessageBox.confirm('你要取消操作吗?')
-      .then(() => {
-        done()
-        hideForm()
-      })
-      .catch(() => {
-        // catch error
-      })
+    .then(() => {
+      done()
+      hideForm()
+    })
+    .catch(() => {
+      // catch error
+    })
 }
 
 //显示修改窗口并设置为修改邮箱/密码/注销窗口

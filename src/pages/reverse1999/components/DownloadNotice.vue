@@ -4,7 +4,8 @@
     <el-tabs v-model="showNum" @tab-click="tabClick">
       <!--少量下载说明-->
       <el-tab-pane :name="1" label="少量下载">
-        <el-card><p class="title">默认情况下，你可以一次性批量下载最多{{ downloadLimitNum }}张图片。</p>
+        <el-card>
+          <p class="title">默认情况下，你可以一次性批量下载最多{{ downloadLimitNum }}张图片。</p>
           <p>1.如果你下载的数量不多，
             <el-text type="primary">长按或右键保存</el-text>
             更快且不消耗本站流量。
@@ -15,7 +16,7 @@
             。
           </p>
           <p>3.如果你想了解更多信息，请查看
-            <el-link type="primary" @click="changePage(3,1)">其它说明</el-link>
+            <el-link type="primary" @click="changePage(3, 1)">其它说明</el-link>
             。
           </p>
         </el-card>
@@ -35,13 +36,12 @@
           </p>
           <p>
             2.点击下载
-            <el-link href="https://wwo.lanzout.com/i7vSy2298l5i" target="_blank"
-                     type="success">JS脚本压缩包(11KB)
+            <el-link href="https://wwo.lanzout.com/i7vSy2298l5i" target="_blank" type="success">JS脚本压缩包(11KB)
             </el-link>
             。使用方式：电脑配有
             <el-link type="primary"
-                     @click="copyText('https://nodejs.org/zh-cn','Node.Js中文官网地址','https://nodejs.org/zh-cn')"
-                     title="点击前往Node.Js中文官网">Node.js环境
+              @click="copyText('https://nodejs.org/zh-cn', 'Node.Js中文官网地址', 'https://nodejs.org/zh-cn')"
+              title="点击前往Node.Js中文官网">Node.js环境
             </el-link>
             ，在脚本所在目录的CMD窗口输入命令
             <el-text type="primary">node i</el-text>
@@ -83,8 +83,8 @@
               <el-link type="primary" @click="changePage(2)">大量下载</el-link>
               ：通过默默提供的脚本，在你的本地运行一个网站代理，再从本地直接从
               <el-link type="primary"
-                       @click="copyText('https://re.bluepoch.com/home/detail.html#wallpaper','重返未来1999官网','https://re.bluepoch.com/home/detail.html#wallpaper')"
-                       title="点击前往重返未来1999官网">重返未来1999官网
+                @click="copyText('https://re.bluepoch.com/home/detail.html#wallpaper', '重返未来1999官网', 'https://re.bluepoch.com/home/detail.html#wallpaper')"
+                title="点击前往重返未来1999官网">重返未来1999官网
               </el-link>
               下载图片(简单来说就是，你直接从重返未来1999官网下载，不通过默默的中转，不会额外消耗默默的带宽和流量)
             </p>
@@ -96,19 +96,18 @@
             </p>
             <p>
               2.关于下载的脚本，可前往
-              <el-link type="primary" title="Github 和 Gitee" @click="showUrl=!showUrl">
+              <el-link type="primary" title="Github 和 Gitee" @click="showUrl = !showUrl">
                 本项目开源地址
               </el-link>
               <Transition name="transition1">
                 <el-link style="margin-left:6px" v-if="showUrl" type="primary"
-                         href="https://gitee.com/MuXi-Dream/download-reverse1999"
-                         target="_blank">
+                  href="https://gitee.com/MuXi-Dream/download-reverse1999" target="_blank">
                   Gitee
                 </el-link>
               </Transition>&ensp;
               <Transition name="transition1">
                 <el-link v-if="showUrl" type="primary" href="https://github.com/ADarkDream/Download-Reverse1999"
-                         target="_blank">
+                  target="_blank">
                   Github
                 </el-link>
               </Transition>
@@ -120,8 +119,8 @@
             <p>
               4.如果你想使用默默的壁纸列表接口或角色信息列表
               <el-button link type="primary" target="_blank"
-                         @click="emitter.emit('showNotice', {showNum:'3'});copyText('1224021291','默默的联系方式(QQ)','https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
-                         title="点击前往API文档(无偿但不公开)">
+                @click="titleDiv.showNotice({ show_num: 3, active_num: 3 }); copyText('1224021291', '默默的联系方式(QQ)', 'https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
+                title="点击前往API文档(无偿但不公开)">
                 API文档，无偿提供，但为了防止被滥用，请联系默默
               </el-button>
               。
@@ -130,7 +129,7 @@
         </el-collapse>
       </el-tab-pane>
     </el-tabs>
-    <br/>
+    <br />
     <div>
       <el-link type="warning" class="statement" @click="showPayCodePanel()" title="点击查看赞助界面">若有意可在本页底部
         <span class="primary">群聊和赞助</span>
@@ -141,13 +140,16 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import { onMounted, ref } from "vue";
+import { TabsPaneContext } from "element-plus";
+//hooks
 import useFunction from "@/hooks/useFunction";
-import {emitter} from "@/utils/emitter";
-import {TabsPaneContext} from "element-plus";
+//utils
+import titleDiv from '@/utils/titleDiv';
 
-const {showFlag, showPayCodePanel, downloadLimitNum} = defineProps(['showFlag', 'showPayCodePanel', 'downloadLimitNum'])//切换页面的参数
-const {copyText} = useFunction()
+
+const { showFlag, showPayCodePanel, downloadLimitNum } = defineProps(['showFlag', 'showPayCodePanel', 'downloadLimitNum'])//切换页面的参数
+const { copyText } = useFunction()
 
 const showNum = ref<number>(1) //控制下载须知的显示第几个页面
 const activeNum = ref<number>(1)//展开第几条,因为设置了accordion，所以必须是字符串格式
@@ -160,7 +162,7 @@ onMounted(() => {
 
 /*点击tabs标签时触发*/
 const tabClick = (pane: TabsPaneContext, ev: Event) => {
-  if (pane.paneName ===3) changePage(3, 1)
+  if (pane.paneName === 3) changePage(3, 1)
 }
 
 //切换公告页面
@@ -200,5 +202,4 @@ const changePage = (show_num: number, active_num = 1) => {
     font-size: 14px;
   }
 }
-
 </style>

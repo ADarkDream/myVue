@@ -60,7 +60,7 @@
                 或
                 <el-text type="danger">功能出错</el-text>
                 请
-                <el-button link title="前往反馈" type="primary" @click="changePage('3', '2')">留言反馈</el-button>
+                <el-button link title="前往反馈" type="primary" @click="changePage(3, 2)">留言反馈</el-button>
                 。
               </el-text>
             </el-card>
@@ -164,14 +164,17 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from "vue-router";
 import axios from "axios";
 import { onMounted, reactive, ref } from "vue";
 import { Edit } from "@element-plus/icons-vue";
 import { ElCollapseTransition, ElMessage, TabsPaneContext } from 'element-plus'
+//hooks
 import useTimeStamp from "@/hooks/useTimestamp";
 import useFunction from "@/hooks/useFunction";
-import { useRouter } from "vue-router";
+//components
 import Approve from "@/components/Approve.vue";
+//types
 import { Notice } from "@/types/global";
 
 

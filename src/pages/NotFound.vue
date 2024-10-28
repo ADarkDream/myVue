@@ -1,5 +1,5 @@
 <template>
-  <el-container :style=" 'height:'+containerHeight+'px'">
+  <el-container :style="'height:' + containerHeight + 'px'">
     <div class="solar-system">
       <div class="sun"></div>
       <div class="mercury"></div>
@@ -23,7 +23,7 @@
       <el-space>
         <el-text text type="primary">{{ time }}</el-text>
         <el-text type="info">秒后自动</el-text>
-        <el-link type="primary" @click="router.replace({name: 'home'})">返回首页</el-link>
+        <el-link type="primary" @click="router.replace({ name: 'home' })">返回首页</el-link>
         <el-link type="primary" @click="showContact">联系站长</el-link>
       </el-space>
     </div>
@@ -33,15 +33,17 @@
 </template>
 
 <script setup lang="ts">
-import {onBeforeRouteLeave, useRouter} from "vue-router";
-import {ref, Ref} from "vue";
+import { ref } from "vue";
+import { onBeforeRouteLeave, useRouter } from "vue-router";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
-import {emitter} from "@/utils/emitter";
+//utils
+import titleDiv from '@/utils/titleDiv';
 
 const router = useRouter()
-const {containerHeight} = useResponsive()
+const { containerHeight } = useResponsive()
 
-const time: Ref<number> = ref(10)
+const time = ref(10)
 const timer1 = ref<NodeJS.Timeout>()
 const timer2 = ref<NodeJS.Timeout>()
 
@@ -51,11 +53,11 @@ timer1.value = setInterval(() => {
 }, 1000)
 //跳转到首页
 timer2.value = setTimeout(() => {
-  router.replace({name: 'home'})
+  router.replace({ name: 'home' })
 }, 11000)
 
 //显示站长联系方式
-const showContact = () => emitter.emit('showNotice', {showNum: '3', activeNum: '1'})
+const showContact = () => titleDiv.showNotice({ show_num: 3, active_num: 1 })
 
 onBeforeRouteLeave(() => {
   clearTimeout(timer1.value)
@@ -70,9 +72,7 @@ onBeforeRouteLeave(() => {
   font: normal 1em/1.45em 'Helvetica Neue', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   color: #fff;
-  background: radial-gradient(
-      ellipse at bottom, #1c2837 0%, #050608 100%
-  ) fixed;
+  background: radial-gradient(ellipse at bottom, #1c2837 0%, #050608 100%) fixed;
   overflow: hidden;
 }
 
@@ -86,7 +86,8 @@ onBeforeRouteLeave(() => {
 }
 
 @media (max-width: 980px) {
-  .msg { /*缩短选项框右边距*/
+  .msg {
+    /*缩短选项框右边距*/
     margin: 30% auto;
   }
 }
@@ -143,9 +144,7 @@ onBeforeRouteLeave(() => {
   margin-left: -20px;
   background-clip: padding-box;
   border: 0 !important;
-  background: radial-gradient(
-      ellipse at center, #ffd000 1%, #f9b700 39%, #f9b700 39%, #e06317 100%
-  ) -28px -103px;
+  background: radial-gradient(ellipse at center, #ffd000 1%, #f9b700 39%, #f9b700 39%, #e06317 100%) -28px -103px;
   background-size: 175%;
   box-shadow: 0 0 10px 2px rgba(255, 107, 0, 0.4), 0 0 22px 11px rgba(255, 203, 0, 0.13);
 }
@@ -362,6 +361,7 @@ onBeforeRouteLeave(() => {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(-360deg);
   }
@@ -371,6 +371,7 @@ onBeforeRouteLeave(() => {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(-360deg);
   }

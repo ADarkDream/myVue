@@ -4,6 +4,7 @@ interface Article {
     title: string,
     status: number,
     author: string,
+    coverUrl: string,
     authorId?: number,
     text: string,
     area: string,
@@ -33,4 +34,4 @@ interface CommentInfo {
     headImgUrl: string
 }
 
-export {Article, Comment, CommentInfo}
+export { Article, Comment, CommentInfo }

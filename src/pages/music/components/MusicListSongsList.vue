@@ -16,7 +16,7 @@
           <el-button link @click="musicListStore.addMusicList([item], { isReplace: true })" size="small" type="primary">
             添加到播放列表
           </el-button>
-          <el-button link size="small" type="primary" @click="ElMessage.info('收藏功能开发中')">
+          <el-button link size="small" type="primary" @click="showMusicListDrawer([item.id])">
             收藏到歌单
           </el-button>
           <el-button link v-if="item.cloud_music_id !== 0" @click="musicPlay.shareMusicLink(item)" size="small"
@@ -26,25 +26,34 @@
         </div>
       </div>
     </template>
-    <div style="height: 150px;" v-if="!isPC && songsList.length > 5"></div>
+    <div style="height: 150px;" v-if="!isPC && !isSearchList && songsList.length > 5"></div>
   </el-scrollbar>
 </template>
 
 <script setup lang="ts">
-import { ElMessage } from "element-plus";
-import { CloudSongInfo } from "@/types/music";
+import { ref } from "vue";
+//stores
+import { useMusicListStore } from "@/store/music/useMusicListStore";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
-import { useMusicListStore } from "@/store/music/useMusicListStore";
-import { ref } from "vue";
+import useMusic from "@/hooks/music/useMusic";
+//utils
 import musicPlay from "@/utils/music/musicPlay";
+//types
+import type { CloudSongInfo } from "@/types/music";
+//files
 import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.svg?component'
+
 
 const musicListStore = useMusicListStore()
 
+
 const { drawerSize, isPC } = useResponsive()
+const { showMusicListDrawer } = useMusic()
+
 const { addMusicToPlay, toggleMusic, play } = useMusicPlay()
-const { songsList, height } = defineProps(['songsList', 'height']) as { songsList: CloudSongInfo[], height: number }
+const { songsList, height, isSearchList } = defineProps(['songsList', 'height', 'isSearchList']) as { songsList: CloudSongInfo[], height: number, isSearchList?: boolean }
 
 const containerRef = ref()
 

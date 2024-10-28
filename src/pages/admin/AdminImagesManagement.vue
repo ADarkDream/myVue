@@ -3,75 +3,72 @@
     图片管理
   </el-header>
   <div class="header2">
-    <el-button type="primary" @click="dialogVisible=true">上传图片</el-button>
+    <el-button type="primary" @click="dialogVisible = true">上传图片</el-button>
     <el-button @click="clearFilter">清空全部筛选</el-button>
   </div>
   <el-main style="padding-bottom:0;padding-top: 0 ">
     <el-table ref="tableRef" :data="tableData" style="width: 100%" max-height="500" stripe border highlight-current-row
-              table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }">
-      <el-table-column fixed prop="id" label="ID" width="70" sortable/>
+      table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }">
+      <el-table-column fixed prop="id" label="ID" width="70" sortable />
 
-      <el-table-column fixed prop="sort" label="分类" width="120"
-                       :filters="[ { text: '头像', value: 'headImg' },
-                       { text: '背景', value: 'bg' },
-              { text: '黑名单', value: 'blacklist' }, ]"
-                       :filter-method="filterHandler">
+      <el-table-column fixed prop="sort" label="分类" width="120" :filters="[{ text: '头像', value: 'headImg' },
+      { text: '背景', value: 'bg' },
+      { text: '黑名单', value: 'blacklist' },]" :filter-method="filterHandler">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
+          <div v-if="isEditRow === scope.$index">
             <el-select placeholder="选择状态" v-model="urlInfo.sort">
-              <el-option label="头像" value="headImg"/>
-              <el-option label="背景" value="bg"/>
-              <el-option label="黑名单" value="blacklist"/>
+              <el-option label="头像" value="headImg" />
+              <el-option label="背景" value="bg" />
+              <el-option label="黑名单" value="blacklist" />
             </el-select>
           </div>
-          <el-button text type="danger" v-else-if="scope.row.sort==='blacklist'|| scope.row.status===2">黑名单
+          <el-button text type="danger" v-else-if="scope.row.sort === 'blacklist' || scope.row.status === 2">黑名单
           </el-button>
-          <el-button text v-else-if="scope.row.sort==='headImg'">头像</el-button>
-          <el-button text v-else-if="scope.row.sort==='bg'">背景</el-button>
+          <el-button text v-else-if="scope.row.sort === 'headImg'">头像</el-button>
+          <el-button text v-else-if="scope.row.sort === 'bg'">背景</el-button>
         </template>
       </el-table-column>
       <el-table-column fixed prop="status" label="状态" width="120" :filters="[
-           { text: '待审核', value: 0 },{ text: '审核通过', value: 1 },
-              { text: '黑名单', value: 2 },
-      ]"
-                       :filter-method="filterHandler">
+        { text: '待审核', value: 0 }, { text: '审核通过', value: 1 },
+        { text: '黑名单', value: 2 },
+      ]" :filter-method="filterHandler">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
+          <div v-if="isEditRow === scope.$index">
             <el-select placeholder="选择状态(默认为待审核)" v-model="urlInfo.status" default-first-option>
-              <el-option label="待审核" :value="0"/>
-              <el-option label="审核通过" :value="1"/>
-              <el-option label="黑名单" :value="2"/>
+              <el-option label="待审核" :value="0" />
+              <el-option label="审核通过" :value="1" />
+              <el-option label="黑名单" :value="2" />
             </el-select>
           </div>
-          <el-button text type="primary" v-else-if="scope.row.status===0">待审核</el-button>
-          <el-button text type="info" v-else-if="scope.row.status===1">审核通过</el-button>
-          <el-button text type="danger" v-else-if="scope.row.status===2">黑名单</el-button>
+          <el-button text type="primary" v-else-if="scope.row.status === 0">待审核</el-button>
+          <el-button text type="info" v-else-if="scope.row.status === 1">审核通过</el-button>
+          <el-button text type="danger" v-else-if="scope.row.status === 2">黑名单</el-button>
         </template>
       </el-table-column>
 
       <el-table-column prop="imgUrl" sum-text label="网址" width="150" align="center">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input v-model="urlInfo.imgUrl" placeholder="请输入图片链接"/>
+          <div v-if="isEditRow === scope.$index">
+            <el-input v-model="urlInfo.imgUrl" placeholder="请输入图片链接" />
           </div>
           <div v-else>
-            <el-image :src="scope.row.imgUrl" alt="" style="width: 50px" loading="lazy"/>
+            <el-image :src="scope.row.imgUrl" alt="" style="width: 50px" loading="lazy" />
           </div>
         </template>
       </el-table-column>
       <el-table-column prop="imgName" label="图片名" width="200">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input v-model="urlInfo.imgName" placeholder="请输入图片名称"/>
+          <div v-if="isEditRow === scope.$index">
+            <el-input v-model="urlInfo.imgName" placeholder="请输入图片名称" />
           </div>
           <div v-else>
             {{ scope.row.imgName }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="imgPath" sum-text label="服务器存储路径" width="150" align="center"/>
-      <el-table-column prop="imgMD5" label="MD5值" width="100"/>
-      <el-table-column prop="uid" label="上传用户UID" width="100" sortable/>
+      <el-table-column prop="imgPath" sum-text label="服务器存储路径" width="150" align="center" />
+      <el-table-column prop="imgMD5" label="MD5值" width="100" />
+      <el-table-column prop="uid" label="上传用户UID" width="100" sortable />
       <el-table-column prop="created_time" label="修改时间" width="150">
         <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
       </el-table-column>
@@ -80,16 +77,16 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="100">
         <template #default="scope">
-          <div v-if="isEditRow!==scope.$index">
+          <div v-if="isEditRow !== scope.$index">
             <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row)">
+            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row)">
               删除
             </el-button>
           </div>
           <div v-else>
             <el-button link type="primary" size="small" @click="handleCancel">取消
             </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(urlInfo,scope.row)">
+            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(urlInfo, scope.row)">
               更新
             </el-button>
           </div>
@@ -100,31 +97,25 @@
 
   <!--图片上传框-->
   <el-dialog v-model="dialogVisible" :show-close="false" title="上传图片">
-    <UploadImage/>
+    <UploadImage />
   </el-dialog>
 </template>
 
 
 <script setup lang="ts">
-import {useRouter} from 'vue-router'
+import { reactive, ref } from 'vue'
 import axios from "axios";
-import {ElMessage, ElMessageBox} from "element-plus";
-import type {TableColumnCtx, TableInstance} from "element-plus";
-import {reactive, ref} from 'vue'
+import { ElMessage, ElMessageBox } from "element-plus";
+import type { TableColumnCtx, TableInstance } from "element-plus";
+//hooks
 import UploadImage from "@/components/UploadImage.vue";
+//components
 import useTimeStamp from "@/hooks/useTimestamp";
 import useFunction from "@/hooks/useFunction";
 
-const {getTime} = useTimeStamp()
-const {diffObj}=useFunction()
-const router = useRouter()
+const { getTime } = useTimeStamp()
+const { diffObj } = useFunction()
 
-//管理员登录判断
-import useUserInfo from "@/hooks/useUserInfo";
-
-
-const {isAdmin} = useUserInfo()
-if (!isAdmin.value) router.replace({name: 'home'})
 
 //上传图片面板的显示与隐藏
 let dialogVisible = ref(false)
@@ -138,9 +129,9 @@ const clearFilter = () => {
 
 //筛选器
 const filterHandler = (
-    value: string,
-    row: Image,
-    column: TableColumnCtx<Image>
+  value: string,
+  row: Image,
+  column: TableColumnCtx<Image>
 ) => {
   const property = column['property'] as keyof Image
   return row[property] === value
@@ -159,7 +150,7 @@ const filterHandler = (
 // }
 
 //当前修改的图片信息
-let urlInfo:Image = reactive({
+let urlInfo: Image = reactive({
   id: 0,
   uid: 0,
   sort: '',
@@ -182,7 +173,7 @@ function getImages() {
     url: '/getImages',
   }).then(result => {
     console.log(result)
-    const {msg, data} = result.data
+    const { msg, data } = result.data
     ElMessage.success(msg)
     tableData.splice(0, tableData.length)
     data.forEach((item: Image) => {
@@ -195,7 +186,7 @@ function getImages() {
 }
 
 
-const tableData:Image[] = reactive([])
+const tableData: Image[] = reactive([])
 //编辑标记
 const isEditRow = ref<number>(-1)
 
@@ -237,7 +228,7 @@ function updateRow(data: Image, id: number, oldData: Image) {
     }
   }).then(result => {
     // console.log(result)
-    const {msg, newPath} = result.data
+    const { msg, newPath } = result.data
     //判断是否修改文件路径
     if (newPath !== undefined) data.imgPath = newPath
     //更新修订时间为当前时间
@@ -258,24 +249,24 @@ function updateRow(data: Image, id: number, oldData: Image) {
 //图片删除确认
 const deleteRow = (index: number, info: Image) => {
   ElMessageBox.confirm(
-      '确认删除该图片吗?',
-      'Warning',
-      {
-        confirmButtonText: '确认删除',
-        cancelButtonText: '取消删除',
-        type: 'warning',
-        showClose: false
-      }
+    '确认删除该图片吗?',
+    'Warning',
+    {
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消删除',
+      type: 'warning',
+      showClose: false
+    }
   )
-      .then(() => {
-        deleteImage(index, info)
+    .then(() => {
+      deleteImage(index, info)
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '删除操作已取消',
       })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '删除操作已取消',
-        })
-      })
+    })
 }
 
 //删除图片
@@ -296,6 +287,4 @@ const deleteImage = (index: number, data: Image) => {
 </script>
 
 
-<style scoped>
-
-</style>
+<style scoped></style>

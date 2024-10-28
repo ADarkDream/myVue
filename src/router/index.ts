@@ -1,33 +1,33 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import Home from "@/pages/home/Home.vue"//常用，不异步加载
-
-const Forum = () => import( "@/pages/forum/Forum.vue");
-const AdminLogin = () => import( "@/pages/admin/AdminLogin.vue");
-const AdminCenter = () => import( "@/pages/admin/AdminCenter.vue");
-const UserCenter = () => import( "@/pages/user/UserCenter.vue");
-const NotFound = () => import( "@/pages/NotFound.vue");
-const UserInfo = () => import( "@/pages/user/UserInfo.vue");
-const UserPreference = () => import( "@/pages/user/UserPreference.vue");
-const UserManagement = () => import( "@/pages/user/UserManagement.vue");
-const UserEdit = () => import( "@/pages/user/UserEdit.vue");
+// const Home = () => import("@/pages/home/Home.vue")
+const Forum = () => import("@/pages/forum/Forum.vue");
+const AdminLogin = () => import("@/pages/admin/AdminLogin.vue");
+const AdminCenter = () => import("@/pages/admin/AdminCenter.vue");
+const UserCenter = () => import("@/pages/user/UserCenter.vue");
+const NotFound = () => import("@/pages/NotFound.vue");
+const UserInfo = () => import("@/pages/user/UserInfo.vue");
+const UserPreference = () => import("@/pages/user/UserPreference.vue");
+const UserManagement = () => import("@/pages/user/UserManagement.vue");
+const UserEdit = () => import("@/pages/user/UserEdit.vue");
 const UserBooks = () => import("@/pages/user/books/UserBooks.vue")
 const UserBook = () => import("@/pages/user/books/UserBook.vue")
 
-const Article = () => import( "@/pages/forum/Article.vue");
-const Center = () => import( "@/pages/forum/Center.vue")
-const AdminArticlesManagement = () => import( "@/pages/admin/AdminArticlesManagement.vue");
-const AdminUsersManagement = () => import( "@/pages/admin/AdminUsersManagement.vue");
-const AdminNoticesManagement = () => import( "@/pages/admin/AdminNoticesManagement.vue");
-const AdminUrlsManagement = () => import( "@/pages/admin/AdminUrlsManagement.vue");
-const AdminImagesManagement = () => import( "@/pages/admin/AdminImagesManagement.vue");
-const AdminFeedbackManagement = () => import( "@/pages/admin/AdminFeedbackManagement.vue");
-const AdminCommentsManagement = () => import( "@/pages/admin/AdminCommentsManagement.vue");
-const Download1999 = () => import( "@/pages/reverse1999/Download1999.vue");//常用，不异步加载
-const Roles1999 = () => import( "@/pages/reverse1999/Roles1999.vue");
-const Images1999 = () => import( "@/pages/reverse1999/Images1999.vue");
-const Test = () => import( "@/pages/Test.vue");
-const News = () => import( "@/pages/News.vue");
-const NewsContent = () => import( "@/pages/NewsContent.vue");
+const Article = () => import("@/pages/forum/Article.vue");
+const Center = () => import("@/pages/forum/Center.vue")
+const AdminArticlesManagement = () => import("@/pages/admin/AdminArticlesManagement.vue");
+const AdminUsersManagement = () => import("@/pages/admin/AdminUsersManagement.vue");
+const AdminNoticesManagement = () => import("@/pages/admin/AdminNoticesManagement.vue");
+const AdminUrlsManagement = () => import("@/pages/admin/AdminUrlsManagement.vue");
+const AdminImagesManagement = () => import("@/pages/admin/AdminImagesManagement.vue");
+const AdminFeedbackManagement = () => import("@/pages/admin/AdminFeedbackManagement.vue");
+const AdminCommentsManagement = () => import("@/pages/admin/AdminCommentsManagement.vue");
+const Download1999 = () => import("@/pages/reverse1999/Download1999.vue");//常用，不异步加载
+const Roles1999 = () => import("@/pages/reverse1999/Roles1999.vue");
+const Images1999 = () => import("@/pages/reverse1999/Images1999.vue");
+const Test = () => import("@/pages/Test.vue");
+const News = () => import("@/pages/News.vue");
+const NewsContent = () => import("@/pages/NewsContent.vue");
 const Admin1999ImagesManagement = () => import("@/pages/admin/Admin1999ImagesManagement.vue")
 const ChatCenter = () => import("@/pages/user/chat/ChatCenter.vue")
 const ChatHall = () => import("@/pages/user/chat/ChatHall.vue")
@@ -52,24 +52,24 @@ const router = createRouter({
             children: [{
                 name: 'forum',
                 path: '',//重定向
-                redirect: {name: 'center'}
+                redirect: { name: 'center' }
             },
-                {
-                    name: 'center',//大厅
-                    path: 'center',
-                    component: Center
-                },
-                {
-                    name: 'article',//文章阅读界面
-                    path: 'article',
-                    component: Article,
-                }]
+            {
+                name: 'center',//大厅
+                path: 'center',
+                component: Center
+            },
+            {
+                name: 'article',//文章阅读界面
+                path: 'article',
+                component: Article,
+            }]
         },
         {//聊天大厅
             name: 'chat',
             path: '/Chat',
             component: ChatCenter,
-            redirect: {name: 'hall'},
+            redirect: { name: 'hall' },
             children: [{
                 name: 'hall',
                 path: 'hall',
@@ -100,7 +100,7 @@ const router = createRouter({
             children: [{
                 name: 'adminCenter',
                 path: ' ',//重定向
-                redirect: {name: 'adminUsersManagement'}
+                redirect: { name: 'adminUsersManagement' }
             }, {
                 name: 'adminUsersManagement',
                 path: 'user',
@@ -142,7 +142,7 @@ const router = createRouter({
             children: [{
                 name: 'userCenter',
                 path: ' ',//重定向
-                redirect: {name: 'userInfo'}
+                redirect: { name: 'userInfo' }
             }, {
                 name: 'userInfo',//用户个人信息界面
                 path: 'info',
@@ -156,23 +156,23 @@ const router = createRouter({
                 path: 'management',
                 component: UserManagement
             },
-                {
-                    name: 'userEdit',//发布文章界面
-                    path: "edit",
-                    component: UserEdit
-                },
-                {
-                    path: 'books',
-                    children: [{
-                        name: 'books',//账本界面
-                        path: '',
-                        component: UserBooks
-                    }, {
-                        name: 'book',//账单界面
-                        path: 'book',
-                        component: UserBook
-                    }]
-                }
+            {
+                name: 'userEdit',//发布文章界面
+                path: "edit",
+                component: UserEdit
+            },
+            {
+                path: 'books',
+                children: [{
+                    name: 'books',//账本界面
+                    path: '',
+                    component: UserBooks
+                }, {
+                    name: 'book',//账单界面
+                    path: 'book',
+                    component: UserBook
+                }]
+            }
             ]
         },
         {
@@ -180,7 +180,7 @@ const router = createRouter({
             children: [{
                 name: 'reverse1999',
                 path: '',//重定向
-                redirect: {name: 'download'}
+                redirect: { name: 'download' }
             }, {
                 name: "download",
                 path: 'download',
@@ -210,7 +210,7 @@ const router = createRouter({
             children: [{
                 name: 'news',
                 path: '',//重定向
-                redirect: {name: 'newsCenter'}
+                redirect: { name: 'newsCenter' }
             }, {
                 name: 'newsCenter',
                 path: 'center',

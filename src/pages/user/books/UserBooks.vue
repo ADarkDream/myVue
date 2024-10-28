@@ -1,29 +1,29 @@
 <template>
-  <el-container :style="'height:'+containerHeight+'px'">
+  <el-container :style="'height:' + containerHeight + 'px'">
     <el-header>
-      <el-button :size="elSize" type="primary" @click="dialogVisible=true">添加账本</el-button>
+      <el-button :size="elSize" type="primary" @click="dialogVisible = true">添加账本</el-button>
     </el-header>
     <el-main>
-      <el-empty style="margin: 0 auto" v-if="books.length===0" description="暂无账本"/>
-      <el-card class="book" shadow="hover" v-for="(item,index) in books" :key="item.bid" @click="goBook(item.bid)">
+      <el-empty style="margin: 0 auto" v-if="books.length === 0" description="暂无账本" />
+      <el-card class="book" shadow="hover" v-for="(item, index) in books" :key="item.bid" @click="goBook(item.bid)">
         <template #header>
-          <el-input v-if="isEditID===item.bid" v-model.trim="newBookInfo.name" maxlength="10"/>
+          <el-input v-if="isEditID === item.bid" v-model.trim="newBookInfo.name" maxlength="10" />
           <template v-else>
             <el-text class="title">{{ item.name }}</el-text>
             <el-text class="title" type="success" v-if="!item.key">[协作]</el-text>
             <div @click.stop>
               <el-dropdown class="menu">
-            <span>
-              <el-icon><MoreFilled/></el-icon>
-            </span>
+                <span>
+                  <el-icon>
+                    <MoreFilled />
+                  </el-icon>
+                </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="handleEdit(item.bid,index)" :icon="Edit">编辑</el-dropdown-item>
-                    <el-dropdown-item v-if="item.key"
-                                      @click="shareKey(item)"
-                                      :icon="Share">分享
+                    <el-dropdown-item @click="handleEdit(item.bid, index)" :icon="Edit">编辑</el-dropdown-item>
+                    <el-dropdown-item v-if="item.key" @click="shareKey(item)" :icon="Share">分享
                     </el-dropdown-item>
-                    <el-dropdown-item @click="updateBook(true,index)" :icon="Delete">删除
+                    <el-dropdown-item @click="updateBook(true, index)" :icon="Delete">删除
                     </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -33,13 +33,13 @@
           </template>
         </template>
         <div>
-          <el-input v-if="isEditID===item.bid" :size="elSize" v-model.trim="newBookInfo.intro" maxlength="30"/>
+          <el-input v-if="isEditID === item.bid" :size="elSize" v-model.trim="newBookInfo.intro" maxlength="30" />
           <el-text v-else>{{ item.intro || '暂无说明' }}</el-text>
         </div>
         <template #footer>
-          <el-button-group v-if="isEditID===item.bid" :size="elSize" style="margin-top: 5px">
-            <el-button type="primary" plain @click.stop="isEditID=0">取消</el-button>
-            <el-button type="success" @click.stop="updateBook(false,index)">保存</el-button>
+          <el-button-group v-if="isEditID === item.bid" :size="elSize" style="margin-top: 5px">
+            <el-button type="primary" plain @click.stop="isEditID = 0">取消</el-button>
+            <el-button type="success" @click.stop="updateBook(false, index)">保存</el-button>
           </el-button-group>
           <el-text v-else class="footer">{{ getTime(item.updated_time) }}</el-text>
         </template>
@@ -47,26 +47,30 @@
     </el-main>
     <!--账本新建框-->
     <el-dialog v-model="dialogVisible" :width="dialogWidth" :show-close="false" title="新增账本">
-      <AddBook :cancelAddBook="cancelAddBook"/>
+      <AddBook :cancelAddBook="cancelAddBook" />
     </el-dialog>
   </el-container>
 </template>
 
 <script setup lang="ts">
+import { onMounted, reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
+import { Delete, Edit, MoreFilled, Share } from "@element-plus/icons-vue";
 import axios from "axios";
-import {ElMessage} from "element-plus";
-import {Delete, Edit, MoreFilled, Share} from "@element-plus/icons-vue";
-import {onMounted, reactive, ref} from "vue";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
 import useFunction from "@/hooks/useFunction";
 import useTimestamp from "@/hooks/useTimestamp";
-import {useRouter} from "vue-router";
+//components
 import AddBook from "@/pages/user/books/components/AddBook.vue";
-import {Book} from '@/types/books'
+//types
+import { Book } from '@/types/books'
 
-const {getTime} = useTimestamp()
-const {elSize, dialogWidth, containerHeight} = useResponsive()
-const {deepEqual, copyText} = useFunction()
+
+const { getTime } = useTimestamp()
+const { elSize, dialogWidth, containerHeight } = useResponsive()
+const { deepEqual, copyText } = useFunction()
 const router = useRouter()
 
 //当前编辑的账本bid
@@ -94,9 +98,9 @@ const dialogVisible = ref(false)
 //获取账本列表
 const getBooks = async () => {
   try {
-    const result = await axios({url: '/myBooks'})
+    const result = await axios({ url: '/myBooks' })
     console.log(result)
-    const {data} = result.data
+    const { data } = result.data
     books.splice(0, books.length, ...data)
 
   } catch (error) {
@@ -112,7 +116,7 @@ const updateBook = async (isDelete = false, index: number) => {
       isEditID.value = 0
       return ElMessage.info('未检测到修改,已取消更新')
     }
-    const {name, intro} = newBookInfo.value//解构出要上传的数据
+    const { name, intro } = newBookInfo.value//解构出要上传的数据
     const result = await axios({
       url: '/updateBook',
       method: 'post',
@@ -124,12 +128,12 @@ const updateBook = async (isDelete = false, index: number) => {
       }
     })
     console.log(result)
-    const {msg} = result.data
+    const { msg } = result.data
     ElMessage.success(msg)
     //删除账本
     if (isDelete) books.splice(index, 1)
     else   //修改账本信息
-      books[index] = Object.assign(books[index], {...newBookInfo.value, updated_time: Date.now()})
+      books[index] = Object.assign(books[index], { ...newBookInfo.value, updated_time: Date.now() })
     //退出编辑
     isEditID.value = 0
   } catch (error) {
@@ -161,7 +165,7 @@ const goBook = (bid: number) => {
   console.log(isEditID.value)
   if (isEditID.value !== 0) return
   else {
-    router.push({name: 'book', query: {bid}})
+    router.push({ name: 'book', query: { bid } })
     // ElMessage.success(`即将前往账本：${bid}`)
   }
 }
@@ -217,8 +221,8 @@ onMounted(async () => {
 }
 
 @media (max-width: 980px) {
-  .el-main{
-     justify-content: space-between;
+  .el-main {
+    justify-content: space-between;
   }
 
   .book {
@@ -228,7 +232,9 @@ onMounted(async () => {
   }
 
 
-  .el-card :deep(.el-card__body), :deep(.el-card__header), :deep(.el-card__footer) {
+  .el-card :deep(.el-card__body),
+  :deep(.el-card__header),
+  :deep(.el-card__footer) {
     padding: 5px;
   }
 
@@ -239,5 +245,4 @@ onMounted(async () => {
 
 
 }
-
 </style>

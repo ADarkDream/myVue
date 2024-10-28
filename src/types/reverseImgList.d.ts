@@ -3,7 +3,7 @@ type ReverseImg = {
     imgIndex: number,
     imgName: string,
     imgUrl: string,
-    imgPath: string,
+    imgPath?: string,
     time: number,
     version: number
 }
@@ -78,16 +78,16 @@ interface VersionInfo {
 
 
 interface Image {
-  id: number,
-  uid: number,
-  sort: string,
-  status: number,
-  imgUrl: string,
-  imgPath: string,
-  imgMD5: string,
-  imgName: string;
-  created_time: string,
-  updated_time: string,
+    id: number,
+    uid: number,
+    sort: string,
+    status: number,
+    imgUrl: string,
+    imgPath: string,
+    imgMD5: string,
+    imgName: string;
+    created_time: string,
+    updated_time: string,
 }
 
 

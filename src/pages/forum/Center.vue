@@ -5,28 +5,30 @@
         <!--   文章筛选区-->
         <el-collapse style="background-color: var(--el-color-primary-light-9)">
           <el-collapse-item title="&ensp;&ensp;&ensp;文章筛选条件">
-            <el-form class="search" size="small" :inline="true" :model="data" label-position="left" >
+            <el-form class="search" size="small" :inline="true" :model="data" label-position="left">
               <el-form-item label="文章标题">
-                <el-input v-model="data.title" placeholder="填写文章标题" clearable :prefix-icon="Search" @keyup.enter="getArticleList"/>
+                <el-input v-model="data.title" placeholder="填写文章标题" clearable :prefix-icon="Search"
+                  @keyup.enter="getArticleList" />
               </el-form-item>
               <el-form-item label="文章作者">
-                <el-input v-model="data.author" placeholder="填写作者昵称" clearable :prefix-icon="Search" @keyup.enter="getArticleList"/>
+                <el-input v-model="data.author" placeholder="填写作者昵称" clearable :prefix-icon="Search"
+                  @keyup.enter="getArticleList" />
               </el-form-item>
               <el-form-item label="发布板块">
                 <el-select v-model="data.area" placeholder="All">
-                  <el-option label="全选" value=""/>
-                  <el-option label="文章" value="文章"/>
-                  <el-option label="教程" value="教程"/>
+                  <el-option label="全选" value="" />
+                  <el-option label="文章" value="文章" />
+                  <el-option label="教程" value="教程" />
                 </el-select>
               </el-form-item>
               <el-form-item label="选择标签">
                 <el-select v-model="data.tags" placeholder="All">
-                  <el-option label="全选" value=""/>
-                  <el-option label="散文" value="散文"/>
-                  <el-option label="小说" value="小说"/>
-                  <el-option label="前端" value="前端"/>
-                  <el-option label="教程" value="教程"/>
-                  <el-option label="其他" value="其他"/>
+                  <el-option label="全选" value="" />
+                  <el-option label="散文" value="散文" />
+                  <el-option label="小说" value="小说" />
+                  <el-option label="前端" value="前端" />
+                  <el-option label="教程" value="教程" />
+                  <el-option label="其他" value="其他" />
                 </el-select>
               </el-form-item>
               <div class="btn">
@@ -42,10 +44,10 @@
       <div class="card" v-for="item in articleList" @click="toArticle(item.id)">
         <div class="articleCover">
           <el-image :src="item.coverUrl" fit="cover">
-             <template #error>
+            <template #error>
               <div class="image-slot">
                 <el-icon style="width: 50px">
-                  <icon-picture/>
+                  <icon-picture />
                 </el-icon>
               </div>
             </template>
@@ -57,8 +59,8 @@
           </div>
           <div>
             <el-text size="small" tag="sub" truncated>板块：{{ item.area }}&ensp;&ensp;&ensp;标签：{{
-                item.tags
-              }}
+              item.tags
+            }}
             </el-text>
           </div>
           <div class="footer">
@@ -74,21 +76,23 @@
 </template>
 
 <script setup lang="ts">
-import {reactive} from 'vue'
-import {Search, Picture as IconPicture} from '@element-plus/icons-vue'
 import axios from "axios";
-import {ElMessage} from 'element-plus'
-import {useRouter, useRoute} from 'vue-router';
-//格式化时间戳,将TS 国际时间转化为北京时间
+import { reactive } from 'vue'
+import { useRouter, useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus'
+import { Search, Picture as IconPicture } from '@element-plus/icons-vue'
+//hooks
 import useTimeStamp from '@/hooks/useTimestamp'
+//types
+import { Article } from '@/types/articles';
 
-let {getDiffTime} = useTimeStamp()
+const { getDiffTime } = useTimeStamp()
 
 
 //路由跳转，前往文章页
 const router = useRouter();
 const toArticle = (id: number) => {
-  router.push({name: 'article', query: {id}})
+  router.push({ name: 'article', query: { id } })
 
 };
 
@@ -100,15 +104,11 @@ const data = reactive({
   tags: '',
 })
 
-interface Article {
-  author: string,
-  area: string,
-  tags: string,
-}
+
 
 //从文章页跳转过来的数据
 const route = useRoute()
-const {author, area, tags} = route.query as unknown as Article
+const { author, area, tags } = route.query as unknown as Article
 if (author !== '' && author !== undefined) data.author = author
 if (area !== '' && area !== undefined) data.area = area
 if (tags !== '' && tags !== undefined) data.tags = tags
@@ -120,12 +120,12 @@ function clearForm() {
   data.author = ''
   data.area = ''
   data.tags = ''
-  router.push({name: 'center'})
+  router.push({ name: 'center' })
   getArticleList()
 }
 
 //用来接收查询的文章列表
-let articleList = reactive([])
+let articleList = reactive<Article[]>([])
 
 //region文章刷新获取
 function getArticleList() {
@@ -139,7 +139,7 @@ function getArticleList() {
     }
   }).then(result => {
     // console.log(result)
-    const {msg, list} = result.data
+    const { msg, list } = result.data
     // ElMessage.success(msg)
     articleList.splice(0, articleList.length)
     Object.assign(articleList, list)
@@ -171,7 +171,7 @@ el-main {
   opacity: 0.8;
 }
 
-.el-form-item  {
+.el-form-item {
   width: 20%;
 }
 
@@ -197,7 +197,7 @@ el-main {
   padding: 5px;
   width: 30%;
   border-radius: 10px;
-background-color: var(--el-bg-color);
+  background-color: var(--el-bg-color);
   opacity: 0.9;
 }
 
@@ -211,10 +211,12 @@ background-color: var(--el-bg-color);
   .container {
     margin: 0;
   }
-.el-form-item  {
-  width: 80%;
-  margin: 3px auto;
-}
+
+  .el-form-item {
+    width: 80%;
+    margin: 3px auto;
+  }
+
   .content {
     padding-left: 0;
     padding-right: 0;

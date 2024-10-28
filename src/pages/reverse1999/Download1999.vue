@@ -1,118 +1,106 @@
 <template>
-  <el-scrollbar :height="containerHeight+'px'  ">
+  <el-scrollbar :height="containerHeight + 'px'">
     <el-container>
       <el-header style="opacity: 0.85;">
         <el-card style="position: relative">
-          <el-image class="logo" :src="logo" v-if="isPC"/>
+          <el-image class="logo" :src="logo" v-if="isPC" />
           <h1>1999国服官图(以影像之)下载 </h1>
           <el-collapse v-model="activeIndex" accordion>
             <el-collapse-item title="资源文档" name="1">
               <template class="links">
-                <el-link type="primary" title="Github 和 Gitee" @click="showUrl=!showUrl">
+                <el-link type="primary" title="Github 和 Gitee" @click="showUrl = !showUrl">
                   本项目开源地址
                 </el-link>
                 <Transition name="horizontal_slide">
                   <el-link v-if="showUrl" type="primary" href="https://gitee.com/MuXi-Dream/download-reverse1999"
-                           target="_blank">
+                    target="_blank">
                     Gitee
                   </el-link>
                 </Transition>
                 <Transition name="horizontal_slide">
                   <el-link v-if="showUrl" type="primary" href="https://github.com/ADarkDream/Download-Reverse1999"
-                           target="_blank">
+                    target="_blank">
                     Github
                   </el-link>
                 </Transition>
                 <el-link type="primary" href="https://re.bluepoch.com/home/detail.html#wallpaper" target="_blank"
-                         title="点击前往重返未来1999官网">
+                  title="点击前往重返未来1999官网">
                   重返未来官网下载地址
                 </el-link>
-                <el-link type="primary" href="https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999"
-                         target="_blank" title="点击前往百度网盘">
+                <el-link type="primary" href="https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999" target="_blank"
+                  title="点击前往百度网盘">
                   百度网盘下载地址
                 </el-link>
                 <el-button link type="primary" target="_blank"
-                           @click="showNotice(3,'1');copyText('1224021291','默默的联系方式(QQ)','https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
-                           title="点击前往API文档(无偿但不公开)">
+                  @click="showNotice({ show_num: 3, active_num: 1 }); copyText('1224021291', '默默的联系方式(QQ)', 'https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
+                  title="点击前往API文档(无偿但不公开)">
                   API接口文档(需要密码请联系默默)
                 </el-button>
               </template>
             </el-collapse-item>
             <el-collapse-item title="筛选条件【所有条件不选则默认全选】" name="2">
-              <el-form :label-position="isPC? 'left' : 'top' " :size="elSize">
+              <el-form :label-position="isPC ? 'left' : 'top'" :size="elSize">
                 <el-form-item label="选择版本：">
-                  <el-checkbox
-                      v-model="checkAllVersions"
-                      :indeterminate="isIndeterminateVersion"
-                      @change="handleCheckAllVersionChange"
-                  >
+                  <el-checkbox v-model="checkAllVersions" :indeterminate="isIndeterminateVersion"
+                    @change="handleCheckAllVersionChange">
                     全选
                   </el-checkbox>
                   <el-checkbox-group v-model="condition.version" style="text-align: left"
-                                     @change="handleCheckedVersionsChange">
+                    @change="handleCheckedVersionsChange">
                     <el-checkbox v-for="item in versionInfo" :key="item.version" :label="item.versionName"
-                                 :value="item.version"/>
+                      :value="item.version" />
                   </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="选择角色：">
-                  <el-button-group size="small" type="primary" :style="isPC? 'margin:5px':'margin:5px auto' ">
+                  <el-button-group size="small" type="primary" :style="isPC ? 'margin:5px' : 'margin:5px auto'">
                     <el-button @click="reset">清空所有选择</el-button>
-                    <el-button @click="router.push({name:'images'})">图片信息表</el-button>
-                    <el-button @click="router.push({name:'roles'})">角色信息表</el-button>
+                    <el-button @click="router.push({ name: 'images' })">图片信息表</el-button>
+                    <el-button @click="router.push({ name: 'roles' })">角色信息表</el-button>
                   </el-button-group>
                   <div class="roleSort">
                     <el-text type="primary">是否包含角色：</el-text>
-                    <el-checkbox
-                        v-model="checkAllRoles"
-                        :indeterminate="isIndeterminateRole"
-                        @change="handleCheckAllRoleChange"
-                    >全选角色(仅包含角色)
+                    <el-checkbox v-model="checkAllRoles" :indeterminate="isIndeterminateRole"
+                      @change="handleCheckAllRoleChange">全选角色(仅包含角色)
                     </el-checkbox>
-                    <el-checkbox
-                        v-model="checkNoRole"
-                        :indeterminate="isIndeterminateNoRole"
-                        @change="handleCheckNoRoleChange"
-                    >全选无角色(或未命名角色)
+                    <el-checkbox v-model="checkNoRole" :indeterminate="isIndeterminateNoRole"
+                      @change="handleCheckNoRoleChange">全选无角色(或未命名角色)
                     </el-checkbox>
                   </div>
                   <div class="roleSort">
                     <!--遍历阵营-->
                     <el-text type="primary">角色所属阵营：</el-text>
-                    <el-checkbox v-for="(item,index) in campInfo" :key="index"
-                                 @click="roleTypeChange(item,'')"
-                                 @change="handleCheckCampChange">
+                    <el-checkbox v-for="(item, index) in campInfo" :key="index" @click="roleTypeChange(item, '')"
+                      @change="handleCheckCampChange">
                       {{ item }}
                     </el-checkbox>
                   </div>
                   <div class="roleSort">
                     <!--遍历种族-->
                     <el-text type="primary">角色所属种族：</el-text>
-                    <el-checkbox v-for="(item,index) in raceInfo" :key="index"
-                                 @click="roleTypeChange('',item)"
-                                 @change="handleCheckCampChange">
+                    <el-checkbox v-for="(item, index) in raceInfo" :key="index" @click="roleTypeChange('', item)"
+                      @change="handleCheckCampChange">
                       {{ item }}
                     </el-checkbox>
                   </div>
                   <el-checkbox-group v-model="condition.roles" style="text-align: left"
-                                     @change="handleCheckedRolesChange">
-                    <el-checkbox v-for="item in roleInfo" :key="item.id" :label="item.name"
-                                 :value="item.id"/>
+                    @change="handleCheckedRolesChange">
+                    <el-checkbox v-for="item in roleInfo" :key="item.id" :label="item.name" :value="item.id" />
                   </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="图片类型：">
                   <el-radio-group v-model="condition.sort">
-                    <el-radio-button label="全选" :value="2"/>
-                    <el-radio-button label="横屏壁纸" :value="1"/>
-                    <el-radio-button label="竖屏壁纸" :value="0"/>
+                    <el-radio-button label="全选" :value="2" />
+                    <el-radio-button label="横屏壁纸" :value="1" />
+                    <el-radio-button label="竖屏壁纸" :value="0" />
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item label="查询类型：">
                   <el-radio-group v-model="condition.accurate">
-                    <el-radio-button label="模糊查询" :value="0"/>
-                    <el-radio-button label="精准查询" :value="1"/>
+                    <el-radio-button label="模糊查询" :value="0" />
+                    <el-radio-button label="精准查询" :value="1" />
                   </el-radio-group>
-                  <el-icon style="margin:0 5px" @click="isShowNotice=!isShowNotice">
-                    <InfoFilled/>
+                  <el-icon style="margin:0 5px" @click="isShowNotice = !isShowNotice">
+                    <InfoFilled />
                   </el-icon>
                   <Transition name="horizontal_slide">
                     <el-text v-show="isShowNotice">
@@ -126,18 +114,15 @@
                   </Transition>
                 </el-form-item>
                 <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
-                <el-button type="warning" :size="elSize" :icon="Warning" @click="showDownloadNotice()"
-                           v-show="isShow">
+                <el-button type="warning" :size="elSize" :icon="Warning" @click="showDownloadNotice()" v-show="isShow">
                   下载须知
                 </el-button>
                 <br v-if="!isPC">
-                <el-button :type="isChoose!==0? 'danger':'success' " :size="elSize"
-                           :icon="isChoose!==0? CloseBold : Select"
-                           @click="selectBtn()" v-show="isShow">
-                    <span
-                        v-if="isChoose===0">多选
-                    </span>
-                  <span v-else-if="isChoose===1">取消全选</span>
+                <el-button :type="isChoose !== 0 ? 'danger' : 'success'" :size="elSize"
+                  :icon="isChoose !== 0 ? CloseBold : Select" @click="selectBtn()" v-show="isShow">
+                  <span v-if="isChoose === 0">多选
+                  </span>
+                  <span v-else-if="isChoose === 1">取消全选</span>
                   <span v-else>退出勾选</span>
                 </el-button>
                 <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
@@ -145,10 +130,10 @@
                 <br>
                 <div class="statement">
 
-                  <el-text type="danger" v-show="isShow&&!isPC">
+                  <el-text type="danger" v-show="isShow && !isPC">
                     注意：移动端浏览器可能无法批量下载，如尝试下载等待之后没有反应，请切换浏览器或长按图片保存。<br>
                   </el-text>
-                  <el-text type="success" @click="showNotice('3','1')">本站仅供技术学习和交流分享，如果涉及侵权请
+                  <el-text type="success" @click="showNotice({ show_num: 3, active_num: 1 })">本站仅供技术学习和交流分享，如果涉及侵权请
                     <el-text type="primary">联系默默</el-text>
                     删除。
                   </el-text>
@@ -156,35 +141,34 @@
               </el-form>
             </el-collapse-item>
             <el-collapse-item title="待完善功能" style="text-align: left" name="3">
-              <template v-for="item in  unCompleted.slice().reverse()" :key="item.id">
+              <template v-for="item in unCompleted.slice().reverse()" :key="item.id">
                 <el-icon>
-                  <Edit/>
+                  <Edit />
                 </el-icon>
                 <el-text>&ensp;{{ item.content }}</el-text>
                 <br></template>
             </el-collapse-item>
             <el-collapse-item title="已实现功能" style="text-align: left" name="4">
-              <template v-for="(item,index) in completed.slice().reverse()" :key="index">
-                <el-icon :color="index===0? 'var(--el-color-primary':''">
-                  <Check/>
+              <template v-for="(item, index) in completed.slice().reverse()" :key="index">
+                <el-icon :color="index === 0 ? 'var(--el-color-primary' : ''">
+                  <Check />
                 </el-icon>
-                <el-text :type="index===0? 'primary':'' " style="margin: 0 5px">{{ item.content }}</el-text>
-                <el-text type="danger" v-if="index===0">[new]</el-text>
+                <el-text :type="index === 0 ? 'primary' : ''" style="margin: 0 5px">{{ item.content }}</el-text>
+                <el-text type="danger" v-if="index === 0">[new]</el-text>
                 <br></template>
             </el-collapse-item>
             <el-collapse-item title="群聊和赞赏" name="5">
               <el-text>欢迎通过
-                <el-text @click="showNotice()" type="success" title="点击反馈">反馈
+                <el-text @click="showNotice({ show_num: 3, active_num: 2 })" type="success" title="点击反馈">反馈
                 </el-text>
                 向默默提出功能建议或BUG。
                 也欢迎来咱们九群玩（默默不是群主）<br>
                 <el-button link type="primary" target="_blank"
-                           @click="copyText('904688184','QQ群号','https://qm.qq.com/q/Oq8R7YS6sM')"
-                           title="点击前往QQ">
+                  @click="copyText('904688184', 'QQ群号', 'https://qm.qq.com/q/Oq8R7YS6sM')" title="点击前往QQ">
                   点击加入群聊【金兔子特供部门🐰】
                 </el-button>
               </el-text>
-              <el-divider/>
+              <el-divider />
               <el-text>如果您觉得本站有用或有趣，欢迎成为元老级赞助人！！！</el-text>
               <br>
               <el-text type="warning">所有收入仅用于维持网站运营。</el-text>
@@ -195,36 +179,38 @@
                 <el-text type="primary">{{ fee }}</el-text>&ensp;元(手动录入会有延迟)
               </el-text>
               <br>
-              <el-button v-if="!showPayCode" @click="showPayCode=true" type="success">点击展示微信赞赏码</el-button>
-              <el-image v-else style="width: 200px" lazy :src="baseUrl.qiniuHttpsUrl+ '/files/payCode.png'"/>
+              <el-button v-if="!showPayCode" @click="showPayCode = true" type="success">点击展示微信赞赏码</el-button>
+              <el-image v-else style="width: 200px" lazy :src="baseUrl.qiniuHttpsUrl + '/files/payCode.png'" />
             </el-collapse-item>
           </el-collapse>
         </el-card>
       </el-header>
       <el-button-group class="btnGroup" type="info" :size="elSize" v-show="isShow">
-        <el-button @click="autoCol" :type="autoFlag ?'primary':'info' ">
+        <el-button @click="autoCol" :type="autoFlag ? 'primary' : 'info'">
           <svg t="1718341380597" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
-               xmlns="http://www.w3.org/2000/svg" p-id="5304" width="200" height="200">
+            xmlns="http://www.w3.org/2000/svg" p-id="5304" width="200" height="200">
             <path
-                d="M832 896H730.56l-72.576-210.24H361.856L293.44 896H192l270.848-768h98.24L832 896zM629.504 598.976L522.112 279.68c-3.392-10.176-7.04-28.096-11.008-53.504H508.8c-3.392 23.168-7.232 40.96-11.456 53.504l-106.56 319.296h238.72z"
-                p-id="5305"></path>
+              d="M832 896H730.56l-72.576-210.24H361.856L293.44 896H192l270.848-768h98.24L832 896zM629.504 598.976L522.112 279.68c-3.392-10.176-7.04-28.096-11.008-53.504H508.8c-3.392 23.168-7.232 40.96-11.456 53.504l-106.56 319.296h238.72z"
+              p-id="5305"></path>
           </svg>
           <span>自动</span></el-button>
-        <el-button @click="colNum=3;autoFlag=false " :type="autoFlag===false&&colNum===3 ?'primary':'info' ">
+        <el-button @click="colNum = 3; autoFlag = false"
+          :type="autoFlag === false && colNum === 3 ? 'primary' : 'info'">
           <svg t="1718333094288" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
-               xmlns="http://www.w3.org/2000/svg" p-id="2024" width="200" height="200">
+            xmlns="http://www.w3.org/2000/svg" p-id="2024" width="200" height="200">
             <path
-                d="M469.333333 138.666667v277.333333a53.393333 53.393333 0 0 1-53.333333 53.333333H138.666667a53.393333 53.393333 0 0 1-53.333334-53.333333V138.666667a53.393333 53.393333 0 0 1 53.333334-53.333334h277.333333a53.393333 53.393333 0 0 1 53.333333 53.333334z m416-53.333334H608a53.393333 53.393333 0 0 0-53.333333 53.333334v277.333333a53.393333 53.393333 0 0 0 53.333333 53.333333h277.333333a53.393333 53.393333 0 0 0 53.333334-53.333333V138.666667a53.393333 53.393333 0 0 0-53.333334-53.333334zM416 554.666667H138.666667a53.393333 53.393333 0 0 0-53.333334 53.333333v277.333333a53.393333 53.393333 0 0 0 53.333334 53.333334h277.333333a53.393333 53.393333 0 0 0 53.333333-53.333334V608a53.393333 53.393333 0 0 0-53.333333-53.333333z m469.333333 0H608a53.393333 53.393333 0 0 0-53.333333 53.333333v277.333333a53.393333 53.393333 0 0 0 53.333333 53.333334h277.333333a53.393333 53.393333 0 0 0 53.333334-53.333334V608a53.393333 53.393333 0 0 0-53.333334-53.333333z"
-                fill="currentColor" p-id="2025"></path>
+              d="M469.333333 138.666667v277.333333a53.393333 53.393333 0 0 1-53.333333 53.333333H138.666667a53.393333 53.393333 0 0 1-53.333334-53.333333V138.666667a53.393333 53.393333 0 0 1 53.333334-53.333334h277.333333a53.393333 53.393333 0 0 1 53.333333 53.333334z m416-53.333334H608a53.393333 53.393333 0 0 0-53.333333 53.333334v277.333333a53.393333 53.393333 0 0 0 53.333333 53.333333h277.333333a53.393333 53.393333 0 0 0 53.333334-53.333333V138.666667a53.393333 53.393333 0 0 0-53.333334-53.333334zM416 554.666667H138.666667a53.393333 53.393333 0 0 0-53.333334 53.333333v277.333333a53.393333 53.393333 0 0 0 53.333334 53.333334h277.333333a53.393333 53.393333 0 0 0 53.333333-53.333334V608a53.393333 53.393333 0 0 0-53.333333-53.333333z m469.333333 0H608a53.393333 53.393333 0 0 0-53.333333 53.333333v277.333333a53.393333 53.393333 0 0 0 53.333333 53.333334h277.333333a53.393333 53.393333 0 0 0 53.333334-53.333334V608a53.393333 53.393333 0 0 0-53.333334-53.333333z"
+              fill="currentColor" p-id="2025"></path>
           </svg>
           <span>3列</span>
         </el-button>
-        <el-button @click="colNum=5;autoFlag=false " :type="autoFlag===false&&colNum===5 ?'primary':'info' ">
+        <el-button @click="colNum = 5; autoFlag = false"
+          :type="autoFlag === false && colNum === 5 ? 'primary' : 'info'">
           <svg t="1718332863471" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
-               xmlns="http://www.w3.org/2000/svg" p-id="1704" width="200" height="200">
+            xmlns="http://www.w3.org/2000/svg" p-id="1704" width="200" height="200">
             <path
-                d="M768 768 1024 768 1024 1024 768 1024 768 768ZM384 768 640 768 640 1024 384 1024 384 768ZM0 768 256 768 256 1024 0 1024 0 768ZM768 384 1024 384 1024 640 768 640 768 384ZM384 384 640 384 640 640 384 640 384 384ZM0 384 256 384 256 640 0 640 0 384ZM768 0 1024 0 1024 256 768 256 768 0ZM384 0 640 0 640 256 384 256 384 0ZM0 0 256 0 256 256 0 256 0 0Z"
-                fill="currentColor" p-id="1705"></path>
+              d="M768 768 1024 768 1024 1024 768 1024 768 768ZM384 768 640 768 640 1024 384 1024 384 768ZM0 768 256 768 256 1024 0 1024 0 768ZM768 384 1024 384 1024 640 768 640 768 384ZM384 384 640 384 640 640 384 640 384 384ZM0 384 256 384 256 640 0 640 0 384ZM768 0 1024 0 1024 256 768 256 768 0ZM384 0 640 0 640 256 384 256 384 0ZM0 0 256 0 256 256 0 256 0 0Z"
+              fill="currentColor" p-id="1705"></path>
           </svg>
           <span>5列</span>
         </el-button>
@@ -233,20 +219,15 @@
 
       <!--    第三方库，瀑布流标签-->
       <wc-flow-layout :gap="10" :cols="colNum">
-        <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl,item.imgName,$event)"
-             class="preImg"
-             :id="'imgDiv-'+item.imgIndex">
-          <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-'+item.imgIndex"
-                    :max-scale="7"
-                    :min-scale="0.2"
-                    :preview-src-list="isChoose!==0? [] : previewImgList"
-                    :initial-index="item.imgIndex"
-                    fit="scale-down"
-                    lazy>
+        <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl, item.imgName, $event)"
+          class="preImg" :id="'imgDiv-' + item.imgIndex">
+          <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-' + item.imgIndex" :max-scale="7" :min-scale="0.2"
+            :preview-src-list="isChoose !== 0 ? [] : previewImgList" :initial-index="item.imgIndex" fit="scale-down"
+            lazy>
             <template #error>
               <div class="image-slot">
                 <el-icon style="width: 50px">
-                  <icon-picture/>
+                  <icon-picture />
                 </el-icon>
               </div>
             </template>
@@ -258,16 +239,16 @@
   </el-scrollbar>
 
   <!--  下载须知公告界面-->
-  <el-dialog v-model="isShowDownloadNotice" :width="isPC? '60%':'90%' " :show-close="!isPC"
-             style="z-index: 100"
-             destroy-on-close>
+  <el-dialog v-model="isShowDownloadNotice" :width="isPC ? '60%' : '90%'" :show-close="!isPC" style="z-index: 100"
+    destroy-on-close>
     <template #header><span style="font-size: 24px">下载须知</span></template>
-    <DownloadNotice :showFlag="showFlag" :showPayCodePanel="showPayCodePanel" :downloadLimitNum="downloadLimitNum"/>
+    <DownloadNotice :showFlag="showFlag" :showPayCodePanel="showPayCodePanel" :downloadLimitNum="downloadLimitNum" />
   </el-dialog>
 </template>
 
 <script lang="ts" setup>
-import {onMounted, reactive, ref, watch} from 'vue'
+import { onMounted, reactive, ref, watch,toRefs } from 'vue'
+import { useRouter } from "vue-router";
 import {
   Check,
   CloseBold,
@@ -279,32 +260,41 @@ import {
   Select,
   Warning,
 } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 import axios from "axios";
-import {ElMessage, ElMessageBox} from "element-plus";
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
-import useUserInfo from "@/hooks/useUserInfo";
-import {useRouter} from "vue-router";
 import useFunction from "@/hooks/useFunction";
-import {useBaseUrl} from '@/hooks/useBaseUrl'
-import logo from '@/assets/logo-small.png'
-import {emitter} from "@/utils/emitter";
+import { useBaseUrl } from '@/hooks/useBaseUrl'
+//components
 import DownloadNotice from "@/pages/reverse1999/components/DownloadNotice.vue";
-import {Notice, NoticeActiveNum} from "@/types/global";
+//utils
+import titleDiv from '@/utils/titleDiv';
+//types
+import { Notice, NoticeActiveNum } from "@/types/global";
+//files
+import logo from '@/assets/logo-small.png'
 
-const {copyText, deepEqual} = useFunction()
+
 const router = useRouter()
-const {isPC, elSize, screenWidth, containerHeight} = useResponsive()
-const {isLogin, updateLocalUserInfo} = useUserInfo()
-const baseUrl = useBaseUrl()
+const userInfoStore = useUserInfoStore()
+const { isLogin, updateLocalUserInfo } = toRefs(userInfoStore)
+const { copyText, deepEqual } = useFunction()
+const { isPC, elSize, screenWidth, containerHeight } = useResponsive()
 
+const baseUrl = useBaseUrl()
+//呼出公告面板
+const { showNotice } = titleDiv
 
 //用户查询的参数
 const condition = reactive<ImgParams>({
-      version: [],
-      roles: [],
-      sort: 2,
-      accurate: 0
-    }
+  version: [],
+  roles: [],
+  sort: 2,
+  accurate: 0
+}
 )
 //用户上一次查询的参数
 const oldCondition = reactive<ImgParams>({
@@ -446,10 +436,10 @@ function reset() {
 function getVersion() {
   axios({
     url: '/getVersion',
-    params: {version: true, role: 'diff'}
+    params: { version: true, role: 'diff' }
   }).then(result => {
     console.log(result)
-    const {versionList, roleList} = result.data.data
+    const { versionList, roleList } = result.data.data
     //更新版本列表
     versionInfo.splice(0, versionInfo.length, ...versionList)
     // console.log('versionInfo', versionInfo)
@@ -477,10 +467,10 @@ const getNotices = async () => {
   try {
     const result = await axios({
       url: '/getNotices',
-      params: {sort: ['completed', 'unCompleted', 'others']}
+      params: { sort: ['completed', 'unCompleted', 'others'] }
     })
     console.log(result)
-    const {noticeList} = result.data
+    const { noticeList } = result.data
     // ElMessage.success( result.data.msg)
     completed.splice(0, completed.length)
     unCompleted.splice(0, unCompleted.length)
@@ -508,10 +498,10 @@ const getImages = async () => {
     checkNoRole.value = false
   }
 
-//判断筛选条件是否改变
+  //判断筛选条件是否改变
   if (deepEqual(condition, oldCondition, true)) return ElMessage.info('筛选条件未作改变，已取消查询')
   else {
-// 将 a 的值同步到 b，包括空值
+    // 将 a 的值同步到 b，包括空值
     Object.keys(oldCondition).forEach(key => {
 
       if (condition.hasOwnProperty(key)) {
@@ -526,7 +516,7 @@ const getImages = async () => {
       params: condition,
     })
     console.log(result)
-    const {status} = result.data
+    const { status } = result.data
     if (status === 300) return//没有查询结果则不进行以下操作
     isShow.value = true //显示布局按钮
     imgList.splice(0, imgList.length, ...result.data.data)
@@ -559,7 +549,7 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
     downloadBtn.innerHTML = `<i class="el-icon-download" id="downloadBtn" ><svg class="el-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" ><path fill="currentColor" d="M160 832h704a32 32 0 1 1 0 64H160a32 32 0 1 1 0-64m384-253.696 236.288-236.352 45.248 45.248L508.8 704 192 387.2l45.248-45.248L480 584.704V128h64z"></path></svg></i>`
     const setBG = document.createElement('i')
     setBG.innerHTML = `<i class="el-icon-download" id="downloadBtn" ><svg t="1718365540691" class="el-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4274" width="200" height="200"><path d="M137.216 894.016a38.656 38.656 0 0 1-29.248-63.68l177.024-267.008a38.592 38.592 0 0 1 52.288-5.76l156.224 116.096L773.76 355.456c13.184-16.64 83.52-94.976 124.8-6.208 0-0.256 0.128 117.568 0.128 237.696v307.072c-0.576-0.384-761.088 0-761.472 0m192.256-713.6a125.312 125.312 0 1 1 0.128 250.56 125.312 125.312 0 0 1-0.128-250.624M81.728 0C36.672 0 0 37.952 0 89.152v841.856C0 982.208 36.864 1024 81.728 1024h864c44.8 0 78.272-41.856 78.272-92.992V89.152C1024 37.952 983.744 0 938.88 0H81.728z" p-id="4275"></path></svg></i>`
-//下载图片监听
+    //下载图片监听
     downloadBtn.addEventListener('click', () => {
       //  if (isLogin.value) downloadImg(url, name)
       // else window.open(url)
@@ -614,10 +604,10 @@ const setBackground = async (url: string, name: string) => {
       }
     })
     console.log(result)
-    const {status, msg} = result.data
+    const { status, msg } = result.data
     if (status === 200) {
       ElMessage.success(msg)
-      updateLocalUserInfo({bgUrl: url})
+      updateLocalUserInfo({ bgUrl: url })
       const body = (document.querySelector('body') as HTMLElement)
       body.style.backgroundImage = `url(${url})`
       localStorage.setItem('useUserBGUrl', '1')
@@ -673,7 +663,7 @@ const checkPort = async () => {
       url: 'http://127.0.0.1:3000/',
     })
     console.log(result)
-    const {status, msg} = result.data
+    const { status, msg } = result.data
     if (status === 200) {
       ElMessage.success(msg)
       isOpenProxy.value = true
@@ -703,7 +693,7 @@ const downloadImages = async () => {
       confirmButtonText: '继续下载',
       cancelButtonText: '取消下载'
     }).then(() => ElMessage.info('如等待之后没有下载，请更换浏览器或长按图片保存'))
-        .catch(() => flag = false)
+      .catch(() => flag = false)
     if (!flag) return
     console.log(downloadList)
     downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName, item.imgPath))
@@ -767,8 +757,7 @@ function autoCol() {
 
 
 //endregion
-//呼出公告面板
-const showNotice = (show_num = 3, active_num = 2) => emitter.emit('showNotice', {show_num, active_num})
+
 
 
 //下载须知面板序号
@@ -866,7 +855,8 @@ console.log('isPC', isPC.value)
     margin-bottom: 10px;
   }
 
-  .el-checkbox { /*缩短选项框右边距*/
+  .el-checkbox {
+    /*缩短选项框右边距*/
     margin-right: 15px;
   }
 
@@ -896,19 +886,23 @@ console.log('isPC', isPC.value)
 }
 
 @keyframes shake {
+
   10%,
   90% {
     transform: translate3d(-1px, 0, 0);
   }
+
   20%,
   80% {
     transform: translate3d(2px, 0, 0);
   }
+
   30%,
   50%,
   70% {
     transform: translate3d(-4px, 0, 0);
   }
+
   40%,
   60% {
     transform: translate3d(4px, 0, 0);

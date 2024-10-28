@@ -1,5 +1,7 @@
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
 import axios from "axios";
+//types
+import type { ResultData } from "@/types/global";
 
 
 export default function () {
@@ -13,7 +15,7 @@ export default function () {
                 }, 1500)
             },
             () => {
-                alert(msg + '复制失败,请自行复制以下内容：',text)
+                alert(msg + '复制失败,请自行复制以下内容：', text)
                 if (url !== undefined) setTimeout(() => {
                     window.open(url)
                 }, 1500)
@@ -28,7 +30,7 @@ export default function () {
                 ElMessage.success(msg + '已复制到剪贴板')
             },
             () => {
-                alert(msg + '复制失败,请自行复制以下内容：',code)
+                alert(msg + '复制失败,请自行复制以下内容：', code)
             }
         )
     }
@@ -71,66 +73,65 @@ export default function () {
     }
 
     //比较之后返回不一致的数据(尚未验证)
-//     function deepEqual(a, b, path = '') {
-//     if (a === b) return true;
-//
-//     if (typeof a !== 'object' || a === null || typeof b !== 'object' || b === null) {
-//         return { path, a, b };
-//     }
-//
-//     const isArrayA = Array.isArray(a);
-//     const isArrayB = Array.isArray(b);
-//
-//     if (isArrayA !== isArrayB) {
-//         return { path, a, b };
-//     }
-//
-//     if (isArrayA && isArrayB) {
-//         if (a.length !== b.length) {
-//             return { path, a, b };
-//         }
-//
-//         const sortedA = [...a].sort();
-//         const sortedB = [...b].sort();
-//
-//         for (let i = 0; i < sortedA.length; i++) {
-//             const result = deepEqual(sortedA[i], sortedB[i], `${path}[${i}]`);
-//             if (result !== true) {
-//                 return result;
-//             }
-//         }
-//         return true;
-//     }
-//
-//     const keysA = Object.keys(a).sort();
-//     const keysB = Object.keys(b).sort();
-//
-//     if (keysA.length !== keysB.length) {
-//         return { path, keysA, keysB };
-//     }
-//
-//     for (const key of keysA) {
-//         const result = deepEqual(a[key], b[key], `${path}.${key}`);
-//         if (result !== true) {
-//             return result;
-//         }
-//     }
-//     return true;
-// }
+    //     function deepEqual(a, b, path = '') {
+    //     if (a === b) return true;
+    //
+    //     if (typeof a !== 'object' || a === null || typeof b !== 'object' || b === null) {
+    //         return { path, a, b };
+    //     }
+    //
+    //     const isArrayA = Array.isArray(a);
+    //     const isArrayB = Array.isArray(b);
+    //
+    //     if (isArrayA !== isArrayB) {
+    //         return { path, a, b };
+    //     }
+    //
+    //     if (isArrayA && isArrayB) {
+    //         if (a.length !== b.length) {
+    //             return { path, a, b };
+    //         }
+    //
+    //         const sortedA = [...a].sort();
+    //         const sortedB = [...b].sort();
+    //
+    //         for (let i = 0; i < sortedA.length; i++) {
+    //             const result = deepEqual(sortedA[i], sortedB[i], `${path}[${i}]`);
+    //             if (result !== true) {
+    //                 return result;
+    //             }
+    //         }
+    //         return true;
+    //     }
+    //
+    //     const keysA = Object.keys(a).sort();
+    //     const keysB = Object.keys(b).sort();
+    //
+    //     if (keysA.length !== keysB.length) {
+    //         return { path, keysA, keysB };
+    //     }
+    //
+    //     for (const key of keysA) {
+    //         const result = deepEqual(a[key], b[key], `${path}.${key}`);
+    //         if (result !== true) {
+    //             return result;
+    //         }
+    //     }
+    //     return true;
+    // }
 
     //获取随机N张重返未来1999背景图片
     const getBG = async (sort?: number, limitNum?: number) => {
         try {
-            const result = await axios({
+            const result = await axios<ResultData<ReverseImg[]>>({
                 url: '/getRandomWallpaper',
-                params: {sort, limitNum},
+                params: { sort, limitNum },
             })
             console.log(result)
-            const {status, msg, data} = result.data
+            const { status, msg, data } = result.data
             if (status === 300) ElMessage.warning(msg)
-            console.log(111)
-            console.log('data', data)
-            return data
+            console.log('/getRandomWallpaper', data)
+            if (data) return data
         } catch (error) {
             console.log('发生错误：')
             console.dir(error)
@@ -149,14 +150,14 @@ export default function () {
 
     //el-table中按时间顺序和逆序排列
     const sortByTime = (tableData, prop, order) => tableData.sort((a, b) => {
-            const propA = a[prop as keyof typeof a]
-            const propB = b[prop as keyof typeof b]
-            if (propA < propB) return order === 'ascending' ? -1 : 1;
-            if (propA > propB) return order === 'ascending' ? 1 : -1;
-            return 0;
-        })
+        const propA = a[prop as keyof typeof a]
+        const propB = b[prop as keyof typeof b]
+        if (propA < propB) return order === 'ascending' ? -1 : 1;
+        if (propA > propB) return order === 'ascending' ? 1 : -1;
+        return 0;
+    })
 
 
     // 向外暴露
-    return { copyText, copyCode, deepEqual, getBG, diffObj, sortByTime}
+    return { copyText, copyCode, deepEqual, getBG, diffObj, sortByTime }
 }

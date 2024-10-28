@@ -1,13 +1,14 @@
 <!--专辑封面-->
 <template>
   <div class="card">
-    <div class="img" :style="'--bgImage:' + `url(${musicListInfo.pic_url || defaultAlbumArt})`">
+    <div class="img"
+      :style="'--bgImage:' + `url(${musicListInfo.pic_url || musicListInfo.default_cover_url || defaultAlbumArt})`">
       <div class="save" @click="toggleLike()">
         <LikeHeart :isLike="isLike" />
       </div>
     </div>
     <div class="text">
-      <p class="title">{{ musicListInfo.name }}</p>
+      <p class="title"><el-text truncated>{{ musicListInfo.name }}</el-text></p>
       <p class="info" v-if="isPC"><span>上次更新：{{ formatDate(new Date(musicListInfo.updated_time)) }}</span><span>{{
         musicListInfo.songsCount }}首</span></p>
     </div>
@@ -15,12 +16,18 @@
 </template>
 
 <script setup lang="ts">
-import defaultAlbumArt from "@/assets/music/music.svg";
 import { ref } from 'vue'
+//hooks
 import useResponsive from "@/hooks/useResponsive";
-import LikeHeart from "@/components/smallComp/LikeHeart.vue";
 import useTimestamp from "@/hooks/useTimestamp";
+//components
+import LikeHeart from "@/components/smallComp/LikeHeart.vue";
+//types
 import type { MusicListInfo } from "@/types/music";
+//files
+import defaultAlbumArt from "@/assets/music/music.svg";
+
+
 const { formatDate } = useTimestamp()
 const { isPC } = useResponsive()
 const isLike = ref(false)

@@ -1,52 +1,51 @@
 <template>
   <!--图片上传框-->
-  <el-upload :show-file-list="false"
-             v-model="avatarFile"
-             @change="fileChange"
-             :limit="1"
-             accept="image/img,image/png,image/jpg,image/jpeg">
-    <el-image style="width: 50%" title="上传图像" :src="nullImgUrl"/>
+  <el-upload :show-file-list="false" v-model="avatarFile" @change="fileChange" :limit="1"
+    accept="image/img,image/png,image/jpg,image/jpeg">
+    <el-image style="width: 50%" title="上传图像" :src="nullImgUrl" />
   </el-upload>
   <br>
   <div v-show="changeHeadImgBtnFlag">
     选择分类：
     <el-select style="width: 100px;margin-right: 20px" placeholder="选择分类(默认为头像)" v-model="image.sort"
-               default-first-option>
-      <el-option label="头像" value="headImg"/>
-      <el-option label="背景" value="bg"/>
-      <el-option v-if="isAdmin" style="color: red" label="黑名单" value="blacklist"/>
+      default-first-option>
+      <el-option label="头像" value="headImg" />
+      <el-option label="背景" value="bg" />
+      <el-option v-if="isAdmin" style="color: red" label="黑名单" value="blacklist" />
     </el-select>
     <span v-if="isAdmin">选择状态：</span>
     <el-select style="width: 100px" placeholder="选择状态(默认为待审核)" v-model="image.status" v-if="isAdmin"
-               default-first-option>
-      <el-option label="待审核" :value="0"/>
-      <el-option label="审核通过" :value="1"/>
-      <el-option style="color: red" label="黑名单" :value="2"/>
+      default-first-option>
+      <el-option label="待审核" :value="0" />
+      <el-option label="审核通过" :value="1" />
+      <el-option style="color: red" label="黑名单" :value="2" />
     </el-select>
   </div>
   <div style="margin: 10px auto" v-show="changeHeadImgBtnFlag">
     <el-button @click="cancel" type="danger">删除</el-button>
-    <el-button @click="headImgDialogVisible=true">浏览</el-button>
+    <el-button @click="headImgDialogVisible = true">浏览</el-button>
     <el-button type="primary" @click="updateAvatar(avatar)">上传</el-button>
   </div>
 
   <!--  头像大图浏览框-->
   <el-dialog v-model="headImgDialogVisible" style="background-color: transparent;"
-             @click="headImgDialogVisible=!headImgDialogVisible" fullscreen :show-close="false">
-    <img :src="nullImgUrl" alt="Preview Image"/>
+    @click="headImgDialogVisible = !headImgDialogVisible" fullscreen :show-close="false">
+    <img :src="nullImgUrl" alt="Preview Image" />
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import {reactive, ref} from "vue";
-import {ElMessage, UploadFile, ElLoading} from "element-plus";
+import { reactive, ref, toRefs } from "vue";
+import { ElMessage, UploadFile, ElLoading } from "element-plus";
 import * as SparkMD5 from "spark-md5";
 import axios from "axios";
-import useUserInfo from "@/hooks/useUserInfo";
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+
+const userInfoStore = useUserInfoStore()
+const { isAdmin, bgUrl, headImgUrl } = toRefs(userInfoStore)
 
 
-const {updateLocalUserInfo} = useUserInfo()
-const {isAdmin} = useUserInfo()
 
 //计算图片的MD5值
 let md5 = ref(sessionStorage.getItem('md5') || '')
@@ -117,16 +116,14 @@ const updateAvatar = async (file: File) => {
     })
     console.log(result)
     loading.close()
-    const {status, msg, imgUrl} = result.data as { status: number, msg: string, imgUrl: string }
+    const { status, msg, imgUrl } = result.data as { status: number, msg: string, imgUrl: string }
     if (status === 200) ElMessage.success(msg)
     if (!isAdmin.value) {
       console.log('非管理员管理状态')
-      if (image.sort === 'headImg') {
-        updateLocalUserInfo({headImgUrl: imgUrl})
-        // headImgUrl.value=imgUrl
-      } else if (image.sort === 'bg') {
-        updateLocalUserInfo({bgUrl: imgUrl})
-        //修改背景图
+      if (image.sort === 'headImg') {//修改头像
+        headImgUrl.value = imgUrl
+      } else if (image.sort === 'bg') {//修改背景图
+        bgUrl.value = imgUrl
       }
     }
     setTimeout(() => {
@@ -155,6 +152,4 @@ function cancel() {
 </script>
 
 
-<style scoped>
-
-</style>
+<style scoped></style>

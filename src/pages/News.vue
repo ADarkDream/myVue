@@ -5,12 +5,12 @@
       <!--      <el-button @click="getNewsChannel">获取频道</el-button>-->
       <br>
       新闻条数：
-      <el-input style="width: 50px;margin-right: 50px" v-model="newsNum" placeholder="新闻条数"/>
+      <el-input style="width: 50px;margin-right: 50px" v-model="newsNum" placeholder="新闻条数" />
 
-      <el-button v-for="(item,index) in channelList" :key="index" @click="getNews(item)">{{ item }}</el-button>
+      <el-button v-for="(item, index) in channelList" :key="index" @click="getNews(item)">{{ item }}</el-button>
     </el-header>
     <el-main>
-      <el-scrollbar :height="screenHeight-175">
+      <el-scrollbar :height="screenHeight - 175">
         <!--新闻列表区-->
         <div class="card" v-for="item in newsList" @click="">
           <div class="articleCover">
@@ -18,7 +18,7 @@
               <template #error>
                 <div class="image-slot">
                   <el-icon style="width: 50px">
-                    <icon-picture/>
+                    <icon-picture />
                   </el-icon>
                 </div>
               </template>
@@ -31,8 +31,8 @@
             <div>
               <!--            <el-text size="small" tag="sub" truncated v-html="item.content"></el-text>-->
               <el-link type="primary" :href="item.weburl">PC端</el-link>&ensp;<el-link type="primary" :href="item.url">
-              移动端
-            </el-link>
+                移动端
+              </el-link>
             </div>
             <div class="footer">
               <el-text size="small" tag="b" style="width: 30%" truncated>{{ item.src }}</el-text>
@@ -49,13 +49,14 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, reactive, ref } from "vue";
+import { Picture as IconPicture } from '@element-plus/icons-vue'
 import axios from "axios";
-import {ElMessage} from "element-plus";
-import {Picture as IconPicture} from '@element-plus/icons-vue'
-import {onMounted, reactive, ref} from "vue";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
 
-const {screenHeight} = useResponsive()
+
+const { screenHeight } = useResponsive()
 const channel = ref('政治')//频道
 const newsNum = ref(10)//新闻条数
 // const channelList = reactive([])
@@ -81,7 +82,7 @@ function getNewsChannel() {
     url: '/newsChannel',
   }).then(result => {
     console.log(result)
-    const { data} = result.data
+    const { data } = result.data
     channelList.splice(0, channelList.length, ...data)
 
   }).catch(error => {
@@ -91,7 +92,7 @@ function getNewsChannel() {
   })
 }
 
-function getNews(type:string) {
+function getNews(type: string) {
   axios({
     url: '/news',
     params: {
@@ -100,7 +101,7 @@ function getNews(type:string) {
     },
   }).then(result => {
     console.log(result)
-    const {data} = result.data
+    const { data } = result.data
     newsList.splice(0, newsList.length, ...data)
   }).catch(error => {
     console.log('发生错误：')
@@ -116,7 +117,7 @@ function getNews(type:string) {
 
 <style scoped>
 .el-container {
-/*  background-color: rgba(176, 163, 149, 255)*/
+  /*  background-color: rgba(176, 163, 149, 255)*/
   background: var(--el-color-primary-light-9);
 }
 
@@ -145,5 +146,4 @@ function getNews(type:string) {
   text-align: left;
   margin-left: 5%;
 }
-
 </style>

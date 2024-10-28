@@ -3,17 +3,17 @@
     <el-card class="content">
       <div class="title">
         <el-tooltip content="推荐导航网站" placement="bottom">
-          <el-button type="success" circle @click="changeFlag" :icon="UploadFilled"/>
+          <el-button type="success" circle @click="changeFlag" :icon="UploadFilled" />
         </el-tooltip>
         <el-text type="primary" style="font-size: 20px">{{ sortName }}</el-text>
         <!--      <el-button v-if="false" @click="addAllUrl(localList[num],targetList[num])">批量上传 {{ nameList[num] }}-->
         <!--        网址到数据库-->
         <!--      </el-button>-->
         <el-tooltip content="隐藏，精简模式" placement="bottom">
-          <el-button type="danger" circle @click="showContent" :icon="CloseBold"/>
+          <el-button type="danger" circle @click="showContent" :icon="CloseBold" />
         </el-tooltip>
       </div>
-      <el-divider/>
+      <el-divider />
       <div class="mainContent">
         <!--网址显示区域-->
         <el-card class="cards" shadow="hover" v-for="item in resultList">
@@ -25,29 +25,35 @@
       </div>
     </el-card>
     <!--上传导航网址-->
-    <el-dialog v-model="dialogVisible" style="opacity: 1;" :show-close="false" title="推荐导航网站"
-               :width="dialogWidth">
-      <AddUrl/>
+    <el-dialog v-model="dialogVisible" style="opacity: 1;" :show-close="false" title="推荐导航网站" :width="dialogWidth">
+      <AddUrl />
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
-import {ElMessage} from "element-plus";
-import {onBeforeUnmount, onMounted, reactive, ref} from "vue";
-import {CloseBold, UploadFilled} from "@element-plus/icons-vue";
-import {emitter} from "@/utils/emitter";
-import {NavigationObj, Navigation, WebsiteInfoItem} from "@/types/url"
-import AddUrl from "@/components/AddUrl.vue";
+import { onBeforeUnmount, onMounted, reactive, ref, toRefs } from "vue";
+import { ElMessage } from "element-plus";
+import { CloseBold, UploadFilled } from "@element-plus/icons-vue";
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
-import useUserInfo from "@/hooks/useUserInfo";
-import {ResultData} from "@/types/global";
+//components
+import AddUrl from "@/components/AddUrl.vue";
+//utils
+import { emitter } from "@/utils/emitter";
+//types
+import { NavigationObj, Navigation, WebsiteInfoItem } from "@/types/url"
+import { ResultData } from "@/types/global";
 
 
 defineProps(['showContent'])
-const {isLogin} = useUserInfo()
-const {dialogWidth} = useResponsive()
+const userInfoStore = useUserInfoStore()
+
+const { isLogin } = toRefs(userInfoStore)
+const { dialogWidth } = useResponsive()
 
 const activeIndex = ref<number>(0)//导航分类的序号
 const sortName = ref<string>('')//导航分类标题
@@ -71,13 +77,13 @@ const getUrlListInfo = async () => {
       url: '/getUrlListInfo',
     })
     console.log(result.data)
-    const {data} = result.data
+    const { data } = result.data
     cloudList.splice(0, cloudList.length, ...data!)
     sessionStorage.setItem('cloudList', JSON.stringify(cloudList))
     let isChangeFlag = localList.length === 0//如果不存在本地列表，则直接修改
     console.log('localList', localList)
     if (!isChangeFlag)//本地列表存在，则检查是否是最新数据
-        //遍历本地导航信息是否为最新，不为最新则删除localListObj中对应的键
+      //遍历本地导航信息是否为最新，不为最新则删除localListObj中对应的键
       localList.forEach(item => {
         // 在cloudList中查找匹配的infoItem,返回的是数组
         const thisItem = cloudList.filter(infoItem => item.sort === infoItem.sort && item.updated_time === infoItem.updated_time)//类型一致但时间相等，不修改
@@ -109,8 +115,8 @@ const getNewList = async (sort: string) => {
       console.log('正在使用本地缓存的导航数据', sort)
       return resultList.splice(0, resultList.length, ...localListObj[sort])
     }
-    const result = await axios<ResultData<Navigation[]>>({url: '/getUrlList', params: {className: sort}})
-    const {data} = result.data
+    const result = await axios<ResultData<Navigation[]>>({ url: '/getUrlList', params: { className: sort } })
+    const { data } = result.data
     console.log('查询到的云端数据如下：')
     console.log('result', data)
     resultList.splice(0, resultList.length, ...data!)//显示在页面上
@@ -149,7 +155,7 @@ function changeFlag() {
 onMounted(async () => {
   if (cloudList.length === 0 || localList.length === 0) await getUrlListInfo()
   if (cloudList[activeIndex.value])
-  await getNewList(cloudList[activeIndex.value].sort)
+    await getNewList(cloudList[activeIndex.value].sort)
 })
 
 onBeforeUnmount(() => {

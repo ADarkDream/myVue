@@ -3,34 +3,34 @@
     <el-aside width="200px">
       <el-scrollbar>
         <el-menu :default-active="index.toString()">
-          <router-link :to="{name:'adminUsersManagement'}">
+          <router-link :to="{ name: 'adminUsersManagement' }">
             <el-menu-item index="0" @click="change(0)">用户管理</el-menu-item>
           </router-link>
-          <router-link :to="{name:'adminArticlesManagement'}">
+          <router-link :to="{ name: 'adminArticlesManagement' }">
             <el-menu-item index="1" @click="change(1)">文章管理</el-menu-item>
           </router-link>
-          <router-link :to="{name:'adminCommentsManagement'}">
+          <router-link :to="{ name: 'adminCommentsManagement' }">
             <el-menu-item index="2" @click="change(2)">评论管理</el-menu-item>
           </router-link>
-          <router-link :to="{name:'adminNoticesManagement'}">
+          <router-link :to="{ name: 'adminNoticesManagement' }">
             <el-menu-item index="3" @click="change(3)">公告管理</el-menu-item>
           </router-link>
-          <router-link :to="{name:'adminUrlsManagement'}">
+          <router-link :to="{ name: 'adminUrlsManagement' }">
             <el-menu-item index="4" @click="change(4)">导航管理</el-menu-item>
           </router-link>
-          <router-link :to="{name:'adminImagesManagement'}">
+          <router-link :to="{ name: 'adminImagesManagement' }">
             <el-menu-item index="5" @click="change(5)">图片管理</el-menu-item>
           </router-link>
-          <router-link :to="{name:'adminFeedbackManagement'}">
+          <router-link :to="{ name: 'adminFeedbackManagement' }">
             <el-menu-item index="6" @click="change(6)">反馈管理</el-menu-item>
           </router-link>
-          <router-link :to="{name:'admin1999ImagesManagement'}">
+          <router-link :to="{ name: 'admin1999ImagesManagement' }">
             <el-menu-item index="7" @click="change(7)">1999图片管理</el-menu-item>
           </router-link>
         </el-menu>
       </el-scrollbar>
     </el-aside>
-    <el-main :style="'height:'+ (screenHeight-70)+'px'">
+    <el-main :style="'height:' + (screenHeight - 70) + 'px'">
       <el-scrollbar>
         <router-view></router-view>
       </el-scrollbar>
@@ -39,14 +39,16 @@
 </template>
 
 <script lang="ts" setup>
-import {onMounted, ref} from 'vue'
-import {useRouter} from "vue-router";
-import useUserInfo from "@/hooks/useUserInfo";
+import { onMounted, ref, toRefs } from 'vue'
+import { useRouter } from "vue-router";
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import useResponsive from "@/hooks/useResponsive";
 
-const {screenHeight} = useResponsive()
+const { screenHeight } = useResponsive()
 const router = useRouter();
-const {isAdmin} = useUserInfo()
+const userInfoStore = useUserInfoStore()
+
+const { isAdmin } = toRefs(userInfoStore)
 
 
 //侧边栏激活菜单
@@ -76,7 +78,7 @@ onMounted(() => {
   //管理员登录判断
   if (!isAdmin.value) {
     if (document.referrer.includes('muxidream')) return router.back()
-    return router.push({name: 'home'})
+    return router.push({ name: 'home' })
   }
   render()
 })
@@ -127,6 +129,4 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
 }
-
-
 </style>

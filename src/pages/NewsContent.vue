@@ -3,7 +3,7 @@
     <div class="articleBar" v-if="false">
       <el-button @click="router.back()">
         <el-icon>
-          <ArrowLeftBold/>
+          <ArrowLeftBold />
         </el-icon>
         返回
       </el-button>
@@ -18,43 +18,41 @@
       <el-container style="min-height: 400px">
         <el-header>
           <h1 class="articleTitle">{{ article.title }}
-            <el-text v-if="article.status===0" type="primary">[待审核]</el-text>
-            <el-text v-if="article.status===2" type="danger">[未过审]</el-text>
+            <el-text v-if="article.status === 0" type="primary">[待审核]</el-text>
+            <el-text v-if="article.status === 2" type="danger">[未过审]</el-text>
           </h1>
-          <el-link type="primary" @click="go(article.author,  '',  '')">{{ article.author }}</el-link>
+          <el-link type="primary" @click="go(article.author, '', '')">{{ article.author }}</el-link>
         </el-header>
-        <el-divider/>
+        <el-divider />
         <el-main style="padding:0 20px">
-          <div v-html="article.text" class="articleContent"/>
+          <div v-html="article.text" class="articleContent" />
         </el-main>
-        <el-divider/>
+        <el-divider />
         <el-footer>
           <el-space class="articleFooter" style="text-align: initial;font-size: 14px">
-          <span>板块：<el-button link @click="go('',  article.area,'')" type="primary">
-            {{ article.area }}</el-button><br>
-            标签：<el-button link @click="go('',  '',  article.tags)" type="primary">
-              {{ article.tags }}</el-button></span>
+            <span>板块：<el-button link @click="go('', article.area, '')" type="primary">
+                {{ article.area }}</el-button><br>
+              标签：<el-button link @click="go('', '', article.tags)" type="primary">
+                {{ article.tags }}</el-button></span>
             <span>发布于：{{ getDiffTime(article.created_time) }}<br><template
-                v-if="article.created_time!==article.updated_time">修改于：{{
-                getDiffTime(article.updated_time)
-              }}</template></span>
+                v-if="article.created_time !== article.updated_time">修改于：{{
+                  getDiffTime(article.updated_time)
+                }}</template></span>
           </el-space>
         </el-footer>
       </el-container>
       <!--评论区域-->
       <div class="commentArea">
         <!--评论输入框-->
-        <div class="addCommentDiv " v-if="isShow&&!isAdmin" ref="commentBox" :class="{'':isFixed,'fixed':isFixed}">
+        <div class="addCommentDiv " v-if="isShow && !isAdmin" ref="commentBox"
+          :class="{ '': isFixed, 'fixed': isFixed }">
           <el-row class="addComment" :gutter="10">
             <el-col :lg="2" :md="3" :sm="3" :xs="4" style="display: flex;justify-content: center">
-              <el-avatar :src="headImgUrl" shape="circle"/>
+              <el-avatar :src="headImgUrl" shape="circle" />
             </el-col>
             <el-col :lg="20" :md="18" :sm="18" :xs="15">
-              <el-input class="input" v-model="comment" maxlength="300" :autosize="true"
-                        placeholder="发表你的评论"
-                        show-word-limit
-                        :prefix-icon="Comment"
-                        type="textarea"></el-input>
+              <el-input class="input" v-model="comment" maxlength="300" :autosize="true" placeholder="发表你的评论"
+                show-word-limit :prefix-icon="Comment" type="textarea"></el-input>
             </el-col>
             <el-col :lg="2" :md="3" :sm="3" :xs="5" style="display: flex">
               <el-button @click="addComment" type="primary">发表</el-button>
@@ -62,17 +60,17 @@
           </el-row>
         </div>
         <el-divider>评论区</el-divider>
-        <div v-if="comments.length===0">暂无评论</div>
-        <el-row v-else v-for="(item,index) in comments" :key="index" class="comments" :gutter="10">
+        <div v-if="comments.length === 0">暂无评论</div>
+        <el-row v-else v-for="(item, index) in comments" :key="index" class="comments" :gutter="10">
           <el-col :sm="2" :xs="4">
             <el-button text type="primary" style="padding: 0;margin: 10px 0;" size="small">
-              <el-avatar :src="item.headImgUrl" style="width: 40px;" @error="errorImage"/>
+              <el-avatar :src="item.headImgUrl" style="width: 40px;" @error="errorImage" />
             </el-button>
           </el-col>
           <el-col :sm="22" :xs="20">
             <div style="width: 100%;height: 20px;margin-bottom: 5px;display: flex;justify-content: space-between">
               <el-space spacer="" style="text-align: left;">
-                <el-text type="success" v-if="item.uid===article.authorId">[作者]</el-text>
+                <el-text type="success" v-if="item.uid === article.authorId">[作者]</el-text>
                 <el-text type="primary"> {{ item.observer }}</el-text>
               </el-space>
               <el-space spacer="">
@@ -80,14 +78,13 @@
                 <el-text type="primary">{{ index + 1 }}楼</el-text>
                 <el-dropdown>
                   <el-icon class="el-icon--right">
-                    <MoreFilled/>
+                    <MoreFilled />
                   </el-icon>
                   <template #dropdown>
                     <el-dropdown-menu>
                       <el-dropdown-item command="a" :icon="WarnTriangleFilled">举报</el-dropdown-item>
                       <el-dropdown-item command="b" :icon="Delete"
-                                        v-if="isAdmin||article.authorId===uid || item.uid===uid"
-                                        @click="deleteRow(item.id)">删除
+                        v-if="isAdmin || article.authorId === uid || item.uid === uid" @click="deleteRow(item.id)">删除
                       </el-dropdown-item>
                     </el-dropdown-menu>
                   </template>
@@ -106,19 +103,23 @@
 </template>
 
 <script setup lang="ts">
+import { nextTick, onMounted, onUnmounted, reactive, ref, toRefs } from "vue";
+import { useRoute, useRouter } from 'vue-router'
+import { ArrowLeftBold, Refresh, Comment, Delete, MoreFilled, WarnTriangleFilled } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
 import axios from "axios";
-import useTimeStamp from '@/hooks/useTimestamp'
-import {ElMessage, ElMessageBox, ElLoading} from "element-plus";
-import {nextTick, onMounted, onUnmounted, reactive} from "vue";
-import {ref} from 'vue'
-import {useRoute, useRouter} from 'vue-router'
-import {ArrowLeftBold, Refresh, Comment, Delete, MoreFilled, WarnTriangleFilled} from "@element-plus/icons-vue";
-import useUserInfo from "@/hooks/useUserInfo";
-import useResponsive from "@/hooks/useResponsive";
 import hljs from 'highlight.js/lib/common';
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
+import useTimeStamp from '@/hooks/useTimestamp'
+import useResponsive from "@/hooks/useResponsive";
 
-const {isLogin, isAdmin, uid, headImgUrl, errorImage} = useUserInfo()
-const {screenWidth} = useResponsive()
+
+const userInfoStore = useUserInfoStore()
+
+const { isLogin, isAdmin, uid, headImgUrl, errorImage } = toRefs(userInfoStore)
+const { screenWidth } = useResponsive()
 const router = useRouter()
 const route = useRoute() // 注意：接收参数的时候不带 ‘r’
 const isShow = ref(true)
@@ -128,12 +129,12 @@ if (isSubmit === '0') isShow.value = false
 
 
 function go(author: string, area: string, tags: string) {
-  router.push({name: 'center', query: {author, area, tags}})
+  router.push({ name: 'center', query: { author, area, tags } })
 }
 
 
 //时间戳转换
-let {getTime, getDiffTime} = useTimeStamp()
+let { getTime, getDiffTime } = useTimeStamp()
 
 //文章类型声明
 interface Article {
@@ -176,7 +177,7 @@ function getArticle() {
     }
   }).then(async (result) => {
     console.log(result)
-    const {msg, comments: commentsData} = result.data
+    const { msg, comments: commentsData } = result.data
     console.log(msg)
     // ElMessage.success(msg)
     Object.assign(article, result.data.article)
@@ -200,7 +201,7 @@ function getArticle() {
 //给代码块添加高亮
 // 复制功能
 import useFunction from "@/hooks/useFunction";
-const {copyCode} = useFunction()
+const { copyCode } = useFunction()
 function addCodeHighLight() {
   const codeBlocks = document.querySelectorAll('[class*="language-"]')
   codeBlocks.forEach((item: HTMLElement) => {
@@ -265,7 +266,7 @@ function addComment() {
     }).then(result => {
       // console.log(result)
       loading.close()
-      const {status, msg} = result.data
+      const { status, msg } = result.data
       if (status === 200) {
         ElMessage.success(msg)
         // 成功之后刷新
@@ -306,25 +307,25 @@ function checkArticle(status: number) {
 //确认删除评论
 const deleteRow = (id: number) => {
   ElMessageBox.confirm(
-      '确认删除该评论吗?',
-      'Warning',
-      {
-        confirmButtonText: '确认删除',
-        cancelButtonText: '取消删除',
-        type: 'warning',
-        showClose: false
-      }
+    '确认删除该评论吗?',
+    'Warning',
+    {
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消删除',
+      type: 'warning',
+      showClose: false
+    }
   )
-      .then(() => {
-        console.log(111)
-        deleteComment(id)
+    .then(() => {
+      console.log(111)
+      deleteComment(id)
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '删除操作已取消',
       })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '删除操作已取消',
-        })
-      })
+    })
 }
 
 //删除评论
@@ -332,7 +333,7 @@ const deleteComment = (id: number) => {
   axios({
     url: '/deleteTheComment',
     method: 'delete',
-    params: {id}
+    params: { id }
   }).then((result) => {
     // console.log(result)
     ElMessage.success(result.data.msg)
@@ -414,7 +415,8 @@ console.log(getTime((new Date()).toISOString()))
   padding: 0 10px 5px 10px;
 }
 
-.el-col { /*评论区文字垂直居中*/
+.el-col {
+  /*评论区文字垂直居中*/
   display: flex;
   align-items: center;
   text-align: center;
@@ -433,12 +435,15 @@ console.log(getTime((new Date()).toISOString()))
 
 
 .fixed {
-  position: fixed; /*  使评论框根据滚动条固定位置 */
-  transition: all 0.5s; /* 可选：添加动画平滑滚动 */
+  position: fixed;
+  /*  使评论框根据滚动条固定位置 */
+  transition: all 0.5s;
+  /* 可选：添加动画平滑滚动 */
   height: 52px;
   left: 20px;
   right: 20px;
-  bottom: 0; /* 固定在底部 */
+  bottom: 0;
+  /* 固定在底部 */
   z-index: 1;
   background-color: var(--el-color-primary-light-9);
 }

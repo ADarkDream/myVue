@@ -1,18 +1,11 @@
 <template>
-  <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      status-icon
-      :rules="Rules"
-      label-width="auto"
-      class="loginForm"
-      label-position="top"
-  >
+  <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="Rules" label-width="auto" class="loginForm"
+    label-position="top">
     <el-form-item prop="email">
-      <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" autocomplete="off"/>
+      <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" autocomplete="off" />
     </el-form-item>
     <el-form-item prop="password">
-      <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码"/>
+      <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码" />
     </el-form-item>
     <el-form-item prop="policy" autocomplete="off">
       <input type="checkbox" v-model="ruleForm.policy">&ensp;我已阅读并同意
@@ -26,15 +19,23 @@
 </template>
 
 <script lang="ts" setup>
-import {reactive, ref} from 'vue'
-import {ElMessage, type FormInstance, type FormRules} from 'element-plus'
-import verifyRules from "@/utils/verifyRules";
-import type {loginForm} from "@/types/form";
+import { reactive, ref, toRefs } from 'vue'
+import { useRouter } from "vue-router";
 import axios from "axios";
-import {useRouter} from "vue-router";
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//utils
+import verifyRules from "@/utils/verifyRules";
+import titleDiv from '@/utils/titleDiv';
+//types
+import type { loginForm } from "@/types/form";
+
 
 const router = useRouter()
-
+const userInfoStore = useUserInfoStore()
+const { token, userInfo, } = toRefs(userInfoStore)
+const { updateLocalUserInfo } = userInfoStore
 const ruleFormRef = ref<FormInstance>()
 
 //表单数据
@@ -46,17 +47,17 @@ const ruleForm = reactive<loginForm>({
 
 //用哪些表单验证规则
 const Rules = ref<FormRules<typeof ruleForm>>({
-  email: [{validator: verifyRules.email, required: true, trigger: 'blur'}],
-  password: [{validator: verifyRules.password, required: true, trigger: 'blur'}],
-  policy: [{validator: verifyRules.policy, required: true, trigger: 'blur'}]
+  email: [{ validator: verifyRules.email, required: true, trigger: 'blur' }],
+  password: [{ validator: verifyRules.password, required: true, trigger: 'blur' }],
+  policy: [{ validator: verifyRules.policy, required: true, trigger: 'blur' }]
 })
 
 //切换loading状态
-const {toLogin}=defineProps(['toLogin'])
+const { toLogin } = defineProps(['toLogin'])
 const isLoading = ref(false)
 
 //显示隐私政策
-const showPolicy = () => ElMessage.info('隐私政策') //emitter.emit('showNotice', {showNum: '1', activeNum: '3'})
+const showPolicy = () => titleDiv.showNotice({ show_num: 1, active_num: 3 })
 
 //提交表单，再次判断表单验证是否通过
 const submitForm = async () => {
@@ -84,7 +85,7 @@ const resetForm = () => {
 }
 
 //把重置表单暴露给父组件
-defineExpose({submitForm})
+defineExpose({ submitForm })
 //endregion
 
 
@@ -93,7 +94,7 @@ const login = async () => {
   try {
     //解决点击登录后马上切换导致误通过的BUG
     if (!ruleForm.policy) return
-    const {email, password} = ruleForm
+    const { email, password } = ruleForm
     const result = await axios({
       url: '/login',
       method: 'post',
@@ -105,14 +106,14 @@ const login = async () => {
 
     console.log(result.data)
 
-    const {userInfo} = result.data
-    localStorage.setItem('userInfo', JSON.stringify(userInfo))
+    const { userInfo } = result.data
+    updateLocalUserInfo(userInfo)
     //成功提示信息
     ElMessage.success(`用户 ${userInfo.username} 登录成功`)
-    sessionStorage.setItem('isLogin', '1')
+
     setTimeout(() => {
       location.reload()
-      router.replace({name: "home"})
+      // router.replace({ name: "home" })
     }, 1000)
   } catch (error) {
     console.error(error)

@@ -4,50 +4,42 @@
   </el-header>
   <div class="header2">
     <el-col :span="3">
-      <el-button type="primary" @click="dialogVisible=true">上传图片</el-button>
+      <el-button type="primary" @click="dialogVisible = true">上传图片</el-button>
     </el-col>
     <el-col :span="3">
       <el-select placeholder="选择版本" v-model="condition.version" multiple :suffix-icon="Search">
-        <el-option v-for="item in versionInfo" :key="item.value" :label="item.text" :value="item.value"/>
+        <el-option v-for="item in versionInfo" :key="item.value" :label="item.text" :value="item.value" />
       </el-select>
     </el-col>
     <el-col :span="4">
-      <el-tree-select
-          placeholder="包含角色"
-          v-model="condition.roles"
-          :data="sourceData"
-          multiple
-          :render-after-expand="false"
-          :filter-node-method="filterNodeMethod"
-          @change="updateRoleNames(true)"
-          filterable
-          :suffix-icon="Search"
-      />
+      <el-tree-select placeholder="包含角色" v-model="condition.roles" :data="sourceData" multiple
+        :render-after-expand="false" :filter-node-method="filterNodeMethod" @change="updateRoleNames(true)" filterable
+        :suffix-icon="Search" />
     </el-col>
     <el-col :span="2">
       <el-select v-model.trim="condition.orderBy" placeholder="排序根据">
-        <el-option label="默认排序" value=""/>
-        <el-option label="根据id" value="id"/>
-        <el-option label="创建时间" value="created_time"/>
+        <el-option label="默认排序" value="" />
+        <el-option label="根据id" value="id" />
+        <el-option label="创建时间" value="created_time" />
       </el-select>
     </el-col>
     <el-col :span="2">
       <el-select :disabled="!condition.orderBy" v-model.trim="condition.isDesc" placeholder="排序方向">
-        <el-option label="正序" value=""/>
-        <el-option label="倒序" value="desc"/>
+        <el-option label="正序" value="" />
+        <el-option label="倒序" value="desc" />
       </el-select>
     </el-col>
     <el-col :span="2">
       <el-select v-model.trim="condition.accurate" placeholder="是否精确查找">
-        <el-option label="精准查询" :value="1"/>
-        <el-option label="模糊查询" :value="0"/>
+        <el-option label="精准查询" :value="1" />
+        <el-option label="模糊查询" :value="0" />
       </el-select>
     </el-col>
     <el-col :span="2">
       <el-select v-model.trim="condition.sort" placeholder="图片类型">
-        <el-option label="全选" :value="2"/>
-        <el-option label="横屏" :value="1"/>
-        <el-option label="竖屏" :value="0"/>
+        <el-option label="全选" :value="2" />
+        <el-option label="横屏" :value="1" />
+        <el-option label="竖屏" :value="0" />
       </el-select>
     </el-col>
     <el-col :span="6">
@@ -56,45 +48,39 @@
     </el-col>
   </div>
   <el-main style="padding-bottom:0;padding-top: 0 ">
-    <el-table ref="tableRef" :data="tableData" style="width: 100%" :max-height="screenHeight-260" stripe border
-              highlight-current-row
-              table-layout="auto" type="type" :default-sort="{ prop: 'imgIndex', order: 'custom' }"
-              @sort-change="handleSortChange">
-      <el-table-column fixed prop="imgIndex" label="本页序号" width="100" align="center" sortable/>
-      <el-table-column prop="id" label="ID" width="50" align="center" sortable/>
+    <el-table ref="tableRef" :data="tableData" style="width: 100%" :max-height="screenHeight - 260" stripe border
+      highlight-current-row table-layout="auto" type="type" :default-sort="{ prop: 'imgIndex', order: 'custom' }"
+      @sort-change="handleSortChange">
+      <el-table-column fixed prop="imgIndex" label="本页序号" width="100" align="center" sortable />
+      <el-table-column prop="id" label="ID" width="50" align="center" sortable />
       <el-table-column prop="version" label="版本" width="100" align="center">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
+          <div v-if="isEditRow === scope.$index">
             <el-select placeholder="选择版本" v-model="imgInfo.version">
-              <el-option v-for="item in versionInfo" :key="item.value" :label="item.text" :value="item.value"/>
+              <el-option v-for="item in versionInfo" :key="item.value" :label="item.text" :value="item.value" />
             </el-select>
           </div>
           <template v-else v-for="item in versionInfo" :key="item.value">
-            <el-text v-if="item.value===scope.row.version">
+            <el-text v-if="item.value === scope.row.version">
               {{ item.text }}
             </el-text>
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="imgUrl" sum-text :label="isEditRow===-1?'图片':'链接' " width="130" align="center">
+      <el-table-column prop="imgUrl" sum-text :label="isEditRow === -1 ? '图片' : '链接'" width="130" align="center">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input type="textarea" v-model="imgInfo.imgUrl" placeholder="请输入图片链接"/>
+          <div v-if="isEditRow === scope.$index">
+            <el-input type="textarea" v-model="imgInfo.imgUrl" placeholder="请输入图片链接" />
           </div>
           <!--preview-teleported解决图片显示不全的问题-->
-          <div v-else class="preImg" :id="'imgDiv-'+imgInfo.imgIndex">
-            <el-image :src="scope.row.imgUrl" :zoom-rate="1.2" :id="'img-'+scope.row.imgIndex"
-                      :max-scale="7"
-                      :min-scale="0.2"
-                      :preview-src-list="isChoose!==0? [] : previewImgList"
-                      :initial-index="scope.row.imgIndex"
-                      fit="scale-down" lazy
-                      :preview-teleported="true"
-            >
+          <div v-else class="preImg" :id="'imgDiv-' + imgInfo.imgIndex">
+            <el-image :src="scope.row.imgUrl" :zoom-rate="1.2" :id="'img-' + scope.row.imgIndex" :max-scale="7"
+              :min-scale="0.2" :preview-src-list="isChoose !== 0 ? [] : previewImgList"
+              :initial-index="scope.row.imgIndex" fit="scale-down" lazy :preview-teleported="true">
               <template #error>
                 <div class="image-slot">
                   <el-icon style="width: 50px">
-                    <icon-picture/>
+                    <icon-picture />
                   </el-icon>
                 </div>
               </template>
@@ -104,24 +90,17 @@
       </el-table-column>
       <el-table-column prop="roleNames" label="包含角色" width="200" align="center">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-tree-select
-                v-model="roleIDList"
-                :data="sourceData"
-                multiple
-                :render-after-expand="false"
-                :filter-node-method="filterNodeMethod"
-                @change="updateRoleNames()"
-                filterable
-            />
+          <div v-if="isEditRow === scope.$index">
+            <el-tree-select v-model="roleIDList" :data="sourceData" multiple :render-after-expand="false"
+              :filter-node-method="filterNodeMethod" @change="updateRoleNames()" filterable />
           </div>
           <el-text v-else type="primary">{{ scope.row.roleNames }}</el-text>
         </template>
       </el-table-column>
       <el-table-column prop="newName" label="图片名" width="150" align="center">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input type="textarea" v-model="imgInfo.newName" placeholder="请输入图片名称"/>
+          <div v-if="isEditRow === scope.$index">
+            <el-input type="textarea" v-model="imgInfo.newName" placeholder="请输入图片名称" />
           </div>
           <div v-else>
             {{ scope.row.newName }}
@@ -130,15 +109,15 @@
       </el-table-column>
       <el-table-column prop="oldName" label="官方原名" width="150" align="center">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input type="textarea" v-model="imgInfo.oldName" placeholder="请输入图片名称"/>
+          <div v-if="isEditRow === scope.$index">
+            <el-input type="textarea" v-model="imgInfo.oldName" placeholder="请输入图片名称" />
           </div>
           <div v-else>
             {{ scope.row.oldName }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="imgPath" sum-text label="服务器存储路径" width="100" align="center"/>
+      <el-table-column prop="imgPath" sum-text label="服务器存储路径" width="100" align="center" />
       <el-table-column prop="time" label="官方上传时间" width="120">
         <template #default="scope">{{ scope.row.time }}</template>
       </el-table-column>
@@ -147,16 +126,16 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="100">
         <template #default="scope">
-          <div v-if="isEditRow!==scope.$index">
+          <div v-if="isEditRow !== scope.$index">
             <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row)">
+            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row)">
               删除
             </el-button>
           </div>
           <div v-else>
             <el-button link type="primary" size="small" @click="handleCancel">取消
             </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(imgInfo,scope.row)">
+            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(imgInfo, scope.row)">
               更新
             </el-button>
           </div>
@@ -164,15 +143,10 @@
       </el-table-column>
     </el-table>
     <div class="pageMenu">
-      <el-pagination
-          v-model:current-page="condition.currentPage"
-          v-model:page-size="condition.pageSize"
-          :page-sizes="[10, 25, 50, 100]"
-          :layout="total/condition.pageSize!>10? 'total, sizes, prev, pager, next,jumper' :'total, sizes, prev, pager, next'"
-          :total="total"
-          @size-change="render"
-          @current-change="render"
-      />
+      <el-pagination v-model:current-page="condition.currentPage" v-model:page-size="condition.pageSize"
+        :page-sizes="[10, 25, 50, 100]"
+        :layout="total / condition.pageSize! > 10 ? 'total, sizes, prev, pager, next,jumper' : 'total, sizes, prev, pager, next'"
+        :total="total" @size-change="render" @current-change="render" />
     </div>
   </el-main>
 
@@ -184,24 +158,39 @@
 
 
 <script setup lang="ts">
-import {useRouter} from 'vue-router'
+import { onMounted, reactive, ref, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox, ElTreeSelect } from "element-plus";
+import { Picture as IconPicture, Search } from "@element-plus/icons-vue";
 import axios from "axios";
-import {ElMessage, ElMessageBox, ElTreeSelect} from "element-plus";
-import type {TableInstance} from "element-plus";
-import {onMounted, reactive, ref} from 'vue'
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
 import useTimeStamp from "@/hooks/useTimestamp";
-import {Picture as IconPicture, Search} from "@element-plus/icons-vue";
-import useUserInfo from "@/hooks/useUserInfo";
 import useFunction from "@/hooks/useFunction";
 import useResponsive from "@/hooks/useResponsive";
+//components
+
+//utils
+
+//types
+
+import type { TableInstance } from "element-plus";
+import { Sort, TableFilterItem } from '@/types/global';
+
+
+
+
+
 
 const router = useRouter()
-const {getTime} = useTimeStamp()
-const {deepEqual,diffObj} = useFunction()
-const {isAdmin} = useUserInfo()
-const {screenHeight} = useResponsive()
+const { getTime } = useTimeStamp()
+const { deepEqual, diffObj } = useFunction()
+const userInfoStore = useUserInfoStore()
+const { isAdmin } = toRefs(userInfoStore)
+const { screenHeight } = useResponsive()
 //管理员登录判断
-if (!isAdmin.value) router.replace({name: 'home'})
+if (!isAdmin.value) router.replace({ name: 'home' })
 
 
 //region  树状选择框
@@ -227,15 +216,15 @@ const updateRoleNames = (isSearch = false) => {
 
 //用户查询的参数
 const condition: ImgParams = reactive({
-      version: [],
-      roles: [],
-      sort: 2,
-      accurate: 0,
-      pageSize: 25,
-      currentPage: 1,
-      orderBy: '',
-      isDesc: ''
-    }
+  version: [],
+  roles: [],
+  sort: 2,
+  accurate: 0,
+  pageSize: 25,
+  currentPage: 1,
+  orderBy: '',
+  isDesc: ''
+}
 )
 //用户上一次查询的参数
 const oldCondition: ImgParams = reactive({
@@ -250,7 +239,7 @@ const oldCondition: ImgParams = reactive({
 })
 
 //当前修改的图片信息
-const imgInfo:ReverseImgInfo = reactive({
+const imgInfo: ReverseImgInfo = reactive({
   id: 0,
   oldName: '',
   newName: '',
@@ -287,7 +276,7 @@ const clearFilter = () => {
 
 
 //监听排序行为，并修改数组顺序,否则删除会出错
-function handleSortChange({prop, order}: Sort<ReverseImgInfo>) {
+function handleSortChange({ prop, order }: Sort<ReverseImgInfo>) {
   //  {column,prop, order}
   console.log(prop, order)
   if (prop === 'id') {//根据排序整个列表
@@ -317,13 +306,13 @@ const getVersion = async () => {
   try {
     const result = await axios({
       url: '/getVersion',
-      params: {version: true,role: 'all'}
+      params: { version: true, role: 'all' }
     })
     console.log('getVersion', result)
-    const {versionList, roleList}: { versionList: VersionInfo[], roleList: Role[] } = result.data.data
+    const { versionList, roleList }: { versionList: VersionInfo[], roleList: Role[] } = result.data.data
     // const versionList=
     //更新版本列表
-    versionList.forEach((item) => versionInfo.push({text: item.versionName, value: item.version}))
+    versionList.forEach((item) => versionInfo.push({ text: item.versionName, value: item.version }))
 
     //更新角色列表
     roleInfo.splice(0, roleInfo.length, ...roleList)
@@ -341,9 +330,9 @@ const getVersion = async () => {
     console.log('campInfo', campInfo)
     const newSourceData = <SourceData[]>campInfo.map((item, index) => {
       const children = roleList.map(role => {
-        if (role.camp === item) return {label: role.name, value: role.id}
+        if (role.camp === item) return { label: role.name, value: role.id }
       }).filter(item => item !== undefined)//过滤掉空值
-      return {label: item, value: index, children}
+      return { label: item, value: index, children }
     })
 
     sourceData.splice(0, sourceData.length, ...newSourceData)
@@ -400,7 +389,7 @@ const getImages = async () => {
       checkNoRole.value = false
     }
 
-//判断筛选条件是否改变
+    //判断筛选条件是否改变
     if (deepEqual(condition, oldCondition, true)) return ElMessage.info('筛选条件未作改变，已取消查询')
     else {
       // 将 a 的值同步到 b，包括空值
@@ -419,7 +408,7 @@ const getImages = async () => {
       params: condition
     })
     console.log('getImages', result)
-    const {status, totalNum} = result.data
+    const { status, totalNum } = result.data
     if (status === 300) return//没有查询结果则不进行以下操作
     total.value = totalNum
     tableData.splice(0, tableData.length, ...result.data.data)
@@ -504,7 +493,7 @@ function checkUpdateRow(newData: ReverseImgInfo, oldData: ReverseImgInfo) {
 
 //上传更新的图片信息
 function updateRow(data: ReverseImgInfo, oldData: ReverseImgInfo) {
-  const {roleNames, ...newData} = data //通过解构赋值去除roleNames
+  const { roleNames, ...newData } = data //通过解构赋值去除roleNames
   if (!newData || JSON.stringify(newData) === '{}') return ElMessage.warning('修改不能为空')
   axios({
     url: '/updateAllWallPaper',
@@ -515,7 +504,7 @@ function updateRow(data: ReverseImgInfo, oldData: ReverseImgInfo) {
     }
   }).then(result => {
     // console.log(result)
-    const {msg} = result.data
+    const { msg } = result.data
     //判断是否修改文件路径
     // if (newPath !== undefined) data.imgPath = newPath
     //将修改后的信息显示出来
@@ -534,24 +523,24 @@ function updateRow(data: ReverseImgInfo, oldData: ReverseImgInfo) {
 //图片删除确认
 const deleteRow = (index: number, info: ReverseImgInfo) => {
   ElMessageBox.confirm(
-      '确认删除该图片吗?',
-      'Warning',
-      {
-        confirmButtonText: '确认删除',
-        cancelButtonText: '取消删除',
-        type: 'warning',
-        showClose: false
-      }
+    '确认删除该图片吗?',
+    'Warning',
+    {
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消删除',
+      type: 'warning',
+      showClose: false
+    }
   )
-      .then(() => {
-        deleteImage(index, info)
+    .then(() => {
+      deleteImage(index, info)
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '删除操作已取消',
       })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '删除操作已取消',
-        })
-      })
+    })
 }
 
 //删除图片
@@ -573,7 +562,7 @@ const deleteImage = (index: number, data: ReverseImgInfo) => {
 
 
 <style scoped>
-.demo-pagination-block + .demo-pagination-block {
+.demo-pagination-block+.demo-pagination-block {
   margin-top: 10px;
 }
 

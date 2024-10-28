@@ -1,21 +1,23 @@
 <template>
-  <el-scrollbar :height="containerHeight+'px'" @scroll="scroll">
-    <router-view/>
+  <el-scrollbar :height="containerHeight + 'px'" @scroll="scroll">
+    <router-view />
   </el-scrollbar>
 </template>
 
 <script setup lang="ts">
+//hooks
 import useResponsive from "@/hooks/useResponsive";
-import {emitter} from "@/utils/emitter";
+//utils
+import { emitter } from "@/utils/emitter";
 
-const {containerHeight} = useResponsive()
+const { containerHeight } = useResponsive()
 
 interface Scroll {
   scrollLeft: number,
   scrollTop: number
 }
 
-function scroll({scrollLeft, scrollTop}: Scroll) {
+function scroll({ scrollLeft, scrollTop }: Scroll) {
   console.log('鼠标滚动了', scrollTop, 'px')
   emitter.emit('comments-move', scrollTop)
 }
@@ -27,7 +29,6 @@ body {
   overflow-x: hidden;
   overflow-y: visible;
 }
-
 </style>
 <style scoped>
 /*.centerScrollbar {

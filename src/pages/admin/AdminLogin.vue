@@ -1,53 +1,44 @@
 <template>
-  <el-dialog
-      v-model="centerDialogVisible"
-      title="管理员登录界面"
-      align-center
-      width="500"
-      style="opacity: 0.8;"
-      :show-close="false"
-  >
-      <el-form
-          ref="ruleFormRef"
-          :model="ruleForm"
-          status-icon
-          :rules="(Rules)"
-          label-width="auto"
-          label-position="top"
-      >
+  <el-dialog v-model="centerDialogVisible" title="管理员登录界面" align-center width="500" style="opacity: 0.8;"
+    :show-close="false">
+    <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="(Rules)" label-width="auto" label-position="top">
 
-        <el-form-item prop="email">
-          <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱"/>
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input v-model.lazy.trim="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)" type="password"
-                    autocomplete="off" placeholder="输入密码"/>
-        </el-form-item>
+      <el-form-item prop="email">
+        <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" />
+      </el-form-item>
+      <el-form-item prop="password">
+        <el-input v-model.lazy.trim="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)" type="password"
+          autocomplete="off" placeholder="输入密码" />
+      </el-form-item>
 
 
-        <div class="btn">
-          <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-          <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="loading">登录</el-button>
-        </div>
-      </el-form>
+      <div class="btn">
+        <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+        <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="loading">登录</el-button>
+      </div>
+    </el-form>
   </el-dialog>
 </template>
 
 <script lang="ts" setup>
 import axios from "axios";
-import {reactive, ref} from 'vue'
-import {ElMessage, type FormInstance, type FormRules} from 'element-plus'
+import { reactive, ref, toRefs } from 'vue'
+import { useRouter } from "vue-router";
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 
-import {useRouter} from "vue-router";
-import useResponsive from "@/hooks/useResponsive";
-import useUserInfo from "@/hooks/useUserInfo";
-const {isPC} =useResponsive()
-const {isAdmin} = useUserInfo()
+
 const router = useRouter()
+const userInfoStore = useUserInfoStore()
+
+
+const { isAdmin } = toRefs(userInfoStore)
+
 
 const centerDialogVisible = ref(true)
 //管理员登录判断
-if (isAdmin.value) router.replace({name: 'adminUsersManagement'})
+if (isAdmin.value) router.replace({ name: 'adminUsersManagement' })
 
 
 //表单数据
@@ -81,21 +72,21 @@ const validatePassword = (rule: any, value: any, callback: any) => {
     callback(new Error('密码不能为空！请输入密码！'))
   }
   setTimeout(() => {
-        let reg = /^([A-Za-z\d\-&.,()\s]+)+$/i;
-        if (!reg.test(value) || value.length < 6 || value.length > 18) {
-          callback(new Error('请输入6-18位不含特殊字符的密码！'))
-        } else {
-          callback()
-        }
-      }, 1000
+    let reg = /^([A-Za-z\d\-&.,()\s]+)+$/i;
+    if (!reg.test(value) || value.length < 6 || value.length > 18) {
+      callback(new Error('请输入6-18位不含特殊字符的密码！'))
+    } else {
+      callback()
+    }
+  }, 1000
   )
 }
 
 
 //用哪些表单验证规则
 const Rules = reactive<FormRules<typeof ruleForm>>({
-  email: [{validator: checkEmail, trigger: 'blur'}],
-  password: [{validator: validatePassword, trigger: 'blur'}],
+  email: [{ validator: checkEmail, trigger: 'blur' }],
+  password: [{ validator: validatePassword, trigger: 'blur' }],
 
 })
 //endregion
@@ -132,14 +123,14 @@ const resetForm = (formEL: FormInstance | undefined) => {
   formEL.resetFields()
 }
 //把重置表单暴露给父组件
-defineExpose({resetForm})
+defineExpose({ resetForm })
 //endregion
 
 
 //region登录账号
 function login() {
   // console.log('login')
-  const {email, password} = ruleForm
+  const { email, password } = ruleForm
   axios({
     url: '/login',
     method: 'post',
@@ -150,7 +141,7 @@ function login() {
     }
   }).then((result) => {
     console.log(result)
-    const {userInfo} = result.data
+    const { userInfo } = result.data
     sessionStorage.setItem('userInfo', JSON.stringify(userInfo))
     //成功提示信息
     ElMessage.success(`管理员  ${userInfo.username} 登录成功`)

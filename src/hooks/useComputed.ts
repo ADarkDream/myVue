@@ -1,9 +1,11 @@
 //保留精度的计算
-import {BigNumber} from 'bignumber.js';
-import {DateParam, DateValue} from '@/types/books'
+import { BigNumber } from 'bignumber.js';
+//hooks
 import useTimestamp from '@/hooks/useTimestamp'
+//types
+import type { DateParam, DateValue } from '@/types/books'
 
-const {formatDate} = useTimestamp()
+const { formatDate } = useTimestamp()
 
 // 加法
 export function numPlus(a: number, b: number) {
@@ -35,7 +37,7 @@ export function numDiv(a: number, b: number) {
 
 
 //获取本周的日期区间，从周一到周日
-export function getDayDateRange({theDate, dateString}: DateParam, flag?: string): DateValue {
+export function getDayDateRange({ theDate, dateString }: DateParam, flag?: string): DateValue {
     let date
     // 将日期字符串转换为Date对象
     if (dateString && /^\d{4}-\d{2}-\d{2}$/.test(dateString)) date = new Date(dateString);
@@ -49,7 +51,7 @@ export function getDayDateRange({theDate, dateString}: DateParam, flag?: string)
         date = new Date(date.setDate(date.getDate() - 1))
     } else if (flag === 'plus') {
         date = new Date(date.setDate(date.getDate() + 1))
-        if (date >= new Date()) return {isFuture: true}
+        if (date >= new Date()) return { isFuture: true }
     }
 
     // 返回格式化的日期字符串(YYYY-MM-DD)
@@ -62,7 +64,7 @@ export function getDayDateRange({theDate, dateString}: DateParam, flag?: string)
 }
 
 //获取和切换周范围，周一至周日
-export function getWeekDateRange({theDate, dateString}: DateParam, flag?: string): DateValue {
+export function getWeekDateRange({ theDate, dateString }: DateParam, flag?: string): DateValue {
     let date
     // 将日期字符串转换为Date对象
     if (dateString && /^\d{4}-\d{2}-\d{2}$/.test(dateString)) date = new Date(dateString);
@@ -77,7 +79,7 @@ export function getWeekDateRange({theDate, dateString}: DateParam, flag?: string
     } else if (flag === 'plus') {
         date = new Date(date.setDate(date.getDate() + 7))
         if (date >= new Date())
-            return {isFuture: true}
+            return { isFuture: true }
     }
 
     // 获取给定日期是周几（0表示周日，1表示周一，...，6表示周六）
@@ -105,7 +107,7 @@ export function getWeekDateRange({theDate, dateString}: DateParam, flag?: string
 }
 
 //获取和切换月范围
-export function getMonthDateRange({theDate, dateString}: DateParam, flag?: string): DateValue {
+export function getMonthDateRange({ theDate, dateString }: DateParam, flag?: string): DateValue {
     let date
     // 将日期字符串转换为Date对象
     if (dateString && /^\d{4}-\d{2}-\d{2}$/.test(dateString)) date = new Date(dateString);
@@ -119,7 +121,7 @@ export function getMonthDateRange({theDate, dateString}: DateParam, flag?: strin
         date = new Date(date.setMonth(date.getMonth() - 1))
     } else if (flag === 'plus') {
         date = new Date(date.setMonth(date.getMonth() + 1))
-        if (date >= new Date()) return {isFuture: true}
+        if (date >= new Date()) return { isFuture: true }
     }
 
     // 获取当前月份的1号
@@ -141,7 +143,7 @@ export function getMonthDateRange({theDate, dateString}: DateParam, flag?: strin
 
 
 //region获取该月份第一天所在周的周一，及最后一天所在周的周日
-export function getAllMonthDateRange({theDate, dateString}: DateParam, flag?: string): DateValue {
+export function getAllMonthDateRange({ theDate, dateString }: DateParam, flag?: string): DateValue {
     let date;
 
     // 将日期字符串或已存在的Date对象转换为Date对象
@@ -162,7 +164,7 @@ export function getAllMonthDateRange({theDate, dateString}: DateParam, flag?: st
     } else if (flag === 'plus') {
         date = new Date(date.setMonth(date.getMonth() + 1));
         if (date >= new Date()) {
-            return {isFuture: true}; // 如果日期是未来日期，直接返回
+            return { isFuture: true }; // 如果日期是未来日期，直接返回
         }
     }
 

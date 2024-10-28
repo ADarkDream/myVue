@@ -5,7 +5,9 @@ interface Artist {
     pic_url?: string
 }
 
-//专辑信息
+/**
+ * 专辑信息
+ */
 interface Album {
     album_id?: number,
     name: string,
@@ -13,13 +15,23 @@ interface Album {
     publish_time?: string
 }
 
-//歌单的信息
+
+/**
+ * 歌单的信息
+ */
 interface MusicListInfo {
     music_list_id: number,
     cloud_music_list_id?: number,
     name: string,
     uid: number,
+    /**
+     * 歌单自定义的封面
+     */
     pic_url: string,
+    /**
+    * 歌单最后一首歌的专辑封面
+    */
+    default_cover_url: string,
     description?: string,
     status: number,
     songsCount: number,
@@ -27,7 +39,12 @@ interface MusicListInfo {
     updated_time: Date,
 }
 
-//歌单的数据结构
+
+/**
+ * 歌单的数据结构
+ * @param musicListInfo
+ * @param songsInfo
+ */
 interface MusicList {
     musicListInfo: MusicListInfo,
     songsInfo: CloudSongInfo[]
@@ -35,7 +52,7 @@ interface MusicList {
 
 //请求数据库歌单列表信息的结构
 interface QueryMusicLists {
-    isLogin: boolean,
+    is_login: boolean,
     user_id?: number,
     music_list_id?: number
 }
@@ -46,6 +63,7 @@ interface QueryMusicList {
     music_list_id: number,
     limit?: number,
     offset?: number,
+    is_login: boolean
 }
 
 //请求网易云歌单数据的结构

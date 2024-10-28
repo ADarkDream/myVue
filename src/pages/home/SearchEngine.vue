@@ -3,56 +3,60 @@
   <div class="searchDiv">
     <!-- 当前的搜索引擎-->
     <el-button class="engine" style="margin-left: 5px">
-      <img class="searchEngine thisSearchEngine" :src="searchImg" :alt="engineName" @click="showEngines = !showEngines">&ensp;
+      <img class="searchEngine thisSearchEngine" :src="searchImg" :alt="engineName"
+        @click="showEngines = !showEngines">&ensp;
     </el-button>
     <template v-if="showEngines">
       <!--    默认的搜索引擎列表-->
       <template class="engines" v-for="item in searchEngines" :key="item.id">
-        <el-button class="engine" v-show="engineId!==item.id && item.isShow">
+        <el-button class="engine" v-show="engineId !== item.id && item.isShow">
           <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)">
         </el-button>
       </template>
       <!--    自定义的搜索引擎列表-->
       <template class="engines" v-for="item in userEngines" :key="item.id">
-        <el-button class="engine" v-show="engineId!==item.id && item.isShow">
+        <el-button class="engine" v-show="engineId !== item.id && item.isShow">
           <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)">
         </el-button>
       </template>
     </template>
     <!--    添加自定义搜索引擎-->
     <el-button plain type="primary" class="engine" :icon="More" v-if="showEngines"
-               @click="engineOption=!engineOption"/>
+      @click="engineOption = !engineOption" />
     <!--    搜索引擎切换-->
-    <el-button class="change" style="margin-left: 0" @click="showEngines = !showEngines" :icon="Sort"/>
+    <el-button class="change" style="margin-left: 0" @click="showEngines = !showEngines" :icon="Sort" />
     <!--    输入框-->
     <input class="search" type="text" :placeholder="placeholder" v-model.trim="keyword" @keyup.enter="search">
 
-    <el-button class="searchBtn" @click="search" :icon="Search"/>
+    <el-button class="searchBtn" @click="search" :icon="Search" />
   </div>
   <!-- 用户更改搜索引擎列表-->
   <el-dialog title="更改搜索引擎列表" :width="dialogWidth" v-model="engineOption" :fullscreen="!isPC">
     <EditEngines :userEngines="userEngines" :engineId="engineId" :getEngineList="getEngineList" :hideList="hideList"
-                 :hideUserEngine="hideUserEngine" :closeEngineOption="closeEngineOption"/>
+      :hideUserEngine="hideUserEngine" :closeEngineOption="closeEngineOption" />
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {onMounted, reactive, ref} from "vue";
-import {More, Search, Sort} from "@element-plus/icons-vue";
-import {emitter} from "@/utils/emitter";
-
+import { onMounted, reactive, ref, toRefs } from "vue";
+import { More, Search, Sort } from "@element-plus/icons-vue";
 import axios from "axios";
-import useUserInfo from "@/hooks/useUserInfo";
+//stores
+import { useLocalEnginesStore } from "@/store/useLocalEnginesStore";
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
 import useResponsive from "@/hooks/useResponsive";
-import {useLocalEnginesStore} from "@/store/useLocalEnginesStore";
-
-
-import {EngineData} from "@/types/url";
+//components
 import EditEngines from "@/components/EditEngines.vue";
+//utils
+import { emitter } from "@/utils/emitter";
+//types
+import { EngineData } from "@/types/url";
 
-const {isScroll, isPC, dialogWidth} = useResponsive()
-const {isLogin} = useUserInfo()
-const {searchEngines} = useLocalEnginesStore()
 
+const { searchEngines } = useLocalEnginesStore()
+const userInfoStore = useUserInfoStore()
+const { isLogin } = toRefs(userInfoStore)
+const { isScroll, isPC, dialogWidth } = useResponsive()
 
 
 const placeholder = ref('海内存知己')
@@ -157,10 +161,10 @@ function changeEngine(item: EngineData) {
 //隐藏用户自定义搜索引擎
 function hideUserEngine(engine: EngineData) {
   if (isLogin.value) {
-    hideUserList[engine.index!] = {id: engine.id, isShow: engine.isShow}
+    hideUserList[engine.index!] = { id: engine.id, isShow: engine.isShow }
     localStorage.setItem('hideUserList', JSON.stringify(hideUserList))
   } else {
-    hideLocalList[engine.index!] = {id: engine.id, isShow: engine.isShow}
+    hideLocalList[engine.index!] = { id: engine.id, isShow: engine.isShow }
     localStorage.setItem('hideLocalList', JSON.stringify(hideLocalList))
   }
 }
@@ -180,7 +184,7 @@ async function getEngineList() {
       url: '/getEngines',
     }).then(result => {
       // console.log(result)
-      let {engineList} = result.data
+      let { engineList } = result.data
       userEngines.splice(0, userEngines.length)
       engineList = engineList.map((item: EngineData) => {
         item.isShow = true

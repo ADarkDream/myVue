@@ -1,26 +1,30 @@
 <template>
-  <router-view/>
+  <router-view />
 </template>
 
 <script setup lang="ts">
-import {onUnmounted, nextTick, ref} from 'vue'
-import {ElMessage} from 'element-plus'
-import {useChatInfoStore} from "@/store/useChatInfoStore";
-import {useRouter} from "vue-router";
-import {useChatMsgStore} from "@/store/useChatMsgStore";
-import {ChatMsg} from "@/types/chat";
-import {emitter} from "@/utils/emitter";
+import { onUnmounted, nextTick, ref } from 'vue'
+import { useRouter } from "vue-router";
+import { ElMessage } from 'element-plus'
+//stores
+import { useChatInfoStore } from "@/store/useChatInfoStore";
+import { useChatMsgStore } from "@/store/useChatMsgStore";
+//utils
+import { emitter } from "@/utils/emitter";
+//types
+import { ChatMsg } from "@/types/chat";
+
 
 const playerInfo = useChatInfoStore()//本地用户信息
 const socket = playerInfo.socket
-const {roomMsg} = useChatMsgStore()//本地的聊天信息
+const { roomMsg } = useChatMsgStore()//本地的聊天信息
 const router = useRouter()
 
 
 //监听服务器的首次连接，获取信息
 socket.on('connection', result => {
   console.log('connection收到消息：', result)
-  const {status, msg, data} = result
+  const { status, msg, data } = result
   //这里要先判断本地数据，确认是不是断线重连
   if (status === 200) {
     ElMessage.success(msg)
@@ -33,13 +37,13 @@ socket.on('connection', result => {
 //监听自己创建房间的消息
 socket.on('room-add', result => {
   console.log('room-add收到消息：', result)
-  const {status, msg, data} = result
+  const { status, msg, data } = result
   if (status === 200) {
     ElMessage.success(msg)
     Object.assign(playerInfo, data.playerInfo)
     console.log('playerInfo', playerInfo)
     setTimeout(() => {
-      router.push({name: 'talk', query: {roomID: playerInfo.roomID}})
+      router.push({ name: 'talk', query: { roomID: playerInfo.roomID } })
     }, 1000)
   } else ElMessage.error(msg)
 })
@@ -48,13 +52,13 @@ socket.on('room-add', result => {
 //监听自己加入房间的消息
 socket.on('room-join', result => {
   console.log('room-join收到消息：', result)
-  const {status, msg, data} = result
+  const { status, msg, data } = result
   if (status === 200) {
     ElMessage.success(msg)
     Object.assign(playerInfo, data.playerInfo)
     getMsgHistory(data.msgHistory)
     setTimeout(() => {
-      router.push({name: 'talk', query: {roomID: playerInfo.roomID}})
+      router.push({ name: 'talk', query: { roomID: playerInfo.roomID } })
     }, 1000)
   } else ElMessage.error(msg)
 })
@@ -90,7 +94,7 @@ const mergeAndSortArrays = (array1: ChatMsg[], array2: ChatMsg[]): ChatMsg[] => 
 //房间内的消息
 socket.on('room-message', result => {
   console.log('room-message收到消息：', result)
-  const {status, msg, data} = result
+  const { status, msg, data } = result
   if (status === 200) {
     // data.roomID=
     roomMsg.push(data)
@@ -103,7 +107,7 @@ socket.on('room-message', result => {
 //监听其他人加入房间的信息
 socket.on('player-join', result => {
   console.log('player-join收到消息：', result)
-  const {status, msg, data} = result
+  const { status, msg, data } = result
   if (status === 200 && data.playerInfo.playerID !== playerInfo.playerID) //排除本人
     ElMessage.info(msg)
   //roomMsg.push({type: data.type, message:msg, time: data.time})
@@ -114,7 +118,7 @@ socket.on('player-join', result => {
 //监听其他人离开房间的信息
 socket.on('player-leave', result => {
   console.log('player-leave收到消息：', result)
-  const {status, msg, data} = result
+  const { status, msg, data } = result
   if (status === 200) ElMessage.info(msg)//roomMsg.push({type: data.type, msg, time: data.time})
   // list2.push(result)
 })
@@ -155,6 +159,4 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

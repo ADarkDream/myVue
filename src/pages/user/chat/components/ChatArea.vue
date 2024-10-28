@@ -4,8 +4,8 @@
       <el-button @click="reLink" size="small" type="warning" plain>重连</el-button>
       <el-text type="primary" style="font-size: 22px;">{{ isLogin ? '' : '临时' }}聊天室[Demo]</el-text>
       <el-button type="primary"
-                 @click="copyText('https:muxidream.cn/Chat/hall?roomID='+playerInfo.roomID+'&playerName=这里填昵称','房间号')"
-                 title="点击复制当前房间号" size="small">复制房间地址
+        @click="copyText('https:muxidream.cn/Chat/hall?roomID=' + playerInfo.roomID + '&playerName=这里填昵称', '房间号')"
+        title="点击复制当前房间号" size="small">复制房间地址
       </el-button>
     </div>
     <el-scrollbar ref="scrollbarRef">
@@ -25,10 +25,10 @@
              <span>+4</span>
            </div>-->
         <template v-for="item in roomMsg" :key="item.time">
-          <div v-if="item.roomID===playerInfo.roomID"
-               :class="['chat-msg',item.playerID===playerInfo.playerID?'owner':'guest']">
+          <div v-if="item.roomID === playerInfo.roomID"
+            :class="['chat-msg', item.playerID === playerInfo.playerID ? 'owner' : 'guest']">
             <div class="chat-msg-profile">
-              <img class="chat-msg-img" :src="imageSrc" alt=""/>
+              <img class="chat-msg-img" :src="imageSrc" alt="" />
               <!--              <el-text class="chat-msg-title">{{ item.playerName }}</el-text>-->
               <el-text class="chat-msg-date">{{ getDiffTime(item.time) }}</el-text>
             </div>
@@ -62,7 +62,8 @@
       <!--        <path-->
       <!--            d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>-->
       <!--      </svg>-->
-      <el-input  type="textarea" ref="inputRef" v-model="msg" @keyup.enter="sendMsg" placeholder="Type something here..."/>
+      <el-input type="textarea" ref="inputRef" v-model="msg" @keyup.enter="sendMsg"
+        placeholder="Type something here..." />
       <el-button type="primary" @click="sendMsg" :icon="Promotion">发送</el-button>
       <!--      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"-->
       <!--           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile">-->
@@ -79,38 +80,45 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, onUnmounted, ref} from "vue";
-import {ElMessage} from "element-plus";
-import {useRouter, useRoute} from "vue-router";
-import useUserInfo from "@/hooks/useUserInfo";
+import { onMounted, onUnmounted, ref, toRefs } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { ElMessage } from "element-plus";
+//stores
+import { useChatInfoStore } from "@/store/useChatInfoStore";
+import { useChatMsgStore } from '@/store/useChatMsgStore'
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+//hooks
 import useTimestamp from "@/hooks/useTimestamp";
-import {useChatInfoStore} from "@/store/useChatInfoStore";
-import {useChatMsgStore} from '@/store/useChatMsgStore'
+//utils
+import titleDiv from '@/utils/titleDiv';
+
 
 
 const playerInfo = useChatInfoStore()//本地用户信息
 const socket = playerInfo.socket
-const {roomMsg} = useChatMsgStore()//本地的聊天信息
+const { roomMsg } = useChatMsgStore()//本地的聊天信息
 // import {ChatMsg} from '@/types/chat'
 import useFunction from "@/hooks/useFunction";
-import {emitter} from "@/utils/emitter";
-import {Promotion} from "@element-plus/icons-vue";
+import { emitter } from "@/utils/emitter";
+import { Promotion } from "@element-plus/icons-vue";
 
 const router = useRouter()
 const route = useRoute()
-const {copyText} = useFunction()
-const {isLogin, imageSrc} = useUserInfo()
-const {getDiffTime} = useTimestamp()
+const { copyText } = useFunction()
+const userInfoStore = useUserInfoStore()
+
+const { isLogin, imageSrc } = toRefs(userInfoStore)
+const { getDiffTime } = useTimestamp()
 
 
 onMounted(() => {
-  const {roomID, playerName} = route.query
+  const { roomID, playerName } = route.query
   if (roomID) playerInfo.setRID(roomID as string)
   if (playerName) playerInfo.setRName(playerName as string)
 
   if (!playerInfo.playerName) {//昵称为空，返回主页
     ElMessage.error('请先填写昵称')
-    return router.push({name: 'hall', query: {roomID}})
+    return router.push({ name: 'hall', query: { roomID } })
   }
 
   if (!playerInfo.roomID) {//房间号为空
@@ -118,12 +126,12 @@ onMounted(() => {
     if (roomID) playerInfo.setRID(roomID as string)
     else {
       ElMessage.error('请先填写房间号')
-      return router.push({name: 'hall'})
+      return router.push({ name: 'hall' })
     }
   }
   console.log('route.query', route.query, JSON.stringify(route.query) !== '{}')
   //如果地址栏有参数则清除
-  if (JSON.stringify(route.query) !== '{}') return router.push({name: 'talk'})
+  if (JSON.stringify(route.query) !== '{}') return router.push({ name: 'talk' })
   reLink()//重连
   inputFocus()//输入框获取焦点
 
@@ -136,7 +144,7 @@ onMounted(() => {
   //   })
   // }
 })
-const showFeedback = () => emitter.emit('showNotice', {showNum: '3', activeNum: '2'})
+const showFeedback = () => titleDiv.showNotice({ show_num: 3, active_num: 2 })
 
 
 const msg = ref<string>('')
@@ -144,17 +152,17 @@ const msg = ref<string>('')
 
 //尝试重连
 const reLink = () => {
-  const {playerID, playerName, roomID, roomName} = playerInfo
+  const { playerID, playerName, roomID, roomName } = playerInfo
   socket.emit('re-link', {
-    playerInfo: {playerID, playerName, roomID, roomName}
+    playerInfo: { playerID, playerName, roomID, roomName }
   })
 }
 
 //发送信息
 const sendMsg = () => {
   if (msg.value) {
-    const {playerID, playerName, roomID, roomName} = playerInfo
-    socket.emit('room-message', {message: msg.value, playerInfo: {playerID, playerName, roomID, roomName}})
+    const { playerID, playerName, roomID, roomName } = playerInfo
+    socket.emit('room-message', { message: msg.value, playerInfo: { playerID, playerName, roomID, roomName } })
     msg.value = ''
   }
 }
@@ -206,8 +214,8 @@ window.addEventListener('beforeunload', listener)
 
 //退出,删除全部监听
 onUnmounted(() => {
-  const {playerID, playerName, roomID, roomName} = playerInfo
-  socket.emit('room-leave', {playerInfo: {playerID, playerName, roomID, roomName}, reason: '离开聊天界面'})
+  const { playerID, playerName, roomID, roomName } = playerInfo
+  socket.emit('room-leave', { playerInfo: { playerID, playerName, roomID, roomName }, reason: '离开聊天界面' })
   removeEventListener('beforeunload', listener)
   console.log('已退出chatRoom')
   // socket.removeAllListeners()
@@ -298,7 +306,7 @@ onUnmounted(() => {
     font-size: 14px;
     font-weight: 500;
 
-    & + & {
+    &+& {
       margin-top: 10px;
     }
   }
@@ -407,7 +415,7 @@ onUnmounted(() => {
     color: var(--settings-icon-hover);
   }
 
-  & + svg {
+  &+svg {
     margin-left: 12px;
   }
 }
@@ -429,6 +437,7 @@ onUnmounted(() => {
 
 
 .dark {
+
   .search-bar input,
   .detail-area input {
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56.966 56.966' fill='%236f7073'%3e%3cpath d='M55.146 51.887L41.588 37.786A22.926 22.926 0 0046.984 23c0-12.682-10.318-23-23-23s-23 10.318-23 23 10.318 23 23 23c4.761 0 9.298-1.436 13.177-4.162l13.661 14.208c.571.593 1.339.92 2.162.92.779 0 1.518-.297 2.079-.837a3.004 3.004 0 00.083-4.242zM23.984 6c9.374 0 17 7.626 17 17s-7.626 17-17 17-17-7.626-17-17 7.626-17 17-17z'/%3e%3c/svg%3e");
@@ -455,7 +464,7 @@ onUnmounted(() => {
     border: 2px solid var(--theme-bg-color);
   }
 
-  * + * {
+  *+* {
     margin-left: -5px;
   }
 
@@ -499,6 +508,4 @@ onUnmounted(() => {
     padding: 20px 0;
   }
 }
-
-
 </style>

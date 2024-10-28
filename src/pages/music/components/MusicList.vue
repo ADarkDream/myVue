@@ -1,17 +1,16 @@
 <!--歌单列表-->
 <template>
   <div class="musicList">
-    <el-empty v-if="!musicList?.length" class="emptyDiv" description=" ">
+    <el-empty v-if="!musicList?.length && !musicListInfo" class="emptyDiv" description=" ">
       <template #default>
         <p>请先搜索或选择歌单</p>
         <el-link type="primary" @click="changePanelIndex(1)">前往歌单广场</el-link>
       </template>
     </el-empty>
     <div v-else class="infoDiv" :class="{ hide: isHidden }">
-      <img :src="musicListInfo?.pic_url" class="cover">
+      <img :src="(musicListInfo?.pic_url || musicListInfo?.default_cover_url || defaultAlbumArt)" class="cover">
       <div class="music_list_info">
-        <p class="title">
-          {{ musicListInfo?.name }}
+        <p class="title"><el-text>{{ musicListInfo?.name }}</el-text>
           <el-button link type="warning" :icon="ArrowUpBold" v-show="!isHidden" @click="toggleInfoVisible">
             {{ '收起' }}
           </el-button>
@@ -25,8 +24,8 @@
           </p>
           <p>歌曲数：{{ musicListInfo?.songsCount }}<el-button link size="small" plain type="primary"
               @click="refresh({ cloud_music_list_id: musicListInfo?.cloud_music_list_id! })">刷新</el-button></p>
-          <p>介绍：
-            <el-text type="info" v-html="musicListInfo?.description || '暂无介绍'"></el-text>
+          <p>介绍：<el-text type="info" class="description" truncated :line-clamp="isPC ? 3 : 1">{{
+            musicListInfo?.description || '暂无介绍' }}</el-text>
           </p>
           <p>上次更新时间：
             <el-text type="info">{{ getTime(musicListInfo!.updated_time) }}</el-text>
@@ -56,14 +55,20 @@
 import { computed, ref } from "vue";
 import { ArrowDownBold, ArrowUpBold } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
-import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
+//stores
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
+//hooks
 import useTimestamp from "@/hooks/useTimestamp";
 import useFunction from "@/hooks/useFunction";
 import useResponsive from "@/hooks/useResponsive";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import useMusicList from "@/hooks/music/useMusicList";
+//components
+import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
+//files
+import defaultAlbumArt from "@/assets/music/music.svg";
+
 
 const musicListStore = useMusicListStore()
 const musicConfigStore = useMusicConfigStore()
@@ -152,14 +157,30 @@ const addTheList = async (isPlay = false) => {
 .music_list_info {
   padding-left: 20px;
   position: relative;
+  width: 100%;
 
   .title {
-    font-size: 20px;
-    color: var(--el-color-primary);
+    display: flex;
+    justify-content: space-between;
+
+    .el-text {
+      font-size: 20px;
+      color: var(--el-color-primary);
+    }
   }
 
   p {
+    display: flex;
     padding: 3px 0;
+
+    .description {
+      white-space: pre-wrap;
+      /*识别\n换行 */
+      flex: 1;
+      /*占据这一行的剩余空间 */
+    }
+
+
   }
 
   .toggleBtn {
@@ -216,7 +237,7 @@ const addTheList = async (isPlay = false) => {
   .music_list_info {
     padding-left: 5px;
 
-    .title {
+    .title .el-text {
       font-size: 16px;
     }
 

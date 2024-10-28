@@ -94,6 +94,11 @@ export default function () {
         return date + ' ' + hour + ':' + minute
     }
 
+    /**
+     * 
+     * @param timestamp 
+     * @returns 
+     */
     function getDate(timestamp: string | number = Date.now()) {
         const d = new Date(formatTimestamp(timestamp))
         const month = addZero(d.getMonth() + 1)
@@ -106,13 +111,17 @@ export default function () {
         // if (hour.)
         return date + ' ' + hour + ':' + minute
     }
-
-    //格式化日期为YYYY-MM-DD
-    const formatDate = (date = new Date()) => {
+    /**
+     * 格式化日期为YYYY-MM-DD
+     * @param date -日期对象
+     * @param mark -间隔符，默认为'-'
+     * @returns YYYY-MM-DD
+     */
+    const formatDate = (date = new Date(), mark = '-') => {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份补0
         const day = String(date.getDate()).padStart(2, '0'); // 日期补0
-        return `${year}-${month}-${day}`;
+        return `${year}${mark}${month}${mark}${day}`;
     }
 
 
@@ -125,6 +134,6 @@ export default function () {
     }
 
     // 向外暴露
-    return { getTime, getDiffTime, getDiffTimestamp, formatDate, formatMusicTime }
+    return { getTime, getDate, getDiffTime, getDiffTimestamp, formatDate, formatMusicTime }
 }
 

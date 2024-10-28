@@ -12,6 +12,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
+//files
 import SVG_volume_mute from '@/assets/music/volume_mute.svg?component'
 import SVG_volume_fill from '@/assets/music/volume_fill.svg?component'
 

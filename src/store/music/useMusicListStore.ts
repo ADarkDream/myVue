@@ -52,6 +52,11 @@ export const useMusicListStore = defineStore('music_list', () => {
     //歌单信息对象
     const musicListInfoObj = reactive<{ [key: string]: MusicListInfo }>({})
 
+    /**
+     * 用户创建的歌单id列表
+     */
+    const myMusicIdList = ref<number[]>([])
+
     //当前歌单的信息
     const musicListInfo = ref<MusicListInfo>()
 
@@ -140,6 +145,7 @@ export const useMusicListStore = defineStore('music_list', () => {
         thisMusic,
         musicListInfo,
         musicList,
+        myMusicIdList,
         connectionObj,
         musicListInfoObj,
         musicListObj,
@@ -149,11 +155,7 @@ export const useMusicListStore = defineStore('music_list', () => {
     }
 }, {
     persist: [{
-        pick: ['playList', 'playingIndex', 'playListIndex', 'musicListInfo', 'musicList', 'connectionObj'],
+        pick: ['playList', 'playingIndex', 'playListIndex', 'musicListInfo', 'musicList', 'myMusicidList', 'connectionObj'],
         storage: localStorage
-    },
-    {
-        pick: ['musicListInfoObj', 'musicListObj',],
-        storage: sessionStorage
     }]
 })

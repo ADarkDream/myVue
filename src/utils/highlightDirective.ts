@@ -1,11 +1,11 @@
 import hljs from 'highlight.js/lib/common';
 import 'highlight.js/styles/default.css'; // 选择你喜欢的代码高亮样式
-
-// 复制功能
+//hooks
 import useFunction from "@/hooks/useFunction";
 
-const {copyCode} = useFunction()
-const copy = (text) => {
+
+const { copyCode } = useFunction()
+const copy = (text: string) => {
     const textarea = document.createElement('textarea');
     textarea.value = text;
     copyCode(text, '代码')
@@ -41,7 +41,7 @@ export default {
                     copy(code);
                     // 使用 Element Plus 的消息组件
                     if (typeof ElMessage !== 'undefined') {
-                        ElMessage.success({message: '复制成功！', offset: 100});
+                        ElMessage.success({ message: '复制成功！', offset: 100 });
                     } else {
                         alert('复制成功！');
                     }

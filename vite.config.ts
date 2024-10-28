@@ -1,10 +1,10 @@
-import {fileURLToPath, URL} from 'node:url'
+import { fileURLToPath, URL } from 'node:url'
 
-import {defineConfig} from 'vite'
+import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 import legacy from "@vitejs/plugin-legacy"
 import compression from 'vite-plugin-compression';
@@ -34,8 +34,8 @@ export default defineConfig({
             //     secure: false, //是否https接口
             // }
         },
-        warmup:{
-            clientFiles:[
+        warmup: {
+            clientFiles: [
                 '/src/components/TitleDiv.vue'
             ]
         }
@@ -43,7 +43,7 @@ export default defineConfig({
     plugins: [
         vue({
             template: {
-                compilerOptions: {isCustomElement: (tag) => tag.startsWith('wc-')}
+                compilerOptions: { isCustomElement: (tag) => tag.startsWith('wc-') }
             },
         }),
         //SVG插件
@@ -74,7 +74,8 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url))
+            '@': fileURLToPath(new URL('./src', import.meta.url)),
+
         }
     },
     //下面的esbuild和build用于压缩打包后的代码,注释掉可以在线上看报错(开发环境下的store的语句也会被删除)

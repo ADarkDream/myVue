@@ -18,7 +18,7 @@
             <el-button link @click="playTheMusic(item, index)" size="small" type="primary">
               点击播放
             </el-button>
-            <el-button link size="small" type="primary" @click="ElMessage.info('收藏功能开发中')">
+            <el-button link size="small" type="primary" @click="showMusicListDrawer([item.id])">
               收藏到歌单
             </el-button>
             <el-button link v-if="item.cloud_music_id !== 0" @click="musicPlay.shareMusicLink(item)" size="small"
@@ -35,16 +35,24 @@
 </template>
 
 <script setup lang="ts">
-import { ElMessage } from "element-plus";
-import { useMusicListStore } from "@/store/music/useMusicListStore";
-import type { CloudSongInfo } from "@/types/music";
-import useResponsive from "@/hooks/useResponsive";
 import { Delete } from "@element-plus/icons-vue";
+//stores
+import { useMusicListStore } from "@/store/music/useMusicListStore";
+//hooks
+import useResponsive from "@/hooks/useResponsive";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
+import useMusic from "@/hooks/music/useMusic";
+//utils
 import musicPlay from "@/utils/music/musicPlay";
+//types
+import type { CloudSongInfo } from "@/types/music";
+//types
 import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.svg?component'
+
+
 const musicListStore = useMusicListStore()
 const { drawerSize } = useResponsive()
+const { showMusicListDrawer } = useMusic()
 
 const { toggleMusic, play } = useMusicPlay()
 const { songsList, height } = defineProps(['songsList', 'height']) as { songsList: CloudSongInfo[], height: number }

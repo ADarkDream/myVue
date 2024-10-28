@@ -22,9 +22,9 @@
         <div class="editor">
             <h3>{{ isEdit ? '编辑' : '预览' }}</h3>
             <div v-if="imgList?.length !== 0">
-                <transition-group name="list">
+                <TransitionGroup name="list">
                     <img :src="imgList[imgIndex].src" alt="Image Preview" @click="addSlide(true)">
-                </transition-group>
+                </TransitionGroup>
                 <p v-if="!isEdit">{{ imgList[imgIndex].desc }}</p>
                 <textarea v-else v-model="imgList[imgIndex].desc" placeholder="填写备注..."></textarea>
             </div>

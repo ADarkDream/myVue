@@ -3,40 +3,37 @@
     公告管理
   </el-header>
   <div class="header2">
-    <el-button type="primary" @click="dialogVisible=true">发布新公告</el-button>
+    <el-button type="primary" @click="dialogVisible = true">发布新公告</el-button>
     <el-button @click="clearFilter">清空全部筛选</el-button>
   </div>
   <el-main style="padding-bottom:0;padding-top: 0 ">
-    <el-table ref="tableRef" :data="tableData" style="width: 100%"  stripe border highlight-current-row
-              table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }">
-      <el-table-column fixed prop="id" label="ID" width="70" sortable/>
+    <el-table ref="tableRef" :data="tableData" style="width: 100%" stripe border highlight-current-row
+      table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }">
+      <el-table-column fixed prop="id" label="ID" width="70" sortable />
       <el-table-column prop="title" label="公告标题" width="150">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input v-model="newNotice.title"/>
+          <div v-if="isEditRow === scope.$index">
+            <el-input v-model="newNotice.title" />
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="sort" label="公告分类" width="150"
-                       :filters="noticeSort"
-                       :filter-method="filterHandler"
-      >
+      <el-table-column prop="sort" label="公告分类" width="150" :filters="noticeSort" :filter-method="filterHandler">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
+          <div v-if="isEditRow === scope.$index">
             <el-select placeholder="选择分类(默认为更新说明)" v-model="newNotice.sort" default-first-option>
-              <el-option v-for="item in noticeSort" :label="item.text" :value="item.value"/>
+              <el-option v-for="item in noticeSort" :label="item.text" :value="item.value" />
             </el-select>
           </div>
-          <div v-else-if="scope.row.sort==='updateNotes'">更新说明</div>
-          <div v-else-if="scope.row.sort==='noUpdated'">待更新内容</div>
-          <div v-else-if="scope.row.sort==='completed'">1999已完成内容</div>
-          <div v-else-if="scope.row.sort==='unCompleted'">1999待完成内容</div>
+          <div v-else-if="scope.row.sort === 'updateNotes'">更新说明</div>
+          <div v-else-if="scope.row.sort === 'noUpdated'">待更新内容</div>
+          <div v-else-if="scope.row.sort === 'completed'">1999已完成内容</div>
+          <div v-else-if="scope.row.sort === 'unCompleted'">1999待完成内容</div>
         </template>
       </el-table-column>
       <el-table-column prop="content" label="公告内容" width="300">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
-            <el-input type="textarea" v-model="newNotice.content"/>
+          <div v-if="isEditRow === scope.$index">
+            <el-input type="textarea" v-model="newNotice.content" />
           </div>
         </template>
       </el-table-column>
@@ -44,17 +41,16 @@
       <el-table-column prop="status" label="状态" width="120" :filters="[
         { text: '已发布', value: 1 },
         { text: '已撤销', value: 0 },
-      ]"
-                       :filter-method="filterHandler">
+      ]" :filter-method="filterHandler">
         <template #default="scope">
-          <div v-if="isEditRow===scope.$index">
+          <div v-if="isEditRow === scope.$index">
             <el-select placeholder="选择状态(默认为发布中)" v-model="newNotice.status" default-first-option>
-              <el-option label="已发布" :value="1"/>
-              <el-option label="已撤销" :value="0"/>
+              <el-option label="已发布" :value="1" />
+              <el-option label="已撤销" :value="0" />
             </el-select>
           </div>
-          <el-button text v-else-if="scope.row.status===1">已发布</el-button>
-          <el-button text type="danger" v-else-if="scope.row.status===0">已撤销</el-button>
+          <el-button text v-else-if="scope.row.status === 1">已发布</el-button>
+          <el-button text type="danger" v-else-if="scope.row.status === 0">已撤销</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="created_time" label="创建时间" width="150">
@@ -65,16 +61,16 @@
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="100">
         <template #default="scope">
-          <div v-if="isEditRow!==scope.$index">
+          <div v-if="isEditRow !== scope.$index">
             <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row.id)">
+            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row.id)">
               删除
             </el-button>
           </div>
           <div v-else>
             <el-button link type="primary" size="small" @click="handleCancel">取消
             </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newNotice,scope.row)">
+            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newNotice, scope.row)">
               更新
             </el-button>
           </div>
@@ -87,18 +83,18 @@
   <el-dialog v-model="dialogVisible" :show-close="false" title="发布新公告">
     <el-form :model="form" label-width="auto" style="max-width: 600px;margin: 0 auto">
       <el-form-item label="公告标题">
-        <el-input v-model="form.title"/>
+        <el-input v-model="form.title" />
       </el-form-item>
       <el-form-item label="公告分类">
         <el-select v-model="form.sort" placeholder="选择公告类型">
-           <el-option v-for="item in noticeSort" :label="item.text" :value="item.value"/>
+          <el-option v-for="item in noticeSort" :label="item.text" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="公告内容">
-        <el-input v-model="form.content" type="textarea"/>
+        <el-input v-model="form.content" type="textarea" />
       </el-form-item>
       <div>
-        <el-button @click="dialogVisible=false">取消发布</el-button>
+        <el-button @click="dialogVisible = false">取消发布</el-button>
         <el-button type="primary" @click="submitNotice(form)">发布公告</el-button>
       </div>
     </el-form>
@@ -107,35 +103,31 @@
 
 
 <script setup lang="ts">
-import {useRouter} from 'vue-router'
 import axios from "axios";
-import {ElMessage, ElMessageBox} from "element-plus";
-import type {TableColumnCtx, TableInstance} from "element-plus";
-import {reactive, ref} from 'vue'
+import { reactive, ref } from 'vue'
+import { ElMessage, ElMessageBox } from "element-plus";
+import type { TableColumnCtx, TableInstance } from "element-plus";
+//hooks
 import useTimeStamp from "@/hooks/useTimestamp";
 import useFunction from "@/hooks/useFunction";
 
-const {getTime} = useTimeStamp()
-const {diffObj} = useFunction()
-const router = useRouter()
+const { getTime } = useTimeStamp()
+const { diffObj } = useFunction()
 
-//管理员登录判断
-import useUserInfo from "@/hooks/useUserInfo";
 
-const {isAdmin} = useUserInfo()
-if (!isAdmin.value) router.replace({name: 'home'})
+
 
 //发布公告面板的显示与隐藏
 let dialogVisible = ref(false)
 
 const tableRef = ref<TableInstance>()
 //公告分类
-const noticeSort=reactive([
-        { text: '更新说明', value: 'updateNotes' },
-        { text: '待更新内容', value: 'noUpdated' },
-        { text: '1999已完成功能', value: 'completed' },
-        { text: '1999待完成功能', value: 'unCompleted' },
-      ])
+const noticeSort = reactive([
+  { text: '更新说明', value: 'updateNotes' },
+  { text: '待更新内容', value: 'noUpdated' },
+  { text: '1999已完成功能', value: 'completed' },
+  { text: '1999待完成功能', value: 'unCompleted' },
+])
 
 //清空全部筛选条件
 const clearFilter = () => {
@@ -144,9 +136,9 @@ const clearFilter = () => {
 
 //筛选器
 const filterHandler = (
-    value: string,
-    row: Notice,
-    column: TableColumnCtx<Notice>
+  value: string,
+  row: Notice,
+  column: TableColumnCtx<Notice>
 ) => {
   const property = column['property']
   return row[property] === value
@@ -189,7 +181,7 @@ function getNotices() {
     url: '/getAllNotices',
   }).then(result => {
     // console.log(result)
-    const {msg, noticeList} = result.data
+    const { msg, noticeList } = result.data
     ElMessage.success(msg)
     tableData.splice(0, tableData.length)
     noticeList.forEach((item: Notice) => {
@@ -242,7 +234,7 @@ function updateRow(data: Notice, oldData: Notice) {
     }
   }).then(result => {
     // console.log(result)
-    const {msg} = result.data
+    const { msg } = result.data
     //更新修订时间为当前时间
     data.updated_time = new Date().toISOString()
     //将修改后的信息显示出来
@@ -273,7 +265,7 @@ function submitNotice(data: Notice) {
     data
   }).then(result => {
     // console.log(result)
-    const {msg} = result.data
+    const { msg } = result.data
     ElMessage.success(msg)
     location.reload()
   }).catch(error => {
@@ -287,25 +279,25 @@ function submitNotice(data: Notice) {
 
 const deleteRow = (index: number, id: number) => {
   ElMessageBox.confirm(
-      '确认删除该公告吗?',
-      'Warning',
-      {
-        confirmButtonText: '确认删除',
-        cancelButtonText: '取消删除',
-        type: 'warning',
-        showClose: false
-      }
+    '确认删除该公告吗?',
+    'Warning',
+    {
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消删除',
+      type: 'warning',
+      showClose: false
+    }
   )
-      .then(() => {
-        deleteNotice(index, id)
-        console.log(index, id)
+    .then(() => {
+      deleteNotice(index, id)
+      console.log(index, id)
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '删除操作已取消',
       })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '删除操作已取消',
-        })
-      })
+    })
 }
 
 //删除公告
@@ -313,7 +305,7 @@ const deleteNotice = (index: number, id: number) => {
   axios({
     url: '/deleteNotice',
     method: 'delete',
-    params: {id}
+    params: { id }
   }).then((result) => {
     // console.log(result)
     ElMessage.success(result.data.msg)
@@ -326,6 +318,4 @@ const deleteNotice = (index: number, id: number) => {
 </script>
 
 
-<style scoped>
-
-</style>
+<style scoped></style>

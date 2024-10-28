@@ -6,24 +6,24 @@
     <img :src='src' alt="该地址无法获取默认图标" style="width: 40px;height: 40px"></el-card>
   <el-form :model="form" label-width="auto" style="max-width: 600px;margin: 0 auto">
     <el-form-item label="站点名称">
-      <el-input v-model="form.name" placeholder="必填"/>
+      <el-input v-model="form.name" placeholder="必填" />
     </el-form-item>
     <el-form-item label="站点地址">
-      <el-input v-model="form.url" @blur="checkIco" type="text" placeholder="必填，站点地址"/>
+      <el-input v-model="form.url" @blur="checkIco" type="text" placeholder="必填，站点地址" />
     </el-form-item>
     <el-form-item label="站点分类">
       <el-select v-model="form.sort" placeholder="必选，选择站点类型">
-        <el-option v-for="item in sort" :label="item.text" :value="item.value"/>
+        <el-option v-for="item in sort" :label="item.text" :value="item.value" />
       </el-select>
     </el-form-item>
     <el-form-item label="站点标签">
-      <el-input v-model="form.tags" type="text" placeholder="选填"/>
+      <el-input v-model="form.tags" type="text" placeholder="选填" />
     </el-form-item>
     <el-form-item label="站点详情">
-      <el-input v-model="form.detail" placeholder="选填，站点的一句话介绍"/>
+      <el-input v-model="form.detail" placeholder="选填，站点的一句话介绍" />
     </el-form-item>
     <el-form-item label="站点图标">
-      <el-input v-model="form.img" placeholder="选填，站点图标链接或base64编码图片"/>
+      <el-input v-model="form.img" placeholder="选填，站点图标链接或base64编码图片" />
     </el-form-item>
     <div>
       <!--        <el-button @click="dialogVisible=false">取消上传</el-button>-->
@@ -33,9 +33,10 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, ref} from 'vue'
-import {ElMessage} from "element-plus";
+import { reactive, ref } from 'vue'
+import { ElMessage } from "element-plus";
 import axios from "axios";
+//files
 import ico_custom from "@/assets/home/custom.png";
 
 
@@ -67,16 +68,16 @@ interface Sort {
 }
 
 let sort = reactive<Sort[]>([
-  {text: '软件下载', value: 'tool'},
-  {text: '在线工具', value: 'onlineTool'},
-  {text: '机器人', value: 'robot'},
-  {text: 'HTML', value: 'html'},
-  {text: '观影', value: 'video'},
-  {text: '电子书', value: 'book'},
-  {text: '教程', value: 'tutorial'},
-  {text: '虚拟机', value: 'vm'},
-  {text: '杂项', value: 'other'},
-  {text: '娱乐', value: 'webGame'},
+  { text: '软件下载', value: 'tool' },
+  { text: '在线工具', value: 'onlineTool' },
+  { text: '机器人', value: 'robot' },
+  { text: 'HTML', value: 'html' },
+  { text: '观影', value: 'video' },
+  { text: '电子书', value: 'book' },
+  { text: '教程', value: 'tutorial' },
+  { text: '虚拟机', value: 'vm' },
+  { text: '杂项', value: 'other' },
+  { text: '娱乐', value: 'webGame' },
 ])
 
 
@@ -98,7 +99,7 @@ function addUrl(data: websiteInfo) {
     data
   }).then(result => {
     // console.log(result)
-    const {msg} = result.data
+    const { msg } = result.data
     ElMessage.success(msg)
     setTimeout(() => {
       location.reload()
@@ -113,6 +114,4 @@ function addUrl(data: websiteInfo) {
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

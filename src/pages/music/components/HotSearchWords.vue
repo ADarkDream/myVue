@@ -7,8 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import { useMusicSearchStore } from "@/store/music/useMusicSearchStore";
 import { toRefs } from "vue";
+//stores
+import { useMusicSearchStore } from "@/store/music/useMusicSearchStore";
+
 
 const searchStore = useMusicSearchStore()
 const { hotWords } = toRefs(searchStore)

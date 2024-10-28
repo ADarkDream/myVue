@@ -2,9 +2,14 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import type { ResultData } from "@/types/global";
-import type { MusicListInfo, QueryCloudMusicList, MusicList, QueryMusicList, QueryMusicLists } from "@/types/music";
+import type { MusicListInfo, QueryCloudMusicList, MusicList, QueryMusicList, QueryMusicLists, CloudSongInfo } from "@/types/music";
 
 const musicList = {
+    /**
+     * 检查id数组是否合规
+     * @param idList
+     * @returns 布尔值
+     */
     checkIdList: (idList: number[]) => {
         if (idList.length === 0) {
             ElMessage.error('请求的idList不能为空')
@@ -22,16 +27,37 @@ const musicList = {
         })
         return true
     },
-    //搜索数据库歌单的歌
-    getMusicList: async ({ music_list_id, limit, offset }: QueryMusicList) => {
+    /**
+     * 获取用户上传的公开音乐列表
+     * @returns songsInfo[]
+     */
+    getCustomMusicList: async () => {
+        try {
+            const result = await axios<ResultData<{ songsInfo: CloudSongInfo[] }>>({
+                url: '/getCustomMusicList',
+            })
+            console.log('/getCustomMusicList返回的数据为：', result.data)
+            const { status, msg, data } = result.data
+            if (status === 200 && data)
+                return data.songsInfo as CloudSongInfo[]
+        } catch (err) {
+            console.error('出错了:')
+            console.error(err)
+        }
+    },
+    /**
+     * 搜索数据库歌单的歌
+     */
+    getMusicList: async ({ music_list_id, limit, offset, is_login }: QueryMusicList) => {
         try {
             const result = await axios<ResultData<MusicList>>({
-                url: '/getMusicList',
+                url: is_login ? '/getMyMusicList' : '/getMusicList',
                 params: { music_list_id, limit, offset },
             })
             console.log('搜索数据库歌单的歌', result.data)
             const { status, msg, data } = result.data
-            return data as MusicList
+            if ((status === 200 || status === 300) && data)
+                return data as MusicList
         } catch (error) {
             console.log('发生错误：')
             console.dir(error)
@@ -57,10 +83,10 @@ const musicList = {
         }
     },
     // 用户获取歌单列表的信息,有user_id查询该用户的所有歌单，有music_list_id查询单个歌单，如果不是自己则只能查公开歌单
-    getMusicListsInfo: async ({ isLogin, user_id, music_list_id }: QueryMusicLists) => {
+    getMusicListsInfo: async ({ is_login, user_id, music_list_id }: QueryMusicLists) => {
         try {
             const result = await axios<ResultData<{ music_lists: MusicListInfo[] }>>({
-                url: isLogin ? '/getUserMusicListsInfo' : '/getMusicListsInfo',
+                url: is_login ? '/getUserMusicListsInfo' : '/getMusicListsInfo',
                 params: {
                     user_id, music_list_id
                 }
@@ -92,6 +118,21 @@ const musicList = {
             console.log('发生错误：')
             console.dir(error)
         }
+    },
+    connectMusicToList: async (music_id_list: number[], music_list_id: number) => {
+        try {
+            const result = await axios({
+                url: '/addCloudMusicToList',
+                method: "POST",
+                data: { music_id_list, music_list_id }
+            })
+            console.log('/connectMusicToList', result.data)
+            return result.data
+        } catch (err) {
+            console.error('connectMusicList出错了:')
+            console.error(err)
+        }
     }
+
 }
 export default musicList

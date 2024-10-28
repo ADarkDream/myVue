@@ -1,40 +1,40 @@
 <template>
-<!--      <el-scrollbar :height="  ">-->
-   <el-container :style="'height:'+(screenHeight-40)+'px;overflow:hidden' ">
+  <!--      <el-scrollbar :height="  ">-->
+  <el-container :style="'height:' + (screenHeight - 40) + 'px;overflow:hidden'">
     <el-header class="header1">
       角色表
     </el-header>
     <!--    移动端筛选框-->
-    <el-collapse  style="margin: 0 10px" v-if="!isPC">
+    <el-collapse style="margin: 0 10px" v-if="!isPC">
       <el-collapse-item title="筛选条件">
         <el-row class="header2">
           <el-col :md="3" v-if="isAdmin">
-            <el-button type="primary" @click="dialogVisible=true" :size="elSize">添加新角色</el-button>
+            <el-button type="primary" @click="dialogVisible = true" :size="elSize">添加新角色</el-button>
           </el-col>
           <el-col :md="3" :sm="4">
             <el-input v-model.trim="searchInfo.name" placeholder="角色名称" :size="elSize" clearable
-                      :prefix-icon="Search"/>
+              :prefix-icon="Search" />
           </el-col>
           <el-col :md="3" :sm="4">
             <el-select v-model="searchInfo.camp" :size="elSize" default-first-option>
-              <el-option label="全选阵营" value=""/>
-              <el-option v-for="(item,index) in campInfo" :key="index" :label="item" :value="item"/>
+              <el-option label="全选阵营" value="" />
+              <el-option v-for="(item, index) in campInfo" :key="index" :label="item" :value="item" />
             </el-select>
           </el-col>
           <el-col :md="3" :sm="4">
             <el-select v-model="searchInfo.race" :size="elSize" default-first-option>
-              <el-option label="全选种族" value=""/>
-              <el-option v-for="(item,index) in raceInfo" :key="index" :label="item" :value="item"/>
+              <el-option label="全选种族" value="" />
+              <el-option v-for="(item, index) in raceInfo" :key="index" :label="item" :value="item" />
             </el-select>
           </el-col>
           <el-col :md="3" :sm="4">
             <el-input v-model.trim="searchInfo.otherTags" placeholder="其他标签" :size="elSize" clearable
-                      :prefix-icon="Search"/>
+              :prefix-icon="Search" />
           </el-col>
           <el-col :md="6" :sm="7">
             <el-button @click="filterChange" type="primary" :size="elSize">筛选查找</el-button>
             <el-button @click="clearFilter" :size="elSize">清空全部筛选</el-button>
-            <el-button :size="elSize" type="primary" @click="router.push({name:'images'})" >点击前往图片表</el-button>
+            <el-button :size="elSize" type="primary" @click="router.push({ name: 'images' })">点击前往图片表</el-button>
           </el-col>
 
         </el-row>
@@ -43,27 +43,27 @@
     <!--    PC筛选框-->
     <el-row class="header2" v-else>
       <el-col :sm="3">
-<!--        <el-button type="primary" @click="dialogVisible=true" :size="elSize">添加新角色</el-button>-->
-             <el-button :size="elSize" type="primary" @click="router.push({name:'images'})" >点击前往图片表</el-button>
+        <!--        <el-button type="primary" @click="dialogVisible=true" :size="elSize">添加新角色</el-button>-->
+        <el-button :size="elSize" type="primary" @click="router.push({ name: 'images' })">点击前往图片表</el-button>
       </el-col>
       <el-col :sm="4">
-        <el-input v-model.trim="searchInfo.name" placeholder="角色名称" :size="elSize" clearable :prefix-icon="Search"/>
+        <el-input v-model.trim="searchInfo.name" placeholder="角色名称" :size="elSize" clearable :prefix-icon="Search" />
       </el-col>
       <el-col :sm="4">
         <el-select v-model="searchInfo.camp" :size="elSize" default-first-option>
-          <el-option label="全选阵营" value=""/>
-          <el-option v-for="(item,index) in campInfo" :key="index" :label="item" :value="item"/>
+          <el-option label="全选阵营" value="" />
+          <el-option v-for="(item, index) in campInfo" :key="index" :label="item" :value="item" />
         </el-select>
       </el-col>
       <el-col :sm="4">
         <el-select v-model="searchInfo.race" :size="elSize" default-first-option>
-          <el-option label="全选种族" value=""/>
-          <el-option v-for="(item,index) in raceInfo" :key="index" :label="item" :value="item"/>
+          <el-option label="全选种族" value="" />
+          <el-option v-for="(item, index) in raceInfo" :key="index" :label="item" :value="item" />
         </el-select>
       </el-col>
       <el-col :sm="3">
         <el-input v-model.trim="searchInfo.otherTags" placeholder="其他标签" :size="elSize" clearable
-                  :prefix-icon="Search"/>
+          :prefix-icon="Search" />
       </el-col>
       <el-col :sm="6">
         <el-button @click="filterChange" type="primary" :size="elSize">筛选查找</el-button>
@@ -71,34 +71,32 @@
       </el-col>
 
     </el-row>
-    <el-main :style="isPC? 'overflow:hidden': 'padding:0 10px' ">
+    <el-main :style="isPC ? 'overflow:hidden' : 'padding:0 10px'">
       <!--      <el-form class="search" :model="newInfo" label-position="left" label-width="auto">-->
       <!--        <el-form-item label-width="auto">-->
 
       <!--        </el-form-item>-->
       <!--      </el-form>-->
       <el-text type="primary">个人收集略有不足，如有错漏还请向我反馈。非常感谢！如有乐意帮忙的司辰也欢迎联系我！</el-text>
-      <el-table ref="tableRef" :data="roleInfo" :height="screenHeight-230" stripe border highlight-current-row
-                table-layout="auto"  :default-sort="{ prop: 'id', order: 'custom' }"
-                @sort-change="handleSortChange">
+      <el-table ref="tableRef" :data="roleInfo" :height="screenHeight - 230" stripe border highlight-current-row
+        table-layout="auto" :default-sort="{ prop: 'id', order: 'custom' }" @sort-change="handleSortChange">
         <!--              @filter-change="filterChange">-->
-        <el-table-column fixed prop="id" label="序号" min-width="80" align="center" sortable/>
+        <el-table-column fixed prop="id" label="序号" min-width="80" align="center" sortable />
         <el-table-column prop="name" label="角色名" min-width="120">
           <template #default="scope">
-            <div v-if="isEditRow===scope.$index">
-              <el-input v-model="newInfo.name"/>
+            <div v-if="isEditRow === scope.$index">
+              <el-input v-model="newInfo.name" />
             </div>
           </template>
         </el-table-column>
         <el-table-column prop="camp" label="所属阵营" min-width="120">
           <template #default="scope">
-            <template v-if="isEditRow===scope.$index">
+            <template v-if="isEditRow === scope.$index">
               <el-select placeholder="选择阵营" v-model="newInfo.camp" default-first-option>
-                <el-option v-for="(item,index) in campInfo" :key="index" :label="item"
-                           :value="item"/>
+                <el-option v-for="(item, index) in campInfo" :key="index" :label="item" :value="item" />
               </el-select>
             </template>
-            <template v-for="(item,index) in campInfo" :key="index" v-else>
+            <template v-for="(item, index) in campInfo" :key="index" v-else>
               <div v-if="item === scope.row.camp">{{ item }}</div>
             </template>
           </template>
@@ -107,21 +105,20 @@
           <!--                       :filters="sort" :column-key="'sort'">-->
           <!--                       :filter-method="filterHandler">-->
           <template #default="scope">
-            <template v-if="isEditRow===scope.$index">
+            <template v-if="isEditRow === scope.$index">
               <el-select placeholder="选择种族" v-model="newInfo.race" default-first-option>
-                <el-option v-for="(item,index) in raceInfo" :key="index" :label="item"
-                           :value="item"/>
+                <el-option v-for="(item, index) in raceInfo" :key="index" :label="item" :value="item" />
               </el-select>
             </template>
-            <template v-for="(item,index) in raceInfo" :key="index" v-else>
+            <template v-for="(item, index) in raceInfo" :key="index" v-else>
               <div v-if="item === scope.row.race">{{ item }}</div>
             </template>
           </template>
         </el-table-column>
         <el-table-column prop="otherTags" label="其它标签" min-width="200" align="center">
           <template #default="scope">
-            <div v-if="isEditRow===scope.$index">
-              <el-input v-model="newInfo.otherTags"/>
+            <div v-if="isEditRow === scope.$index">
+              <el-input v-model="newInfo.otherTags" />
             </div>
           </template>
         </el-table-column>
@@ -133,16 +130,16 @@
         </el-table-column>
         <el-table-column fixed="right" label="操作" min-width="100" align="center" v-if="isAdmin">
           <template #default="scope">
-            <div v-if="isEditRow!==scope.$index">
+            <div v-if="isEditRow !== scope.$index">
               <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" @click="deleteRow(scope.$index,scope.row.id)">
+              <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row.id)">
                 删除
               </el-button>
             </div>
             <div v-else>
               <el-button link type="primary" size="small" @click="handleCancel">取消
               </el-button>
-              <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newInfo,scope.row)">
+              <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newInfo, scope.row)">
                 更新
               </el-button>
             </div>
@@ -150,16 +147,9 @@
         </el-table-column>
       </el-table>
       <div class="pageMenu">
-        <el-pagination
-            v-model:current-page="currentPage"
-            v-model:page-size="pageSize"
-            :page-sizes="[10, 25, 50, 100]"
-            :layout="isPC? 'total, sizes, prev, pager, next, jumper' : 'total, sizes, prev, pager, next,' "
-            :total="total"
-            :small="!isPC"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-        />
+        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 25, 50, 100]"
+          :layout="isPC ? 'total, sizes, prev, pager, next, jumper' : 'total, sizes, prev, pager, next,'" :total="total"
+          :small="!isPC" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
       </div>
 
 
@@ -167,35 +157,48 @@
 
     <!--添加新角色-->
     <el-dialog v-model="dialogVisible" :show-close="false" title="添加新角色">
-      <AddRole/>
+      <AddRole />
     </el-dialog>
   </el-container>
-<!--    </el-scrollbar>-->
+  <!--    </el-scrollbar>-->
 </template>
 
 
 <script setup lang="ts">
-import AddRole from "@/components/AddRole.vue";
-import {useRouter} from 'vue-router'
+import { reactive, ref, watch, toRefs } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from "axios";
-import {ElMessage, ElMessageBox} from "element-plus";
-import type { TableInstance} from "element-plus";
-import {Search} from "@element-plus/icons-vue";
-import {reactive, ref, watch} from 'vue'
+import { ElMessage, ElMessageBox } from "element-plus";
+import type { TableInstance } from "element-plus";
+import { Search } from "@element-plus/icons-vue";
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+
+
+//hooks
 import useTimeStamp from "@/hooks/useTimestamp";
 import useFunction from "@/hooks/useFunction";
-import useUserInfo from "@/hooks/useUserInfo";
 import useResponsive from "@/hooks/useResponsive";
+//components
+import AddRole from "@/components/AddRole.vue";
+//utils
 
-const {getDiffTime, getTime} = useTimeStamp()
-const {diffObj}=useFunction()
+//types
+
+//files
+
+const userInfoStore = useUserInfoStore()
+
+
+const { getDiffTime, getTime } = useTimeStamp()
+const { diffObj } = useFunction()
 const router = useRouter()
 
 //登录判断
 
 //屏幕高度
-const {screenHeight, elSize, isPC} = useResponsive()
-const {isAdmin} = useUserInfo()
+const { screenHeight, elSize, isPC } = useResponsive()
+const { isAdmin } = toRefs(userInfoStore)
 
 
 const roleInfo = reactive([]) //存角色信息
@@ -208,11 +211,11 @@ getRoles()
 function getRoles() {
   axios({
     url: '/getVersion',
-    params: {version:false,role: 'all'}//只查询角色
+    params: { version: false, role: 'all' }//只查询角色
   }).then(result => {
     console.log(result)
-    const {data} = result.data
-    console.log('data',data)
+    const { data } = result.data
+    console.log('data', data)
     //更新角色列表
     roleInfo.splice(0, roleInfo.length, ...data.roleList)
     //获取阵营列表
@@ -384,28 +387,28 @@ function checkUpdateRow(newData: Role, oldData: Role) {
 
 //上传更新的角色信息
 function updateRow(data: Role, id: number, oldData: Role) {
-//   axios({
-//     url: '/updateUrl',
-//     method: 'post',
-//     data: {
-//       data,
-//       id
-//     }
-//   }).then(result => {
-//     // console.log(result)
-//     const {msg} = result.data
-//     //更新修订时间为当前时间
-//     data.updated_time = new Date().toISOString()
-//     //将修改后的信息显示出来
-//     Object.assign(oldData, data)
-//     //去除编辑标记
-//     isEditRow.value = -1
-//     ElMessage.success(msg)
-//   }).catch(error => {
-//     console.log('发生错误：')
-//     console.log(error)
-//     ElMessage.error(error.msg)
-//   })
+  //   axios({
+  //     url: '/updateUrl',
+  //     method: 'post',
+  //     data: {
+  //       data,
+  //       id
+  //     }
+  //   }).then(result => {
+  //     // console.log(result)
+  //     const {msg} = result.data
+  //     //更新修订时间为当前时间
+  //     data.updated_time = new Date().toISOString()
+  //     //将修改后的信息显示出来
+  //     Object.assign(oldData, data)
+  //     //去除编辑标记
+  //     isEditRow.value = -1
+  //     ElMessage.success(msg)
+  //   }).catch(error => {
+  //     console.log('发生错误：')
+  //     console.log(error)
+  //     ElMessage.error(error.msg)
+  //   })
 }
 
 
@@ -413,43 +416,43 @@ function updateRow(data: Role, id: number, oldData: Role) {
 
 const deleteRow = (index: number, id: number) => {
   ElMessageBox.confirm(
-      '确认删除该角色信息吗?',
-      'Warning',
-      {
-        confirmButtonText: '确认删除',
-        cancelButtonText: '取消删除',
-        type: 'warning',
-        showClose: false
-      }
+    '确认删除该角色信息吗?',
+    'Warning',
+    {
+      confirmButtonText: '确认删除',
+      cancelButtonText: '取消删除',
+      type: 'warning',
+      showClose: false
+    }
   )
-      .then(() => {
-        deleteRole(index, id)
+    .then(() => {
+      deleteRole(index, id)
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '删除操作已取消',
       })
-      .catch(() => {
-        ElMessage({
-          type: 'info',
-          message: '删除操作已取消',
-        })
-      })
+    })
 }
 
 //删除角色
 const deleteRole = (index: number, id: number) => {
-//   axios({
-//     url: '/deleteUrl',
-//     method: 'delete',
-//     params: {id}
-//   }).then((result) => {
-//     // console.log(result)
-//     ElMessage.success(result.data.msg)
-//
-//     const newArr = totalData.filter(item => item.id !== id)
-//     totalData.splice(0, totalData.length, ...newArr)
-//     filterChange()
-//     // location.reload()
-//   }).catch(error => {
-//     console.dir('发生错误：' + error)
-//   })
+  //   axios({
+  //     url: '/deleteUrl',
+  //     method: 'delete',
+  //     params: {id}
+  //   }).then((result) => {
+  //     // console.log(result)
+  //     ElMessage.success(result.data.msg)
+  //
+  //     const newArr = totalData.filter(item => item.id !== id)
+  //     totalData.splice(0, totalData.length, ...newArr)
+  //     filterChange()
+  //     // location.reload()
+  //   }).catch(error => {
+  //     console.dir('发生错误：' + error)
+  //   })
 }
 
 
@@ -472,7 +475,7 @@ const deleteRole = (index: number, id: number) => {
   align-items: center;
 }
 
-.demo-pagination-block + .demo-pagination-block {
+.demo-pagination-block+.demo-pagination-block {
   margin-top: 10px;
 }
 
@@ -496,5 +499,4 @@ const deleteRole = (index: number, id: number) => {
     margin: 5px 0;
   }
 }
-
 </style>

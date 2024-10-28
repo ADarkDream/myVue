@@ -7,8 +7,8 @@ import { reactive, ref } from "vue";
 export const useMusicConfigStore = defineStore('music_config', () => {
     //页面背景配置
     const bgSettings = reactive({
-        '--music-bg-color': '#ffffff',
-        '--music-bg-opacity': 0.6, /*背景透明度*/
+        '--music-bg-color': '#DDE6E8',
+        '--music-bg-opacity': 0.7, /*背景透明度*/
         '--music-bg-filter': 3, /*背景模糊度*/
         '--music-bg-saturate': 1, /*背景饱和度*/
     })

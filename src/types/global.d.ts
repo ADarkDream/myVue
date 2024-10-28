@@ -1,5 +1,5 @@
-import {Bill} from "@/types/books";
-import {TableColumnCtx} from "element-plus";
+import { Bill } from "@/types/books";
+import { TableColumnCtx } from "element-plus";
 
 interface ResultData<T> {
     status: number,
@@ -9,7 +9,7 @@ interface ResultData<T> {
 
 //el-table表格排序，handleSortChange传参声明
 interface Sort<T> {
-    column?:T,
+    column?: T,
     prop: string
     order: 'ascending' | 'descending'
 }
@@ -22,16 +22,16 @@ type TableFilterItem<T> = {
 
 //el-table合并列的类型声明
 interface SpanMethodProps<T> {
-  row: T
-  column: TableColumnCtx<T>
-  rowIndex: number
-  columnIndex: number
+    row: T
+    column: TableColumnCtx<T>
+    rowIndex: number
+    columnIndex: number
 }
 
 //el-table表格统计的类型声明
 interface SummaryMethodProps<T = Bill> {
-  columns: TableColumnCtx<T>[]
-  data: T[]
+    columns: TableColumnCtx<T>[]
+    data: T[]
 }
 
 //公告
@@ -46,8 +46,19 @@ interface Notice {
     time?: string
 }
 
-//打开公告列表的序号
+
+/**
+ * 打开公告列表的序号
+ * @param show_num 公告页面序号
+ * @param active_num 折叠面板序号
+ */
 type NoticeActiveNum = {
+    /**
+ * 公告页面序号
+ */
     show_num: number,
+    /**
+ * 折叠面板序号
+ */
     active_num?: number
 }

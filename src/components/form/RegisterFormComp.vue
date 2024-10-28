@@ -1,30 +1,21 @@
 <template>
-  <el-form
-      ref="ruleFormRef"
-      :model="ruleForm"
-      status-icon
-      :rules="Rules"
-      label-width="auto"
-      class="registerForm"
-      label-position="top"
-  >
+  <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="Rules" label-width="auto" class="registerForm"
+    label-position="top">
     <el-form-item prop="username">
-      <el-input v-model.lazy.trim="ruleForm.username" placeholder="输入昵称"/>
+      <el-input v-model.lazy.trim="ruleForm.username" placeholder="输入昵称" />
     </el-form-item>
     <el-form-item prop="email">
-      <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" autocomplete="off"/>
+      <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" autocomplete="off" />
     </el-form-item>
     <el-form-item prop="password">
-      <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码"/>
+      <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码" />
     </el-form-item>
     <el-form-item prop="checkPassword">
-      <el-input v-model.lazy.trim="ruleForm.checkPassword" type="password" autocomplete="off"
-                placeholder="确认密码"/>
+      <el-input v-model.lazy.trim="ruleForm.checkPassword" type="password" autocomplete="off" placeholder="确认密码" />
     </el-form-item>
     <el-form-item prop="emailCode">
       <template style="display: flex;justify-content: space-between;width: 100%">
-        <el-input v-model.lazy.trim="ruleForm.emailCode" autocomplete="off"
-                  placeholder="输入邮箱获取验证码"/>
+        <el-input v-model.lazy.trim="ruleForm.emailCode" autocomplete="off" placeholder="输入邮箱获取验证码" />
         <el-button type="primary" :disabled="isDisabled" @click="getEmailCode()">
           {{ isDisabled ? t + '秒后获取' : '获取' }}
         </el-button>
@@ -35,18 +26,22 @@
       <el-button link type="primary" @click="showPolicy">隐私政策</el-button>
       <el-button style="position: absolute;right: 0" link @click="resetForm()">重置表单</el-button>
     </el-form-item>
-        <el-button class="submitBtn" @click="submitForm()" :loading="isLoading">注册</el-button>
+    <el-button class="submitBtn" @click="submitForm()" :loading="isLoading">注册</el-button>
     <br>
     <el-link @click="toLogin(true)">前往登录</el-link>
   </el-form>
 </template>
 
 <script lang="ts" setup>
-import {onUnmounted, reactive, ref} from 'vue'
-import {ElMessage, type FormInstance, type FormRules} from 'element-plus'
+import { onUnmounted, reactive, ref } from 'vue'
+import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import axios from "axios"
+//utils
 import verifyRules from "@/utils/verifyRules";
-import type {registerForm} from "@/types/form";
-import axios from "axios";
+import titleDiv from '@/utils/titleDiv';
+//types
+import type { registerForm } from "@/types/form";
+
 
 const ruleFormRef = ref<FormInstance>()
 
@@ -56,7 +51,7 @@ const timer1 = ref<ReturnType<typeof setTimeout>>()
 const isDisabled = ref(false)
 
 //切换父组件loading状态
-const {toLogin} = defineProps(['toLogin'])
+const { toLogin } = defineProps(['toLogin'])
 const isLoading = ref(false)
 
 //表单数据
@@ -83,12 +78,12 @@ const validatePassword = (rule: any, value: any, callback: any) => {
 
 //用哪些表单验证规则
 const Rules = ref<FormRules<typeof ruleForm>>({
-  username: [{validator: verifyRules.userName, required: true, trigger: 'blur'}],
-  email: [{validator: verifyRules.email, required: true, trigger: 'blur'}],
-  password: [{validator: verifyRules.password, required: true, trigger: 'blur'}],
-  checkPassword: [{validator: validatePassword, required: true, trigger: 'blur'}],
-  emailCode: [{validator: verifyRules.emailCode, required: true, trigger: 'blur'}],
-  policy: [{validator: verifyRules.policy, required: true, trigger: 'blur'}]
+  username: [{ validator: verifyRules.userName, required: true, trigger: 'blur' }],
+  email: [{ validator: verifyRules.email, required: true, trigger: 'blur' }],
+  password: [{ validator: verifyRules.password, required: true, trigger: 'blur' }],
+  checkPassword: [{ validator: validatePassword, required: true, trigger: 'blur' }],
+  emailCode: [{ validator: verifyRules.emailCode, required: true, trigger: 'blur' }],
+  policy: [{ validator: verifyRules.policy, required: true, trigger: 'blur' }]
 })
 
 
@@ -112,7 +107,7 @@ const getEmailCode = async () => {
     const result = await axios({
       url: '/getEmailCode',
       method: 'POST',
-      data: {email: ruleForm.email}
+      data: { email: ruleForm.email }
     })
     ElMessage.success(result.data.msg)
   } catch (error) {
@@ -121,18 +116,18 @@ const getEmailCode = async () => {
     t.value = 61
     clearInterval(timer1.value)
     console.log('倒计时已清除')
-     isDisabled.value = false
+    isDisabled.value = false
   }
 }
 
 
 //显示隐私政策
-const showPolicy = () => ElMessage.info('隐私政策') //emitter.emit('showNotice', {showNum: '1', activeNum: '3'})
+const showPolicy = () => titleDiv.showNotice({ show_num: 1, active_num: 3 })
 
 //region提交表单，再次判断表单验证是否通过
 const submitForm = async () => {
   //设置按钮禁用
-  isLoading.value=true
+  isLoading.value = true
 
   if (!ruleFormRef.value) return
   await ruleFormRef.value.validate(async (res) => {
@@ -143,7 +138,7 @@ const submitForm = async () => {
     // else {
     // ElMessage.error('操作失败')
     // }
-   isLoading.value=false
+    isLoading.value = false
   })
 }
 
@@ -153,7 +148,7 @@ const register = async () => {
   try {
     //解决点击注册后马上切换导致误通过的BUG
     if (!ruleForm.policy) return
-    const {username, email, password} = ruleForm
+    const { username, email, password } = ruleForm
     const result = await axios({
       url: '/register',
       method: 'POST',
@@ -165,7 +160,7 @@ const register = async () => {
       }
     })
     console.log(result)
-    const {msg} = result.data
+    const { msg } = result.data
     //成功提示信息
     ElMessage.success(msg)
     sessionStorage.setItem('email', email)
@@ -188,7 +183,7 @@ const resetForm = () => {
 }
 
 //把重置表单暴露给父组件
-defineExpose({submitForm})
+defineExpose({ submitForm })
 
 //endregion
 

@@ -232,13 +232,17 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
+import { reactive, ref } from "vue";
+import {useRouter} from "vue-router";
 import {ElMessage, ElMessageBox, type TableColumnCtx, type TableInstance} from "element-plus";
-import {reactive, ref} from "vue";
+import axios from "axios";
+//hooks
 import useTimeStamp from '@/hooks/useTimestamp'
 import useResponsive from "@/hooks/useResponsive";
-import {useRouter} from "vue-router";
+//utils
 import {emitter} from "@/utils/emitter";
+//types
+
 
 const router = useRouter()
 const {isPC}=useResponsive()

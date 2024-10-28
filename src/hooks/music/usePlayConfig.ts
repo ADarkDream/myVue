@@ -1,9 +1,12 @@
 //音乐播放相关的方法
 import { computed, toRefs } from "vue";
+import { ElMessage } from "element-plus";
+//stores
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { usePlayConfigStore } from "@/store/music/usePlayConfigStore";
+//hooks
 import useMusicPlay from "@/hooks/music/useMusicPlay";
-import { ElMessage } from "element-plus";
+
 
 
 export default function () {
