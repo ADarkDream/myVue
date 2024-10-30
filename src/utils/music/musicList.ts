@@ -2,7 +2,7 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import type { ResultData } from "@/types/global";
-import type { MusicListInfo, QueryCloudMusicList, MusicList, QueryMusicList, QueryMusicLists, CloudSongInfo } from "@/types/music";
+import type { MusicListInfo, QueryCloudMusicList, MusicList, QueryMusicList, QueryMusicLists, CloudSongInfo, CreateMusicListInfo } from "@/types/music";
 
 const musicList = {
     /**
@@ -47,6 +47,11 @@ const musicList = {
     },
     /**
      * 搜索数据库歌单的歌
+     * @param music_list_id,数据库歌单id
+     * @param limit,限制返回歌曲条数
+     * @param offset,偏移量
+     * @param is_login -是否登录，切换接口
+     * @returns 
      */
     getMusicList: async ({ music_list_id, limit, offset, is_login }: QueryMusicList) => {
         try {
@@ -57,13 +62,23 @@ const musicList = {
             console.log('搜索数据库歌单的歌', result.data)
             const { status, msg, data } = result.data
             if ((status === 200 || status === 300) && data)
-                return data as MusicList
+                return { status: 1, msg, data: data }
+            else return { status: 0, msg }
         } catch (error) {
             console.log('发生错误：')
             console.dir(error)
+            return { status: 0, msg: error as string }
         }
     },
-    //搜索网易云的歌单及音乐信息
+
+    /**
+     * 搜索网易云的歌单及音乐信息
+     * @param cloud_music_list_id,网易云歌单id
+     * @param limit,限制返回歌曲条数
+     * @param offset,偏移量
+     * @param latest -是否获取最新数据
+     * @returns 
+     */
     getCloudMusicList: async ({ cloud_music_list_id, limit, offset, latest }: QueryCloudMusicList) => {
         try {
             const result = await axios<ResultData<MusicList>>({
@@ -72,14 +87,15 @@ const musicList = {
             })
             console.log('搜索网易云的歌单及音乐信息', result.data)
             const { status, msg, data } = result.data
-            if (status === 200) {
-                return { status: 1, data: data! }
-            } else if (status === 300)
-                return { status: 0, msg }
+            if (status === 200 && data) {
+                return { status: 1, data: data }
+            }// else if (status === 300)
+            //    return { status: 0, msg }
+            else return { status: 0, msg }
         } catch (error) {
             console.log('发生错误：')
             console.dir(error)
-            return { status: 0, msg: error }
+            return { status: 0, msg: error as string }
         }
     },
     // 用户获取歌单列表的信息,有user_id查询该用户的所有歌单，有music_list_id查询单个歌单，如果不是自己则只能查公开歌单
@@ -103,22 +119,61 @@ const musicList = {
             return { status: 0, msg: '查询歌单信息失败' }
         }
     },
-    //用户创建歌单
-    createMusicList: async (formData: { name: string, pic_url: string, status: number }) => {
-        if (!formData.name) return ElMessage.info('歌单名称不能为空')
+
+    /**
+     * 用户创建歌单
+     * @param formData 
+     * @returns 
+     */
+    createMusicList: async (formData: MusicListInfo) => {
         try {
-            const result = await axios({
+            const result = await axios<ResultData<{ music_list_info: MusicListInfo }>>({
                 url: '/addMusicList',
                 method: 'post',
                 data: formData
             })
             console.log(result.data)
-            return result.data
+            const { status, msg, data } = result.data
+            if (status === 200 && data) return { status: 1, msg, music_list_info: data.music_list_info }
+            return { status: 0, msg }
         } catch (error) {
             console.log('发生错误：')
             console.dir(error)
+            return { status: 0, msg: '发生错误，创建歌单失败' }
         }
     },
+    /**
+     * 更新歌单信息或删除歌单(status=0)
+     * @param newData 
+     * @returns {{status:0|1}}
+     */
+    updateMyMusicListInfo: async (newData: CreateMusicListInfo) => {
+        try {
+            const result = await axios({
+                url: '/updateMyMusicListInfo',
+                method: "POST",
+                data: newData
+            })
+            console.log('/updateMyMusicListInfo返回的数据为：', result.data)
+            const { status, msg } = result.data
+            if (status === 200) {
+                ElMessage.success(msg)
+                return { status: 1 }
+            }
+            return { status: 0 }
+        } catch (err) {
+            console.error('updateMyMusicListInfo出错了:')
+            console.error(err)
+            ElMessage.error((newData.status === 0 ? '删除' : '更新') + '歌单信息失败')
+            return { status: 0 }
+        }
+    },
+    /**
+     * 批量收藏音乐到歌单
+     * @param music_id_list -要收藏的数据库歌曲id列表
+     * @param music_list_id -数据库歌单id
+     * @returns 
+     */
     connectMusicToList: async (music_id_list: number[], music_list_id: number) => {
         try {
             const result = await axios({

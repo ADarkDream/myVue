@@ -33,15 +33,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, toRefs } from "vue";
 import { onBeforeRouteLeave, useRouter } from "vue-router";
-//hooks
-import useResponsive from "@/hooks/useResponsive";
+//stores
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //utils
 import titleDiv from '@/utils/titleDiv';
 
 const router = useRouter()
-const { containerHeight } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { containerHeight } = toRefs(responsiveStore)
 
 const time = ref(10)
 const timer1 = ref<NodeJS.Timeout>()

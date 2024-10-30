@@ -35,28 +35,32 @@
 </template>
 
 <script setup lang="ts">
+import { toRefs } from "vue";
 import { Delete } from "@element-plus/icons-vue";
 //stores
 import { useMusicListStore } from "@/store/music/useMusicListStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import useMusic from "@/hooks/music/useMusic";
 //utils
 import musicPlay from "@/utils/music/musicPlay";
 //types
 import type { CloudSongInfo } from "@/types/music";
-//types
+//files
 import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.svg?component'
 
 
+
 const musicListStore = useMusicListStore()
-const { drawerSize } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { drawerSize } = toRefs(responsiveStore)
+const { deleteMusicFromPlayList, clearPlayList } = musicListStore
 const { showMusicListDrawer } = useMusic()
 
 const { toggleMusic, play } = useMusicPlay()
 const { songsList, height } = defineProps(['songsList', 'height']) as { songsList: CloudSongInfo[], height: number }
-const { deleteMusicFromPlayList, clearPlayList } = musicListStore
+
 
 const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   //如果是当前播放的歌曲，则暂停

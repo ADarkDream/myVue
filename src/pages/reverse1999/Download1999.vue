@@ -247,7 +247,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref, watch,toRefs } from 'vue'
+import { onMounted, reactive, ref, watch, toRefs } from 'vue'
 import { useRouter } from "vue-router";
 import {
   Check,
@@ -264,14 +264,17 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import axios from "axios";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
-import useFunction from "@/hooks/useFunction";
+
 import { useBaseUrl } from '@/hooks/useBaseUrl'
+import useTitleDiv from '@/hooks/useTitleDiv';
 //components
 import DownloadNotice from "@/pages/reverse1999/components/DownloadNotice.vue";
 //utils
 import titleDiv from '@/utils/titleDiv';
+import myFunction from "@/utils/myFunction";
+import userInfo from '@/utils/userInfo';
 //types
 import { Notice, NoticeActiveNum } from "@/types/global";
 //files
@@ -280,11 +283,14 @@ import logo from '@/assets/logo-small.png'
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
-const { isLogin, updateLocalUserInfo } = toRefs(userInfoStore)
-const { copyText, deepEqual } = useFunction()
-const { isPC, elSize, screenWidth, containerHeight } = useResponsive()
-
+const responsiveStore = useResponsiveStore()
+const { isLogin, useUserBGUrl, bgUrl, localBgUrl } = toRefs(userInfoStore)
+const { isPC, elSize, screenWidth, containerHeight } = toRefs(responsiveStore)
+const { updateLocalUserInfo } = userInfoStore
+const { toggleBG } = useTitleDiv()
 const baseUrl = useBaseUrl()
+const { copyText, deepEqual } = myFunction
+const { updateImgUrl } = userInfo
 //呼出公告面板
 const { showNotice } = titleDiv
 
@@ -585,38 +591,28 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
 
 //设置背景图
 const setBackground = async (url: string, name: string) => {
-  localStorage.setItem('bgUrl', url)
-  // bgUrl.value = url
-  const body = (document.querySelector('body') as HTMLElement)
-  body.style.backgroundImage = `url(${url})`
-  ElMessage.success('设置本地背景图成功')
-  //如果是登录用户则设置到账户信息中
-  if (isLogin.value) try {
-    const result = await axios({
-      url: '/updateImgUrl',
-      method: 'post',
-      data: {
-        isUrl: true,
-        imgUrl: url,
-        imgName: name,
-        sort: 'bg',
-        md5: ''
-      }
+  if (!isLogin.value) {//如果是游客
+    localBgUrl.value = url
+    ElMessage.success('设置本地背景图成功')
+    return
+  }
+  try {  //如果是登录用户则设置到账户信息中
+    const imageInfo = await updateImgUrl({
+      imgUrl: url,
+      imgName: name,
+      sort: 'bg'
     })
-    console.log(result)
-    const { status, msg } = result.data
-    if (status === 200) {
-      ElMessage.success(msg)
-      updateLocalUserInfo({ bgUrl: url })
-      const body = (document.querySelector('body') as HTMLElement)
-      body.style.backgroundImage = `url(${url})`
-      localStorage.setItem('useUserBGUrl', '1')
-    }
+    if (!imageInfo) throw Error
+
+    updateLocalUserInfo({ bgId: imageInfo.id })
+    toggleBG({ newBgUrl: url })
+    useUserBGUrl.value = true
   } catch (error) {
     console.log('发生错误：')
     console.log(error)
+    localBgUrl.value = url
+    return ElMessage.error('设置自定义背景图出错，修改为本地背景图')
   }
-
 }
 
 
@@ -752,7 +748,7 @@ function autoCol() {
   console.log('视口宽度', screenWidth.value)
   console.log('计算的图片列数', Math.floor(screenWidth.value / 250))
   colNum.value = Number(Math.floor(screenWidth.value / 250))
-  if (previewImgList.length <= downloadLimitNum.value && isPC.value) colNum.value = Number((previewImgList.length / 2).toFixed(0)) //PC端如果图片不大于downloadLimitNum张，则有x张就分x/2列(去除小数)
+  if (previewImgList.length <= 15 && isPC.value) colNum.value = Number((previewImgList.length / 2).toFixed(0)) //PC端如果图片不大于15张，则有x张就分x/2列(去除小数)
 }
 
 

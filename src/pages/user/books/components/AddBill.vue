@@ -53,23 +53,26 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, toRefs, watch } from 'vue'
 import { ElMessage, type FormInstance } from "element-plus";
 import axios from "axios";
 //stores
 import { useBookStore } from "@/store/useBookStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+
 import useTimestamp from '@/hooks/useTimestamp'
 //types
 import { Bill, NewBill } from "@/types/books";
 import { ResultData } from "@/types/global";
 
 
-const { formatDate } = useTimestamp()
 const bookData = useBookStore()
+const responsiveStore = useResponsiveStore()
+const { formatDate } = useTimestamp()
+
 const { cancelAddBill, thisBill, url } = defineProps(['cancelAddBill', 'thisBill', 'url'])
-const { isPC, elSize } = useResponsive()
+const { isPC, elSize } = toRefs(responsiveStore)
 
 const addBillFormRef = ref<FormInstance>()
 const addBillForm = reactive<NewBill>({

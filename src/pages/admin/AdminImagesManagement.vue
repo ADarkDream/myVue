@@ -111,10 +111,13 @@ import type { TableColumnCtx, TableInstance } from "element-plus";
 import UploadImage from "@/components/UploadImage.vue";
 //components
 import useTimeStamp from "@/hooks/useTimestamp";
-import useFunction from "@/hooks/useFunction";
+//utils
+import myFunction from "@/utils/myFunction";
+//types
+import { Image } from '@/types/upload';
 
 const { getTime } = useTimeStamp()
-const { diffObj } = useFunction()
+const { diffObj } = myFunction
 
 
 //上传图片面板的显示与隐藏

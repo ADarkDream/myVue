@@ -1,17 +1,61 @@
 // 引入defineStore用于创建store
 import { defineStore } from 'pinia'
-import { reactive, ref } from "vue";
-import type { CloudSongInfo, MusicList, SearchResult } from "@/types/music";
-import axios from "axios";
-import type { ResultData } from "@/types/global";
+import { reactive, ref, toRefs } from "vue";
+import { ElMessage } from 'element-plus';
+
+import { useUserInfoStore } from '../user/useUserInfoStore';
+import type { MusicListInfo } from '@/types/music';
+
 
 
 // 定义并暴露一个store
 export const useMusicListDrawerStore = defineStore('music_list_drawer', () => {
+    const userInfoStore = useUserInfoStore()
+    const { isLogin, uid } = toRefs(userInfoStore)
+
     //是否显示搜索面板
     const isShowMusicListDrawer = ref(false)
     //要收藏的数据库音乐id数组
     const music_id_list = ref<number[]>([])
 
-    return { isShowMusicListDrawer, music_id_list }
+    //是否显示编辑歌单信息的抽屉
+    const isShowEditMusicListInfoDrawer = ref(false)
+
+    /**
+     * 创建歌单或编辑歌单信息的标记
+     */
+    const isCreateFlag = ref(true)
+
+    const formData = ref<MusicListInfo>({
+        music_list_id: 0,
+        name: '',
+        uid: uid.value!,
+        pic_url: '',
+        default_cover_url: '',
+        description: '',
+        status: 1,
+        songsCount: 0,
+        created_time: new Date(),
+        updated_time: new Date()
+    })
+
+    /**
+     * 重置formData
+     */
+    const reSetFormData = () => {
+        formData.value = {
+            music_list_id: 0,
+            name: '',
+            uid: uid.value!,
+            pic_url: '',
+            default_cover_url: '',
+            description: '',
+            status: 1,
+            songsCount: 0,
+            created_time: new Date(),
+            updated_time: new Date()
+        }
+    }
+
+    return { isShowMusicListDrawer, music_id_list, isShowEditMusicListInfoDrawer, isCreateFlag, formData, reSetFormData }
 })

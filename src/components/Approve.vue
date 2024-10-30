@@ -23,16 +23,17 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, reactive, ref } from "vue";
+import { onUnmounted, reactive, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
-//hooks
-import useResponsive from "@/hooks/useResponsive";
-import useFunction from "@/hooks/useFunction";
+//stores
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //utils
 import titleDiv from '@/utils/titleDiv';
+import myFunction from "@/utils/myFunction";
 
-const { isPC } = useResponsive()
-const { copyText } = useFunction()
+const responsiveStore = useResponsiveStore()
+const { isPC } = toRefs(responsiveStore)
+const { copyText } = myFunction
 const { showNotice } = titleDiv
 const router = useRouter()
 

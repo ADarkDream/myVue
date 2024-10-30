@@ -12,7 +12,7 @@ interface EngineData {
 }
 
 
-type ThisEngine= {
+type ThisEngine = {
     index: number,
     id?: number,
     engineId?: number,
@@ -53,9 +53,9 @@ interface WebsiteInfoItem {
 
 //表格筛选分类的元素
 interface Sort {
-  text: string,
-  value: string
+    text: string,
+    value: string
 }
 
-export {EngineData, ThisEngine, Navigation, NavigationObj, WebsiteInfoItem}
+export type { EngineData, ThisEngine, Navigation, NavigationObj, WebsiteInfoItem }
 

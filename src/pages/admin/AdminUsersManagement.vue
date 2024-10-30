@@ -221,12 +221,13 @@ const userInfoStore = useUserInfoStore()
 
 //hooks
 import useTimeStamp from "@/hooks/useTimestamp";
-import useFunction from "@/hooks/useFunction";
 //types
 import { UserInfo } from "@/types/user"
+//utils
+import myFunction from "@/utils/myFunction";
 
 const { getTime } = useTimeStamp()
-const { diffObj } = useFunction()
+const { diffObj } = myFunction
 //控制用户列表和管理员列表
 const tableVisible = ref(false)
 //判断是否是超级管理员

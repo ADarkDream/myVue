@@ -76,7 +76,7 @@
               <el-space spacer="">
                 <el-text>{{ getDiffTime(item.created_time) }}</el-text>
                 <el-text type="primary">{{ index + 1 }}楼</el-text>
-                <el-dropdown>
+                <el-dropdown :trigger="isPC ? 'hover' : 'click'">
                   <el-icon class="el-icon--right">
                     <MoreFilled />
                   </el-icon>
@@ -111,15 +111,17 @@ import axios from "axios";
 import hljs from 'highlight.js/lib/common';
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
 import useTimeStamp from '@/hooks/useTimestamp'
-import useResponsive from "@/hooks/useResponsive";
 
+//utils
+import myFunction from "@/utils/myFunction";
 
 const userInfoStore = useUserInfoStore()
-
+const responsiveStore = useResponsiveStore()
 const { isLogin, isAdmin, uid, headImgUrl, errorImage } = toRefs(userInfoStore)
-const { screenWidth } = useResponsive()
+const { screenWidth, isPC } = toRefs(responsiveStore)
 const router = useRouter()
 const route = useRoute() // 注意：接收参数的时候不带 ‘r’
 const isShow = ref(true)
@@ -200,8 +202,8 @@ function getArticle() {
 
 //给代码块添加高亮
 // 复制功能
-import useFunction from "@/hooks/useFunction";
-const { copyCode } = useFunction()
+
+const { copyCode } = myFunction
 function addCodeHighLight() {
   const codeBlocks = document.querySelectorAll('[class*="language-"]')
   codeBlocks.forEach((item: HTMLElement) => {

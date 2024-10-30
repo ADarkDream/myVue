@@ -140,14 +140,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-//hooks
-import useResponsive from "@/hooks/useResponsive";
+import { ref, toRefs } from "vue";
+//stores
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //components
 import ChatConnect from "@/pages/user/chat/components/ChatConnect.vue";
 
-
-const { isPC } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { isPC } = toRefs(responsiveStore)
 const isShowConnect = ref(false)
 const showConnect = () => {
   isShowConnect.value = true

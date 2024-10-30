@@ -1,8 +1,8 @@
-import {defineStore} from 'pinia'
-import {onMounted, reactive, ref} from 'vue'
-import {io} from "socket.io-client";
-import {useBaseUrl} from '@/hooks/useBaseUrl'
-import {ElMessage} from "element-plus";
+import { defineStore } from 'pinia'
+import { onMounted, reactive, ref } from 'vue'
+import { io } from "socket.io-client";
+import { useBaseUrl } from '@/hooks/useBaseUrl'
+import { ElMessage } from "element-plus";
 
 const baseUrl = useBaseUrl()
 
@@ -45,6 +45,7 @@ export const useChatInfoStore = defineStore('chatInfo', () => {
         playerName,
         roomID,
         roomName,
+        playerInfo,
         setPID,
         setPName,
         setRID,

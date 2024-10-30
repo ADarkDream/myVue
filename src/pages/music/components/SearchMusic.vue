@@ -42,16 +42,15 @@ import { ElMessage } from "element-plus";
 import { Back } from "@element-plus/icons-vue";
 //stores
 import { useMusicSearchStore } from "@/store/music/useMusicSearchStore";
-//hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //components
 import HotSearchWords from "@/pages/music/components/HotSearchWords.vue";
 import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
 
 const searchStore = useMusicSearchStore()
+const responsiveStore = useResponsiveStore()
 
-
-const { isPC, drawerSize } = useResponsive()
+const { isPC, drawerSize } = toRefs(responsiveStore)
 
 
 const searchDivHeight = ref(drawerSize.value - 180)

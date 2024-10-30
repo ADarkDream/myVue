@@ -109,10 +109,11 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import type { TableColumnCtx, TableInstance } from "element-plus";
 //hooks
 import useTimeStamp from "@/hooks/useTimestamp";
-import useFunction from "@/hooks/useFunction";
+//utils
+import myFunction from "@/utils/myFunction";
 
 const { getTime } = useTimeStamp()
-const { diffObj } = useFunction()
+const { diffObj } = myFunction
 
 
 

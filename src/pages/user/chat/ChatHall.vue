@@ -21,20 +21,20 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, toRefs } from 'vue'
 import { useRouter, useRoute } from "vue-router";
 import { ElMessage } from 'element-plus'
 //stores
 import { useChatInfoStore } from '@/store/useChatInfoStore'
-//hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 
 
 
 const router = useRouter()
 const route = useRoute()
+const responsiveStore = useResponsiveStore()
 
-const { screenHeight, isPC } = useResponsive()
+const { screenHeight, isPC } = toRefs(responsiveStore)
 const playerInfo = useChatInfoStore()//本地用户信息
 const socket = playerInfo.socket
 

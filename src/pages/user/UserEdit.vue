@@ -36,20 +36,20 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, shallowRef, onUnmounted } from 'vue'
+import { ref, reactive, shallowRef, onUnmounted, toRefs } from 'vue'
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage, ElLoading } from "element-plus";
 import { IToolbarConfig, IEditorConfig } from '@wangeditor/editor'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import axios from "axios";
-//hooks
-import useResponsive from "@/hooks/useResponsive";
+//stores
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //utils
 import { emitter } from "@/utils/emitter";
 
-
-const { isPC, screenHeight } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { isPC, screenHeight } = toRefs(responsiveStore)
 //region 表单
 const data = reactive({
   id: '',

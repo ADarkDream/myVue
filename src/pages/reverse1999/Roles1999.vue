@@ -173,31 +173,31 @@ import type { TableInstance } from "element-plus";
 import { Search } from "@element-plus/icons-vue";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 
 //hooks
 import useTimeStamp from "@/hooks/useTimestamp";
-import useFunction from "@/hooks/useFunction";
-import useResponsive from "@/hooks/useResponsive";
+
 //components
 import AddRole from "@/components/AddRole.vue";
 //utils
+import myFunction from "@/utils/myFunction";
 
 //types
 
 //files
 
 const userInfoStore = useUserInfoStore()
-
+const responsiveStore = useResponsiveStore()
 
 const { getDiffTime, getTime } = useTimeStamp()
-const { diffObj } = useFunction()
+const { diffObj } = myFunction
 const router = useRouter()
 
 //登录判断
 
 //屏幕高度
-const { screenHeight, elSize, isPC } = useResponsive()
+const { screenHeight, elSize, isPC } = toRefs(responsiveStore)
 const { isAdmin } = toRefs(userInfoStore)
 
 

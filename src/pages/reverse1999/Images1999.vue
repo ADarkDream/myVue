@@ -211,10 +211,12 @@ import type { TableInstance } from "element-plus";
 import axios from "axios";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
 import useTimeStamp from "@/hooks/useTimestamp";
-import useFunction from "@/hooks/useFunction";
-import useResponsive from "@/hooks/useResponsive";
+
+//utils
+import myFunction from "@/utils/myFunction";
 //types
 import { Notice, TableFilterItem } from "@/types/global";
 
@@ -224,13 +226,13 @@ const router = useRouter()
 
 //管理员登录判断
 const userInfoStore = useUserInfoStore()
-
+const responsiveStore = useResponsiveStore()
 
 
 const { isAdmin } = toRefs(userInfoStore)
-const { copyText, deepEqual, diffObj } = useFunction()
+const { copyText, deepEqual, diffObj } = myFunction
 const { getTime } = useTimeStamp()
-const { screenHeight, elSize, isPC } = useResponsive()
+const { screenHeight, elSize, isPC } = toRefs(responsiveStore)
 
 
 //region  树状选择框

@@ -98,13 +98,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, toRefs } from "vue";
 import { TableInstance } from "element-plus";
 //stores
 import { useBookStore } from "@/store/useBookStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
 import useTimestamp from "@/hooks/useTimestamp";
-import useResponsive from "@/hooks/useResponsive";
+
 import { getWeekDateRange, getMonthDateRange, getDayDateRange } from "@/hooks/useComputed";
 //utils
 import { emitter } from "@/utils/emitter";
@@ -119,8 +120,9 @@ const {
   deleteRow,
 } = defineProps(['showBillPanel', 'isNull', 'deleteRow'])
 
+const responsiveStore = useResponsiveStore()
 const { getTime, getDiffTime, formatDate } = useTimestamp()
-const { isPC, elSize, screenHeight } = useResponsive()
+const { isPC, elSize, screenHeight } = toRefs(responsiveStore)
 
 
 const bookData = useBookStore()

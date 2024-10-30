@@ -14,7 +14,7 @@
         <el-slider v-model="currentTime" @change="changeCurrentTime" :min="0" :max="duration" :show-tooltip="false" />
         <div class="time"><span>{{
           formatMusicTime(currentTime)
-            }}</span><span>{{ formatMusicTime(duration) }}</span></div>
+        }}</span><span>{{ formatMusicTime(duration) }}</span></div>
       </div>
     </div>
     <div class="control-panel" :class="{ active: controlPanelActive }">
@@ -78,10 +78,11 @@ import { onMounted, ref, computed, watch, toRefs } from 'vue';
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { usePlayConfigStore } from '@/store/music/usePlayConfigStore'
 import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
 import useTimestamp from "@/hooks/useTimestamp";
 import usePlayConfig from '@/hooks/music/usePlayConfig'
-import useResponsive from "@/hooks/useResponsive";
+
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 //components
 import PlayList from "@/pages/music/components/PlayList.vue";
@@ -100,7 +101,8 @@ import SVG_sequential_play from '@/assets/music/sequential_play.svg?component'
 import SVG_random_play from '@/assets/music/random_play.svg?component'
 import SVG_single_loop from '@/assets/music/single_loop.svg?component'
 
-const { drawerSize } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { drawerSize } = toRefs(responsiveStore)
 const musicListStore = useMusicListStore()
 const playConfigStore = usePlayConfigStore()
 const musicPlayStore = useMusicPlayStore()
@@ -135,9 +137,7 @@ const {
 const {
   lockThePlayer,
   togglePlayerVisible,
-
   changeCurrentTime,
-
   toggleVolumePanelVisible
 } = musicPlayStore
 

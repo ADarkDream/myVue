@@ -142,14 +142,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { TabsPaneContext } from "element-plus";
-//hooks
-import useFunction from "@/hooks/useFunction";
 //utils
 import titleDiv from '@/utils/titleDiv';
-
+import myFunction from "@/utils/myFunction";
 
 const { showFlag, showPayCodePanel, downloadLimitNum } = defineProps(['showFlag', 'showPayCodePanel', 'downloadLimitNum'])//切换页面的参数
-const { copyText } = useFunction()
+const { copyText } = myFunction
 
 const showNum = ref<number>(1) //控制下载须知的显示第几个页面
 const activeNum = ref<number>(1)//展开第几条,因为设置了accordion，所以必须是字符串格式

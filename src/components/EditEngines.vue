@@ -34,8 +34,7 @@ import { Delete } from "@element-plus/icons-vue";
 //stores
 import { useLocalEnginesStore } from "@/store/useLocalEnginesStore";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-//hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //components
 import AddSearchEngine from "@/components/AddSearchEngine.vue";
 //types
@@ -43,8 +42,9 @@ import { EngineData } from "@/types/url";
 
 
 const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
 const { isLogin } = toRefs(userInfoStore)
-const { dialogWidth2, elSize, isPC } = useResponsive()
+const { dialogWidth2, elSize, isPC } = toRefs(responsiveStore)
 
 
 const {

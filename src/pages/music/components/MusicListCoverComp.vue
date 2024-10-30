@@ -3,41 +3,72 @@
   <div class="card">
     <div class="img"
       :style="'--bgImage:' + `url(${musicListInfo.pic_url || musicListInfo.default_cover_url || defaultAlbumArt})`">
-      <div class="save" @click="toggleLike()">
-        <LikeHeart :isLike="isLike" />
+      <div class="save" @click.stop>
+        <LikeHeart class="likeHeart" :isLike="isLike" @click="toggleLike()" v-if="!isOwner" />
+        <el-dropdown v-else class="optionBtn" :trigger="isPC ? 'hover' : 'click'">
+          <span>
+            <el-icon>
+              <MoreFilled />
+            </el-icon>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="a" :icon="Edit"
+                @click="showEditMusicListInfoDrawer(false, musicListInfo)">修改</el-dropdown-item>
+              <el-dropdown-item command="b" :icon="Delete" @click="deleteMusicList(musicListInfo)">删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </div>
     </div>
     <div class="text">
       <p class="title"><el-text truncated>{{ musicListInfo.name }}</el-text></p>
-      <p class="info" v-if="isPC"><span>上次更新：{{ formatDate(new Date(musicListInfo.updated_time)) }}</span><span>{{
-        musicListInfo.songsCount }}首</span></p>
+      <p class="info"><span><span v-if="isPC">上次更新：</span> {{ formatDate(new Date(musicListInfo.updated_time))
+          }}</span><span>{{
+            musicListInfo.songsCount }}首</span></p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
+import { Delete, Edit } from '@element-plus/icons-vue';
+//stores
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 import useTimestamp from "@/hooks/useTimestamp";
+import useMusicList from '@/hooks/music/useMusicList';
+import useMusic from '@/hooks/music/useMusic';
 //components
 import LikeHeart from "@/components/smallComp/LikeHeart.vue";
 //types
 import type { MusicListInfo } from "@/types/music";
 //files
 import defaultAlbumArt from "@/assets/music/music.svg";
+import { ElMessage } from 'element-plus';
 
+const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
+const { uid } = toRefs(userInfoStore)
 
 const { formatDate } = useTimestamp()
-const { isPC } = useResponsive()
-const isLike = ref(false)
+const { isPC } = toRefs(responsiveStore)
+const { deleteMusicList } = useMusicList()
+const { showEditMusicListInfoDrawer } = useMusic()
 
+const isLike = ref(false)
 
 const { musicListInfo } = defineProps(['musicListInfo']) as { musicListInfo: MusicListInfo }
 
+const isOwner = ref(musicListInfo.uid === uid.value)
+
 const toggleLike = () => {
   isLike.value = !isLike.value
+  ElMessage.info('功能开发中')
 }
+
+
 
 </script>
 
@@ -87,6 +118,19 @@ const toggleLike = () => {
   z-index: 2;
 }
 
+/* 菜单 */
+.optionBtn {
+  border: none;
+  color: rgb(255, 91, 137);
+  padding: 10px;
+  border-radius: 5px;
+  transform: scale(1.5)
+}
+
+.optionBtn:hover {
+  border: none;
+}
+
 .text {
   margin: 20px;
   display: flex;
@@ -112,8 +156,12 @@ const toggleLike = () => {
 
 /*支持hover才触发*/
 @media (hover: hover) {
-  .save:hover {
+  .save:hover .likeHeart {
     transform: scale(1.1) rotate(10deg);
+  }
+
+  .save:hover .optionBtn {
+    transform: scale(1.8);
   }
 }
 
@@ -133,7 +181,8 @@ const toggleLike = () => {
   }
 
   .text {
-    margin: 2px 5px 0 5px;
+    margin: 0;
+    height: 30px;
   }
 
   .text .title {
@@ -141,9 +190,10 @@ const toggleLike = () => {
   }
 
   .text .info {
-    display: none;
-    /*    font-size: 10px;
-        margin-left: 5px;*/
+    /* display: none; */
+    padding: 0 10px;
+    font-size: 11px;
+    /*    margin-left: 5px;*/
   }
 }
 </style>

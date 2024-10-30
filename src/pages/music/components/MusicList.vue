@@ -8,7 +8,9 @@
       </template>
     </el-empty>
     <div v-else class="infoDiv" :class="{ hide: isHidden }">
-      <img :src="(musicListInfo?.pic_url || musicListInfo?.default_cover_url || defaultAlbumArt)" class="cover">
+      <div
+        :style="'--coverImg:' + `url(${musicListInfo?.pic_url || musicListInfo?.default_cover_url || defaultAlbumArt})`"
+        class="cover"></div>
       <div class="music_list_info">
         <p class="title"><el-text>{{ musicListInfo?.name }}</el-text>
           <el-button link type="warning" :icon="ArrowUpBold" v-show="!isHidden" @click="toggleInfoVisible">
@@ -23,7 +25,7 @@
             </el-text>
           </p>
           <p>歌曲数：{{ musicListInfo?.songsCount }}<el-button link size="small" plain type="primary"
-              @click="refresh({ cloud_music_list_id: musicListInfo?.cloud_music_list_id! })">刷新</el-button></p>
+              @click="refresh()">刷新</el-button></p>
           <p>介绍：<el-text type="info" class="description" truncated :line-clamp="isPC ? 3 : 1">{{
             musicListInfo?.description || '暂无介绍' }}</el-text>
           </p>
@@ -35,8 +37,9 @@
         <el-button-group class="btnGroup" size="small" type="primary" v-if="isPC || !isHidden">
           <el-button @click="addTheList(true)">播放</el-button>
           <el-button @click="addTheList()">添加</el-button>
-          <el-button disabled>收藏</el-button>
-          <el-button @click="copyText('https://muxidream.cn/music?ml_id=' + musicListInfo?.music_list_id, '播放链接')">
+          <el-button :disabled="isOwner">收藏</el-button>
+          <el-button @click="copyText('https://muxidream.cn/music?ml_id=' + musicListInfo?.music_list_id, '播放链接')"
+            :disabled="musicListInfo?.status === 1">
             分享
           </el-button>
         </el-button-group>
@@ -52,39 +55,45 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, toRefs } from "vue";
 import { ArrowDownBold, ArrowUpBold } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 //stores
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 //hooks
 import useTimestamp from "@/hooks/useTimestamp";
-import useFunction from "@/hooks/useFunction";
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import useMusicList from "@/hooks/music/useMusicList";
 //components
 import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
+//utils
+import myFunction from "@/utils/myFunction";
 //files
 import defaultAlbumArt from "@/assets/music/music.svg";
 
 
 const musicListStore = useMusicListStore()
 const musicConfigStore = useMusicConfigStore()
+const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
 const { getTime } = useTimestamp()
-const { copyText } = useFunction()
+const { copyText } = myFunction
 
 const musicList = computed(() => musicListStore.musicList)
-const musicListInfo = computed(() => musicListStore.musicListInfo)
+const musicListInfo = computed(() => musicListStore.musicListInfo!)
 const { addMusicList } = musicListStore
 const { changePanelIndex } = musicConfigStore
+const { uid, isLogin } = toRefs(userInfoStore)
 const { toggleMusic } = useMusicPlay()
-const { getCloudMusicList } = useMusicList()
-const { drawerSize, isPC } = useResponsive()
+const { getCloudMusicList, getMusicList } = useMusicList()
+const { drawerSize, isPC } = toRefs(responsiveStore)
 
 const isHidden = ref(false)
 
+const isOwner = computed(() => musicListInfo.value?.uid === uid.value)
 
 const height = ref(isPC.value ? 200 : 125)
 
@@ -100,8 +109,13 @@ const toggleInfoVisible = () => {
 }
 
 //刷新歌单
-const refresh = async ({ cloud_music_list_id }: { cloud_music_list_id: number }) => {
-  const { status, msg } = await getCloudMusicList({ cloud_music_list_id: cloud_music_list_id, latest: 1 })
+const refresh = async () => {
+  const { music_list_id, cloud_music_list_id } = musicListInfo.value
+  let result
+  if (isOwner.value) result = await getMusicList({ music_list_id, is_login: isLogin.value }, true)
+  else result = await getCloudMusicList({ cloud_music_list_id: cloud_music_list_id!, latest: 1 })
+  const { status, msg } = result
+
   if (status === 1) ElMessage.success('刷新成功')
   else ElMessage.info(msg)
 }
@@ -127,6 +141,8 @@ const addTheList = async (isPlay = false) => {
 
 <style scoped>
 .musicList {
+  --coverImg: url('@/assets/music/music.svg');
+
   .el-empty {
     margin-top: 50px;
     font-size: 18px;
@@ -145,12 +161,14 @@ const addTheList = async (isPlay = false) => {
     padding: 5px;
     border-radius: 15px;
   }
+
 }
 
 .cover {
   width: 200px;
   height: 200px;
   border-radius: 15px;
+  background: var(--coverImg) no-repeat center center/cover;
 }
 
 /*歌单信息*/

@@ -50,6 +50,24 @@ interface MusicList {
     songsInfo: CloudSongInfo[]
 }
 
+/**
+ * 创建和修改歌单的信息
+ */
+interface CreateMusicListInfo {
+    music_list_id?: number,
+    cloud_music_list_id?: number,
+    name?: string,
+    uid?: number,
+    /**
+     * 歌单自定义的封面
+     */
+    pic_url?: string,
+    description?: string,
+    status?: 0 | 1 | 2,
+}
+
+
+
 //请求数据库歌单列表信息的结构
 interface QueryMusicLists {
     is_login: boolean,
@@ -106,4 +124,4 @@ interface SearchResult {
     songCount: number
 }
 
-export type { CloudSongInfo, SongInfo, SearchResult, MusicListInfo, MusicList, QueryMusicLists, QueryMusicList, QueryCloudMusicList }
+export type { CloudSongInfo, SongInfo, SearchResult, MusicListInfo, CreateMusicListInfo, MusicList, QueryMusicLists, QueryMusicList, QueryCloudMusicList }

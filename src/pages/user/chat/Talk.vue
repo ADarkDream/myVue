@@ -43,18 +43,18 @@
 import { ref, toRefs } from 'vue'
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-//hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //components
 import ChatDetail from "@/pages/user/chat/components/ChatDetail.vue";
 import ChatArea from "@/pages/user/chat/components/ChatArea.vue";
 import ChatConversation from "@/pages/user/chat/components/ChatConversation.vue";
 
 const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
 
 const { isLogin, imageSrc } = toRefs(userInfoStore)
 
-const { containerHeight, isPC } = useResponsive()
+const { containerHeight, isPC } = toRefs(responsiveStore)
 // const toggleButton = document.querySelector('.dark-light');
 const colors = document.querySelectorAll('.color');
 

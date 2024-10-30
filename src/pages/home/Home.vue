@@ -28,10 +28,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, toRefs } from "vue";
 import { ElCollapseTransition } from "element-plus";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //components
 import Aside from "@/components/Aside.vue";
 import Approve from "@/components/Approve.vue";
@@ -39,7 +39,9 @@ import SearchEngine from "@/pages/home/SearchEngine.vue";
 import Content from "@/pages/home/Content.vue";
 
 
-const { isScroll, isPC } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { isPC } = toRefs(responsiveStore)
+const { isScroll } = responsiveStore
 
 const isSticky = ref(false)
 

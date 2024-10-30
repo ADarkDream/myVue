@@ -7,13 +7,14 @@
     </el-drawer>
 </template>
 <script lang="ts" setup>
-import { ref } from "vue";
-//hooks
-import useResponsive from '@/hooks/useResponsive';
+import { ref, toRefs } from "vue";
+//stores
+import { useResponsiveStore } from '@/store/useResponsiveStore';
 
 
+const responsiveStore = useResponsiveStore()
+const { isPC, drawerSize } = toRefs(responsiveStore)
 
-const { isPC, drawerSize, containerHeight, touchstart, positionComputed } = useResponsive()
 const a = ref(false)
 
 </script>

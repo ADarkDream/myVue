@@ -3,10 +3,10 @@ import axios from "axios";
 //types
 import type { ResultData } from "@/types/global";
 
+const myFunction = {
 
-export default function () {
     //复制文本
-    function copyText(text: string, msg: string, url?: string) {
+    copyText: (text: string, msg: string, url?: string) => {
         navigator.clipboard.writeText(text).then(
             () => {
                 ElMessage.success(msg + '已复制到剪贴板')
@@ -21,10 +21,10 @@ export default function () {
                 }, 1500)
             }
         )
-    }
+    },
 
     //复制代码
-    function copyCode(code: string, msg: string) {
+    copyCode: (code: string, msg: string) => {
         navigator.clipboard.writeText(code).then(
             () => {
                 ElMessage.success(msg + '已复制到剪贴板')
@@ -33,11 +33,11 @@ export default function () {
                 alert(msg + '复制失败,请自行复制以下内容：', code)
             }
         )
-    }
+    },
 
     //深度对比两个数据是否一致,返回true为一致，能比较常见数据。isSort=true先排序再比较，使其对数组排序不敏感
     // 不能比较循环引用对象(会导致无限递归)、特殊对象类型(例如 Date、Map、Set 等)，以及原型链上的属性、函数、 NaN、Symbol 类型。
-    function deepEqual(a, b, isSort = false) {
+    deepEqual: (a, b, isSort = false) => {
         if (a === b) return true;
 
         if (typeof a !== 'object' || a === null || typeof b !== 'object' || b === null) {
@@ -55,7 +55,7 @@ export default function () {
                 const sortedB = [...b].sort();
                 //递归，深层遍历数组
                 for (let i = 0; i < sortedA.length; i++) {
-                    if (!deepEqual(sortedA[i], sortedB[i])) return false;
+                    if (!myFunction.deepEqual(sortedA[i], sortedB[i])) return false;
                 }
                 return true;
             }
@@ -67,10 +67,10 @@ export default function () {
         if (keysA.length !== keysB.length) return false;
         for (const key of keysA) {
             //递归，深层遍历对象
-            if (!keysB.includes(key) || !deepEqual(a[key], b[key])) return false;
+            if (!keysB.includes(key) || !myFunction.deepEqual(a[key], b[key])) return false;
         }
         return true;
-    }
+    },
 
     //比较之后返回不一致的数据(尚未验证)
     //     function deepEqual(a, b, path = '') {
@@ -121,7 +121,7 @@ export default function () {
     // }
 
     //获取随机N张重返未来1999背景图片
-    const getBG = async (sort?: number, limitNum?: number) => {
+    getBG: async (sort?: number, limitNum?: number) => {
         try {
             const result = await axios<ResultData<ReverseImg[]>>({
                 url: '/getRandomWallpaper',
@@ -132,32 +132,32 @@ export default function () {
             if (status === 300) ElMessage.warning(msg)
             console.log('/getRandomWallpaper', data)
             if (data) return data
+            else return []
         } catch (error) {
             console.log('发生错误：')
             console.dir(error)
+            return []
         }
-    }
+    },
+
 
     //清除未修改的数据,如果未修改返回{}
-    function diffObj<T>(newData: T, oldData: T) {
+    diffObj: <T>(newData: T, oldData: T) => {
         return Object.keys(newData).concat(Object.keys(oldData))
             .filter(key => newData[key as keyof T] !== oldData[key as keyof T])
             .reduce((result: Record<string, any>, key) => {
                 result[key] = newData[key as keyof T] // 返回newData对象的属性
                 return result //最后返回的结果属于ReverseImgInfo的一部分
             }, {})
-    }
+    },
 
     //el-table中按时间顺序和逆序排列
-    const sortByTime = (tableData, prop, order) => tableData.sort((a, b) => {
+    sortByTime: (tableData, prop, order) => tableData.sort((a, b) => {
         const propA = a[prop as keyof typeof a]
         const propB = b[prop as keyof typeof b]
         if (propA < propB) return order === 'ascending' ? -1 : 1;
         if (propA > propB) return order === 'ascending' ? 1 : -1;
         return 0;
     })
-
-
-    // 向外暴露
-    return { copyText, copyCode, deepEqual, getBG, diffObj, sortByTime }
 }
+export default myFunction

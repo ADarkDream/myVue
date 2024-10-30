@@ -1,75 +1,100 @@
 <template>
-  <el-header class="header1" v-if="isPC">
-    偏好设置
-  </el-header>
-  <el-main>
-
-    <el-card header="我的背景图">
-      <el-text>图片上传之后会审核30S左右,请稍后刷新。若图片没有成功加载,可能是<el-text type="warning">图片违规</el-text>或<el-text
-          type="danger">服务器错误</el-text></el-text><br>
-      <el-space>
-        <el-switch v-model="isOpen" inline-prompt active-text="应用" inactive-text="去除" size="large" v-if="isShow" />
-        <el-button :size="elSize" type="primary" @click="dialogVisible = !dialogVisible"
-          :icon="UploadFilled">上传</el-button>
-        <el-button :size="elSize" type="danger" :icon="Delete" @click="deleteRow" v-if="isShow">删除</el-button>
-      </el-space>
-      <template #footer>
-        <el-image :src="bgUrl" />
-      </template>
-    </el-card>
-  </el-main>
+  <div class="userPreference">
+    <el-header class="header1" v-if="isPC">
+      偏好设置<el-text type="warning" v-if="isLoading">&ensp;审核中...</el-text>
+    </el-header>
+    <el-main>
+      <div style="margin-bottom: 20px;">图片上传之后会自动审核。若图片没有成功加载,可能是<el-text type="warning">图片违规</el-text>或<el-text
+          type="danger">服务器错误</el-text>
+      </div>
+      <div>
+        <el-space v-if="isShow && !dialogVisible">
+          <el-switch v-model="useUserBGUrl" inline-prompt active-text="应用" inactive-text="去除" size="large" />
+          <el-button :size="elSize" type="primary" @click="dialogVisible = true" :icon="UploadFilled">上传</el-button>
+          <el-button :size="elSize" type="danger" :icon="Delete" @click="deleteRow()">删除</el-button>
+        </el-space>
+      </div>
 
 
-  <!--图片上传框-->
-  <el-dialog v-model="dialogVisible" :width="isPC ? '' : 'wide:100%'" :show-close="false" title="上传图片">
-    <UploadImage />
-  </el-dialog>
+      <el-image :src="bgUrl" v-if="isShow && !dialogVisible" style="width: 50%;" />
+      <!--图片上传框-->
+      <UploadImage v-if="!isShow || dialogVisible" />
+      <el-button v-if="dialogVisible" :size="elSize" type="primary" @click="dialogVisible = false"
+        style="margin-top: 10px;">取消上传</el-button>
+
+
+
+    </el-main>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, toRefs } from "vue";
+import { ref, toRefs, computed, watch, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { Delete, UploadFilled } from "@element-plus/icons-vue";
-import axios from "axios";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useUploadImageStore } from "@/store/upload/uploadImageStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+import useTitleDiv from "@/hooks/useTitleDiv";
 //components
 import UploadImage from "@/components/UploadImage.vue";
+//utils
+import userInfo from '@/utils/userInfo';
+
+
 
 
 const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
+const uploadImageStore = useUploadImageStore()
 
 //获取本地存储的用户信息
-const { bgUrl } = toRefs(userInfoStore)
-const { isPC, elSize } = useResponsive()
-const dialogVisible = ref(false)
-const isShow = ref(false)
-const isOpen = ref(false)
-if (bgUrl.value !== '') {
-  isShow.value = true
-  localStorage.setItem('userBGUrl', bgUrl.value)
-} else isShow.value = false
-if (localStorage.getItem('useUserBGUrl') === '1') isOpen.value = true
+const { bgUrl, useUserBGUrl } = toRefs(userInfoStore)
+const { updateLocalUserInfo } = userInfoStore
+const { isPC, elSize } = toRefs(responsiveStore)
+const { options, isLoading, imageInfo } = toRefs(uploadImageStore)
+const { resetUpload } = uploadImageStore
+const { toggleBG } = useTitleDiv()
+const { updateImgUrl } = userInfo
 
-console.log(isShow.value)
-
-const body = (document.querySelector('body') as HTMLElement)
-
-
-watch(isOpen, (newVal, oldVal) => {
-  if (newVal === true) {
-    localStorage.setItem('useUserBGUrl', '1')
-    body.style.backgroundImage = `url(${bgUrl.value})`
-  } else {
-    localStorage.setItem('useUserBGUrl', '0')
-    body.style.backgroundImage = `url(${localStorage.getItem('bgUrl')})`
+const changeBgUrl = () => {
+  options.value = {
+    sort: 'bg',
+    imgUrl: '',
+    status: 0,
+    maxSize: 2
   }
+
+  watch(isLoading, async (newVal, oldVal) => {
+    if (newVal === oldVal) return
+    if (newVal === false && imageInfo.value) {
+
+      const image_info = await updateImgUrl(imageInfo.value)
+      if (!image_info) throw Error
+
+      updateLocalUserInfo({ bgId: image_info.id })
+      toggleBG({ newBgUrl: image_info.imgUrl })
+      useUserBGUrl.value = true
+      resetUpload()
+      dialogVisible.value = false
+    }
+  })
+}
+
+const dialogVisible = ref(false)
+//是否显示菜单
+const isShow = computed(() => !!bgUrl.value)
+
+onMounted(() => {
+  changeBgUrl()
 })
 
 
-//删除文章确认
+
+
+//删除背景图确认
 const deleteRow = () => {
   ElMessageBox.confirm(
     `注意：该图片不会从服务器删除，只是不会在你的背景图列表显示。`,
@@ -81,7 +106,10 @@ const deleteRow = () => {
       showClose: false
     }
   ).then(() => {
-    deleteBGImage()
+    updateImgUrl({ sort: 'bg' })
+    useUserBGUrl.value = false
+    bgUrl.value = ''
+    toggleBG({})
   })
     .catch(() => {
       ElMessage({
@@ -89,28 +117,6 @@ const deleteRow = () => {
         message: '删除操作已取消',
       })
     })
-}
-
-
-function deleteBGImage() {
-  axios({
-    url: '/updateImgUrl',
-    method: 'post',
-    data: {}
-  }).then(result => {
-    console.log(result)
-    const { msg } = result.data
-    ElMessage.success(msg)
-    localStorage.removeItem('useUserBGUrl')
-    localStorage.removeItem('userBGUrl')
-    bgUrl.value = ''
-    isShow.value = false
-    body.style.backgroundImage = `url(${localStorage.getItem('bgUrl')})`
-  }).catch(error => {
-    console.log('发生错误：')
-    console.log(error)
-    //ElMessage.error('发生错误：' + error.message)
-  })
 }
 </script>
 

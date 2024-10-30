@@ -44,7 +44,7 @@ import axios from "axios";
 import { useLocalEnginesStore } from "@/store/useLocalEnginesStore";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //components
 import EditEngines from "@/components/EditEngines.vue";
 //utils
@@ -55,9 +55,10 @@ import { EngineData } from "@/types/url";
 
 const { searchEngines } = useLocalEnginesStore()
 const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
 const { isLogin } = toRefs(userInfoStore)
-const { isScroll, isPC, dialogWidth } = useResponsive()
-
+const { isPC, dialogWidth } = toRefs(responsiveStore)
+const { isScroll } = responsiveStore
 
 const placeholder = ref('海内存知己')
 // 显示和隐藏

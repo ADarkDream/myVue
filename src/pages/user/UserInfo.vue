@@ -5,8 +5,7 @@
     </el-header>
     <div class="user" :style="isPC ? 'right: 0;' : ''">
       <!--头像框-->
-      <el-avatar :size="isPC ? 150 : 75" title="更换头像" :src="headImgUrl" @error="errorImage"
-        @click="dialogVisible = true" />
+      <el-avatar :size="isPC ? 150 : 75" title="更换头像" :src="headImgUrl" @error="errorImage" @click="changeAvatar()" />
       <div>
         <div :style="isPC ? '' : 'text-align:left'">
           <el-button text v-show="isDisabled" @click="isDisabled = false" title="修改昵称" :icon="Edit">
@@ -23,7 +22,7 @@
           <el-button @click="showEditForm('修改邮箱')">修改邮箱</el-button>
           <el-button @click="showEditForm('修改密码')">修改密码</el-button>
           <br v-if="isPC">
-          <el-button @click="getUserInfo" type="primary">刷新信息</el-button>
+          <el-button @click="updateUserInfo()" type="primary">刷新信息</el-button>
           <el-button shadow="hover" type="danger" @click="showEditForm('注销账户')">
             注销账号
           </el-button>
@@ -129,31 +128,32 @@
     </el-form>
   </el-dialog>
   <!--图片上传框-->
-  <el-dialog v-model="dialogVisible" :width="isPC ? '' : 'wide:100%'" :show-close="false" title="上传图片">
+  <el-dialog v-model="dialogVisible" :width="isPC ? '' : 'wide:50%'" :show-close="false" title="上传图片">
     <UploadImage />
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, toRefs } from 'vue';
+import { ref, reactive, onMounted, toRefs, watch } from 'vue';
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus";
 import { Edit } from "@element-plus/icons-vue";
 import axios from "axios";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useUploadImageStore } from '@/store/upload/uploadImageStore';
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+import useUser from '@/hooks/user/useUser';
 //components
 import UploadImage from "@/components/UploadImage.vue";
 //utils
 import { emitter } from "@/utils/emitter";
 
-
-const { isPC, elSize } = useResponsive()
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
-
+const uploadImageStore = useUploadImageStore()
+const responsiveStore = useResponsiveStore()
 //获取本地存储的用户信息
 const {
   errorImage,
@@ -162,6 +162,33 @@ const {
   username,
   headImgUrl
 } = toRefs(userInfoStore)
+const { options, isLoading, imageInfo } = toRefs(uploadImageStore)
+const { resetUpload } = uploadImageStore
+
+
+const { isPC, elSize } = toRefs(responsiveStore)
+const { updateUserInfo } = useUser()
+
+
+const changeAvatar = () => {
+  options.value = {
+    sort: 'headImg',
+    imgUrl: '',
+    status: 0,
+    maxSize: 2
+  }
+  dialogVisible.value = true
+
+  watch(isLoading, (newVal, oldVal) => {
+    if (newVal === oldVal) return
+    if (newVal === false && imageInfo.value) {
+      headImgUrl.value = imageInfo.value.imgUrl
+      resetUpload()
+      dialogVisible.value = false
+    }
+  })
+}
+
 
 
 function goArticleManagement() {
@@ -169,23 +196,6 @@ function goArticleManagement() {
   router.push({ name: 'userManagement' })
 }
 
-//获取用户信息
-const getUserInfo = async () => {
-  try {
-    const result = await axios({ url: '/getUserInfo' })
-    console.log(result)
-    const { status, userInfo, msg } = result.data
-    if (status === 200) ElMessage.success(msg)
-    // console.log(userInfo)
-    localStorage.setItem('userInfo', JSON.stringify(userInfo))
-    setTimeout(() => {
-      location.reload()
-    }, 1500)
-  } catch (error) {
-    console.log('发生错误：')
-    console.dir(error)
-  }
-}
 
 onMounted(async () => {
   await Promise.all([
@@ -649,5 +659,10 @@ const hideForm = () => {
     font-size: 14px;
     padding: 0;
   }
+}
+</style>
+<style>
+.el-dialog .el-dialog__header {
+  padding-bottom: 20px;
 }
 </style>

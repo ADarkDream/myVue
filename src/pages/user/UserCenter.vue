@@ -29,7 +29,7 @@ import { useRoute, useRouter } from "vue-router";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //components
 import TabBar from "@/pages/user/TabBar.vue";
 //utils
@@ -37,7 +37,9 @@ import { emitter } from "@/utils/emitter";
 
 
 //屏幕高度
-const { isPC, containerHeight, touchstart, positionComputed } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { isPC, containerHeight } = toRefs(responsiveStore)
+const { positionComputed, touchstart } = responsiveStore
 const route = useRoute()
 const router = useRouter()
 const userInfoStore = useUserInfoStore()

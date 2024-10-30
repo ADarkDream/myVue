@@ -1,7 +1,7 @@
 <template>
     <div class="musicAdd">
         <div class="bar">
-            <el-button class="button" @click=""><el-icon>
+            <el-button class="button" @click="ElMessage.info('功能开发中')"><el-icon>
                     <Upload />
                 </el-icon>上传</el-button>
             <el-button class="button" @click="musicSearchStore.isShowSearchPanel = true"><el-icon>
@@ -56,21 +56,21 @@
                 </el-row>
             </el-form-item>
         </el-form>
-        <el-text type="danger">此页面高度待调整</el-text>
+        <el-text type="danger">用户上传的音乐(此页面高度待调整)</el-text>
         <!-- 用户上传的音乐 -->
-        <MusicListSongsList :songs-list="customMusicList" />
+        <MusicListSongsList :songs-list="customMusicList" :height="350" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, toRefs } from "vue";
 import { ElMessage } from 'element-plus';
 import { InfoFilled, Refresh, Search, Upload } from "@element-plus/icons-vue";
 //stores
 import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
 import { useMusicSearchStore } from '@/store/music/useMusicSearchStore';
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import useMusicList from "@/hooks/music/useMusicList";
 //components
@@ -82,7 +82,8 @@ import type { CloudSongInfo, SongInfo } from "@/types/music";
 
 const musicConfigStore = useMusicConfigStore()
 const musicSearchStore = useMusicSearchStore()
-const { elSize } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { elSize } = toRefs(responsiveStore)
 
 const { addMusicToPlay, addMusic } = useMusicPlay()
 
@@ -140,9 +141,12 @@ const search_song_or_list = async (str: string, isSong: boolean) => {
         changePanelIndex(isSong ? 3 : 2)
     } else ElMessage.error(`请输入有效的${isSong ? '歌曲' : '歌单'}id或分享链接`)
 }
-const getCustomMusicList = async () => customMusicList.value = await musicList.getCustomMusicList() || []
+const getCustomMusicList = async () => {
+    customMusicList.value = await musicList.getCustomMusicList() || []
+    ElMessage.success('刷新成功')
+}
 onMounted(async () => {
-    await getCustomMusicList()
+    customMusicList.value = await musicList.getCustomMusicList() || []
 })
 
 
@@ -191,13 +195,13 @@ onMounted(async () => {
 }
 
 .button::before {
-    top: -1em;
-    left: -1em;
+    top: -2em;
+    left: -2em;
 }
 
 .button::after {
-    left: calc(100% + 1em);
-    top: calc(100% + 1em);
+    left: calc(100% + 2em);
+    top: calc(100% + 2em);
 }
 
 .button:hover::before,
@@ -216,4 +220,10 @@ onMounted(async () => {
 }
 
 /*endregion*/
+
+@media (max-width:980px) {
+    .button {
+        font-size: 15px;
+    }
+}
 </style>

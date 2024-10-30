@@ -77,18 +77,7 @@ interface VersionInfo {
 }
 
 
-interface Image {
-    id: number,
-    uid: number,
-    sort: string,
-    status: number,
-    imgUrl: string,
-    imgPath: string,
-    imgMD5: string,
-    imgName: string;
-    created_time: string,
-    updated_time: string,
-}
+
 
 
 

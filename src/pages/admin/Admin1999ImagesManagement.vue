@@ -165,16 +165,15 @@ import { Picture as IconPicture, Search } from "@element-plus/icons-vue";
 import axios from "axios";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
 import useTimeStamp from "@/hooks/useTimestamp";
-import useFunction from "@/hooks/useFunction";
-import useResponsive from "@/hooks/useResponsive";
+
 //components
 
 //utils
-
+import myFunction from "@/utils/myFunction";
 //types
-
 import type { TableInstance } from "element-plus";
 import { Sort, TableFilterItem } from '@/types/global';
 
@@ -184,11 +183,14 @@ import { Sort, TableFilterItem } from '@/types/global';
 
 
 const router = useRouter()
-const { getTime } = useTimeStamp()
-const { deepEqual, diffObj } = useFunction()
 const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
+const { getTime } = useTimeStamp()
+const { deepEqual, diffObj } = myFunction
+
+
 const { isAdmin } = toRefs(userInfoStore)
-const { screenHeight } = useResponsive()
+const { screenHeight } = toRefs(responsiveStore)
 //管理员登录判断
 if (!isAdmin.value) router.replace({ name: 'home' })
 

@@ -31,11 +31,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, toRefs } from "vue";
 //stores
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import useMusic from "@/hooks/music/useMusic";
 //utils
@@ -47,9 +47,10 @@ import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.
 
 
 const musicListStore = useMusicListStore()
+const responsiveStore = useResponsiveStore()
 
 
-const { drawerSize, isPC } = useResponsive()
+const { drawerSize, isPC } = toRefs(responsiveStore)
 const { showMusicListDrawer } = useMusic()
 
 const { addMusicToPlay, toggleMusic, play } = useMusicPlay()

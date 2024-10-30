@@ -171,14 +171,15 @@ import { Edit } from "@element-plus/icons-vue";
 import { ElCollapseTransition, ElMessage, TabsPaneContext } from 'element-plus'
 //hooks
 import useTimeStamp from "@/hooks/useTimestamp";
-import useFunction from "@/hooks/useFunction";
 //components
 import Approve from "@/components/Approve.vue";
+//utils
+import myFunction from "@/utils/myFunction";
 //types
 import { Notice } from "@/types/global";
 
 
-const { copyText } = useFunction()
+const { copyText } = myFunction
 const { getDiffTime } = useTimeStamp()
 const router = useRouter()
 

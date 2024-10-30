@@ -1,22 +1,23 @@
 import { defineStore } from 'pinia'
-import { computed, reactive, ref } from "vue";
+import { computed, ref, toRefs } from "vue";
 import { ElMessage } from "element-plus";
 import { jwtDecode } from "jwt-decode";
 //hooks
 import { useBaseUrl } from '@/hooks/useBaseUrl'
 //types
-import type { Token, TokenUserInfo, UserInfo } from '@/types/user';
+import type { Token, UserInfo } from '@/types/user';
 
 
 // 定义并暴露一个store
 export const useUserInfoStore = defineStore('user_info', () => {
     const baseUrl = useBaseUrl()
+
     //获取本地存储的用户信息userInfo中的数据
     const imageSrc = baseUrl.qiniuHttpsUrl + '/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png'
     //是否使用本地背景图
-    const useUserBGUrl = ref(localStorage.getItem('useUserBGUrl') === '1')
+    const useUserBGUrl = ref(false)
     //本地背景图
-    const localBgUrl = ref(localStorage.getItem('localBgUrl'))
+    const localBgUrl = ref('')
 
 
     const userInfo = ref<UserInfo>({
@@ -39,11 +40,21 @@ export const useUserInfoStore = defineStore('user_info', () => {
     const username = computed({ get: () => userInfo.value.username, set: (val: string) => userInfo.value.username = val })
     const signature = computed({ get: () => userInfo.value.signature, set: (val: string) => userInfo.value.signature = val })
     const headImgUrl = computed({ get: () => userInfo.value.headImgUrl, set: (val: string) => userInfo.value.headImgUrl = val })
+    /**
+     * 用户设置的背景图
+     */
     const bgUrl = computed({ get: () => userInfo.value.bgUrl, set: (val: string) => userInfo.value.bgUrl = val })
     const isLogin = ref(false)
     const isAdmin = ref(false)
     const errorFlag = ref(false)//头像错误标志
 
+
+
+    // //切换本地和用户设置的壁纸
+    // watch(useUserBGUrl, (newVal, oldVal) => {
+    //     if (newVal === oldVal) return
+    //     toggleBG({})
+    // })
 
     /**
      * 更新用户信息userInfo
@@ -174,10 +185,11 @@ export const useUserInfoStore = defineStore('user_info', () => {
         isAdmin,
         isLogin,
         localBgUrl,
+        useUserBGUrl
     }
 }, {
     persist: [{
-        pick: ['userInfo', 'token_user',],
+        pick: ['userInfo', 'token_user', 'useUserBGUrl', 'localBgUrl'],
         storage: localStorage
     }, {
         pick: ['token_admin', 'isLogin', 'isAdmin'],

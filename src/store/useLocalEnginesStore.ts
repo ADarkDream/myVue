@@ -1,6 +1,6 @@
 // 引入defineStore用于创建store
-import {defineStore} from 'pinia'
-import {reactive} from 'vue'
+import { defineStore } from 'pinia'
+import { reactive } from 'vue'
 import ico_baidu from '@/assets/home/baidu.png';
 import ico_baidu_kaifa from '@/assets/home/baidu_kaifa.png';
 import ico_bilibili from '@/assets/home/bilibili.png';
@@ -9,7 +9,7 @@ import ico_google from '@/assets/home/google.png';
 import ico_360 from '@/assets/home/360.png';
 import ico_github from '@/assets/home/github.png';
 import ico_custom from '@/assets/home/custom.png';
-import {EngineData} from "@/types/url";
+import type { EngineData } from "@/types/url";
 
 
 // 定义并暴露一个store
@@ -24,7 +24,7 @@ export const useLocalEnginesStore = defineStore('searchEngines', () => {
             searchUrl: '/search?q=',
             isShow: true
         },
-          {
+        {
             id: 1,
             name: '百度',
             index: 1,
@@ -60,7 +60,7 @@ export const useLocalEnginesStore = defineStore('searchEngines', () => {
             searchUrl: '/all?keyword=',
             isShow: false
         },
-            {
+        {
             id: 5,
             name: '百度开发者搜索',
             index: 5,
@@ -80,5 +80,5 @@ export const useLocalEnginesStore = defineStore('searchEngines', () => {
         },
     ])
 
-    return {searchEngines}
+    return { searchEngines }
 })

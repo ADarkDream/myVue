@@ -69,6 +69,20 @@ const verifyRules = {
 	policy: (rule: any, value: boolean, callback: any) => {
 		if (value === false) callback(new Error('请先阅读并勾选隐私政策！'))
 		else callback()
-	}
+	},
+
+
+	//修改邮箱的验证
+	// checkEmail: (rule: any, value: any, callback: any) => {
+	// 	const reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+(([.\-])[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/i;
+	// 	if (!value)
+	// 		return callback(new Error('邮箱不能为空！请输入邮箱地址！'))
+	// 	else if (value !== email.value)
+	// 		return callback(new Error('输入的邮箱与本账号邮箱不匹配！'))
+	// 	else if (!reg.test(value))
+	// 		return callback(new Error('请输入正确的邮箱地址！'))
+	// 	else
+	// 		return callback()
+	// }
 }
 export default verifyRules

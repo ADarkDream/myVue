@@ -83,6 +83,7 @@
 import { onMounted, onUnmounted, ref, toRefs } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessage } from "element-plus";
+import { Promotion } from "@element-plus/icons-vue";
 //stores
 import { useChatInfoStore } from "@/store/useChatInfoStore";
 import { useChatMsgStore } from '@/store/useChatMsgStore'
@@ -91,6 +92,8 @@ import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import useTimestamp from "@/hooks/useTimestamp";
 //utils
 import titleDiv from '@/utils/titleDiv';
+import myFunction from "@/utils/myFunction";
+import { emitter } from "@/utils/emitter";
 
 
 
@@ -98,13 +101,11 @@ const playerInfo = useChatInfoStore()//本地用户信息
 const socket = playerInfo.socket
 const { roomMsg } = useChatMsgStore()//本地的聊天信息
 // import {ChatMsg} from '@/types/chat'
-import useFunction from "@/hooks/useFunction";
-import { emitter } from "@/utils/emitter";
-import { Promotion } from "@element-plus/icons-vue";
+
 
 const router = useRouter()
 const route = useRoute()
-const { copyText } = useFunction()
+const { copyText } = myFunction
 const userInfoStore = useUserInfoStore()
 
 const { isLogin, imageSrc } = toRefs(userInfoStore)

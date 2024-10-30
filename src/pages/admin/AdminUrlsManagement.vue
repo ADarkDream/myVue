@@ -161,13 +161,13 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import type { TableInstance } from "element-plus";
 //hooks
 import useTimeStamp from "@/hooks/useTimestamp";
-import useFunction from "@/hooks/useFunction";
 //components
 import AddUrl from "@/components/AddUrl.vue";
-
+//utils
+import myFunction from "@/utils/myFunction";
 
 const { getTime } = useTimeStamp()
-const { diffObj } = useFunction()
+const { diffObj } = myFunction
 
 
 //添加导航网站面板的显示与隐藏

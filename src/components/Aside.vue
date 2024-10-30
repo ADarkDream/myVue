@@ -259,15 +259,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 import { Switch } from '@element-plus/icons-vue'
-//hooks
-import useResponsive from "@/hooks/useResponsive";
+//stores
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //utils
 import { emitter } from "@/utils/emitter";
 
+const responsiveStore = useResponsiveStore()
 
-const { isPC } = useResponsive()
+const { isPC } = toRefs(responsiveStore)
 const { showContent } = defineProps(['showContent'])
 //侧边栏折叠标志，true为折叠状态
 const isCollapse = ref(true)

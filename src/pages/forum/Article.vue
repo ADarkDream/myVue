@@ -77,7 +77,7 @@
                 <el-space spacer="" style="margin-right: 10px">
                   <el-text>{{ getDiffTime(item.created_time) }}</el-text>
                   <el-text type="primary">{{ index + 1 }}楼</el-text>
-                  <el-dropdown>
+                  <el-dropdown :trigger="isPC ? 'hover' : 'click'">
                     <span>
                       <el-icon class="el-icon--right">
                         <MoreFilled />
@@ -114,16 +114,19 @@ import hljs from 'highlight.js/lib/common';
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 //hooks
 import useTimeStamp from '@/hooks/useTimestamp'
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
+//utils
+import { emitter } from "@/utils/emitter";
 //types
 import { Article, CommentInfo } from '@/types/articles'
 
 
 
 const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
 
 const { isLogin, isAdmin, uid, headImgUrl, errorImage } = toRefs(userInfoStore)
-const { screenHeight, containerHeight } = useResponsive()
+const { screenHeight, containerHeight, isPC } = toRefs(responsiveStore)
 const router = useRouter()
 const route = useRoute() // 注意：接收参数的时候不带 ‘r’
 const isShow = ref(true)
@@ -185,10 +188,10 @@ async function getArticle() {
 
 //给代码块添加高亮
 // 复制功能
-// import useFunction from "@/hooks/useFunction";
-import { emitter } from "@/utils/emitter";
 
-// const {copyCode} = useFunction()
+
+
+
 
 function addCodeHighLight() {
   const codeBlocks = document.querySelectorAll('[class*="language-"]')

@@ -1,16 +1,18 @@
 //音乐
-import { toRefs } from "vue";
+import { ref, toRefs } from "vue";
 import { ElMessage } from "element-plus";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import { useMusicListDrawerStore } from '@/store/music/useMusicListDrawerStore'
+import type { MusicListInfo } from "@/types/music";
 
 
 export default function () {
     const musicListDrawerStore = useMusicListDrawerStore()
     const userInfoStore = useUserInfoStore()
-    const { isLogin } = toRefs(userInfoStore)
-    const { isShowMusicListDrawer, music_id_list } = toRefs(musicListDrawerStore)
+    const { isLogin, uid } = toRefs(userInfoStore)
+    const { isShowMusicListDrawer, isShowEditMusicListInfoDrawer, music_id_list, isCreateFlag, formData } = toRefs(musicListDrawerStore)
+    const { reSetFormData } = musicListDrawerStore
     /**
      * 显示歌单列表的抽屉
      */
@@ -23,6 +25,24 @@ export default function () {
         }
     }
 
-    return { showMusicListDrawer }
+    /**
+  * 打开创建歌单的抽屉
+  * @param is_create 创建歌单或编辑歌单信息
+  */
+    const showEditMusicListInfoDrawer = (is_create: boolean, music_list_info?: MusicListInfo) => {
+        if (isLogin.value) {
+            //如果是修改歌单信息
+            if (!is_create && music_list_info) formData.value = music_list_info
+            else reSetFormData()
+            isCreateFlag.value = is_create
+            isShowEditMusicListInfoDrawer.value = true
+        }
+        else ElMessage.info('请先登录')
+    }
+
+
+
+
+    return { formData, showMusicListDrawer, showEditMusicListInfoDrawer }
 }
 

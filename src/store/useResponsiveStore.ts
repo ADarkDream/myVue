@@ -1,7 +1,8 @@
+import { defineStore } from "pinia";
 import { ref, reactive, type Ref } from "vue";
 import { useRouter } from "vue-router";
 
-export default function () {
+export const useResponsiveStore = defineStore('responsive', () => {
     const router = useRouter()
     const screenWidth = ref<number>(document.body.clientWidth)
     const screenHeight = ref<number>(window.innerHeight)
@@ -162,4 +163,4 @@ export default function () {
         elSize,
         drawerSize
     }
-}
+})

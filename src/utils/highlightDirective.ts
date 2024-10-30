@@ -1,10 +1,11 @@
 import hljs from 'highlight.js/lib/common';
 import 'highlight.js/styles/default.css'; // 选择你喜欢的代码高亮样式
-//hooks
-import useFunction from "@/hooks/useFunction";
+//utils
+import myFunction from "@/utils/myFunction";
+import { ElMessage } from 'element-plus';
 
 
-const { copyCode } = useFunction()
+const { copyCode } = myFunction
 const copy = (text: string) => {
     const textarea = document.createElement('textarea');
     textarea.value = text;

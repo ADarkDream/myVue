@@ -39,7 +39,7 @@ import { CloseBold, UploadFilled } from "@element-plus/icons-vue";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //components
 import AddUrl from "@/components/AddUrl.vue";
 //utils
@@ -51,9 +51,9 @@ import { ResultData } from "@/types/global";
 
 defineProps(['showContent'])
 const userInfoStore = useUserInfoStore()
-
+const responsiveStore = useResponsiveStore()
 const { isLogin } = toRefs(userInfoStore)
-const { dialogWidth } = useResponsive()
+const { dialogWidth } = toRefs(responsiveStore)
 
 const activeIndex = ref<number>(0)//导航分类的序号
 const sortName = ref<string>('')//导航分类标题

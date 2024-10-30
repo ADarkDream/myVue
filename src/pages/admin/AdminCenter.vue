@@ -42,9 +42,10 @@
 import { onMounted, ref, toRefs } from 'vue'
 import { useRouter } from "vue-router";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 
-const { screenHeight } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { screenHeight } = toRefs(responsiveStore)
 const router = useRouter();
 const userInfoStore = useUserInfoStore()
 

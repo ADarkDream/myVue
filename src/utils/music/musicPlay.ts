@@ -1,13 +1,13 @@
 //音乐播放相关的方法
 import axios from "axios";
 import { ElMessage } from "element-plus";
-//hooks
-import useFunction from "@/hooks/useFunction";
+//utils
+import myFunction from "@/utils/myFunction";
 //types
 import type { ResultData } from "@/types/global";
 import type { CloudSongInfo } from "@/types/music";
 
-const { copyText } = useFunction()
+const { copyText } = myFunction
 
 const musicPlay = {
     //如果音乐有id没src，则要通过id获取最新的src，然后重新赋值

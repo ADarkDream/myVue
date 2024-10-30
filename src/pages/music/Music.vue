@@ -57,7 +57,7 @@
           <h2>待完善：</h2>
           <el-text tag="p">1、七牛云链接后加上?avinfo可以获得音频源数据</el-text>
           <el-text tag="p">2、歌词界面:用第三方库 lyric-parser 进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。</el-text>
-          <el-text tag="p">3、歌曲收藏到歌单</el-text>
+          <el-text tag="p">3、收藏歌单；删除歌单中的歌</el-text>
           <el-text tag="p">4、上传自定义歌曲</el-text>
           <el-text tag="p">5、重构歌曲播放样式</el-text>
           <h2>问题：</h2>
@@ -66,6 +66,8 @@
           <el-text tag="p">3、歌单查询的歌曲排序有问题</el-text>
 
         </div>
+
+
       </el-tab-pane>
     </el-tabs>
     <!-- 搜索抽屉 -->
@@ -74,6 +76,8 @@
     <!-- <UpdateMusic /> -->
     <!-- 歌单列表抽屉 -->
     <MusicListDrawer />
+    <!--新建歌单的抽屉-->
+    <EditMusicListInfoDrawer />
   </div>
 </template>
 <script setup lang="ts">
@@ -83,8 +87,10 @@ import { useRoute, useRouter } from "vue-router";
 //stores
 import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
+import { useUserInfoStore } from '@/store/user/useUserInfoStore';
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import useMusicList from "@/hooks/music/useMusicList";
 //components
@@ -95,7 +101,8 @@ import MusicListSquare from "@/pages/music/components/MusicListSquare.vue";
 import MusicSettings from "@/pages/music/components/MusicSettings.vue";
 import MusicList from "@/pages/music/components/MusicList.vue";
 import UpdateMusic from '@/pages/music/components/UpdateMusic.vue'
-import MusicListDrawer from './components/MusicListDrawer.vue';
+import MusicListDrawer from '@/pages/music/drawer/MusicListDrawer.vue';
+import EditMusicListInfoDrawer from "@/pages/music/drawer/EditMusicListInfoDrawer.vue";
 //files
 import SVG_music_list from '@/assets/music/music_list.svg?component'
 
@@ -107,13 +114,18 @@ const router = useRouter()
 
 const musicConfigStore = useMusicConfigStore()
 const musicListStore = useMusicListStore()
-const { isPC, containerHeight, touchstart, positionComputed } = useResponsive()
-
-const { addMusicToPlay } = useMusicPlay()
-const { getCloudMusicList, getMusicList } = useMusicList()
+const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
 //页面背景配置
 const { activePanelIndex } = toRefs(musicConfigStore)
 const { bgSettings, changePanelIndex } = musicConfigStore
+const { isLogin } = toRefs(userInfoStore)
+
+const { isPC, containerHeight } = toRefs(responsiveStore)
+const { touchstart, positionComputed } = responsiveStore
+const { addMusicToPlay } = useMusicPlay()
+const { getCloudMusicList, getMusicList } = useMusicList()
+
 const playList = computed(() => musicListStore.playList)
 
 const music = ref<HTMLDivElement>()
@@ -157,7 +169,7 @@ onMounted(async () => {
 
   //跳转到歌单列表
   if (Number.isInteger(music_list_id) && music_list_id > 0) {
-    await getMusicList({ music_list_id })
+    await getMusicList({ music_list_id, is_login: isLogin.value })
     await router.replace({ name: 'music' })
     changePanelIndex(2)
   }

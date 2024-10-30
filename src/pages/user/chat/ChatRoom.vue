@@ -70,7 +70,7 @@ const route = useRoute()
 const { getTime } = useTimestamp()
 const roomID = ref<string>(route.query.roomID as string || '')//房间ID
 const playerName = ref<string>(sessionStorage.getItem('playerName') || '')//玩家昵称
-const chatMsgInfo = JSON.parse(localStorage.getItem('chatMsgInfo'))
+const chatMsgInfo = JSON.parse(localStorage.getItem('chatMsgInfo') || '')
 
 
 onMounted(() => {

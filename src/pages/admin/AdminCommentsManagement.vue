@@ -71,14 +71,15 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import type { TableColumnCtx, TableInstance } from "element-plus";
 //hooks
 import useTimeStamp from "@/hooks/useTimestamp";
-import useFunction from "@/hooks/useFunction";
+//utils
+import myFunction from "@/utils/myFunction";
 //types
 import { Comment } from "@/types/articles"
 
 
 
 const { getTime } = useTimeStamp()
-const { diffObj } = useFunction()
+const { diffObj } = myFunction
 const router = useRouter()
 const goArticle = (id: number) => {
   router.push({ path: '/forum/article', query: { id, isEdit: 1 } })

@@ -5,12 +5,14 @@
 </template>
 
 <script setup lang="ts">
+import { toRefs } from "vue";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //utils
 import { emitter } from "@/utils/emitter";
 
-const { containerHeight } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { containerHeight } = toRefs(responsiveStore)
 
 interface Scroll {
   scrollLeft: number,

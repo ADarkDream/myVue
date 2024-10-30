@@ -1,12 +1,13 @@
-.primary{
-  color:var(--el-color-primary);
-}
-.warning{
-  color:var(--el-color-warning);
+.primary {
+    color: var(--el-color-primary);
 }
 
-.success{
-    color:var(--el-color-success);
+.warning {
+    color: var(--el-color-warning);
+}
+
+.success {
+    color: var(--el-color-success);
 }
 
 .el-header {
@@ -71,7 +72,8 @@
 
         /*复选框文字内容*/
 
-        .el-checkbox.el-checkbox--small, .el-checkbox__label {
+        .el-checkbox.el-checkbox--small,
+        .el-checkbox__label {
             font-size: 14px;
             font-weight: 600;
         }
@@ -80,11 +82,14 @@
 
 
     @media (hover: hover) {
+
         /*折叠面板的标题*/
         .el-collapse-item__header:hover {
             /*    color: var(--el-color-primary);*/
             font-weight: 600;
         }
+
+
     }
 
 }
@@ -96,6 +101,11 @@
 /*去除输入框焦点边框*/
 .el-input__wrapper.is-focus {
     box-shadow: none;
+}
+
+/* 去掉el-dropdown的黑框 */
+.el-tooltip__trigger:focus {
+    outline: none;
 }
 
 /*el-button按钮插槽的自定义的SVG太小了，放大*/
@@ -118,7 +128,9 @@
 
 /*移动端*/
 @media (max-width: 980px) {
-    .el-header, .el-main {
+
+    .el-header,
+    .el-main {
         padding: 10px 10px 0 10px;
     }
 

@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeMount, onBeforeUnmount, reactive, ref } from "vue";
+import { computed, onBeforeMount, onBeforeUnmount, reactive, ref, toRefs } from "vue";
 import { useRoute } from "vue-router";
 import { ElMessage, ElMessageBox, type TabsInstance } from "element-plus";
 import { ArrowRight } from "@element-plus/icons-vue";
@@ -58,9 +58,9 @@ import axios from "axios";
 //stores
 import { useBookStore } from '@/store/useBookStore'
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
-import useFunction from "@/hooks/useFunction";
+
 import useTimestamp from '@/hooks/useTimestamp'
 import { numPlus, numMinus, getAllMonthDateRange } from "@/hooks/useComputed";
 //components
@@ -71,6 +71,7 @@ import BillTotalCost from "@/pages/user/books/components/BillTotalCost.vue";
 import BookIntroduction from "@/pages/user/books/components/BookIntroduction.vue";
 //utils
 import { emitter } from "@/utils/emitter";
+import myFunction from "@/utils/myFunction";
 //types
 import { Book, Bill, TotalCost, BillDesc, NewBill } from '@/types/books'
 import { ResultData, SpanMethodProps, TableFilterItem } from "@/types/global";
@@ -80,10 +81,11 @@ import { ResultData, SpanMethodProps, TableFilterItem } from "@/types/global";
 
 const route = useRoute()
 const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
 
 const { formatDate } = useTimestamp()
-const { isPC, elSize, dialogWidth, screenHeight } = useResponsive()
-const { copyText } = useFunction()
+const { isPC, elSize, dialogWidth, screenHeight } = toRefs(responsiveStore)
+const { copyText } = myFunction
 // import {numPlus} = useComputed()
 const { uid } = userInfoStore
 const bookData = useBookStore()

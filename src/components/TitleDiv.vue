@@ -9,7 +9,7 @@
         <!--首页-->
         <el-button @click="goTo('home')" plain :icon="HomeFilled" v-if="!isHome">首页</el-button>
         <!--更换壁纸-->
-        <el-button :icon="Switch" class="bgBtn" @click="changeBG(1)" v-if="isHome">更换壁纸</el-button>
+        <el-button :icon="Switch" class="bgBtn" @click="toggleBG({ getNewBg: true })" v-if="isHome">更换壁纸</el-button>
         <!--重返未来-->
         <el-button :icon="Download" class="bgBtn" @click="goTo('download')" v-if="isHome">
           重返未来
@@ -103,7 +103,8 @@
                   退出管理员登录
                 </el-dropdown-item>
                 <!--更换壁纸-->
-                <el-dropdown-item v-if="!isHome" @click="changeBG(1)" :icon="Switch">更换壁纸</el-dropdown-item>
+                <el-dropdown-item v-if="!isHome" @click="toggleBG({ getNewBg: true })"
+                  :icon="Switch">更换壁纸</el-dropdown-item>
                 <!--新闻-->
                 <el-dropdown-item @click="goTo('news')">
                   <SVG_news class="el-icon" />
@@ -181,7 +182,7 @@
         <!--论坛-->
         <el-button @click="goTo('center')" plain :icon="Comment" />
         <!--选项下拉菜单-->
-        <el-dropdown>
+        <el-dropdown trigger="click">
           <span>
             <el-button class="option" :icon="Operation" />
           </span>
@@ -208,7 +209,7 @@
                 退出管理员登录
               </el-dropdown-item>
               <!--更换壁纸-->
-              <el-dropdown-item :icon="Switch" class="bgBtn" @click="changeBG(0)">更换壁纸
+              <el-dropdown-item :icon="Switch" class="bgBtn" @click="toggleBG({ getNewBg: true })">更换壁纸
               </el-dropdown-item>
               <!--重返未来-->
               <el-dropdown-item :icon="Download" class="bgBtn" @click="goTo('download')" v-if="!isHome">重返未来
@@ -308,9 +309,9 @@ import { useRouter, useRoute } from "vue-router";
 import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
-import useFunction from "@/hooks/useFunction";
+import useTitleDiv from '@/hooks/useTitleDiv';
 //components
 import Notice from "@/components/Notice.vue";
 import Player from "@/pages/music/components/Player.vue";
@@ -325,19 +326,22 @@ import { NoticeActiveNum } from "@/types/global";
 import SVG_music from '@/assets/music/music.svg?component'
 import SVG_news from '@/assets/TitleDiv/news.svg?component'
 
-const userInfoStore = useUserInfoStore()
 
-const { isLogin, isAdmin, username, headImgUrl, localBgUrl, errorImage } = toRefs(userInfoStore)
-const { loginOut } = userInfoStore
-const { isDark, isPC, isHome, isForum } = useResponsive()
-const { getBG } = useFunction()
 const router = useRouter()
 const route = useRoute()
 const musicPlayStore = useMusicPlayStore()
 const musicListStore = useMusicListStore()
+const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
 const { togglePlayerVisible, toggleVolumePanelVisible } = musicPlayStore
 const { isShowVolumePanel, volume } = toRefs(musicPlayStore)
 const { isPlaying } = toRefs(musicListStore)
+const { isLogin, isAdmin, username, headImgUrl, localBgUrl, useUserBGUrl, errorImage } = toRefs(userInfoStore)
+const { loginOut } = userInfoStore
+const { isDark, isPC, isHome, isForum } = toRefs(responsiveStore)
+const { toggleBG } = useTitleDiv()
+
+
 
 const showPlayer = ref(false)
 
@@ -364,8 +368,9 @@ const goTo = (name: string) => router.push({ name })
 onMounted(() => {
   //如果本地壁纸为空
   if (!localBgUrl.value) //{//如果背景图不存在
-    //响应式布局,判断是电脑则用横屏背景图
-    changeBG(isPC.value ? 1 : 0)
+    toggleBG({ getNewBg: true })
+  //响应式布局,判断是电脑则用横屏背景图
+  // changeBG(isPC.value ? 1 : 0)
   // } else {
   //   console.log(333, bgUrl.value)
   //   // body.style.backgroundImage = 'url('+bgUrl.value+')'
@@ -383,6 +388,7 @@ onMounted(() => {
 
 //日夜模式切换逻辑
 function light() {
+
   if (isDark.value) {
     body.style.backgroundImage = ''
     html.classList.add('dark')
@@ -391,34 +397,34 @@ function light() {
     // console.log('当前为夜间模式')
   } else {
     html.classList.remove('dark')
-    body.style.backgroundImage = `url(${localBgUrl.value})`
+    toggleBG({})
+    // body.style.backgroundImage = `url(${localBgUrl.value})`
     // darkStr.value = '日间模式'
     sessionStorage.setItem('isDark', '0')
     // console.log('当前为日间模式')
   }
+
 }
 
 
 //监视日夜模式切换
 watch(isDark, (newValue, oldValue) => {
-  if (newValue === oldValue) {
-    return
-  } else {
-    // console.log('isDark变化了,当前为：', newValue)
-    light()
-  }
+  if (newValue === oldValue) return
+  // console.log('isDark变化了,当前为：', newValue)
+
+  light()
+
 })
 
 
 //更换壁纸,1为横屏，0为竖屏
-async function changeBG(number: number) {
-  const resImgList = await getBG(number)
-  localBgUrl.value = !!resImgList ? resImgList[0].imgUrl : ''
-  console.log('当前背景图片地址是：' + localBgUrl.value + '\r\n如需更多壁纸请前往重返未来1999官网：' + 'https://re.bluepoch.com/home/detail.html#wallpaper')
-  if (!isDark.value) body.style.backgroundImage = `url(${localBgUrl.value})`
-  localStorage.setItem('localBgUrl', localBgUrl.value)
-  localStorage.setItem('useUserBGUrl', '0') //取消用户个人信息的背景设置
-}
+// async function changeBG(number: number) {
+//   const resImgList = await getBG(number)
+//   localBgUrl.value = !!resImgList ? resImgList[0].imgUrl : ''
+//   console.log('当前背景图片地址是：' + localBgUrl.value + '\r\n如需更多壁纸请前往重返未来1999官网：' + 'https://re.bluepoch.com/home/detail.html#wallpaper')
+//   if (!isDark.value) body.style.backgroundImage = `url(${localBgUrl.value})`
+//   useUserBGUrl.value = false //取消用户个人信息的背景设置
+// }
 
 
 //前往管理中心
@@ -510,6 +516,12 @@ function checkRoute(path: string) {
 watch(router.currentRoute, (newValue, oldValue) => {
   if (newValue === oldValue) return
   checkRoute(newValue.path)
+})
+
+//切换本地和用户设置的壁纸
+watch(useUserBGUrl, (newVal, oldVal) => {
+  if (newVal === oldVal) return
+  toggleBG({})
 })
 
 //公告列表面板序号

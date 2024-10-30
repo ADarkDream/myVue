@@ -12,7 +12,7 @@
             <el-text class="title">{{ item.name }}</el-text>
             <el-text class="title" type="success" v-if="!item.key">[协作]</el-text>
             <div @click.stop>
-              <el-dropdown class="menu">
+              <el-dropdown class="menu" :trigger="isPC ? 'hover' : 'click'">
                 <span>
                   <el-icon>
                     <MoreFilled />
@@ -53,24 +53,28 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { Delete, Edit, MoreFilled, Share } from "@element-plus/icons-vue";
 import axios from "axios";
+//stores
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
-import useResponsive from "@/hooks/useResponsive";
-import useFunction from "@/hooks/useFunction";
+
 import useTimestamp from "@/hooks/useTimestamp";
 //components
 import AddBook from "@/pages/user/books/components/AddBook.vue";
+//utils
+import myFunction from "@/utils/myFunction";
 //types
 import { Book } from '@/types/books'
 
-
+const responsiveStore = useResponsiveStore()
+const { elSize, dialogWidth, containerHeight, isPC } = toRefs(responsiveStore)
 const { getTime } = useTimestamp()
-const { elSize, dialogWidth, containerHeight } = useResponsive()
-const { deepEqual, copyText } = useFunction()
+
+const { deepEqual, copyText } = myFunction
 const router = useRouter()
 
 //当前编辑的账本bid

@@ -43,19 +43,48 @@ export const useMusicListStore = defineStore('music_list', () => {
         }
     ])
 
-    //数据库歌单id（key）和网易云歌单id（value）键值对
+
+    /**
+     * - 歌单关系和键值对
+     * - 数据库歌单id(key:number)
+     * - 网易云歌单id(value)
+     */
     const connectionObj = reactive<{ [key: number]: number }>({})
-
-    //歌单歌曲对象
+    /**
+     * - 歌单歌曲对象
+     * - 数据库歌单id(key:string)
+     * - 歌曲列表CloudSongInfo(value)
+     */
     const musicListObj = reactive<{ [key: string]: CloudSongInfo[] }>({})
-
-    //歌单信息对象
+    /**
+     * - 歌单信息对象
+     * - 数据库歌单id(key:string)
+     * - 歌单信息列表MusicListInfo(value)
+     */
     const musicListInfoObj = reactive<{ [key: string]: MusicListInfo }>({})
 
+    /**
+   * 公开的歌单id列表
+   */
+    const publicMusicIdList = ref<number[]>([])
+    /**
+    * 公开的歌单列表
+    */
+    const publicMusicListInfo = computed<MusicListInfo[]>(
+        () => publicMusicIdList.value.map(id => musicListInfoObj[id.toString()]
+        ).filter(info => info !== undefined)
+    )
     /**
      * 用户创建的歌单id列表
      */
     const myMusicIdList = ref<number[]>([])
+    /**
+    * 用户创建的歌单列表
+    */
+    const myMusicListInfo = computed<MusicListInfo[]>(
+        () => myMusicIdList.value.map(id => musicListInfoObj[id.toString()]
+        ).filter(info => info !== undefined)
+    )
 
     //当前歌单的信息
     const musicListInfo = ref<MusicListInfo>()
@@ -134,6 +163,47 @@ export const useMusicListStore = defineStore('music_list', () => {
         playList.value = defaultPlayList.value
     }
 
+    /**
+     * 给歌单信息列表赋新值,并根据id降序排列(从新到旧)
+     * @param idList -歌单的新值
+     * @param flag 公开/用户/用户收藏的歌单
+     */
+    const setMusicIdList: (idList: number[], flag: 'public' | 'my' | 'connect') => void = (idList, flag = 'public') => {
+        let tempList = idList
+        //歌单按id降序排列(从新到旧)
+        if (idList.length > 1) tempList = idList.sort((a, b) => b - a)
+
+        //直接赋值
+        if (flag === 'public') publicMusicIdList.value = tempList
+        else if (flag === 'my')
+            myMusicIdList.value = tempList
+        //else if (flag === 'connect') 
+    }
+
+    /**
+     * 添加、删除歌单列表中的id并降序排列(从新到旧)，然后更新歌单列表
+     * @param idList 要添加或删除的id列表
+     * @param isAdd 添加/删除
+     * @param flag 公开/用户/用户收藏的歌单
+     */
+    const updateMusicIdList: (idList: number[], isAdd: boolean, flag: 'public' | 'my' | 'connect') => void = (idList, isAdd = true, flag = 'public') => {
+        let tempList = publicMusicIdList.value//公开的
+        if (flag === 'my') tempList = myMusicIdList.value//用户的
+        // else if (flag = 'connect') tempList = //用户收藏的
+
+        const tempSet = new Set(tempList)
+
+        if (isAdd)//添加
+            idList.forEach(id => tempSet.add(id))
+        else// 删除
+            idList.forEach(id => tempSet.delete(id))
+
+        // console.log('updateMusicIdList', flag, [...tempSet]);
+
+        setMusicIdList([...tempSet], flag)
+    }
+
+
 
     return {
         defaultPlayList,
@@ -145,13 +215,16 @@ export const useMusicListStore = defineStore('music_list', () => {
         thisMusic,
         musicListInfo,
         musicList,
-        myMusicIdList,
+        publicMusicListInfo,
+        myMusicListInfo,
         connectionObj,
         musicListInfoObj,
         musicListObj,
         addMusicList,
         deleteMusicFromPlayList,
         clearPlayList,
+        setMusicIdList,
+        updateMusicIdList,
     }
 }, {
     persist: [{

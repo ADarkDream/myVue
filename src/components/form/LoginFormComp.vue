@@ -19,8 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, toRefs } from 'vue'
-import { useRouter } from "vue-router";
+import { reactive, ref } from 'vue'
 import axios from "axios";
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 //stores
@@ -32,9 +31,8 @@ import titleDiv from '@/utils/titleDiv';
 import type { loginForm } from "@/types/form";
 
 
-const router = useRouter()
+
 const userInfoStore = useUserInfoStore()
-const { token, userInfo, } = toRefs(userInfoStore)
 const { updateLocalUserInfo } = userInfoStore
 const ruleFormRef = ref<FormInstance>()
 

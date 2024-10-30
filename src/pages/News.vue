@@ -49,14 +49,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, toRefs } from "vue";
 import { Picture as IconPicture } from '@element-plus/icons-vue'
 import axios from "axios";
-//hooks
-import useResponsive from "@/hooks/useResponsive";
+//stores
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 
-
-const { screenHeight } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { screenHeight } = toRefs(responsiveStore)
 const channel = ref('政治')//频道
 const newsNum = ref(10)//新闻条数
 // const channelList = reactive([])

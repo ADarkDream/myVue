@@ -39,21 +39,23 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, toRefs } from 'vue';
 import type { CalendarDateType, CalendarInstance } from 'element-plus'
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
+//stores
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
 import { getAllMonthDateRange } from "@/hooks/useComputed";
 import useTimestamp from '@/hooks/useTimestamp'
-import useResponsive from "@/hooks/useResponsive";
+
 dayjs.locale('zh-cn');//每周从周一开始
 
-
-const { isPC } = useResponsive()
+const responsiveStore = useResponsiveStore()
+const { isPC } = toRefs(responsiveStore)
 const { formatDate } = useTimestamp()
 
-// const {isPC} = useResponsive()
+// const {isPC} =  toRefs(responsiveStore)
 const { getTheBillDesc, bookDesc, changeTab } = defineProps(['getTheBillDesc', 'bookDesc', 'changeTab'])
 
 //日历
