@@ -63,7 +63,7 @@ const { showEditMusicListInfoDrawer } = useMusic()
 </script>
 <style scoped>
 .MusicListDrawer {
-    --coverImage: url('../assets/music/music.svg');
+    --coverImage: url('@/assets/music/music.svg');
 }
 
 .title {

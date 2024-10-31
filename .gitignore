@@ -30,3 +30,4 @@ coverage
 *.tsbuildinfo
 /sitemap.xml
 /sitemap.xml.gz
+myVue.code-workspace

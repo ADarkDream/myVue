@@ -4,8 +4,8 @@
       偏好设置<el-text type="warning" v-if="isLoading">&ensp;审核中...</el-text>
     </el-header>
     <el-main>
-      <div style="margin-bottom: 20px;">图片上传之后会自动审核。若图片没有成功加载,可能是<el-text type="warning">图片违规</el-text>或<el-text
-          type="danger">服务器错误</el-text>
+      <div style="margin-bottom: 20px;">自定义网站背景图。图片上传之后会自动审核。若图片没有成功加载,可能是<el-text
+          type="warning">图片违规</el-text>或<el-text type="danger">服务器错误</el-text>
       </div>
       <div>
         <el-space v-if="isShow && !dialogVisible">

@@ -2,15 +2,23 @@
   <!--图片上传框-->
   <div class="uploadImage" :style="isAdmin ? '' : 'flex-direction: column;'">
     <el-upload ref="upload" class="uploadDiv" :show-file-list="false" :on-change="fileChange" :on-exceed="handleExceed"
-      :limit="1" :auto-upload="false" accept="image/img,image/png,image/jpg,image/jpeg">
+      :limit="1" :auto-upload="false" drag accept="image/img,image/png,image/jpg,image/jpeg">
       <el-image class="uploadImg" :class="{ isBg: options.sort === 'bg' && options.imgUrl }" title="上传图像"
         :src="options.imgUrl">
         <template #error>
           <div style="width: 100%;">
             <SVG_plus class="svg" />
+            <el-text tag="p" type="info" v-if="isPC">支持拖拽上传</el-text><br>
           </div>
         </template>
       </el-image>
+      <template #tip>
+        <div class="upload_desc">
+          <el-text type="info">.img/png/jpg/jpeg</el-text>
+          <el-text type="info">
+            <{{ options.maxSize }}MB</el-text>
+        </div>
+      </template>
     </el-upload>
     <div class="options">
       <div v-if="changeBtnsFlag && isAdmin">
@@ -75,7 +83,7 @@ const responsiveStore = useResponsiveStore()
 const { isAdmin } = toRefs(userInfoStore)
 const { options, isLoading, uploadImgFile, changeBtnsFlag } = toRefs(uploadImageStore)
 const { cancelUpload } = uploadImageStore
-const { elSize } = toRefs(responsiveStore)
+const { elSize, isPC } = toRefs(responsiveStore)
 const { fileChange, computedMd5, uploadImage } = useUploadImage()
 
 
@@ -133,6 +141,12 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
       transition: scale 0.5s ease;
       fill: var(--borderColor)
     }
+
+    .upload_desc {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 5px;
+    }
   }
 
   /* 上传背景图时，高度和宽度自适应 */
@@ -179,5 +193,14 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 
   }
 
+}
+</style>
+<style>
+/* 去除拖拽上传的边框 */
+.el-upload-dragger,
+.el-upload-dragger.is-dragover {
+  border: none;
+  padding: 0;
+  border-radius: 15px;
 }
 </style>
