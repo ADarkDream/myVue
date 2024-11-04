@@ -228,7 +228,7 @@ onBeforeUnmount(() => {
   width: 15px;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .mainContent {
     display: block;
     justify-content: space-between;

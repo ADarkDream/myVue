@@ -34,7 +34,7 @@ interface Token {
  * 用户信息
  */
 interface UserInfo {
-  uid: number | undefined,
+  uid?: number,
   username: string,
   email: string,
   password?: string,
@@ -48,6 +48,7 @@ interface UserInfo {
   isSuperAdmin?: number,
   created_time?: string,
   updated_time?: string,
+  [key: string]: unknown
 }
 
 export type { TokenUserInfo, Token, UserInfo }

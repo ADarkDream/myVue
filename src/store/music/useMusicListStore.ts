@@ -2,7 +2,7 @@
 import { defineStore } from 'pinia'
 import { computed, reactive, ref } from "vue";
 import { useBaseUrl } from "@/hooks/useBaseUrl";
-import type { CloudSongInfo, MusicList, MusicListInfo, QueryCloudMusicList, QueryMusicList, QueryMusicLists } from "@/types/music";
+import type { CloudSongInfo, MusicList, MusicListInfo, QueryCloudMusicList, QueryMusicList, QueryMusicLists, SongInfo } from "@/types/music";
 import musicListUtils from "@/utils/music/musicList";
 import { ElMessage } from "element-plus";
 
@@ -20,7 +20,7 @@ export const useMusicListStore = defineStore('music_list', () => {
             status: 1,
             artists: [{ name: '川川尾巴小心不要被扯掉了' }],
             album: {
-                name: '',
+                name: '川川老师的作品集',
                 pic_url: defaultUrl + '/music/album-art/%E4%B8%93%E8%BE%91%E5%9B%BE-%E5%B7%9D%E5%B7%9D%E5%B0%BE%E5%B7%B4%E5%B0%8F%E5%BF%83%E4%B8%8D%E8%A6%81%E8%A2%AB%E6%89%AF%E6%8E%89%E4%BA%86.jpg'
             },
             src: defaultUrl + '/music/files/%E6%9C%AA%E5%91%BD%E5%90%8D-%E5%B7%9D%E5%B7%9D%E5%B0%BE%E5%B7%B4%E5%B0%8F%E5%BF%83%E4%B8%8D%E8%A6%81%E8%A2%AB%E6%89%AF%E6%8E%89%E4%BA%86.m4a'
@@ -28,20 +28,7 @@ export const useMusicListStore = defineStore('music_list', () => {
     ])
 
     //播放列表
-    const playList = ref<CloudSongInfo[]>([
-        {
-            id: 1,
-            cloud_music_id: 0,
-            name: '未命名',
-            status: 1,
-            artists: [{ name: '川川尾巴小心不要被扯掉了' }],
-            album: {
-                name: '',
-                pic_url: defaultUrl + '/music/album-art/%E4%B8%93%E8%BE%91%E5%9B%BE-%E5%B7%9D%E5%B7%9D%E5%B0%BE%E5%B7%B4%E5%B0%8F%E5%BF%83%E4%B8%8D%E8%A6%81%E8%A2%AB%E6%89%AF%E6%8E%89%E4%BA%86.jpg'
-            },
-            src: defaultUrl + '/music/files/%E6%9C%AA%E5%91%BD%E5%90%8D-%E5%B7%9D%E5%B7%9D%E5%B0%BE%E5%B7%B4%E5%B0%8F%E5%BF%83%E4%B8%8D%E8%A6%81%E8%A2%AB%E6%89%AF%E6%8E%89%E4%BA%86.m4a'
-        }
-    ])
+    const playList = ref<CloudSongInfo[]>([...defaultPlayList.value])
 
 
     /**
@@ -86,10 +73,16 @@ export const useMusicListStore = defineStore('music_list', () => {
         ).filter(info => info !== undefined)
     )
 
-    //当前歌单的信息
+
+    /**
+     * 当前歌单的信息
+     */
     const musicListInfo = ref<MusicListInfo>()
 
-    //当前歌单的音乐列表
+
+    /**
+     * 当前歌单的音乐列表
+     */
     const musicList = ref<CloudSongInfo[]>([])
 
 
@@ -97,7 +90,7 @@ export const useMusicListStore = defineStore('music_list', () => {
     const playingIndex = ref(0)
 
     //当前播放的歌曲信息
-    const thisMusic = computed(() => playList.value[playingIndex.value])
+    const thisMusic = ref<CloudSongInfo>(defaultPlayList.value[0])
 
 
     //播放列表序号和id对应的对象,id为键，index为值
@@ -145,22 +138,58 @@ export const useMusicListStore = defineStore('music_list', () => {
     const deleteMusicFromPlayList = (id: number) => {
         //获取要删除的歌在歌单列表的序号
         const index = playListIndex.value[id]
-        if (index === playingIndex.value) {
-            //toggleMusic({})
-            return ElMessage.error('不能删除当前播放的歌曲')
-        }
-        else if (index < playingIndex.value) {
+        // if (index === playingIndex.value) {
+        //     //toggleMusic({})
+        //     return ElMessage.error('不能删除当前播放的歌曲')
+        // }
+        // else if (index < playingIndex.value) {
+        if (playingIndex.value !== 0)
             playingIndex.value--
-            console.log(index)
-            console.log(playingIndex.value)
-            console.warn('删除的是播放歌曲之前的歌')
-        }
+        // console.warn('删除的是播放歌曲之前的歌')
+        // }
         playList.value.splice(index, 1)
     }
+
+    /**
+     * 修改当前播放的歌曲
+     * @param index 
+     * @param isOnMounted 
+     * @returns 
+     */
+    const setThisMusic = async (index: number, isOnMounted = false) => {
+        try {
+            console.log(index, isOnMounted, playingIndex.value, playList.value)
+            const length = playList.value.length
+            if (!index) index = 0
+            //播放序号超出播放列表长度
+            if (index > length || length === 0) {
+                //网站加载时
+                if (isOnMounted && length === 0) {
+                    playList.value = defaultPlayList.value
+                    index = 0
+                }
+                else if (length === 0) return ElMessage.info('播放列表为空！')
+                else {
+                    ElMessage.info('目标歌曲不存在，已切换播放')
+                    index = length - 1
+                }
+            }
+
+
+            playingIndex.value = index
+            thisMusic.value = playList.value[playingIndex.value]
+            console.log('设置当前播放歌曲:', playingIndex.value, thisMusic.value)
+        } catch (err) {
+            console.error('setThisMusic出错了:')
+            console.error(err)
+        }
+    }
+
 
     //清空播放列表
     const clearPlayList = () => {
         playList.value = defaultPlayList.value
+        // playingIndex.value = 0
     }
 
     /**
@@ -225,6 +254,7 @@ export const useMusicListStore = defineStore('music_list', () => {
         clearPlayList,
         setMusicIdList,
         updateMusicIdList,
+        setThisMusic
     }
 }, {
     persist: [{

@@ -62,7 +62,7 @@ export default function () {
         isStop?: boolean
     }) {
         const length = playList.value.length
-        if (length === 0) return ElMessage.info('歌曲列表为空')
+        if (length === 0) return ElMessage.error('播放列表为空')
         else if (playingIndex.value < 0 || playingIndex.value > length) {
             playingIndex.value = 0
             ElMessage.info('歌曲不存在,已跳转到第一首')
@@ -189,24 +189,25 @@ export default function () {
         isLoading.value = true
         // 移除旧的 `canplay` 事件监听器
         audioElement.value.removeEventListener('canplay', handleCanPlay)
+
         //切换歌曲逻辑
         //定向切歌
         index = Number(index)
         if (Number.isInteger(index) && index >= 0) {//判断非负整数
-            playingIndex.value = index
-            console.log(`即将播放：${playList.value[index].name}`)
+            musicListStore.setThisMusic(index)
+            // console.log(`即将播放：${playList.value[index].name}`)
         }
         //按模式切歌
         else togglePlayingIndex(isNext, isAuto)
 
         //获取要播放的这一首歌
-        const song = playList.value[playingIndex.value]
-        console.log('即将播放', song)
+        musicListStore.setThisMusic(playingIndex.value)
+        console.log('即将播放', thisMusic.value)
         // if (song?.fee === 1 && !song.src) {
         //     musicListStore.deleteMusicFromPlayList(song.id)
         //     return ElMessage.warning('暂不支持VIP音乐')
         // }
-        await resetUrl(song)
+        await resetUrl(thisMusic.value)
 
         //如果当前不是播放状态，则播放
         if (!isPlaying.value) await play({ isReplay: true })

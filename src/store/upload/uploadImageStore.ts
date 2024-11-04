@@ -1,7 +1,7 @@
 // 引入defineStore用于创建store
 import { defineStore } from 'pinia'
 import { ref } from "vue";
-import type { UploadFile, UploadRawFile } from 'element-plus';
+import type { UploadRawFile } from 'element-plus';
 import type { Image } from '@/types/upload';
 
 // 定义并暴露一个store

@@ -444,7 +444,7 @@ const deleteRow = (id: number, isDraft: number) => {
   border-radius: 10px;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .card {
     width: 100%;
   }

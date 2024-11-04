@@ -221,7 +221,7 @@ onMounted(async () => {
 
 /*endregion*/
 
-@media (max-width:980px) {
+@media (max-width:780px) {
     .button {
         font-size: 15px;
     }

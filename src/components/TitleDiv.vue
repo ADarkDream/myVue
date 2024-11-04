@@ -643,7 +643,7 @@ emitter.on('showNotice', (item: NoticeActiveNum) => {
   }
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .title {
     padding: 5px 10px;
   }

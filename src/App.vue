@@ -180,7 +180,7 @@ axios.interceptors.response.use((response) => {
   z-index: 100;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .shade {
     padding: 0;
     position: fixed;

@@ -327,7 +327,7 @@ emitter.on('showAsideBtn', handler)
   background-color: transparent;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .change2 {
     margin: 5px 0 0 20px;
     float: left

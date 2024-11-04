@@ -268,7 +268,7 @@ onMounted(() => {
   justify-content: space-between;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
 
   .el-header,
   .el-main,
@@ -292,7 +292,7 @@ onMounted(() => {
   opacity: 0.5;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
 
   /* 隐藏右边日期面板 */
   .el-picker-panel__content.el-date-range-picker__content.is-right {

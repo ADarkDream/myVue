@@ -845,7 +845,7 @@ console.log('isPC', isPC.value)
   background: white;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   h1 {
     font-size: 24px;
     margin-bottom: 10px;

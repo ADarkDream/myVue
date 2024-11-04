@@ -123,9 +123,41 @@ export default function () {
             ElMessage.success('添加成功')
             isShowMusicListDrawer.value = false//关闭歌单列表
             //更新歌单信息
+            //向信息对象中添加
             getMusicListsInfo({ is_login: true, user_id: uid.value, music_list_id }, true)
+            // musicListInfoObj.value[music_list_id.toString()] = MusicListInfo
+
         } else if (status === 300) return// ElMessage.info(msg)
         else ElMessage.error('添加失败')
+    }
+
+
+    /**
+    * 删除歌曲
+    * @param music_list_id -数据库的歌单id
+    */
+    const deleteMusicFromList = async (music_list_id: number, index: number) => {
+        const { status } = await musicListUtils.deleteMusicFromList(music_id_list.value, music_list_id)
+        if (status === 1) {
+            ElMessage.success('删除成功')
+            //todo 关闭选中状态
+
+            //更新歌单信息
+            if (musicListInfo.value) {
+                //更新歌曲数量
+                const newSongCount = musicListInfo.value.songsCount - music_id_list.value.length
+                musicListInfo.value.songsCount = newSongCount
+
+                musicListInfoObj.value[music_list_id.toString()] = musicListInfo.value
+                //更新歌单数据
+                const newMusicList = musicList.value.filter(songInfo => {
+                    return !music_id_list.value.includes(songInfo.id)
+                })
+                musicList.value = newMusicList
+                musicListObj.value[music_list_id.toString()] = newMusicList
+            }
+        }
+        else ElMessage.error('删除失败')
     }
 
     /**
@@ -139,8 +171,36 @@ export default function () {
                 ElMessage.success(msg)
                 musicListInfoObj.value[music_list_id] = music_list_info
                 updateMusicIdList([music_list_id], true, 'my')
+                if (formData.status === 2) //如果是公开歌单，则同步增加
+                    updateMusicIdList([music_list_id], true, 'public')
                 isShowEditMusicListInfoDrawer.value = false
             } else ElMessage.error(msg)
+        } catch (error) {
+            console.log('发生错误：')
+            console.dir(error)
+        }
+    }
+
+    /**
+      * 修改歌单信息
+      */
+    const updateMusicList = async (formData: MusicListInfo) => {
+        try {
+            const { status } = await musicListUtils.updateMyMusicListInfo(formData)
+            if (status === 1) {//修改成功
+                const { music_list_id } = formData
+                const music_list_info = musicListInfoObj.value[music_list_id]
+                const old_status = music_list_info.status
+                const new_status = formData.status
+                console.log('修改了歌单权限')
+                if (old_status !== new_status) {//修改了歌单权限
+                    updateMusicIdList([music_list_id], new_status === 2, 'public')
+                }
+                //添加新的歌单信息
+                musicListInfoObj.value[music_list_id] = Object.assign(music_list_info, formData)
+                //关闭修改抽屉
+                isShowEditMusicListInfoDrawer.value = false
+            }
         } catch (error) {
             console.log('发生错误：')
             console.dir(error)
@@ -190,6 +250,6 @@ export default function () {
 
 
 
-    return { getMusicListsInfo, getMusicList, getCloudMusicList, connectMusicToList, createMusicList, deleteMusicList }
+    return { getMusicListsInfo, getMusicList, getCloudMusicList, connectMusicToList, deleteMusicFromList, createMusicList, updateMusicList, deleteMusicList }
 }
 

@@ -21,12 +21,10 @@ export const useUserInfoStore = defineStore('user_info', () => {
 
 
     const userInfo = ref<UserInfo>({
-        uid: undefined,
         username: '',
         email: '',
         signature: '',
         bgUrl: '',
-        password: '',
         headImgUrl: imageSrc,
     })
 
@@ -66,9 +64,9 @@ export const useUserInfoStore = defineStore('user_info', () => {
         (Object.keys(newUserInfo) as (keyof UserInfo)[]).forEach(key => {
             // 如果 userInfo 没有这个 key，则新建该 key
             if (!(key in userInfo.value)) {
-                (userInfo.value as any)[key] = undefined; // 初始化新键
+                (userInfo.value)[key] = undefined; // 初始化新键
             }
-            userInfo.value[key] = newUserInfo[key] as any
+            userInfo.value[key] = newUserInfo[key]
         })
         checkLocalToken()
     }
@@ -119,14 +117,13 @@ export const useUserInfoStore = defineStore('user_info', () => {
      */
     const loginOut = (is_admin = false) => {
         //重置userInfo
-        userInfo.value.email = ''
-        userInfo.value.signature = ''
-        userInfo.value.uid = undefined
-        userInfo.value.username = ''
-        userInfo.value.bgId = undefined
-        userInfo.value.bgUrl = ''
-        userInfo.value.headImgId = undefined
-        userInfo.value.headImgUrl = ''
+        userInfo.value = {
+            username: '',
+            email: '',
+            signature: '',
+            bgUrl: '',
+            headImgUrl: imageSrc,
+        }
         isAdmin.value = false
         isLogin.value = false//退出登录
         if (is_admin) {//清除管理员的token

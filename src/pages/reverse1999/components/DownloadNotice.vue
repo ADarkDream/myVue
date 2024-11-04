@@ -189,7 +189,7 @@ const changePage = (show_num: number, active_num = 1) => {
 }
 
 /*移动端*/
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .downloadNotice p {
     font-size: 13px;
   }

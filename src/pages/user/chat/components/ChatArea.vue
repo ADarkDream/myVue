@@ -28,7 +28,7 @@
           <div v-if="item.roomID === playerInfo.roomID"
             :class="['chat-msg', item.playerID === playerInfo.playerID ? 'owner' : 'guest']">
             <div class="chat-msg-profile">
-              <img class="chat-msg-img" :src="imageSrc" alt="" />
+              <img class="chat-msg-img" :src="headImgUrl || imageSrc" alt="" />
               <!--              <el-text class="chat-msg-title">{{ item.playerName }}</el-text>-->
               <el-text class="chat-msg-date">{{ getDiffTime(item.time) }}</el-text>
             </div>
@@ -85,8 +85,8 @@ import { useRouter, useRoute } from "vue-router";
 import { ElMessage } from "element-plus";
 import { Promotion } from "@element-plus/icons-vue";
 //stores
-import { useChatInfoStore } from "@/store/useChatInfoStore";
-import { useChatMsgStore } from '@/store/useChatMsgStore'
+import { useChatInfoStore } from "@/store/user/chat/useChatInfoStore";
+import { useChatMsgStore } from '@/store/user/chat/useChatMsgStore'
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 //hooks
 import useTimestamp from "@/hooks/useTimestamp";
@@ -94,45 +94,50 @@ import useTimestamp from "@/hooks/useTimestamp";
 import titleDiv from '@/utils/titleDiv';
 import myFunction from "@/utils/myFunction";
 import { emitter } from "@/utils/emitter";
-
-
-
-const playerInfo = useChatInfoStore()//本地用户信息
-const socket = playerInfo.socket
-const { roomMsg } = useChatMsgStore()//本地的聊天信息
 // import {ChatMsg} from '@/types/chat'
+
+
+const chatInfoStore = useChatInfoStore()
+const chatMsgStore = useChatMsgStore()
+const userInfoStore = useUserInfoStore()
+const { socket, playerInfo } = toRefs(chatInfoStore)//本地用户信息
+const { roomMsg } = toRefs(chatMsgStore)//本地的聊天信息
+
 
 
 const router = useRouter()
 const route = useRoute()
 const { copyText } = myFunction
-const userInfoStore = useUserInfoStore()
 
-const { isLogin, imageSrc } = toRefs(userInfoStore)
+
+const { isLogin, headImgUrl, imageSrc } = toRefs(userInfoStore)
 const { getDiffTime } = useTimestamp()
 
 
-onMounted(() => {
-  const { roomID, playerName } = route.query
-  if (roomID) playerInfo.setRID(roomID as string)
-  if (playerName) playerInfo.setRName(playerName as string)
+onMounted(async () => {
 
-  if (!playerInfo.playerName) {//昵称为空，返回主页
+  const { roomID, playerName } = playerInfo.value
+  let has_roomID = false
+  let has_playerName = false
+  console.log(route.query);
+  if (roomID && typeof roomID === 'string') {
+    playerInfo.value.roomID = roomID
+    has_roomID = true
+  } else {//房间号为空，返回主页
+    ElMessage.error('请先填写房间号')
+    return router.push({ name: 'hall' })
+  }
+  if (playerName && typeof playerName === 'string') {
+    playerInfo.value.playerName = playerName
+
+    has_playerName = true
+  } else {//昵称为空，返回主页
     ElMessage.error('请先填写昵称')
-    return router.push({ name: 'hall', query: { roomID } })
+    return router.push({ name: 'hall' })
   }
 
-  if (!playerInfo.roomID) {//房间号为空
-    // 设置房间号为地址栏房间号
-    if (roomID) playerInfo.setRID(roomID as string)
-    else {
-      ElMessage.error('请先填写房间号')
-      return router.push({ name: 'hall' })
-    }
-  }
-  console.log('route.query', route.query, JSON.stringify(route.query) !== '{}')
   //如果地址栏有参数则清除
-  if (JSON.stringify(route.query) !== '{}') return router.push({ name: 'talk' })
+  if (has_roomID && has_playerName) await router.push({ name: 'talk' })
   reLink()//重连
   inputFocus()//输入框获取焦点
 
@@ -153,17 +158,15 @@ const msg = ref<string>('')
 
 //尝试重连
 const reLink = () => {
-  const { playerID, playerName, roomID, roomName } = playerInfo
-  socket.emit('re-link', {
-    playerInfo: { playerID, playerName, roomID, roomName }
+  socket.value.emit('re-link', {
+    playerInfo: playerInfo.value
   })
 }
 
 //发送信息
 const sendMsg = () => {
   if (msg.value) {
-    const { playerID, playerName, roomID, roomName } = playerInfo
-    socket.emit('room-message', { message: msg.value, playerInfo: { playerID, playerName, roomID, roomName } })
+    socket.value.emit('room-message', { message: msg.value, playerInfo: playerInfo.value })
     msg.value = ''
   }
 }
@@ -215,8 +218,7 @@ window.addEventListener('beforeunload', listener)
 
 //退出,删除全部监听
 onUnmounted(() => {
-  const { playerID, playerName, roomID, roomName } = playerInfo
-  socket.emit('room-leave', { playerInfo: { playerID, playerName, roomID, roomName }, reason: '离开聊天界面' })
+  socket.value.emit('room-leave', { playerInfo: playerInfo.value, reason: '离开聊天界面' })
   removeEventListener('beforeunload', listener)
   console.log('已退出chatRoom')
   // socket.removeAllListeners()
@@ -268,6 +270,7 @@ onUnmounted(() => {
   width: 40px;
   border-radius: 50%;
   object-fit: cover;
+  cursor: pointer;
 }
 
 .chat-msg-profile {
@@ -326,6 +329,7 @@ onUnmounted(() => {
   overflow-wrap: anywhere;
 }
 
+/*聊天框的小箭头*/
 .chat-msg-content::after {
   position: absolute;
   top: 10px;
@@ -364,7 +368,7 @@ onUnmounted(() => {
 
   .chat-msg-text {
     font-size: 18px;
-    /*    background-color: var(--theme-color);
+    /*     background-color: var(--theme-color);
         color: #fff;
         border-radius: 20px 20px 0 20px;*/
   }
@@ -379,12 +383,13 @@ onUnmounted(() => {
 .guest {
   .chat-msg-content {
     margin: 0 0 0 12px;
+    border: 1px solid gray;
     /* background-color: #9cda62;*/
   }
 
   .chat-msg-content::after {
     left: -8px;
-    /*border-right-color: #9cda62;*/
+    border-right-color: gray;
   }
 }
 
@@ -451,6 +456,14 @@ onUnmounted(() => {
 
   .chat-area-group span {
     color: #d1d1d2;
+  }
+
+  .owner .chat-msg-content {
+    background-color: gray;
+  }
+
+  .owner .chat-msg-content::after {
+    border-left-color: gray;
   }
 }
 

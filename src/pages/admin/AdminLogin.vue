@@ -172,7 +172,7 @@ function login() {
   justify-content: center;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .el-form {
     width: 80%;
     margin: 3% auto;

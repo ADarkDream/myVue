@@ -3,7 +3,7 @@
   <div class="uploadImage" :style="isAdmin ? '' : 'flex-direction: column;'">
     <el-upload ref="upload" class="uploadDiv" :show-file-list="false" :on-change="fileChange" :on-exceed="handleExceed"
       :limit="1" :auto-upload="false" drag accept="image/img,image/png,image/jpg,image/jpeg">
-      <el-image class="uploadImg" :class="{ isBg: options.sort === 'bg' && options.imgUrl }" title="上传图像"
+      <el-image class="uploadImg" :class="{ isBg: options.sort === 'bg' && options.imgUrl }" fit="cover" title="点击上传图像"
         :src="options.imgUrl">
         <template #error>
           <div style="width: 100%;">
@@ -135,6 +135,7 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
     border: 2px solid var(--borderColor);
     border-radius: 15px;
     transition: box-shadow 0.5s ease;
+    background: no-repeat center center/cover;
 
     .svg {
       width: 50px;
@@ -182,7 +183,7 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 
 
 
-@media (max-width:980px) {
+@media (max-width:780px) {
   .uploadDiv {
 
     .uploadImg {
@@ -196,11 +197,19 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 }
 </style>
 <style>
-/* 去除拖拽上传的边框 */
-.el-upload-dragger,
-.el-upload-dragger.is-dragover {
-  border: none;
-  padding: 0;
-  border-radius: 15px;
+.uploadImage {
+
+  /* 去除拖拽上传的边框 */
+  .el-upload-dragger,
+  .el-upload-dragger.is-dragover {
+    border: none;
+    padding: 0;
+    border-radius: 15px;
+    margin: 0 auto;
+  }
+
+  .el-image {
+    margin: 0 auto;
+  }
 }
 </style>

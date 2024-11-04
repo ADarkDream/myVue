@@ -7,49 +7,61 @@
         <el-link type="primary" @click="changePanelIndex(1)">前往歌单广场</el-link>
       </template>
     </el-empty>
-    <div v-else class="infoDiv" :class="{ hide: isHidden }">
-      <div
-        :style="'--coverImg:' + `url(${musicListInfo?.pic_url || musicListInfo?.default_cover_url || defaultAlbumArt})`"
-        class="cover"></div>
-      <div class="music_list_info">
-        <p class="title"><el-text>{{ musicListInfo?.name }}</el-text>
-          <el-button link type="warning" :icon="ArrowUpBold" v-show="!isHidden" @click="toggleInfoVisible">
-            {{ '收起' }}
+    <div v-else :class="{ hide: isHidden }">
+      <div class="infoDiv">
+        <div
+          :style="'--coverImg:' + `url(${musicListInfo?.pic_url || musicListInfo?.default_cover_url || defaultAlbumArt})`"
+          class="cover"></div>
+        <div class="music_list_info">
+          <p class="title"><el-text>{{ musicListInfo?.name }}</el-text>
+            <el-button link type="warning" :icon="ArrowUpBold" v-show="!isHidden" @click="toggleInfoVisible">
+              {{ '收起' }}
+            </el-button>
+          </p>
+          <div class="info">
+            <p>歌单状态：
+              <el-text :type="musicListInfo?.status === 1 ? 'primary' : 'success'">{{
+                musicListInfo?.status === 1 ? '私有' : '公开'
+              }}
+              </el-text>
+            </p>
+            <p>歌曲数：{{ musicListInfo?.songsCount }}<el-button link size="small" plain type="primary"
+                @click="refresh()">刷新</el-button></p>
+            <p>介绍：<el-text type="info" class="description" truncated :line-clamp="isPC ? 3 : 1">{{
+              musicListInfo?.description || '暂无介绍' }}</el-text>
+            </p>
+            <p>上次更新时间：
+              <el-text type="info">{{ getTime(musicListInfo!.updated_time) }}</el-text>
+            </p>
+          </div>
+
+          <el-button-group class="btnGroup" size="small" type="primary" v-if="isPC && !isHidden">
+            <el-button @click="addTheList(true)">播放</el-button>
+            <el-button @click="addTheList()">添加</el-button>
+            <el-button @click="connectMusicList()" v-show="isOwner">收藏</el-button>
+            <el-button @click="showEditMusicListInfoDrawer(false, musicListInfo)" v-if="isOwner">编辑</el-button>
+            <el-button @click="shareMusicListLink()">分享</el-button>
+            <el-button v-if="musicListInfo.cloud_music_list_id"
+              @click="musicListUtils.goToCloudMusicList(musicListInfo.cloud_music_list_id)">前往网易云</el-button>
+          </el-button-group>
+          <el-button link type="warning" :icon="ArrowDownBold" v-show="isHidden" @click="toggleInfoVisible()">
+            {{ '显示' }}
           </el-button>
-        </p>
-        <div class="info">
-          <p>歌单状态：
-            <el-text :type="musicListInfo?.status === 1 ? 'primary' : 'success'">{{
-              musicListInfo?.status === 1 ? '私有' : '公开'
-            }}
-            </el-text>
-          </p>
-          <p>歌曲数：{{ musicListInfo?.songsCount }}<el-button link size="small" plain type="primary"
-              @click="refresh()">刷新</el-button></p>
-          <p>介绍：<el-text type="info" class="description" truncated :line-clamp="isPC ? 3 : 1">{{
-            musicListInfo?.description || '暂无介绍' }}</el-text>
-          </p>
-          <p>上次更新时间：
-            <el-text type="info">{{ getTime(musicListInfo!.updated_time) }}</el-text>
-          </p>
         </div>
 
-        <el-button-group class="btnGroup" size="small" type="primary" v-if="isPC || !isHidden">
-          <el-button @click="addTheList(true)">播放</el-button>
-          <el-button @click="addTheList()">添加</el-button>
-          <el-button :disabled="isOwner">收藏</el-button>
-          <el-button @click="copyText('https://muxidream.cn/music?ml_id=' + musicListInfo?.music_list_id, '播放链接')"
-            :disabled="musicListInfo?.status === 1">
-            分享
-          </el-button>
-        </el-button-group>
-
-        <el-button link type="warning" :icon="ArrowDownBold" v-show="isHidden" @click="toggleInfoVisible">
-          {{ '显示' }}
-        </el-button>
       </div>
+      <el-button-group class="btnGroup" style="margin:5px 0 ;" size="small" type="primary" v-if="!isPC && !isHidden">
+        <el-button @click="addTheList(true)">播放</el-button>
+        <el-button @click="addTheList()">添加</el-button>
+        <el-button :disabled="!isOwner">收藏</el-button>
+        <el-button @click="showEditMusicListInfoDrawer(false, musicListInfo)" v-if="isOwner">编辑</el-button>
+        <el-button @click="shareMusicListLink()">分享</el-button>
+        <el-button v-if="musicListInfo.cloud_music_list_id"
+          @click="musicListUtils.goToCloudMusicList(musicListInfo.cloud_music_list_id)">前往网易云</el-button>
+      </el-button-group>
     </div>
-    <music-list-songs-list :songsList="musicList" :height="drawerSize - 80 - height" v-show="musicList.length !== 0" />
+    <music-list-songs-list :songsList="musicList" :height="drawerSize - 80 - height" v-show="musicList.length !== 0"
+      :isOwner />
   </div>
 
 </template>
@@ -67,10 +79,12 @@ import useTimestamp from "@/hooks/useTimestamp";
 import { useResponsiveStore } from "@/store/useResponsiveStore";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import useMusicList from "@/hooks/music/useMusicList";
+import useMusic from '@/hooks/music/useMusic'
 //components
 import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
 //utils
 import myFunction from "@/utils/myFunction";
+import musicListUtils from "@/utils/music/musicList";
 //files
 import defaultAlbumArt from "@/assets/music/music.svg";
 
@@ -87,9 +101,10 @@ const musicListInfo = computed(() => musicListStore.musicListInfo!)
 const { addMusicList } = musicListStore
 const { changePanelIndex } = musicConfigStore
 const { uid, isLogin } = toRefs(userInfoStore)
+const { drawerSize, isPC } = toRefs(responsiveStore)
 const { toggleMusic } = useMusicPlay()
 const { getCloudMusicList, getMusicList } = useMusicList()
-const { drawerSize, isPC } = toRefs(responsiveStore)
+const { showEditMusicListInfoDrawer } = useMusic()
 
 const isHidden = ref(false)
 
@@ -120,12 +135,27 @@ const refresh = async () => {
   else ElMessage.info(msg)
 }
 
+/**
+ * 分享歌单链接
+ */
+const shareMusicListLink = () => {
+  if (musicListInfo.value?.status !== 2) return ElMessage.info('当前歌单为私有歌单，请先修改为公开歌单再分享')
+  else copyText('https://muxidream.cn/music?ml_id=' + musicListInfo.value?.music_list_id, '歌单链接')
+}
 
+/**
+ * 收藏歌单
+ */
+const connectMusicList = async () => {
+  if (isOwner.value) return ElMessage.info('无法收藏自己的歌单')
 
+  else return ElMessage.info('功能开发中')
+}
+// ! 收藏功能不完善
 //将歌曲添加到播放列表，剔除会员歌曲
 const addTheList = async (isPlay = false) => {
-  const newList = musicList.value.filter(songInfo => songInfo.fee !== 1)
-  ElMessage.warning('已过滤会员歌曲并添加到播放列表')
+  const newList = musicList.value //.filter(songInfo => songInfo.fee !== 1)
+  // ElMessage.warning('已过滤会员歌曲并添加到播放列表')
 
   const index = await addMusicList(newList, { isReplace: true })
   //如果要播放，跳转到这个歌单的第一首歌
@@ -169,13 +199,14 @@ const addTheList = async (isPlay = false) => {
   height: 200px;
   border-radius: 15px;
   background: var(--coverImg) no-repeat center center/cover;
+  flex: 0 0 200px;
 }
 
 /*歌单信息*/
 .music_list_info {
   padding-left: 20px;
   position: relative;
-  width: 100%;
+
 
   .title {
     display: flex;
@@ -249,6 +280,7 @@ const addTheList = async (isPlay = false) => {
     .cover {
       width: 115px;
       height: 115px;
+      flex: 0 0 115px;
     }
   }
 

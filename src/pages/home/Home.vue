@@ -154,7 +154,7 @@ Aside {
   transform: translateY(-50px);
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .time {
     font-size: 100px;
     width: 45%;

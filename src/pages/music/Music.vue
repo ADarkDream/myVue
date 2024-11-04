@@ -11,7 +11,7 @@
         </template>
         <MusicAdd />
       </el-tab-pane>
-      <el-tab-pane :name="1">
+      <el-tab-pane :name="1" :lazy="true">
         <template #label>
           <el-text class="tab-label">
             <SVG_music_list class="el-icon" style="transform: scale(1.5)" />&ensp;歌单广场
@@ -19,7 +19,7 @@
         </template>
         <music-list-square :toggleToMusicList="toggleToMusicList" />
       </el-tab-pane>
-      <el-tab-pane :name="2">
+      <el-tab-pane :name="2" :lazy="true">
         <template #label>
           <el-text class="tab-label">
             <SVG_music_list class="el-icon" style="transform: scale(1.5)" />&ensp;歌单列表
@@ -27,7 +27,7 @@
         </template>
         <music-list />
       </el-tab-pane>
-      <el-tab-pane :name="3">
+      <el-tab-pane :name="3" :lazy="true">
         <template #label>
           <el-text class="tab-label">
             <SVG_music_list class="el-icon" style="transform: scale(1.5)" />&ensp;播放列表
@@ -35,7 +35,7 @@
         </template>
         <play-list :songs-list="playList" />
       </el-tab-pane>
-      <el-tab-pane :name="4">
+      <el-tab-pane :name="4" :lazy="true">
         <template #label>
           <el-text class="tab-label">
             <el-icon>
@@ -45,7 +45,7 @@
         </template>
         <MusicSettings />
       </el-tab-pane>
-      <el-tab-pane :name="5">
+      <el-tab-pane :name="5" :lazy="true">
         <template #label>
           <el-text class="tab-label">
             <el-icon>
@@ -56,18 +56,20 @@
         <div style="text-align: left">
           <h2>待完善：</h2>
           <el-text tag="p">1、七牛云链接后加上?avinfo可以获得音频源数据</el-text>
-          <el-text tag="p">2、歌词界面:用第三方库 lyric-parser 进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。</el-text>
-          <el-text tag="p">3、收藏歌单；删除歌单中的歌</el-text>
-          <el-text tag="p">4、上传自定义歌曲</el-text>
+          <el-text tag="p"><el-text type="warning">2、歌词界面</el-text>:用第三方库 lyric-parser
+            进行处理。实现显示歌词、拖动进度条歌词同步滚动、歌词跟随歌曲进度高亮。</el-text>
+          <el-text tag="p" type="warning">3、收藏歌单</el-text>
+          <el-text tag="p" type="warning">4、上传自定义歌曲</el-text>
           <el-text tag="p">5、重构歌曲播放样式</el-text>
+          <el-text tag="p">6、加提示：批量添加歌曲询问是否覆盖，删除公开歌单告知私有歌单会一并删除</el-text>
+          <el-text tag="p">7、加环境变量，基地址等信息存入环境变量</el-text>
+          <el-text tag="p" type="warning">8、歌曲分类搜索</el-text>
+          <el-text tag="p" type="warning">9、批量操作功能</el-text>
           <h2>问题：</h2>
           <el-text tag="p">1、播放失败的重试函数待测试是否有效</el-text>
           <el-text tag="p">2、浏览器媒体界面，列表最后一首到第一首会出错，播放时间不归位</el-text>
-          <el-text tag="p">3、歌单查询的歌曲排序有问题</el-text>
 
         </div>
-
-
       </el-tab-pane>
     </el-tabs>
     <!-- 搜索抽屉 -->
@@ -165,7 +167,7 @@ onMounted(async () => {
     await addMusicToPlay(cloud_music_id, isPC.value) //移动端不自动播放，没有优化
     await router.replace({ name: 'music' })
     changePanelIndex(3)
-  }
+  } else musicListStore.setThisMusic(musicListStore.playingIndex, true)
 
   //跳转到歌单列表
   if (Number.isInteger(music_list_id) && music_list_id > 0) {

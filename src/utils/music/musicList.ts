@@ -147,7 +147,7 @@ const musicList = {
      * @param newData 
      * @returns {{status:0|1}}
      */
-    updateMyMusicListInfo: async (newData: CreateMusicListInfo) => {
+    updateMyMusicListInfo: async (newData: MusicListInfo | { status: number }) => {
         try {
             const result = await axios({
                 url: '/updateMyMusicListInfo',
@@ -187,7 +187,42 @@ const musicList = {
             console.error('connectMusicList出错了:')
             console.error(err)
         }
-    }
+    },
+    /**
+     * 批量删除歌单中的音乐
+     * @param music_id_list -要收藏的数据库歌曲id列表
+     * @param music_list_id -数据库歌单id
+     * @returns {status:0|1} 
+     * - `returns`：0删除失败，1删除成功
+     */
+    deleteMusicFromList: async (music_id_list: number[], music_list_id: number) => {
+        try {
+            const result = await axios({
+                url: '/deleteMusicFromList',
+                method: "DELETE",
+                data: { music_list_id, music_id_list }
+            })
+            console.log('/deleteMusicFromList返回的数据为：', result.data)
+            // const { status, msg, data } = result.data
+            return { status: 1 }
+        } catch (err) {
+            console.error('deleteMusicFromList出错了:')
+            console.error(err)
+            return { status: 0 }
+        }
+    },
+
+    /**
+     * 跳转到网易云歌单详情界面
+     * @param cloud_music_list_id -网易云歌单id 
+     */
+    goToCloudMusicList: (cloud_music_list_id: number) => window.open('https://music.163.com/#/playlist?id=' + cloud_music_list_id),
+
+    /**
+      * 跳转到网易云歌曲详情界面
+      * @param cloud_music_list_id -网易云歌曲id
+      */
+    goToCloudMusic: (cloud_music_id: number) => window.open('https://music.163.com/#/song?id=' + cloud_music_id)
 
 }
 export default musicList

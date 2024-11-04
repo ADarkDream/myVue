@@ -3,62 +3,78 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, nextTick, ref } from 'vue'
+import { onBeforeMount, onBeforeUnmount, nextTick, ref, toRefs } from 'vue'
 import { useRouter } from "vue-router";
+import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus'
 //stores
-import { useChatInfoStore } from "@/store/useChatInfoStore";
-import { useChatMsgStore } from "@/store/useChatMsgStore";
+import { useChatInfoStore } from "@/store/user/chat/useChatInfoStore";
+import { useChatMsgStore } from "@/store/user/chat/useChatMsgStore";
 //utils
 import { emitter } from "@/utils/emitter";
 //types
 import { ChatMsg } from "@/types/chat";
+import { ResultData } from '@/types/global';
 
-
-const playerInfo = useChatInfoStore()//本地用户信息
-const socket = playerInfo.socket
-const { roomMsg } = useChatMsgStore()//本地的聊天信息
 const router = useRouter()
+const route = useRoute()
+const chatInfoStore = useChatInfoStore()//本地用户信息
+const chatMsgStore = useChatMsgStore()
+const { socket, playerInfo } = toRefs(chatInfoStore)
+const { setPID } = chatInfoStore
 
+
+const { roomMsg } = toRefs(chatMsgStore)//本地的聊天信息
+
+onBeforeMount(async () => {
+  console.log('爷爷');
+  const { roomID, playerName } = route.query
+  if (roomID && typeof roomID === 'string') {
+    playerInfo.value.roomID = roomID
+  }
+  if (playerName && typeof playerName === 'string') {
+    playerInfo.value.playerName = playerName
+  }
+  // await router.replace({ path: route.path })
+})
 
 //监听服务器的首次连接，获取信息
-socket.on('connection', result => {
+socket.value.on('connection', (result: ResultData<{ playerID: string }>) => {
   console.log('connection收到消息：', result)
   const { status, msg, data } = result
   //这里要先判断本地数据，确认是不是断线重连
-  if (status === 200) {
+  if (status === 200 && data) {
     ElMessage.success(msg)
-    // Object.assign(playerInfo, data)
-    playerInfo.setPID(data.playerID)
-    console.log('playerInfo', playerInfo)
+    setPID(data.playerID)
+    console.log('playerInfo', playerInfo.value)
   } else ElMessage.error('与聊天服务器连接失败')
 })
 
 //监听自己创建房间的消息
-socket.on('room-add', result => {
+socket.value.on('room-add', result => {
   console.log('room-add收到消息：', result)
   const { status, msg, data } = result
   if (status === 200) {
     ElMessage.success(msg)
-    Object.assign(playerInfo, data.playerInfo)
-    console.log('playerInfo', playerInfo)
+    playerInfo.value = data.playerInfo
+    console.log('playerInfo', playerInfo.value)
     setTimeout(() => {
-      router.push({ name: 'talk', query: { roomID: playerInfo.roomID } })
+      router.push({ name: 'talk', query: { roomID: playerInfo.value.roomID } })
     }, 1000)
   } else ElMessage.error(msg)
 })
 
 
 //监听自己加入房间的消息
-socket.on('room-join', result => {
+socket.value.on('room-join', result => {
   console.log('room-join收到消息：', result)
   const { status, msg, data } = result
   if (status === 200) {
     ElMessage.success(msg)
-    Object.assign(playerInfo, data.playerInfo)
+    playerInfo.value = data.playerInfo
     getMsgHistory(data.msgHistory)
     setTimeout(() => {
-      router.push({ name: 'talk', query: { roomID: playerInfo.roomID } })
+      router.push({ name: 'talk', query: { roomID: playerInfo.value.roomID } })
     }, 1000)
   } else ElMessage.error(msg)
 })
@@ -67,8 +83,8 @@ socket.on('room-join', result => {
 const getMsgHistory = (msgData: ChatMsg[]) => {
   const chatMsgInfo = JSON.parse(localStorage.getItem('chatMsgInfo') || '{}')
   if (chatMsgInfo) {
-    const tempArr = mergeAndSortArrays(chatMsgInfo.roomMsg || [], msgData)
-    roomMsg.splice(0, roomMsg.length, ...tempArr)//将处理后的消息存入roomMsg
+    roomMsg.value = mergeAndSortArrays(chatMsgInfo.roomMsg || [], msgData) //将处理后的消息存入roomMsg
+
     //接收到消息之后，执行向下滚动
     nextTick(() => emitter.emit('scrollToBottom'))
   }
@@ -92,12 +108,12 @@ const mergeAndSortArrays = (array1: ChatMsg[], array2: ChatMsg[]): ChatMsg[] => 
 
 
 //房间内的消息
-socket.on('room-message', result => {
+socket.value.on('room-message', result => {
   console.log('room-message收到消息：', result)
   const { status, msg, data } = result
   if (status === 200) {
     // data.roomID=
-    roomMsg.push(data)
+    roomMsg.value.push(data)
     //接收到消息之后，执行向下滚动
     nextTick(() => emitter.emit('scrollToBottom'))
   }
@@ -105,10 +121,10 @@ socket.on('room-message', result => {
 
 
 //监听其他人加入房间的信息
-socket.on('player-join', result => {
+socket.value.on('player-join', result => {
   console.log('player-join收到消息：', result)
   const { status, msg, data } = result
-  if (status === 200 && data.playerInfo.playerID !== playerInfo.playerID) //排除本人
+  if (status === 200 && data.playerInfo.playerID !== playerInfo.value.playerID) //排除本人
     ElMessage.info(msg)
   //roomMsg.push({type: data.type, message:msg, time: data.time})
   // ElMessage.info(msg)
@@ -116,7 +132,7 @@ socket.on('player-join', result => {
 
 
 //监听其他人离开房间的信息
-socket.on('player-leave', result => {
+socket.value.on('player-leave', result => {
   console.log('player-leave收到消息：', result)
   const { status, msg, data } = result
   if (status === 200) ElMessage.info(msg)//roomMsg.push({type: data.type, msg, time: data.time})
@@ -126,18 +142,18 @@ socket.on('player-leave', result => {
 const cycle = ref(1)
 
 // 监听连接错误事件
-socket.on('connect_error', (err) => {
+socket.value.on('connect_error', (err) => {
   ElMessage.error('聊天服务器连接失败,正在重试第' + cycle.value + '次')
   cycle.value++
   if (cycle.value > 3) {
-    socket.close()
+    socket.value.close()
     ElMessage.error('聊天服务器连接失败,已关闭连接')
   }
   console.error(err)
 })
 
 //监听自己重连房间的消息
-// socket.on('re-link', result => {
+// socket.value.on('re-link', result => {
 //   console.log('re-link收到消息：', result)
 //   const {status, msg, data} = result
 //   if (status === 200) {
@@ -151,10 +167,10 @@ socket.on('connect_error', (err) => {
 
 
 //退出,删除全部监听
-onUnmounted(() => {
-  socket.close()
-  // socket.emit('disconnect', {playerInfo, reason: '已与服务器断开连接'})
-  socket.removeAllListeners()
+onBeforeUnmount(() => {
+  socket.value.close()
+  // socket.value.emit('disconnect', {playerInfo, reason: '已与服务器断开连接'})
+  socket.value.removeAllListeners()
   console.log('已退出，移除大厅的socket监听')
 })
 </script>

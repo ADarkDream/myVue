@@ -86,7 +86,7 @@ onBeforeRouteLeave(() => {
   color: gray;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .msg {
     /*缩短选项框右边距*/
     margin: 30% auto;

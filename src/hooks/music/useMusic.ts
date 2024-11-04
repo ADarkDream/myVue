@@ -5,6 +5,7 @@ import { ElMessage } from "element-plus";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import { useMusicListDrawerStore } from '@/store/music/useMusicListDrawerStore'
 import type { MusicListInfo } from "@/types/music";
+import { json } from "stream/consumers";
 
 
 export default function () {
@@ -32,7 +33,11 @@ export default function () {
     const showEditMusicListInfoDrawer = (is_create: boolean, music_list_info?: MusicListInfo) => {
         if (isLogin.value) {
             //如果是修改歌单信息
-            if (!is_create && music_list_info) formData.value = music_list_info
+            if (!is_create && music_list_info) {
+                //深拷贝(否则上传歌单封面会直接修改本地歌单封面)
+                const tempData = JSON.stringify(music_list_info)
+                formData.value = JSON.parse(tempData)
+            }
             else reSetFormData()
             isCreateFlag.value = is_create
             isShowEditMusicListInfoDrawer.value = true

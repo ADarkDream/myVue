@@ -207,7 +207,7 @@ el-main {
   background-color: gray;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .container {
     margin: 0;
   }

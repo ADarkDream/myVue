@@ -15,7 +15,7 @@ const myFunction = {
                 }, 1500)
             },
             () => {
-                alert(msg + '复制失败,请自行复制以下内容：', text)
+                alert(msg + '复制失败,请自行复制以下内容：' + text)
                 if (url !== undefined) setTimeout(() => {
                     window.open(url)
                 }, 1500)
@@ -30,7 +30,7 @@ const myFunction = {
                 ElMessage.success(msg + '已复制到剪贴板')
             },
             () => {
-                alert(msg + '复制失败,请自行复制以下内容：', code)
+                alert(msg + '复制失败,请自行复制以下内容：' + code)
             }
         )
     },
@@ -158,6 +158,31 @@ const myFunction = {
         if (propA < propB) return order === 'ascending' ? -1 : 1;
         if (propA > propB) return order === 'ascending' ? 1 : -1;
         return 0;
-    })
+    }),
+
+    /**
+       * @param jsonData - (必需)需要转换的JSON数据
+       * @param targetLanguage - typescript(默认)：转换的目标语言
+       * @param typeName - Data(默认)：转换为的根类型名
+       * @param justTypes - true(默认):仅返回类型,false:还会返回类型检查函数和步骤
+       * @returns {{resultArr: string[]}} -返回的是数组,每个元素代表一行
+       */
+    getTypes: async ({ jsonData, targetLanguage, typeName, justTypes = true }: { jsonData: JSON, targetLanguage?: string, typeName?: string, justTypes?: boolean }) => {
+        try {
+            const result = await axios<ResultData<{ resultArr: string[] }>>({
+                url: '/getTypes',
+                method: "POST",
+                data: { jsonData, justTypes }
+            })
+            console.log('/返回的数据为：', result.data.data)
+            // const { status, msg, data } = result.data
+        } catch (err) {
+            console.error('getTypes出错了:')
+            console.error(err)
+        }
+    }
+
+
+
 }
 export default myFunction

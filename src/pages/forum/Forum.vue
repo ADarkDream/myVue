@@ -38,7 +38,7 @@ body {
 width: 90%;
 }*/
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .centerScrollbar {
     margin: 0;
   }

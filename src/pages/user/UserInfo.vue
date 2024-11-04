@@ -639,7 +639,7 @@ const hideForm = () => {
   border-radius: 20px;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .el-container {
     flex-direction: column;
     /*    flex-wrap: nowrap;*/

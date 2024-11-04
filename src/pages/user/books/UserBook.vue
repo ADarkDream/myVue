@@ -555,7 +555,7 @@ onBeforeUnmount(() => {
 }
 
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .el-tabs {
     width: 100%;
   }

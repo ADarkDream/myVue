@@ -1,14 +1,14 @@
 <template>
   <!--新建歌单的窗口-->
   <el-drawer v-model="isShowEditMusicListInfoDrawer" :show-close="false" direction="btt" :append-to-body="true"
-    size="50%" destroy-on-close :close="resetUpload()">
+    size="50%" destroy-on-close @open="open" @close="resetUpload()">
     <template #header>
       <div style="display: flex;justify-content: space-between">
         <el-button link @click="isShowEditMusicListInfoDrawer = false">取消</el-button>
-        <el-button link @click="editMusicListInfo">完成</el-button>
+        <el-button link @click="editMusicListInfo">{{ isCreateFlag ? '创建' : '修改' }}</el-button>
       </div>
     </template>
-    <el-form :model="formData">
+    <el-form :model="formData" label-position="top">
       <el-row :gutter="20" style="display: flex;justify-content: center;">
         <el-col :xs="8" :sm="12" :md="12" :lg="6" :xl="6">
           <el-form-item>
@@ -16,13 +16,13 @@
           </el-form-item>
         </el-col>
         <el-col :xs="16" :sm="12" :md="12" :lg="12" :xl="12">
-          <el-form-item :required="true">
-            <el-input placeholder="歌单命名" v-model.trim="formData.name" />
+          <el-form-item :required="true" label="歌单命名：">
+            <el-input placeholder="听别人的故事，印证自己的心事" v-model.trim="formData.name" />
           </el-form-item>
-          <el-form-item>
-            <el-input type="textarea" placeholder="歌单介绍" v-model.trim="formData.description" />
+          <el-form-item label="歌单介绍：">
+            <el-input type="textarea" placeholder="希望是个小小故事，献给小小的人儿。" v-model.trim="formData.description" />
           </el-form-item>
-          <el-form-item>
+          <el-form-item label="封面地址：">
             <el-input type="textarea" placeholder="封面地址(若不填则使用歌单最新一首歌的封面)" v-model.trim="formData.pic_url"
               :disabled="isLoading" />
           </el-form-item>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, toRefs, watch } from "vue";
+import { computed, toRefs, watch } from "vue";
 import { ElMessage } from "element-plus";
 
 //stores
@@ -65,19 +65,22 @@ const musicListDrawerStore = useMusicListDrawerStore()
 const userInfoStore = useUserInfoStore()
 const uploadImageStore = useUploadImageStore()
 const { uid } = toRefs(userInfoStore)
-const { isShowEditMusicListInfoDrawer, formData } = toRefs(musicListDrawerStore)
+const { isShowEditMusicListInfoDrawer, formData, isCreateFlag } = toRefs(musicListDrawerStore)
 const { options, isLoading, imageInfo } = toRefs(uploadImageStore)
 const { resetUpload } = uploadImageStore
-const { createMusicList } = useMusicList()
+const { createMusicList, updateMusicList } = useMusicList()
 
 
 
 //歌单是否公开
-const isOpen = ref(false)
+const isOpen = computed({
+  get: () => formData.value.status === 2,
+  set: (is_open: boolean) => formData.value.status = is_open ? 2 : 1
+})
 
 
 
-onMounted(() => {
+const open = () => {
   options.value.sort = '/album/cover'
   options.value.imgUrl = computed(() => {
     const { pic_url, default_cover_url } = formData.value
@@ -85,24 +88,31 @@ onMounted(() => {
     else if (default_cover_url) return default_cover_url
     else return ''
   }).value
-})
+}
 
 watch(isLoading, (newVal, oldVal) => {
-  if (newVal === oldVal) return
+  if (newVal === oldVal) console.log('11111');
+
   if (newVal === false && imageInfo.value) {
     formData.value.pic_url = imageInfo.value.imgUrl
+    options.value.imgUrl = formData.value.pic_url
   }
 })
 
 
-// 创建歌单
+
+/**
+ * 创建或更新歌单
+ */
 const editMusicListInfo = async () => {
-  formData.value.status = isOpen.value ? 2 : 1
   const { name, pic_url } = formData.value
 
   if (!name) return ElMessage.info('歌单名称不能为空')
   if (pic_url && !regexRules.url.test(pic_url)) return ElMessage.info('请输入一个网址链接')
-  await createMusicList(formData.value)
+  if (isCreateFlag.value)//创建歌单
+    await createMusicList(formData.value)
+  else//修改歌单信息
+    await updateMusicList(formData.value)
 
   //重置表单
   formData.value = {
@@ -184,7 +194,7 @@ const editMusicListInfo = async () => {
 }
 
 
-@media (max-width:980px) {
+@media (max-width:780px) {
   .el-form {
     width: 95%;
   }

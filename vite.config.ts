@@ -80,7 +80,7 @@ export default defineConfig({
     },
     //下面的esbuild和build用于压缩打包后的代码,注释掉可以在线上看报错(开发环境下的store的语句也会被删除)
     esbuild: {
-        // drop: ['console', 'debugger'], // 删除 所有的console 和 debugger
+        // drop: ['console', 'debugger'], // 删除 开发和生产环境下的所有的console 和 debugger
     },
     build: {
         chunkSizeWarningLimit: 1500,//配置文件大小提醒限制，默认500

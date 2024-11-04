@@ -474,7 +474,7 @@ onMounted(async () => {
   margin: 0 auto;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .articleTitle {
     font-size: 20px;
   }

@@ -52,40 +52,39 @@ import { onMounted, onUnmounted, ref, toRefs } from 'vue'
 import { useRouter, useRoute } from "vue-router";
 import { ElMessage } from 'element-plus'
 //stores
-import { useChatInfoStore } from "@/store/useChatInfoStore";
-import { useChatMsgStore } from '@/store/useChatMsgStore'
+import { useChatInfoStore } from "@/store/user/chat/useChatInfoStore";
+import { useChatMsgStore } from '@/store/user/chat/useChatMsgStore'
 //hooks
 import useTimestamp from "@/hooks/useTimestamp";
 
 
-const { playerInfo, socket } = useChatInfoStore()//本地用户信息
-const { roomMsg } = useChatMsgStore()//本地的聊天信息
-
-
 const router = useRouter();
 const route = useRoute()
+const chatInfoStore = useChatInfoStore()
+const chatMsgStore = useChatMsgStore()
+const { playerInfo, socket } = toRefs(chatInfoStore)//本地用户信息
+const { roomMsg } = toRefs(chatMsgStore)//本地的聊天信息
 
 
 
-const { getTime } = useTimestamp()
-const roomID = ref<string>(route.query.roomID as string || '')//房间ID
-const playerName = ref<string>(sessionStorage.getItem('playerName') || '')//玩家昵称
-const chatMsgInfo = JSON.parse(localStorage.getItem('chatMsgInfo') || '')
+
+
+
+// const { getTime } = useTimestamp()
+// const roomID = ref<string>(route.query.roomID as string || '')//房间ID
+// const playerName = ref<string>(sessionStorage.getItem('playerName') || '')//玩家昵称
+// const chatMsgInfo = JSON.parse(localStorage.getItem('chatMsgInfo') || '')
 
 
 onMounted(() => {
-  // ElMessage.success(route.path)
-  // console.log('roomID：', roomID.value)
-  // console.log('playerName：', playerName.value)
 
-
-  if (!playerInfo.playerName) {//昵称为空，返回主页
+  if (!playerInfo.value.playerName) {//昵称为空，返回主页
     ElMessage.error('请先填写昵称')
     return router.push({ name: 'chat', query: { roomID: route.query.roomID } })
   }
 
-  if (!playerInfo.roomID) {//房间号为空，设置为当前房间号
-    playerInfo.roomID = route.query.roomID as string
+  if (!playerInfo.value.roomID) {//房间号为空，设置为当前房间号
+    playerInfo.value.roomID = route.query.roomID as string
   }
   console.log('roomMsg', roomMsg)
   // if (chatMsgInfo) {//pinia刷新之后不能获取复杂数据类型，bug? 手动获取
@@ -111,8 +110,27 @@ onMounted(() => {
 })
 
 
-let token = sessionStorage.getItem('token') || localStorage.getItem('token')
-const baseUrl = 'ws://localhost:9999'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// let token = sessionStorage.getItem('token') || localStorage.getItem('token')
+// const baseUrl = 'ws://localhost:9999'
 
 // setInterval(()=>{
 //     console.log('roomMsg',roomMsg)
@@ -129,16 +147,13 @@ const msg2 = ref<string>('')
 // }
 const addMsg = () => {
   //尝试重连
-  const { playerID, playerName, roomID, roomName } = playerInfo
-  socket.emit('re-link', {
-    playerInfo: { playerID, playerName, roomID, roomName }
-  })
+  socket.value.emit('re-link', { playerInfo: playerInfo.value })
 }
 
 //发送信息
 const sendMsg2 = () => {
   if (msg2.value) {
-    socket.emit('room-message', { message: msg2.value })
+    socket.value.emit('room-message', { message: msg2.value })
     msg2.value = ''
   }
 }
@@ -152,16 +167,16 @@ const closeConnection2 = () => {
 }
 
 //阻止用户直接关闭当前标签页
-const listener = (event) => {
+const listener = (event: BeforeUnloadEvent) => {
   event.preventDefault(); // 阻止默认的关闭行为
-  event.returnValue = ''; // 设置警告消息为空字符串，以触发浏览器显示默认的关闭提示
+  return; // 设置警告消息为空字符串，以触发浏览器显示默认的关闭提示
 }
 window.addEventListener('beforeunload', listener)
 
 
 //退出,删除全部监听
 onUnmounted(() => {
-  socket.emit('room-leave', { reason: '离开房间的原因' })
+  socket.value.emit('room-leave', { reason: '离开房间的原因' })
   removeEventListener('beforeunload', listener)
   console.log('已退出chatRoom')
   // socket.removeAllListeners()

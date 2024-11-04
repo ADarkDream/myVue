@@ -13,12 +13,21 @@ export const useMusicListDrawerStore = defineStore('music_list_drawer', () => {
     const userInfoStore = useUserInfoStore()
     const { isLogin, uid } = toRefs(userInfoStore)
 
-    //是否显示搜索面板
+
+    /**
+     * 要是否显示搜索面板
+     */
     const isShowMusicListDrawer = ref(false)
-    //要收藏的数据库音乐id数组
+
+
+    /**
+     * 要收藏或要删除的数据库音乐id数组(选中状态的id数组)
+     */
     const music_id_list = ref<number[]>([])
 
-    //是否显示编辑歌单信息的抽屉
+    /**
+     * 是否显示编辑歌单信息的抽屉
+     */
     const isShowEditMusicListInfoDrawer = ref(false)
 
     /**

@@ -320,7 +320,7 @@ img {
 }
 
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .searchDiv {
     margin: 0 auto;
     padding: 0;

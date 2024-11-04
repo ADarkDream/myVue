@@ -489,7 +489,7 @@ const deleteRole = (index: number, id: number) => {
   padding: 10px 0;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .header2 {
     width: 80%;
     margin: 0 auto;

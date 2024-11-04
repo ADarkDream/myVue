@@ -135,7 +135,7 @@ const closeDialog = () => {
   padding: 0;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 780px) {
   .searchEngine {
     height: 25px;
     width: 25px;

@@ -44,7 +44,7 @@ export default function () {
             }
             console.log(`使用了${useUserBGUrl.value ? '自定义' : '本地'}壁纸：`, url);
         }
-        body.style.backgroundImage = `url('${url}')`
+        body.style.backgroundImage = url ? `url('${url}')` : ''
     }
     return { toggleBG }
 }
