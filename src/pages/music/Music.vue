@@ -167,7 +167,7 @@ onMounted(async () => {
     await addMusicToPlay(cloud_music_id, isPC.value) //移动端不自动播放，没有优化
     await router.replace({ name: 'music' })
     changePanelIndex(3)
-  } else musicListStore.setThisMusic(musicListStore.playingIndex, true)
+  } //else musicListStore.setThisMusic(musicListStore.playingIndex, true)
 
   //跳转到歌单列表
   if (Number.isInteger(music_list_id) && music_list_id > 0) {

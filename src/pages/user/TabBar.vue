@@ -7,12 +7,11 @@
             </div>-->
     <menu ref="menu" class="menu">
 
-      <div :class="index===0? 'menu__item active':'menu__item'" style="--bgColorItem: #ff8c00;"
-           @click="clickItem(0)">
+      <div :class="index === 0 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #ff8c00;" @click="clickItem(0)">
         <svg class="icon" viewBox="0 0 24 24">
-          <path d="M3.8,6.6h16.4"/>
-          <path d="M20.2,12.1H3.8"/>
-          <path d="M3.8,17.5h16.4"/>
+          <path d="M3.8,6.6h16.4" />
+          <path d="M20.2,12.1H3.8" />
+          <path d="M3.8,17.5h16.4" />
           <!--圆-->
           <!--          <path d="M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z"/>-->
           <!--头-->
@@ -21,41 +20,37 @@
         </svg>
       </div>
 
-      <div :class="index===1? 'menu__item active':'menu__item'" style="--bgColorItem: #f54888;"
-           @click="clickItem(1)">
+      <div :class="index === 1 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #f54888;" @click="clickItem(1)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M5.1,3.9h13.9c0.6,0,1.2,0.5,1.2,1.2v13.9c0,0.6-0.5,1.2-1.2,1.2H5.1c-0.6,0-1.2-0.5-1.2-1.2V5.1
-          C3.9,4.4,4.4,3.9,5.1,3.9z"/>
-          <path d="M5.5,20l9.9-9.9l4.7,4.7"/>
+          C3.9,4.4,4.4,3.9,5.1,3.9z" />
+          <path d="M5.5,20l9.9-9.9l4.7,4.7" />
           <path
-              d="M10.4,8.8c0,0.9-0.7,1.6-1.6,1.6c-0.9,0-1.6-0.7-1.6-1.6C7.3,8,8,7.3,8.9,7.3C9.7,7.3,10.4,8,10.4,8.8z"/>
+            d="M10.4,8.8c0,0.9-0.7,1.6-1.6,1.6c-0.9,0-1.6-0.7-1.6-1.6C7.3,8,8,7.3,8.9,7.3C9.7,7.3,10.4,8,10.4,8.8z" />
         </svg>
       </div>
 
 
-      <div :class="index===2? 'menu__item active':'menu__item'" style="--bgColorItem: #65ddb7;"
-           @click="clickItem(2)">
+      <div :class="index === 2 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #65ddb7;" @click="clickItem(2)">
         <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="100" height="100">
-          <path d="M12,12H20M12,12V20M12,12V4M12,12H4"/>
+          <path d="M12,12H20M12,12V20M12,12V4M12,12H4" />
         </svg>
       </div>
 
-      <div :class="index===3? 'menu__item active':'menu__item'" style="--bgColorItem: #7373fb;"
-           @click="clickItem(3)">
+      <div :class="index === 3 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #7373fb;" @click="clickItem(3)">
         <svg class="icon" viewBox="0 0 24 24">
-          <path d="M3.4,11.9l8.8,4.4l8.4-4.4"/>
-          <path d="M3.4,16.2l8.8,4.5l8.4-4.5"/>
-          <path d="M3.7,7.8l8.6-4.5l8,4.5l-8,4.3L3.7,7.8z"/>
+          <path d="M3.4,11.9l8.8,4.4l8.4-4.4" />
+          <path d="M3.4,16.2l8.8,4.5l8.4-4.5" />
+          <path d="M3.7,7.8l8.6-4.5l8,4.5l-8,4.3L3.7,7.8z" />
         </svg>
       </div>
 
-      <div :class="index===4? 'menu__item active':'menu__item'" style="--bgColorItem:#e0b115;"
-           @click="clickItem(4)">
+      <div :class="index === 4 ? 'menu__item active' : 'menu__item'" style="--bgColorItem:#e0b115;" @click="clickItem(4)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M5.1,3.9h13.9c0.6,0,1.2,0.5,1.2,1.2v13.9c0,0.6-0.5,1.2-1.2,1.2H5.1c-0.6,0-1.2-0.5-1.2-1.2V5.1
-          C3.9,4.4,4.4,3.9,5.1,3.9z"/>
-          <path d="M4.2,9.3h15.6"/>
-          <path d="M9.1,9.5v10.3"/>
+          C3.9,4.4,4.4,3.9,5.1,3.9z" />
+          <path d="M4.2,9.3h15.6" />
+          <path d="M9.1,9.5v10.3" />
         </svg>
       </div>
 
@@ -68,7 +63,7 @@
         <clipPath id="menu" clipPathUnits="objectBoundingBox" transform="scale(0.0049285362247413 0.021978021978022)">
           <path d="M6.7,45.5c5.7,0.1,14.1-0.4,23.3-4c5.7-2.3,9.9-5,18.1-10.5c10.7-7.1,11.8-9.2,20.6-14.3c5-2.9,9.2-5.2,15.2-7
           c7.1-2.1,13.3-2.3,17.6-2.1c4.2-0.2,10.5,0.1,17.6,2.1c6.1,1.8,10.2,4.1,15.2,7c8.8,5,9.9,7.1,20.6,14.3c8.3,5.5,12.4,8.2,18.1,10.5
-          c9.2,3.6,17.6,4.2,23.3,4H6.7z"/>
+          c9.2,3.6,17.6,4.2,23.3,4H6.7z" />
         </clipPath>
       </svg>
     </div>
@@ -76,14 +71,14 @@
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted, watch, defineProps, toRefs} from 'vue';
+import { ref, onMounted, watch, defineProps, toRefs } from 'vue';
 
 const props = defineProps<{
   change: Function,
   index: number
 }>()
-const {change} = props
-const {index} = toRefs(props)
+const { change } = props
+const { index } = toRefs(props)
 //元素：tab菜单
 const menu = ref(null)
 //元素数组：按钮
@@ -97,7 +92,7 @@ const menuBorder = ref(null)
 
 //点击按钮触发
 const clickItem = (id: number) => {
-//重复点击同一个按钮
+  //重复点击同一个按钮
   if (index.value === id) return
   //跳转路由
   change(id)
@@ -143,7 +138,8 @@ watch(() => props.index, (newVal, oldVal) => {
 }
 
 .tabBar {
-  --bgColorMenu: #dde0e8; /* #09abab;*/
+  --bgColorMenu: #dde0e8;
+  /* #09abab;*/
   --duration: .7s;
   --timeOut: .7s;
   width: 100%;

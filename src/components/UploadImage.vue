@@ -205,7 +205,8 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
     border: none;
     padding: 0;
     border-radius: 15px;
-    margin: 0 auto;
+    margin: 0;
+    background-color: transparent;
   }
 
   .el-image {

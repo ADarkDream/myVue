@@ -14,7 +14,7 @@
         <el-slider v-model="currentTime" @change="changeCurrentTime" :min="0" :max="duration" :show-tooltip="false" />
         <div class="time"><span>{{
           formatMusicTime(currentTime)
-            }}</span><span>{{ formatMusicTime(duration) }}</span></div>
+        }}</span><span>{{ formatMusicTime(duration) }}</span></div>
       </div>
     </div>
     <div class="control-panel" :class="{ active: controlPanelActive }">
@@ -82,7 +82,6 @@ import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
 import useTimestamp from "@/hooks/useTimestamp";
 import usePlayConfig from '@/hooks/music/usePlayConfig'
-
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 //components
 import PlayList from "@/pages/music/components/PlayList.vue";
@@ -137,11 +136,10 @@ const {
 const {
   lockThePlayer,
   togglePlayerVisible,
-  changeCurrentTime,
   toggleVolumePanelVisible
 } = musicPlayStore
 
-const { play, toggleMusic } = useMusicPlay()
+const { play, toggleMusic, setMediaInfo, changeCurrentTime } = useMusicPlay()
 
 togglePlayerVisible()
 
@@ -186,60 +184,6 @@ onMounted(async () => {
 
 
 
-/**
- * 给浏览器媒体播放控件传递播放音乐的信息
- */
-const setMediaInfo = async () => {
-  try {
-    console.log('thisMusic', thisMusic.value)
-    const title = thisMusic.value.name || '未命名'
-    const artist = thisMusic.value.artists.map(artist => artist.name).join('&') || '未知艺术家'
-    const album = thisMusic.value.album.name || '未命名'
-    const pic_url = thisMusic.value.album.pic_url || ''
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title,
-      artist,
-      album,
-      artwork: [
-        {
-          src: pic_url,
-          sizes: "96x96",
-          type: "image/png",
-        },
-        {
-          src: pic_url,
-          sizes: "128x128",
-          type: "image/png",
-        },
-        {
-          src: pic_url,
-          sizes: "192x192",
-          type: "image/png",
-        },
-        {
-          src: pic_url,
-          sizes: "256x256",
-          type: "image/png",
-        },
-        {
-          src: pic_url,
-          sizes: "384x384",
-          type: "image/png",
-        },
-        {
-          src: pic_url,
-          sizes: "512x512",
-          type: "image/png",
-        },
-      ],
-    })
-
-
-  } catch (err) {
-    console.error('changeMeidaInfo出错了:')
-    console.error(err)
-  }
-}
 
 
 //如果浏览器支持
@@ -271,13 +215,16 @@ if ("mediaSession" in navigator) {
     toggleMusic({ isNext: true, isAuto: false })
   })
 
+
   //监听歌曲切换
-  watch(playingIndex, (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-      //修改当前播放歌曲的信息
-      setMediaInfo()
-    }
-  })
+  //   watch(audioElement, (newVal, oldVal) => {
+  //     if (newVal !== oldVal) {
+  //       //修改当前播放歌曲的信息
+  //       console.log('修改当前播放歌曲的信息')
+
+  //       setMediaInfo()
+  //     }
+  //   })
 }
 </script>
 
@@ -602,6 +549,7 @@ if ("mediaSession" in navigator) {
 /*当前进度条*/
 .progress-bar .el-slider__bar {
   height: 3px;
+  transition: width 1s ease;
 }
 
 /*进度条上的拖动圆点*/

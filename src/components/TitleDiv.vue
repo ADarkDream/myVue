@@ -284,8 +284,8 @@
         @click="toggleVolumePanelVisible" />
     </Transition>
     <!--播放器-->
-    <div class="music_div">
-      <Player v-if="showPlayer" />
+    <div class="music_div" v-if="showPlayer">
+      <Player />
     </div>
 
 

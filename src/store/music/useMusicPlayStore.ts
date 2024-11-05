@@ -1,7 +1,7 @@
 // 引入defineStore用于创建store
 import { defineStore } from 'pinia'
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 
 
@@ -11,10 +11,10 @@ import { ElMessage } from 'element-plus'
 export const useMusicPlayStore = defineStore('music_play', () => {
     const audioContext = new AudioContext()
 
-    //媒体元素
+    //媒体DOM元素
     const audioElement = ref<HTMLAudioElement>()
 
-    //修改媒体元素
+    //修改媒体DOM元素
     const setAudioElement = (el: HTMLAudioElement) => {
         audioElement.value = el
     }
@@ -22,7 +22,7 @@ export const useMusicPlayStore = defineStore('music_play', () => {
 
     //歌名和歌手名DOM元素
     const musicName = ref<HTMLDivElement>()
-    //修改媒体元素
+    //修改歌名和歌手名DOM元素
     const setNameElement = (el: HTMLDivElement) => {
         musicName.value = el
     }
@@ -141,13 +141,6 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         volume.value = value
     }
 
-    //修改播放进度
-    const changeCurrentTime = (newCurrentTime: number) => {
-        if (audioElement.value) {
-            audioElement.value.currentTime = newCurrentTime
-        }
-    }
-
 
 
 
@@ -174,7 +167,6 @@ export const useMusicPlayStore = defineStore('music_play', () => {
         togglePlayerVisible,
         toggleVolumePanelVisible,
         changeVolume,
-        changeCurrentTime,
     }
 }, {
     persist: [{

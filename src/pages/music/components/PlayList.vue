@@ -2,7 +2,6 @@
   <div>
     <div class="playListBar">
       <el-button :icon="Operation" @click="ElMessage.info('功能开发中')">批量操作</el-button>
-      <el-text>播放列表</el-text>
       <el-button :icon="Delete" @click="clearPlayList">清空</el-button>
     </div>
     <el-empty v-if="songsList.length === 0" class="emptyDiv" description=" ">

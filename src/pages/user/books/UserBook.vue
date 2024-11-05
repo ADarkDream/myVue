@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container @touchstart="stopTouch" @touchend="stopTouch">
     <el-header>
       <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ name: 'books' }">账本列表</el-breadcrumb-item>
@@ -519,6 +519,11 @@ onBeforeMount(async () => {
 
 console.log('开启了gitBillList的emitter监听')
 emitter.on('get-bill-list', emitterGitBillList)
+
+//阻止左右滑动触发翻页
+const stopTouch = (e: TouchEvent) => {
+  e.stopPropagation()
+}
 
 onBeforeUnmount(() => {
   emitter.off('get-bill-list', emitterGitBillList)

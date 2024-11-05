@@ -12,7 +12,6 @@ import useMusicPlay from "@/hooks/music/useMusicPlay";
 export default function () {
 
     const musicListStore = useMusicListStore()
-    // const musicPlayStore = useMusicPlayStore()
     const playConfigStore = usePlayConfigStore()
 
     const playList = computed(() => musicListStore.playList)
@@ -75,67 +74,72 @@ export default function () {
 
     //按模式切歌
     function togglePlayingIndex(isNext: boolean, isAuto: boolean) {
+        let index = playingIndex.value
         if (modeIndex.value === 0) {
-            listLoop(isNext)
+            index = listLoop(index, isNext)
         } else if (modeIndex.value === 1) {
-            sequentialPlay(isNext)
+            index = sequentialPlay(index, isNext)
         } else if (modeIndex.value === 2) {
-            randomPlay()
+            index = randomPlay(index)
         } else if (modeIndex.value === 3) {
-            singleLoop(isNext, isAuto)
+            index = singleLoop(index, isNext, isAuto)
         }
+        return index
     }
 
 
     //列表循环
-    function listLoop(isNext: boolean) {
-        if (isNext) playingIndex.value++
-        else playingIndex.value--
-        //下一首，此为最后一首
-        if (playingIndex.value >= playList.value.length) {
-            playingIndex.value = 0
-            //上一首，此为第一首
-        } else if (playingIndex.value < 0) {
-            playingIndex.value = playList.value.length - 1
+    function listLoop(index: number, isNext: boolean) {
+        if (isNext) index++
+        else index--
+        if (index >= playList.value.length) {//下一首，此为最后一首
+            index = 0
+            ElMessage.info('当前已是第一首')
+        } else if (index < 0) {//上一首，此为第一首
+            index = playList.value.length - 1
         }
-        console.log('列表循环', playingIndex.value, playList.value[playingIndex.value])
+        console.log('列表循环', index, playList.value[index])
+        return index
     }
 
     //顺序播放
-    async function sequentialPlay(isNext: boolean) {
-        if (isNext) playingIndex.value++
-        else playingIndex.value--
+    function sequentialPlay(index: number, isNext: boolean) {
+        if (isNext) index++
+        else index--
         //下一首，此为最后一首或上一首，此为第一首
-        if (playingIndex.value >= playList.value.length) {
+        if (index >= playList.value.length) {
             //换成默认的信息，空白信息
-            playingIndex.value = 0
-            await useMusicPlay().play({ isStop: true })
-            return //ElMessage.info('当前是最后一首')
-        } else if (playingIndex.value <= 0) {
-            playingIndex.value++
-            return //ElMessage.info('当前是第一首')
+            index = playList.value.length - 1
+            // await useMusicPlay().play({ isStop: true })
+            ElMessage.info('当前已是最后一首')
+        } else if (index <= 0) {
+            index = 0
+            ElMessage.info('当前已是第一首')
         }
 
-        // console.log('顺序播放', playingIndex.value, playList.value[playingIndex.value])
+        console.log('顺序播放', index, playList.value[index])
+        return index
     }
 
     //随机播放
-    function randomPlay() {
-        const randomNum = Math.floor(Math.random() * (playList.value.length))
-        if (playingIndex.value === randomNum && playList.value.length !== 1) return randomPlay
-        playingIndex.value = randomNum
-        // console.log('顺序播放', playingIndex.value, playList.value[playingIndex.value])
+    function randomPlay(index: number) {
+        const length = playList.value.length
+        if (length === 0 || length === 1) return 0
+        const randomNum = Math.floor(Math.random() * (length))
+        if (index === randomNum) return randomPlay(index)
+        index = randomNum
+        console.log('随机播放', index, playList.value[index])
+        return index
     }
 
     //单曲循环
-    function singleLoop(isNext: boolean, isAuto: boolean) {
-        //自动切换，循环当前音乐
-        if (isAuto) {
-            // if (audioElement.value) audioElement.value.currentTime = 0
-            // console.log('单曲循环', playingIndex.value, playList.value[playingIndex.value])
-            //手动切换
-        } else {
-            listLoop(isNext)
+    function singleLoop(index: number, isNext: boolean, isAuto: boolean) {
+        if (isAuto) { //自动切换，循环当前音乐
+            console.log('单曲循环')
+            return index
+        } else {//手动切换
+            console.log('单曲循环,手动切换下一首')
+            return listLoop(index, isNext)
         }
     }
 

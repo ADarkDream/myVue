@@ -206,6 +206,7 @@ const addTheList = async (isPlay = false) => {
 .music_list_info {
   padding-left: 20px;
   position: relative;
+  flex-grow: 1;
 
 
   .title {

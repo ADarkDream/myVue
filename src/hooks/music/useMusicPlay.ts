@@ -40,73 +40,100 @@ export default function () {
     } = toRefs(musicPlayStore)
 
     const { togglePlayerVisible } = musicPlayStore
+
+
+    /**
+     * 修改播放进度为newCurrentTime
+     * @param newCurrentTime -新的播放时间
+     */
+    const changeCurrentTime = (newCurrentTime: number) => {
+        if (audioElement.value) {
+            audioElement.value.currentTime = newCurrentTime
+        }
+    }
+
+
     //如果音乐有id没地址，则要通过id获取最新的src，然后重新赋值
     const resetUrl = async (song: CloudSongInfo) => {
         if (song.src) return
         //获取播放链接
         const newSong = await useMusicPlay.getMusicUrl(song)
-        if (newSong) {
+        if (newSong?.src) {
             const index = musicListStore.addMusicList([newSong], { isReplace: true })
             console.log(`播放第${index + 1}首歌：${playList.value[index].name}`)
             ElMessage.info(`播放：${playList.value[index].name}`)
             //切换到添加的这首歌
             // await toggleMusic({index})
-        } else return ElMessage.warning('暂不支持VIP音乐')
+        } else return ElMessage.warning('暂不支持该音乐')
     }
 
     //播放和暂停
     //pause=true则必定暂停，pause默认则看isPlaying.valueisReplay=true则从头开始播放
+    /**
+     * 
+     * @param pause - 强制暂停
+     * @param isReplay - 重新播放当前歌曲
+     * @param isStop - 强制停止播放(回归初始状态)
+     * @returns 
+     */
     async function play({ pause = false, isReplay = false, isStop = false }: {
         pause?: boolean,
         isReplay?: boolean,
         isStop?: boolean
     }) {
-        const length = playList.value.length
-        if (length === 0) return ElMessage.error('播放列表为空')
-        else if (playingIndex.value < 0 || playingIndex.value > length) {
-            playingIndex.value = 0
-            ElMessage.info('歌曲不存在,已跳转到第一首')
-        }
-        await resetUrl(playList.value[playingIndex.value])
+        if (!audioElement.value) return
+        // const length = playList.value.length
+        // if (length === 0) return ElMessage.error('播放列表为空')
+        // else if (playingIndex.value < 0 || playingIndex.value > length) {
+        //     playingIndex.value = 0
+        //     ElMessage.info('歌曲不存在,已跳转到第一首')
+        // }
+        await resetUrl(thisMusic.value)
 
         if (audioContext.value.state === "suspended") {
             await audioContext.value.resume()
         }
+        //关闭播放时间计时器
+        if (timer1.value) clearInterval(timer1.value)
 
         console.log('是否强制暂停：', pause, '是否强制重新播放：', isReplay, '是否强制停止播放：', isStop)
         if (pause || isPlaying.value) {//暂停
             isPlaying.value = false
-            audioElement.value?.pause()
+            audioElement.value.pause()
             infoBarActive.value = false
             controlPanelActive.value = false
-            //关闭播放时间计时器
-            clearInterval(timer1.value)
             console.log('播放暂停')
         } else {//播放
-            if (!audioElement.value) return
             if (is_show_player_before_play.value) togglePlayerVisible()
             infoBarActive.value = true
             controlPanelActive.value = true
             isPlaying.value = true
+
             // 重新加载新歌曲(来自toggleMusic)
             if (isReplay) {
                 audioElement.value.load()
                 // 绑定新的 `canplay` 事件监听器，确保加载完成后再播放
                 audioElement.value.addEventListener('canplay', handleCanPlay)
+                //重置播放进度
+                changeCurrentTime(0)
+                console.log('replay播放');
             } else await handleCanPlay()
+
+            //更新音乐信息
+            setMediaInfo()
             //设置当前播放歌曲的音量
             gainNode.value.gain.value = volume.value
+
 
             if (isStop) {//停止播放，播放进度重置并暂停
                 if (!audioElement.value) return
                 infoBarActive.value = false
                 controlPanelActive.value = false
                 isPlaying.value = false
-                audioElement.value.currentTime = 0
-                duration.value = 0
-                //关闭播放时间计时器
-                if (timer1.value) clearInterval(timer1.value)
+
                 audioElement.value.pause()
+                changeCurrentTime(0)
+                duration.value = 0
                 ElMessage.info('停止播放')
             } else {//暂停或播放
                 isLoading.value = false
@@ -114,7 +141,7 @@ export default function () {
 
                 duration.value = audioElement.value?.duration
                 //关闭播放时间计时器
-                if (timer1.value) clearInterval(timer1.value)
+                // if (timer1.value) clearInterval(timer1.value)
                 //开启播放时间计时器,显示当前播放时长
                 timer1.value = setInterval(() => playing(), 1000)
                 console.log('播放开始')
@@ -123,21 +150,24 @@ export default function () {
         }
     }
 
-    //监听播放进度
+    //监听并修改播放进度
     const playing = async () => {
-        currentTime.value = audioElement.value?.currentTime
+        if (!audioElement.value) return
+        currentTime.value = audioElement.value.currentTime
+
         if ("setPositionState" in navigator.mediaSession) {
             navigator.mediaSession.setPositionState({
                 duration: duration.value || 0,        // 音频总时长
                 playbackRate: audioElement.value?.playbackRate || 1.0, // 播放速率
-                position: audioElement.value?.currentTime    // 当前播放进度
+                position: currentTime.value  // 当前播放进度
             })
+            // console.log(currentTime.value, audioElement.value.currentTime);
         }
-        //切换下一首
-        if (audioElement.value?.currentTime === duration.value) {
+        if (currentTime.value === duration.value) {//切换下一首
             await toggleMusic({})
         }
     }
+
 
     //判断歌曲和歌手名是否超出长度限制，是否滚动
     const isScroll = () => {
@@ -167,6 +197,61 @@ export default function () {
         }
     }
 
+    /**
+     * 给浏览器媒体播放控件传递播放音乐的信息
+     */
+    const setMediaInfo = () => {
+        try {
+            console.log('thisMusic', thisMusic.value)
+            const title = thisMusic.value.name || '未命名'
+            const artist = thisMusic.value.artists.map(artist => artist.name).join('&') || '未知艺术家'
+            const album = thisMusic.value.album.name || '未命名'
+            const pic_url = thisMusic.value.album.pic_url || ''
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title,
+                artist,
+                album,
+                artwork: [
+                    {
+                        src: pic_url,
+                        sizes: "96x96",
+                        type: "image/png",
+                    },
+                    {
+                        src: pic_url,
+                        sizes: "128x128",
+                        type: "image/png",
+                    },
+                    {
+                        src: pic_url,
+                        sizes: "192x192",
+                        type: "image/png",
+                    },
+                    {
+                        src: pic_url,
+                        sizes: "256x256",
+                        type: "image/png",
+                    },
+                    {
+                        src: pic_url,
+                        sizes: "384x384",
+                        type: "image/png",
+                    },
+                    {
+                        src: pic_url,
+                        sizes: "512x512",
+                        type: "image/png",
+                    },
+                ],
+            })
+
+
+        } catch (err) {
+            console.error('changeMeidaInfo出错了:')
+            console.error(err)
+        }
+    }
+
 
     //切换音乐
     const toggleMusic = async ({ isNext = true, isAuto = true, index }: {
@@ -183,8 +268,7 @@ export default function () {
             audioElement.value.pause()
             isPlaying.value = false
         }
-        //重置播放进度
-        audioElement.value.currentTime = 0
+
         //设置加载flag
         isLoading.value = true
         // 移除旧的 `canplay` 事件监听器
@@ -195,19 +279,25 @@ export default function () {
         index = Number(index)
         if (Number.isInteger(index) && index >= 0) {//判断非负整数
             musicListStore.setThisMusic(index)
-            // console.log(`即将播放：${playList.value[index].name}`)
         }
         //按模式切歌
-        else togglePlayingIndex(isNext, isAuto)
+        else {
+            const newIndex = togglePlayingIndex(isNext, isAuto)
+            if (newIndex === playingIndex.value) return await play({ isReplay: true })
+            //获取要播放的这一首歌的信息
+            musicListStore.setThisMusic(newIndex)
+        }
 
-        //获取要播放的这一首歌
-        musicListStore.setThisMusic(playingIndex.value)
         console.log('即将播放', thisMusic.value)
+        //获取播放链接
+        await resetUrl(thisMusic.value)
+        //重置播放进度
+        changeCurrentTime(0)
         // if (song?.fee === 1 && !song.src) {
         //     musicListStore.deleteMusicFromPlayList(song.id)
         //     return ElMessage.warning('暂不支持VIP音乐')
         // }
-        await resetUrl(thisMusic.value)
+
 
         //如果当前不是播放状态，则播放
         if (!isPlaying.value) await play({ isReplay: true })
@@ -330,6 +420,8 @@ export default function () {
         play,
         toggleMusic,
         addMusicToPlay,
-        addMusic
+        addMusic,
+        setMediaInfo,
+        changeCurrentTime
     }
 }

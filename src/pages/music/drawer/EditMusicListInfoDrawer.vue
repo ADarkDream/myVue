@@ -5,7 +5,7 @@
     <template #header>
       <div style="display: flex;justify-content: space-between">
         <el-button link @click="isShowEditMusicListInfoDrawer = false">取消</el-button>
-        <el-button link @click="editMusicListInfo">{{ isCreateFlag ? '创建' : '修改' }}</el-button>
+        <el-button link :disabled="isLoading" @click="editMusicListInfo">{{ isCreateFlag ? '创建' : '修改' }}</el-button>
       </div>
     </template>
     <el-form :model="formData" label-position="top">

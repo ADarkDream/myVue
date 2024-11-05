@@ -12,13 +12,8 @@
       </el-scrollbar>
     </el-aside>
     <div class="mobileUserCenter" ref="mobileUserCenter" style="width: 100%;">
-      <el-main>
-        <router-view />
-
-
-        <TabBar v-if="!isPC" :change="change" :index="index" />
-
-      </el-main>
+      <router-view />
+      <TabBar v-if="!isPC" :change="change" :index="index" />
     </div>
   </el-container>
 </template>
@@ -122,8 +117,9 @@ const touchend = (e: TouchEvent) => {
 </script>
 
 <style scoped>
-.container {
-  background-color: var(--el-bg-color);
+.container,
+.mobileUserCenter {
+  background-color: var(--el-color-primary-light-9);
 }
 
 .container .el-header {

@@ -15,7 +15,7 @@ const musicPlay = {
         try {
             const { id, cloud_music_id, fee, status } = song
             //获取播放链接
-            const result = await axios<ResultData<{ playInfo: { cloud_music_id: number, src: string } }>>({
+            const result = await axios<ResultData<{ playInfo: { id: number, cloud_music_id: number, src: string } }>>({
                 url: '/getPlayInfo',
                 params: { id, cloud_music_id, fee, status },
             })
