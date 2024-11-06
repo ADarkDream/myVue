@@ -41,8 +41,9 @@
             <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text>
           </div>
           <div class="btns">
-            <el-button link @click="playTheMusic(item, index)" size="small" type="primary">
-              播放
+            <el-button link @click="playTheMusic(item, index)" size="small"
+              :type="thisMusic.id === item.id && isPlaying ? '' : 'primary'">
+              {{ thisMusic.id === item.id && isPlaying ? '暂停' : '播放' }}
             </el-button>
             <el-button link @click="addMusicList([item], { isReplace: true })" size="small" type="primary">
               添加
@@ -99,7 +100,7 @@ const musicListDrawerStore = useMusicListDrawerStore()
 
 const { drawerSize, isPC } = toRefs(responsiveStore)
 const { music_id_list } = toRefs(musicListDrawerStore)
-const { musicListInfo, thisMusic } = toRefs(musicListStore)
+const { musicListInfo, thisMusic, isPlaying } = toRefs(musicListStore)
 const { addMusicList } = musicListStore
 const { showMusicListDrawer } = useMusic()
 

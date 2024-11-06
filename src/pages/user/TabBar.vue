@@ -7,7 +7,8 @@
             </div>-->
     <menu ref="menu" class="menu">
 
-      <div :class="index === 0 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #ff8c00;" @click="clickItem(0)">
+      <div :class="index === 0 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #ff8c00;"
+        @click="clickItem(0)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M3.8,6.6h16.4" />
           <path d="M20.2,12.1H3.8" />
@@ -20,7 +21,8 @@
         </svg>
       </div>
 
-      <div :class="index === 1 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #f54888;" @click="clickItem(1)">
+      <div :class="index === 1 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #f54888;"
+        @click="clickItem(1)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M5.1,3.9h13.9c0.6,0,1.2,0.5,1.2,1.2v13.9c0,0.6-0.5,1.2-1.2,1.2H5.1c-0.6,0-1.2-0.5-1.2-1.2V5.1
           C3.9,4.4,4.4,3.9,5.1,3.9z" />
@@ -31,13 +33,15 @@
       </div>
 
 
-      <div :class="index === 2 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #65ddb7;" @click="clickItem(2)">
+      <div :class="index === 2 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #65ddb7;"
+        @click="clickItem(2)">
         <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="100" height="100">
           <path d="M12,12H20M12,12V20M12,12V4M12,12H4" />
         </svg>
       </div>
 
-      <div :class="index === 3 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #7373fb;" @click="clickItem(3)">
+      <div :class="index === 3 ? 'menu__item active' : 'menu__item'" style="--bgColorItem: #7373fb;"
+        @click="clickItem(3)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M3.4,11.9l8.8,4.4l8.4-4.4" />
           <path d="M3.4,16.2l8.8,4.5l8.4-4.5" />
@@ -45,7 +49,8 @@
         </svg>
       </div>
 
-      <div :class="index === 4 ? 'menu__item active' : 'menu__item'" style="--bgColorItem:#e0b115;" @click="clickItem(4)">
+      <div :class="index === 4 ? 'menu__item active' : 'menu__item'" style="--bgColorItem:#e0b115;"
+        @click="clickItem(4)">
         <svg class="icon" viewBox="0 0 24 24">
           <path d="M5.1,3.9h13.9c0.6,0,1.2,0.5,1.2,1.2v13.9c0,0.6-0.5,1.2-1.2,1.2H5.1c-0.6,0-1.2-0.5-1.2-1.2V5.1
           C3.9,4.4,4.4,3.9,5.1,3.9z" />
@@ -71,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, defineProps, toRefs } from 'vue';
+import { ref, onMounted, watch, toRefs } from 'vue';
 
 const props = defineProps<{
   change: Function,

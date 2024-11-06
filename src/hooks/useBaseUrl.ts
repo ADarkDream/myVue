@@ -7,7 +7,7 @@ import axios from "axios";
 export const useBaseUrl = defineStore('baseUrl', () => {
     //配置axios基地址，根据本环境配置的DEV参数判断是生产环境还是开发环境
     const isLocal = import.meta.env.DEV === true
-    axios.defaults.baseURL = isLocal ? 'http://192.168.0.120:9000' : 'https://muxidream.cn/api/'
+    axios.defaults.baseURL = isLocal ? 'http://127.0.0.1:9000' : 'https://muxidream.cn/api/'
     //聊天服务器基地址
     const chatBaseUrl = isLocal ? 'http://127.0.0.1:9999/' : 'https://muxidream.cn/'
 
