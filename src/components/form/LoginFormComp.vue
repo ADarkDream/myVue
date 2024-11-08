@@ -12,6 +12,10 @@
       <el-button link type="primary" @click="showPolicy">隐私政策</el-button>
       <el-button style="position: absolute;right: 0" link @click="resetForm()">重置表单</el-button>
     </el-form-item>
+    <p class="other_login_div">
+      <el-text>其他登录方式(申请中)：</el-text>
+      <img src="@/assets/titleDiv/qq_login.png" style="width: 20px;" @click='to_qq_login()' />
+    </p>
     <el-button class="submitBtn" @click="submitForm()" :loading="isLoading">登录</el-button>
     <br>
     <el-link @click="toLogin(false)">前往注册</el-link>
@@ -30,11 +34,22 @@ import titleDiv from '@/utils/titleDiv';
 //types
 import type { loginForm } from "@/types/form";
 
-
+const { showNotice, to_qq_login } = titleDiv
 
 const userInfoStore = useUserInfoStore()
 const { updateLocalUserInfo } = userInfoStore
 const ruleFormRef = ref<FormInstance>()
+
+/**
+ * 跳转到QQ登录
+ */
+// const to_qq_login = () => {
+//   const oOpts = {
+//     appId: "102476068",
+//     redirectURI: "https://muxidream.cn/connect_qq/callback"
+//   }
+//   QC.Login.showPopup(oOpts)
+// }
 
 //表单数据
 const ruleForm = reactive<loginForm>({
@@ -55,7 +70,7 @@ const { toLogin } = defineProps(['toLogin'])
 const isLoading = ref(false)
 
 //显示隐私政策
-const showPolicy = () => titleDiv.showNotice({ show_num: 1, active_num: 3 })
+const showPolicy = () => showNotice({ show_num: 1, active_num: 3 })
 
 //提交表单，再次判断表单验证是否通过
 const submitForm = async () => {
@@ -130,5 +145,10 @@ const login = async () => {
   width: 70%;
   height: 50px;
   font-size: 18px;
+}
+
+.other_login_div {
+  display: flex;
+  align-items: center;
 }
 </style>

@@ -152,8 +152,8 @@
     <div id="app"></div>
 </body>
 <script type="module" src="./src/main.ts"></script>
+<!--网站加载动画的黑夜模式设置  -->
 <script type="text/javascript">
-    //动画的黑夜模式设置
     //首次加载，根据是否是深色偏好设置夜间模式
     const isDark = sessionStorage.getItem('isDark') === '1' || window.matchMedia('(prefers-color-scheme: dark)').matches
     if (isDark) sessionStorage.setItem('isDark', '1')
@@ -171,17 +171,23 @@
         else if (document.readyState === 'complete') mask.style.display = 'none'
     }
 </script>
-<script type="text/javascript"> //必应的网站分析验证
-    // (function (c, l, a, r, i, t, y) {
-    //     c[a] = c[a] || function () {
-    //         (c[a].q = c[a].q || []).push(arguments)
-    //     }
-    //     t = l.createElement(r)
-    //     t.async = 1
-    //     t.src = "https://www.clarity.ms/tag/" + i
-    //     y = l.getElementsByTagName(r)[0]
-    //     y.parentNode.insertBefore(t, y)
-    // })(window, document, "clarity", "script", "nl63h6oui7")
-</script>
+<% if (VITE_NODE_ENV==='production' ) { %>
+    <!-- 仅在生产模式下使用该js弹出隐私政策 -->
+    <script type="text/javascript" src="https://www.termsfeed.com/public/cookie-consent/4.2.0/cookie-consent.js"
+        charset="UTF-8"></script>
+    <script type="text/javascript" charset="UTF-8" data-cookie-consent="tracking">
+        document.addEventListener('DOMContentLoaded', () => cookieconsent.run({ "notice_banner_type": "simple", "consent_type": "express", "palette": "dark", "language": "en", "page_load_consent_levels": ["strictly-necessary"], "notice_banner_reject_button_hide": false, "preferences_center_close_button_hide": false, "page_refresh_confirmation_buttons": false, "website_name": "默默的小站" }))
+    </script>
+    <script type="text/plain" data-cookie-consent="tracking"> //必应的网站分析验证
+        (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+            })(window, document, "clarity", "script", "nl63h6oui7");
+    </script>
+    <% } %>
+        <!-- QQ登录JS SDK -->
+        <script type="text/javascript" charset="utf-8" src="https://connect.qq.com/qc_jssdk.js" data-appid="102483810"
+            data-redirecturi="https://muxidream.cn/connect/qq_callback" defer></script>
 
 </html>

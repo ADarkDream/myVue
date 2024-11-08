@@ -82,18 +82,23 @@
           </el-collapse-item>
           <el-collapse-item title="隐私政策" :name="3">
             <el-card class="privacyStatement">
-              <el-text tag="p">
-                本站与 Microsoft Clarity 合作，通过行为指标、热图和会话回放来捕捉您如何使用本站的网站并与之互动，以改进本站的产品和服务。网站使用数据是通过第一方和第三方
+              <p>
+                本站与 Microsoft Clarity 合作，通过行为指标、热图和会话回放来捕捉您使用本站的轨迹，以改进本站的产品和服务。网站使用数据是通过第一方和第三方
                 Cookie 以及其他跟踪技术捕获的，以确定产品和服务的受欢迎程度和在线活动。此外，本站将这些信息用于网站优化。有关
                 Microsoft 如何收集和使用您的数据的更多信息，请访问
-                <el-link type="primary" href="https://privacy.microsoft.com/zh-CN/privacystatement">Microsoft 隐私声明
-                </el-link>
-                。使用本站，即表示您同意本站和 Microsoft 可以收集和使用此数据。
-              </el-text>
-              <el-text tag="p"><b>
-                  PS:根据国家法律法规，本站仅收集访问者IP等身份信息，使用Clarity收集访问者在本站的浏览轨迹以确定bug位置进行优化，相关的账号、密码等隐私信息均不会被采集。
+                <el-button link type="primary" :href="'https://privacy.microsoft.com/zh-CN/privacystatement'">Microsoft
+                  隐私声明
+                </el-button>。
+              </p>
+              <p>
+                若您同意，则本站和 Microsoft 可以收集和使用此数据。您也可以点击此处<el-button link type="primary"
+                  @click="clear_Clarity_cookie()">重置Clarity的cookie同意
+                </el-button>。
+              </p>
+              <p><b>
+                  PS:根据国家法律法规，本站仅收集访问者IP等身份信息。此外，本站使用Clarity收集访问者在本站的浏览轨迹以确定bug位置进行优化，相关的账号、密码等隐私信息均不会被采集。
                 </b>
-              </el-text>
+              </p>
             </el-card>
           </el-collapse-item>
         </el-collapse>
@@ -251,6 +256,30 @@ const submitFeedback = async () => {
 }
 
 
+//清除全部cookie
+const delAllCookie = () => {
+  const cookies = document.cookie.split(";")
+
+  cookies.forEach(cookie => {
+    const [name] = cookie.split("=");
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+  })
+
+  if (cookies.length > 0) {
+    const domain = `.${location.host.split('.').slice(-2).join('.')}` // 顶级域名
+    cookies.forEach(cookie => {
+      const [name] = cookie.split("=")
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`
+    })
+  }
+  console.log('已删除全部本地cookie');
+}
+const clear_Clarity_cookie = () => {
+  // window.clarity('consent', false)
+  delAllCookie()
+  ElMessage.success('已重置同意，刷新后可选择拒绝cookie')
+  setTimeout(() => { location.reload() }, 1500)
+}
 </script>
 
 <style scoped>

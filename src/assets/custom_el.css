@@ -78,6 +78,9 @@
             font-weight: 600;
         }
 
+        .el-link {
+            text-indent: 2px
+        }
     }
 
 

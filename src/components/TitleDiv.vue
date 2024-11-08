@@ -324,7 +324,8 @@ import { emitter } from "@/utils/emitter";
 import { NoticeActiveNum } from "@/types/global";
 //files
 import SVG_music from '@/assets/music/music.svg?component'
-import SVG_news from '@/assets/TitleDiv/news.svg?component'
+import SVG_news from '@/assets/titleDiv/news.svg?component'
+
 
 
 const router = useRouter()
@@ -344,9 +345,6 @@ const { toggleBG } = useTitleDiv()
 
 
 const showPlayer = ref(false)
-
-
-
 //控制头像的显示
 const showHeadImg = ref(isLogin.value)
 //控制公告界面的显示,登陆之后默认不显示
