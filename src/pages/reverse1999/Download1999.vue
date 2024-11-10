@@ -95,9 +95,9 @@
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item label="查询类型：">
-                  <el-radio-group v-model="condition.accurate">
-                    <el-radio-button label="模糊查询" :value="0" />
-                    <el-radio-button label="精准查询" :value="1" />
+                  <el-radio-group v-model="condition.mode">
+                    <el-radio-button label="模糊查询" :value="'inaccurate'" />
+                    <el-radio-button label="精准查询" :value="'accurate'" />
                   </el-radio-group>
                   <el-icon style="margin:0 5px" @click="isShowNotice = !isShowNotice">
                     <InfoFilled />
@@ -276,7 +276,7 @@ import titleDiv from '@/utils/titleDiv';
 import myFunction from "@/utils/myFunction";
 import userInfo from '@/utils/userInfo';
 //types
-import { Notice, NoticeActiveNum } from "@/types/global";
+import { Notice, NoticeActiveNum, ResultData } from "@/types/global";
 //files
 import logo from '@/assets/logo-small.png'
 
@@ -299,7 +299,7 @@ const condition = reactive<ImgParams>({
   version: [],
   roles: [],
   sort: 2,
-  accurate: 0
+  mode: 'inaccurate'
 }
 )
 //用户上一次查询的参数
@@ -307,7 +307,7 @@ const oldCondition = reactive<ImgParams>({
   version: ['all'],
   roles: [],
   sort: 2,
-  accurate: 0
+  mode: 'inaccurate'
 })
 
 //筛选
@@ -517,15 +517,16 @@ const getImages = async () => {
     })
   }
   try {
-    const result = await axios({
+    const result = await axios<ResultData<{ imgList: ReverseImg[] }>>({
       url: '/getWallpaper',
       params: condition,
     })
     console.log(result)
-    const { status } = result.data
+    const { status, data } = result.data
     if (status === 300) return//没有查询结果则不进行以下操作
     isShow.value = true //显示布局按钮
-    imgList.splice(0, imgList.length, ...result.data.data)
+    if (!data) return
+    imgList.splice(0, imgList.length, ...data.imgList)
     previewImgList.splice(0, previewImgList.length)
 
     imgList.forEach((item, index) => {

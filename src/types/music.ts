@@ -9,10 +9,13 @@ interface Artist {
  * 专辑信息
  */
 interface Album {
+    id?: number,
     album_id?: number,
     name: string,
     pic_url?: string
     publish_time?: string
+    is_custom?: number,
+    //size:number //专辑中的歌曲数量
 }
 
 
@@ -119,9 +122,13 @@ interface SongInfo {
 
 
 //搜索音乐返回的结果
-interface SearchResult {
-    songs: CloudSongInfo[],
-    songCount: number
+interface SearchResult<T> {
+    list: T[],
+    totalNum: number
 }
 
-export type { CloudSongInfo, SongInfo, SearchResult, MusicListInfo, CreateMusicListInfo, MusicList, QueryMusicLists, QueryMusicList, QueryCloudMusicList }
+//搜索音乐返回的结果
+
+
+
+export type { CloudSongInfo, Album, SongInfo, SearchResult, MusicListInfo, CreateMusicListInfo, MusicList, QueryMusicLists, QueryMusicList, QueryCloudMusicList }

@@ -123,7 +123,7 @@ const myFunction = {
     //获取随机N张重返未来1999背景图片
     getBG: async (sort?: number, limitNum?: number) => {
         try {
-            const result = await axios<ResultData<ReverseImg[]>>({
+            const result = await axios<ResultData<{ imgList: ReverseImg[] }>>({
                 url: '/getRandomWallpaper',
                 params: { sort, limitNum },
             })
@@ -131,7 +131,7 @@ const myFunction = {
             const { status, msg, data } = result.data
             if (status === 300) ElMessage.warning(msg)
             console.log('/getRandomWallpaper', data)
-            if (data) return data
+            if (data) return data.imgList
             else return []
         } catch (error) {
             console.log('发生错误：')

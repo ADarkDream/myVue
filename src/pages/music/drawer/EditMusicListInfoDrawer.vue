@@ -50,7 +50,7 @@ import { ElMessage } from "element-plus";
 //stores
 import { useMusicListDrawerStore } from "@/store/music/useMusicListDrawerStore";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import { useUploadImageStore } from "@/store/upload/uploadImageStore";
+import { useUploadFileStore } from "@/store/upload/uploadFileStore";
 //hooks
 import useMusicList from "@/hooks/music/useMusicList"
 //components
@@ -63,11 +63,11 @@ import regexRules from "@/utils/regexRules";
 
 const musicListDrawerStore = useMusicListDrawerStore()
 const userInfoStore = useUserInfoStore()
-const uploadImageStore = useUploadImageStore()
+const uploadFileStore = useUploadFileStore()
 const { uid } = toRefs(userInfoStore)
 const { isShowEditMusicListInfoDrawer, formData, isCreateFlag } = toRefs(musicListDrawerStore)
-const { options, isLoading, imageInfo } = toRefs(uploadImageStore)
-const { resetUpload } = uploadImageStore
+const { options, isLoading, fileInfo } = toRefs(uploadFileStore)
+const { resetUpload } = uploadFileStore
 const { createMusicList, updateMusicList } = useMusicList()
 
 
@@ -93,8 +93,8 @@ const open = () => {
 watch(isLoading, (newVal, oldVal) => {
   if (newVal === oldVal) console.log('11111');
 
-  if (newVal === false && imageInfo.value) {
-    formData.value.pic_url = imageInfo.value.imgUrl
+  if (newVal === false && fileInfo.value) {
+    formData.value.pic_url = fileInfo.value.imgUrl
     options.value.imgUrl = formData.value.pic_url
   }
 })

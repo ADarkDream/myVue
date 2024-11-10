@@ -44,7 +44,7 @@
         <el-button-group>
           <el-button @click="cancelUpload" type="danger" :size="elSize">删除</el-button>
           <el-button @click="imgFullDialogVisible = true" :size="elSize">浏览</el-button>
-          <el-button type="primary" @click="uploadImage(uploadImgFile!)" :loading="isLoading" :size="elSize">{{
+          <el-button type="primary" @click="uploadImage(uploadFile!)" :loading="isLoading" :size="elSize">{{
             isLoading
               ?
               '审核中' : '上传'
@@ -69,7 +69,7 @@ import { ref, toRefs } from "vue";
 
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import { useUploadImageStore } from "@/store/upload/uploadImageStore";
+import { useUploadFileStore } from "@/store/upload/uploadFileStore";
 import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
 
@@ -78,11 +78,11 @@ import useUploadImage from "@/hooks/upload/useUploadImage"
 import SVG_plus from "@/assets/music/plus.svg?component"
 
 const userInfoStore = useUserInfoStore()
-const uploadImageStore = useUploadImageStore()
+const uploadFileStore = useUploadFileStore()
 const responsiveStore = useResponsiveStore()
 const { isAdmin } = toRefs(userInfoStore)
-const { options, isLoading, uploadImgFile, changeBtnsFlag } = toRefs(uploadImageStore)
-const { cancelUpload } = uploadImageStore
+const { options, isLoading, uploadFile, changeBtnsFlag } = toRefs(uploadFileStore)
+const { cancelUpload } = uploadFileStore
 const { elSize, isPC } = toRefs(responsiveStore)
 const { fileChange, computedMd5, uploadImage } = useUploadImage()
 
@@ -109,7 +109,7 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   computedMd5(file)
   changeBtnsFlag.value = true
   options.value.imgUrl = URL.createObjectURL(file)
-  uploadImgFile.value = file
+  uploadFile.value = file
 }
 </script>
 

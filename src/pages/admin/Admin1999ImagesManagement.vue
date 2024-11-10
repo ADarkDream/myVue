@@ -24,13 +24,13 @@
       </el-select>
     </el-col>
     <el-col :span="2">
-      <el-select :disabled="!condition.orderBy" v-model.trim="condition.isDesc" placeholder="排序方向">
+      <el-select :disabled="!condition.orderBy" v-model.trim="condition.order" placeholder="排序方向">
         <el-option label="正序" value="" />
         <el-option label="倒序" value="desc" />
       </el-select>
     </el-col>
     <el-col :span="2">
-      <el-select v-model.trim="condition.accurate" placeholder="是否精确查找">
+      <el-select v-model.trim="condition.mode" placeholder="是否精确查找">
         <el-option label="精准查询" :value="1" />
         <el-option label="模糊查询" :value="0" />
       </el-select>
@@ -143,7 +143,7 @@
       </el-table-column>
     </el-table>
     <div class="pageMenu">
-      <el-pagination v-model:current-page="condition.currentPage" v-model:page-size="condition.pageSize"
+      <el-pagination v-model:current-page="condition.offset" v-model:page-size="condition.pageSize"
         :page-sizes="[10, 25, 50, 100]"
         :layout="total / condition.pageSize! > 10 ? 'total, sizes, prev, pager, next,jumper' : 'total, sizes, prev, pager, next'"
         :total="total" @size-change="render" @current-change="render" />
@@ -283,7 +283,7 @@ function handleSortChange({ prop, order }: Sort<ReverseImgInfo>) {
   console.log(prop, order)
   if (prop === 'id') {//根据排序整个列表
     condition.orderBy = prop
-    order === 'descending' ? condition.isDesc = 'desc' : condition.isDesc = ''
+    order === 'descending' ? condition.order = 'desc' : condition.order = ''
     render()
   } else tableData.sort((a, b) => {  // 根据 column 和 order 对 this.tableData 进行排序,只排序本页
     const propA = a[prop as keyof typeof a]!

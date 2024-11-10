@@ -4,15 +4,15 @@ import { ElMessage, ElLoading } from "element-plus";
 import type { UploadFile, UploadRawFile } from "element-plus";
 import * as SparkMD5 from "spark-md5";
 //stores
-import { useUploadImageStore } from "@/store/upload/uploadImageStore";
-//hooks
+import { useUploadFileStore } from "@/store/upload/uploadFileStore";
+//utils
 import uploadImageUtiles from "@/utils/upload/uploadImage";
 
 
 export default function () {
-    const uploadImageStore = useUploadImageStore()
-    const { changeBtnsFlag, options, oldMd5, md5, uploadImgFile, isLoading, imageInfo } = toRefs(uploadImageStore)
-    const { cancelUpload } = uploadImageStore
+    const uploadFileStore = useUploadFileStore()
+    const { changeBtnsFlag, options, oldMd5, md5, uploadFile, isLoading, fileInfo } = toRefs(uploadFileStore)
+    const { cancelUpload } = uploadFileStore
 
     //当用户选择图片之后开始解析图片和计算md5
     async function fileChange(file: UploadFile) {
@@ -22,7 +22,7 @@ export default function () {
         //将用户上传的图片转换成url赋值给头像
         options.value.imgUrl = URL.createObjectURL(file.raw!)
         //取消本次上传的文件
-        uploadImgFile.value = file.raw
+        uploadFile.value = file.raw
         computedMd5(file.raw!)
     }
     /**
@@ -63,7 +63,7 @@ export default function () {
 
         isLoading.value = true
         try {
-            imageInfo.value = await uploadImageUtiles.uploadImg(formData)
+            fileInfo.value = await uploadImageUtiles.uploadImg(formData)
             isLoading.value = false
             oldMd5.value = md5.value
             //取消上传,重置部分参数

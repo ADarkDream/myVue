@@ -164,6 +164,8 @@ export const useMusicListStore = defineStore('music_list', () => {
             //播放序号超出播放列表长度
             if (index > length || length === 0) {
                 //网站加载时
+                console.log('playList.value', playList.value);
+
                 if (isOnMounted && length === 0) {
                     playList.value = defaultPlayList.value
                     index = 0

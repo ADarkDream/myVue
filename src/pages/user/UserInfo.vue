@@ -141,7 +141,7 @@ import { Edit } from "@element-plus/icons-vue";
 import axios from "axios";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import { useUploadImageStore } from '@/store/upload/uploadImageStore';
+import { useUploadFileStore } from '@/store/upload/uploadFileStore';
 import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
 import useUser from '@/hooks/user/useUser';
@@ -152,7 +152,7 @@ import { emitter } from "@/utils/emitter";
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
-const uploadImageStore = useUploadImageStore()
+const uploadFileStore = useUploadFileStore()
 const responsiveStore = useResponsiveStore()
 //获取本地存储的用户信息
 const {
@@ -162,8 +162,8 @@ const {
   username,
   headImgUrl
 } = toRefs(userInfoStore)
-const { options, isLoading, imageInfo } = toRefs(uploadImageStore)
-const { resetUpload } = uploadImageStore
+const { options, isLoading, fileInfo } = toRefs(uploadFileStore)
+const { resetUpload } = uploadFileStore
 
 
 const { isPC, elSize } = toRefs(responsiveStore)
@@ -181,8 +181,8 @@ const changeAvatar = () => {
 
   watch(isLoading, (newVal, oldVal) => {
     if (newVal === oldVal) return
-    if (newVal === false && imageInfo.value) {
-      headImgUrl.value = imageInfo.value.imgUrl
+    if (newVal === false && fileInfo.value) {
+      headImgUrl.value = fileInfo.value.imgUrl
       resetUpload()
       dialogVisible.value = false
     }

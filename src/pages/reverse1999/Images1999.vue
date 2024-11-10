@@ -28,12 +28,12 @@
             </el-select>
           </el-col>
           <el-col :md="3" :sm="4">
-            <el-select :disabled="!condition.orderBy" v-model.trim="condition.isDesc" placeholder="排序方向">
+            <el-select :disabled="!condition.orderBy" v-model.trim="condition.order" placeholder="排序方向">
               <el-option label="正序" value="" />
               <el-option label="倒序" value="desc" />
             </el-select>
           </el-col>
-          <el-select v-model.trim="condition.accurate" placeholder="是否精确查找">
+          <el-select v-model.trim="condition.mode" placeholder="是否精确查找">
             <el-option label="精准查询" :value="1" />
             <el-option label="模糊查询" :value="0" />
           </el-select>
@@ -80,13 +80,13 @@
         </el-select>
       </el-col>
       <el-col :span="2">
-        <el-select :disabled="!condition.orderBy" v-model.trim="condition.isDesc" placeholder="排序方向">
+        <el-select :disabled="!condition.orderBy" v-model.trim="condition.order" placeholder="排序方向">
           <el-option label="正序" value="" />
           <el-option label="倒序" value="desc" />
         </el-select>
       </el-col>
       <el-col :span="2">
-        <el-select v-model.trim="condition.accurate" placeholder="是否精确查找">
+        <el-select v-model.trim="condition.mode" placeholder="是否精确查找">
           <el-option label="精准查询" :value="1" />
           <el-option label="模糊查询" :value="0" />
         </el-select>
@@ -188,7 +188,7 @@
         </el-table-column>
       </el-table>
       <div class="pageMenu">
-        <el-pagination v-model:current-page="condition.currentPage" v-model:page-size="condition.pageSize"
+        <el-pagination v-model:current-page="condition.offset" v-model:page-size="condition.pageSize"
           :page-sizes="[10, 25, 50, 100]" :layout="options" :total="total" :small="!isPC" @size-change="render()"
           @current-change="render()" />
       </div>
@@ -218,7 +218,7 @@ import useTimeStamp from "@/hooks/useTimestamp";
 //utils
 import myFunction from "@/utils/myFunction";
 //types
-import { Notice, TableFilterItem } from "@/types/global";
+import { Notice, TableFilterItem, ResultData } from "@/types/global";
 
 
 
@@ -259,11 +259,11 @@ const condition = reactive<ImgParams>({
   version: [],
   roles: [],
   sort: 2,
-  accurate: 0,
+  mode: 'accurate',
   pageSize: 25,
-  currentPage: 1,
-  orderBy: '',
-  isDesc: ''
+  offset: 0,
+  orderBy: 'id',
+  order: 'asc'
 }
 )
 //用户上一次查询的参数
@@ -271,11 +271,11 @@ const oldCondition = reactive<ImgParams>({
   version: [],
   roles: [],
   sort: 2,
-  accurate: 0,
+  mode: 'accurate',
   pageSize: 25,
-  currentPage: 0,
-  orderBy: '',
-  isDesc: ''
+  offset: 0,
+  orderBy: 'id',
+  order: 'desc'
 })
 
 //当前修改的图片信息
@@ -334,7 +334,7 @@ function handleSortChange({ column, prop, order }) {
   console.log(column, 1, prop, 2, order)
   if (prop === 'id') {//根据排序整个列表
     condition.orderBy = prop
-    order === 'descending' ? condition.isDesc = 'desc' : condition.isDesc = ''
+    order === 'descending' ? condition.order = 'desc' : condition.order = ''
     render()
   } else tableData.sort((a, b) => {  // 根据 column 和 order 对 this.tableData 进行排序,只排序本页
     if (a[prop] < b[prop]) return order === 'ascending' ? -1 : 1;//
@@ -461,15 +461,16 @@ async function getImages() {
       });
     }
 
-    const result = await axios({
+    const result = await axios<ResultData<{ imgList: ReverseImgInfo[], totalNum: number }>>({
       url: '/getWallpaper',
       params: { ...condition, isManagement: '1' }
     })
     console.log('getImages', result)
-    const { status, totalNum } = result.data
+    const { status, data } = result.data
     if (status === 300) return//没有查询结果则不进行以下操作
-    total.value = totalNum
-    tableData.splice(0, tableData.length, ...result.data.data)
+    if (!data) return
+    total.value = data.totalNum
+    tableData.splice(0, tableData.length, ...data.imgList)
     previewImgList.splice(0, previewImgList.length)
     //imgIndex用于排序，但不连续,故重写
     tableData.forEach((item, index) => {
@@ -645,6 +646,10 @@ const deleteImage = (index: number, data: ReverseImgInfo) => {
   }).catch(error => {
     console.dir('发生错误：' + error)
   })
+}
+
+function ResultData<T>(arg0: { url: string; params: { isManagement: string; version: string[]; roles: number[]; sort: ImgSort; mode: "accurate" | "inaccurate"; pageSize?: number | undefined; offset?: number | undefined; orderBy?: string | undefined; order?: string | undefined; }; }) {
+  throw new Error('Function not implemented.');
 }
 </script>
 <style scoped>

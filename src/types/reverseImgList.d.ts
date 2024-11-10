@@ -39,11 +39,11 @@ interface ImgParams {
     version: string[],
     roles: number[],
     sort: ImgSort,
-    accurate: Accurate,//0是模糊查询
+    mode: 'accurate' | 'inaccurate',//0是模糊查询
     pageSize?: number,//查询每页条数
-    currentPage?: number//当前页码
+    offset?: number//当前页码
     orderBy?: string,//倒序查询的依据
-    isDesc?: string //'desc'为倒序查询,与orderBy同时存在时生效
+    order?: string //'desc'为倒序查询,与orderBy同时存在时生效
 }
 
 //图片分类
@@ -54,10 +54,10 @@ enum ImgSort {
 }
 
 //是否精确查询
-enum Accurate {
-    NotAccurate = 0,//模糊查询
-    IsAccurate = 1//精确查询
-}
+// enum Accurate {
+//     NotAccurate = 0,//模糊查询
+//     IsAccurate = 1//精确查询
+// }
 
 
 //1999角色信息

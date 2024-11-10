@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from "vue";
+import { onMounted, toRefs } from "vue";
 //stores
 import { useMusicSearchStore } from "@/store/music/useMusicSearchStore";
 
@@ -15,6 +15,8 @@ import { useMusicSearchStore } from "@/store/music/useMusicSearchStore";
 const searchStore = useMusicSearchStore()
 const { hotWords } = toRefs(searchStore)
 const { changeKeyWords } = defineProps(['changeKeyWords'])
+
+onMounted(() => searchStore.getHotWords())
 </script>
 
 <style scoped>
@@ -41,7 +43,7 @@ const { changeKeyWords } = defineProps(['changeKeyWords'])
 @media (max-width: 780px) {
   .hotWords {
     justify-content: space-evenly;
-    padding: 0 5px
+    padding: 0 5px;
   }
 }
 </style>

@@ -1,37 +1,7 @@
 <template>
-  <el-scrollbar ref="containerRef" :height="height || (drawerSize - 80)" v-if="songsList.length !== 0">
+  <div ref="containerRef" :style="{ height: (height || (drawerSize - 80)) + 'px', overflow: 'scroll' }"
+    v-if="songsList.length !== 0">
     <template v-for="(item, index) in songsList" :key="index">
-      <!-- <div class="musicDiv">
-        <el-text>{{ index + 1 }}、{{ item.name || '未命名' }} -
-          {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }}
-        </el-text>
-        <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text><el-text v-if="isPC" type="info"
-          style="margin-left:30px ;">[专辑]{{ item.album.name }}</el-text>
-        <SVG_music_playing_indicator style="fill: skyblue;height: 20px;margin-left: 20px;"
-          v-show="item.id === thisMusic.id" />
-        <div class="btns">
-          <el-button link @click="playTheMusic(item, index)" size="small" type="primary">
-            播放
-          </el-button>
-          <el-button link @click="addMusicList([item], { isReplace: true })" size="small" type="primary">
-            添加到播放列表
-          </el-button>
-          <el-button link size="small" type="primary" @click="showMusicListDrawer([item.id])">
-            收藏
-          </el-button>
-          <el-button link v-if="item.cloud_music_id" @click="musicPlayUtils.shareMusicLink(item)" size="small"
-            type="primary">
-            分享
-          </el-button>
-          <el-button link v-if="item.cloud_music_id" @click="musicListUtils.goToCloudMusic(item.cloud_music_id)"
-            target="_blank" size="small" type="primary">
-            前往网易云
-          </el-button>
-          <el-button link v-if="isOwner" @click="deleteMusic(item.id, index)" size="small" type="danger">
-            删除
-          </el-button>
-        </div>
-      </div> -->
       <div class="musicDiv">
         <div>
           <div class="songInfo">
@@ -71,7 +41,7 @@
     </template>
     <!-- 占位盒子 -->
     <div style="height: 150px;" v-if="!isPC && !isSearchList && songsList.length > 5"></div>
-  </el-scrollbar>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -7,7 +7,8 @@
       </div>
       <div><el-button @click="router.push({ name: 'music' })">点击前往音乐播放器demo</el-button></div>
       <h2>本地图片幻灯片(试题)</h2>
-      <Slider />
+      <!-- <Slider /> -->
+      <UploadAudio />
     </el-main>
     <!--    <div class="center">-->
 
@@ -121,6 +122,7 @@
 import { useRouter } from "vue-router";
 //components
 import Slider from '@/pages/Slider.vue'
+import UploadAudio from "@/components/UploadAudio.vue";
 
 const router = useRouter()
 

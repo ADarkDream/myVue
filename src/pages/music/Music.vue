@@ -161,20 +161,25 @@ onMounted(async () => {
   //跳转到播放列表
   if (Number.isInteger(music_id) && music_id > 0) {
     await addMusicToPlay(music_id, isPC.value, true) //移动端不自动播放，没有优化
-    await router.replace({ name: 'music' })
+    router.replace({ name: 'music' })
     changePanelIndex(3)
   } else if (Number.isInteger(cloud_music_id) && cloud_music_id > 0) {
     await addMusicToPlay(cloud_music_id, isPC.value) //移动端不自动播放，没有优化
-    await router.replace({ name: 'music' })
+    router.replace({ name: 'music' })
     changePanelIndex(3)
-  } //else musicListStore.setThisMusic(musicListStore.playingIndex, true)
+  }
 
   //跳转到歌单列表
   if (Number.isInteger(music_list_id) && music_list_id > 0) {
     await getMusicList({ music_list_id, is_login: isLogin.value })
-    await router.replace({ name: 'music' })
+    router.replace({ name: 'music' })
     changePanelIndex(2)
   }
+
+
+  //设置当前播放的歌曲
+  musicListStore.setThisMusic(musicListStore.playingIndex, true)
+
 
   //如果是移动端，监听左右滑动
   if (!isPC.value && music.value) {

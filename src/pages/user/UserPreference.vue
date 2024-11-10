@@ -35,7 +35,7 @@ import { Delete, UploadFilled } from "@element-plus/icons-vue";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import { useResponsiveStore } from "@/store/useResponsiveStore";
-import { useUploadImageStore } from "@/store/upload/uploadImageStore";
+import { useUploadFileStore } from "@/store/upload/uploadFileStore";
 //hooks
 import useTitleDiv from "@/hooks/useTitleDiv";
 //components
@@ -48,14 +48,14 @@ import userInfo from '@/utils/userInfo';
 
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
-const uploadImageStore = useUploadImageStore()
+const uploadFileStore = useUploadFileStore()
 
 //获取本地存储的用户信息
 const { bgUrl, useUserBGUrl } = toRefs(userInfoStore)
 const { updateLocalUserInfo } = userInfoStore
 const { isPC, elSize } = toRefs(responsiveStore)
-const { options, isLoading, imageInfo } = toRefs(uploadImageStore)
-const { resetUpload } = uploadImageStore
+const { options, isLoading, fileInfo } = toRefs(uploadFileStore)
+const { resetUpload } = uploadFileStore
 const { toggleBG } = useTitleDiv()
 const { updateImgUrl } = userInfo
 
@@ -69,9 +69,9 @@ const changeBgUrl = () => {
 
   watch(isLoading, async (newVal, oldVal) => {
     if (newVal === oldVal) return
-    if (newVal === false && imageInfo.value) {
+    if (newVal === false && fileInfo.value) {
 
-      const image_info = await updateImgUrl(imageInfo.value)
+      const image_info = await updateImgUrl(fileInfo.value)
       if (!image_info) throw Error
 
       updateLocalUserInfo({ bgId: image_info.id })

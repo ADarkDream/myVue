@@ -153,14 +153,14 @@ const connectMusicList = async () => {
 }
 // ! 收藏功能不完善
 //将歌曲添加到播放列表，剔除会员歌曲
-const addTheList = async (isPlay = false) => {
+const addTheList = async (isCover = false) => {
   const newList = musicList.value //.filter(songInfo => songInfo.fee !== 1)
   // ElMessage.warning('已过滤会员歌曲并添加到播放列表')
 
-  const index = await addMusicList(newList, { isReplace: true })
+  await addMusicList(newList, { isCover })
   //如果要播放，跳转到这个歌单的第一首歌
-  if (isPlay) {
-    await toggleMusic({ index: index - newList.length + 1 })
+  if (isCover) {
+    await toggleMusic({ index: 0 })
   }
   //面板激活序号
 

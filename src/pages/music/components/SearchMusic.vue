@@ -1,6 +1,6 @@
 <template>
-  <el-drawer class="updateMusicDrawer" v-model="isShowSearchPanel" :with-header="false"
-    :size="drawerSize - (isPC ? 39 : 39) + 'px'" @touchstart="(e: TouchEvent) => e.stopPropagation()"
+  <el-drawer class="searchMusicDrawer" v-model="isShowSearchPanel" :with-header="false"
+    :size="drawerSize - (isPC ? 45 : 45) + 'px'" @touchstart="(e: TouchEvent) => e.stopPropagation()"
     @touchend="(e: TouchEvent) => e.stopPropagation()" direction="btt" show-close>
     <div class="container">
       <div class="header">
@@ -10,7 +10,7 @@
             clearable />
           <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
         </div>
-        <el-radio-group v-model="searchConfig.type" size="small">
+        <el-radio-group v-model="searchConfig.type" size="small" style="height: 30px;">
           <el-radio-button label="单曲" :value="1" />
           <el-radio-button label="专辑" :value="10" />
           <el-radio-button label="歌手" :value="100" />
@@ -18,19 +18,26 @@
           <el-radio-button label="用户" :value="1002" />
           <el-radio-button label="歌词" :value="1006" />
         </el-radio-group>
-        <HotSearchWords :changeKeyWords="changeKeyWords" />
+        <HotSearchWords :changeKeyWords="changeKeyWords" style="height: 30px;overflow: hidden;" />
       </div>
       <div v-if="showResult">
-        <music-list-songs-list :songsList="searchResult" :height="searchDivHeight" :isSearchList="true" />
-        <div>
-          <div style="width: 100%;display: flex;justify-content: center;margin-bottom: 100px">
-            <el-pagination v-model:current-page="page" :page-size="10"
-              :layout="isPC ? 'prev, pager, next,total' : 'prev, pager, next'" :total="songCount"
-              @current-change="searchMusic()" />
+        <music-list-songs-list v-if="searchResultType === 1 && showResult" :songsList="searchResult"
+          :height="searchDivHeight" :isSearchList="true" />
+        <div v-else-if="searchResultType === 10 && showResult">
+          <div class="songInfo" v-for="(album, index) in searchResult" :key="index">
+            <el-text>{{ index + 1 }}、{{ album.name || '未命名' }} -
+              <!-- {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }} -->
+            </el-text>&ensp;
+            <!-- <el-text>{{ album.publish_time }}</el-text> -->
           </div>
         </div>
+        <div class="footer">
+          <el-pagination v-model:current-page="page" :page-size="10"
+            :layout="isPC ? 'prev, pager, next,total' : 'prev, pager, next'" :total="totalNum"
+            @current-change="searchMusic()" />
+        </div>
       </div>
-      <el-empty v-else description=" " style="padding: 0" image="/fool.png" :image-size="350"></el-empty>
+      <el-empty v-else description=" " style="padding: 0" image="/fool.png" :image-size="350" />
     </div>
   </el-drawer>
 
@@ -46,6 +53,7 @@ import { useResponsiveStore } from "@/store/useResponsiveStore";
 //components
 import HotSearchWords from "@/pages/music/components/HotSearchWords.vue";
 import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
+import MusicListCoverComp from "./MusicListCoverComp.vue";
 
 const searchStore = useMusicSearchStore()
 const responsiveStore = useResponsiveStore()
@@ -53,9 +61,9 @@ const responsiveStore = useResponsiveStore()
 const { isPC, drawerSize } = toRefs(responsiveStore)
 
 
-const searchDivHeight = ref(drawerSize.value - 180)
+const searchDivHeight = ref(isPC.value ? (drawerSize.value - 210) : (drawerSize.value - 180))
 
-const { isShowSearchPanel, searchConfig, songCount } = toRefs(searchStore)
+const { isShowSearchPanel, searchConfig, totalNum, searchResultType } = toRefs(searchStore)
 const searchResult = computed(() => searchStore.searchResult)
 
 const { search } = searchStore
@@ -79,10 +87,10 @@ const searchMusic = async () => {
   searchConfig.value.s = keyWords.value
 
   const offset = (page.value - 1) * limitNum
-  if (offset < 0 || offset > songCount.value) return ElMessage.info('页码错误')
+  if (offset < 0 || offset > totalNum.value) return ElMessage.info('页码错误')
   //最后一页不满limit的数量，需要额外处理
-  if (songCount.value) {
-    const restNum = songCount.value - offset
+  if (totalNum.value) {
+    const restNum = totalNum.value - offset
     //设置本次查询的条数
     searchConfig.value.limit = restNum < limitNum ? restNum : limitNum
   }
@@ -192,5 +200,11 @@ const searchMusic = async () => {
 .searchDiv .el-input:focus {
   box-shadow: none;
   border: none;
+}
+
+.footer {
+  height: 30px;
+  display: flex;
+  justify-content: center;
 }
 </style>
