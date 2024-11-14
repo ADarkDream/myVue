@@ -32,6 +32,7 @@
 </template>
 <script lang="ts" setup>
 import { toRefs } from "vue";
+import { Plus } from '@element-plus/icons-vue'
 //stores
 import { useMusicListDrawerStore } from '@/store/music/useMusicListDrawerStore'
 import { useMusicListStore } from "@/store/music/useMusicListStore";

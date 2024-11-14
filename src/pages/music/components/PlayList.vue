@@ -52,6 +52,7 @@
 
 <script setup lang="ts">
 import { toRefs } from "vue";
+import { ElMessage } from "element-plus";
 import { Operation, Delete } from "@element-plus/icons-vue";
 //stores
 import { useMusicListStore } from "@/store/music/useMusicListStore";
@@ -67,7 +68,7 @@ import musicListUtils from "@/utils/music/musicList";
 import type { CloudSongInfo } from "@/types/music";
 //files
 import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.svg?component'
-import { ElMessage } from "element-plus";
+
 
 
 

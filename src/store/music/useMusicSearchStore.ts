@@ -4,7 +4,6 @@ import { reactive, ref } from "vue";
 import type { CloudSongInfo, Album, MusicList, SearchResult } from "@/types/music";
 import axios from "axios";
 import type { ResultData } from "@/types/global";
-import { ElMessage } from 'element-plus';
 
 
 // 定义并暴露一个store

@@ -50,7 +50,6 @@
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref, toRefs } from 'vue'
 import { useRouter, useRoute } from "vue-router";
-import { ElMessage } from 'element-plus'
 //stores
 import { useChatInfoStore } from "@/store/user/chat/useChatInfoStore";
 import { useChatMsgStore } from '@/store/user/chat/useChatMsgStore'

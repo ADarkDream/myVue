@@ -1,7 +1,6 @@
 // 引入defineStore用于创建store
 import { defineStore } from 'pinia'
 import { reactive, ref, toRefs } from "vue";
-import { ElMessage } from 'element-plus';
 
 import { useUserInfoStore } from '../user/useUserInfoStore';
 import type { MusicListInfo } from '@/types/music';

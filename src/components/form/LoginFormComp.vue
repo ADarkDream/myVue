@@ -13,8 +13,10 @@
       <el-button style="position: absolute;right: 0" link @click="resetForm()">重置表单</el-button>
     </el-form-item>
     <p class="other_login_div">
-      <el-text>其他登录方式(申请中)：</el-text>
-      <img src="@/assets/titleDiv/qq_login.png" style="width: 20px;" @click='to_qq_login()' />
+      <el-text>其他登录方式(测试中)：</el-text>
+      <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq(true)' alt="QQ登录_小窗口"
+        title="小窗口" />
+      <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq()' alt="QQ登录_新窗口" title="新窗口" />
     </p>
     <el-button class="submitBtn" @click="submitForm()" :loading="isLoading">登录</el-button>
     <br>
@@ -25,31 +27,37 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import axios from "axios";
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useResponsiveStore } from '@/store/useResponsiveStore';
+//hooks
+import useOAuth from '@/hooks/user/useOAuth';
 //utils
 import verifyRules from "@/utils/verifyRules";
 import titleDiv from '@/utils/titleDiv';
 //types
 import type { loginForm } from "@/types/form";
 
-const { showNotice, to_qq_login } = titleDiv
+const { showNotice } = titleDiv
 
 const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
 const { updateLocalUserInfo } = userInfoStore
+const { isPC } = toRefs(responsiveStore)
+const { to_qq_oauth } = useOAuth()
+
 const ruleFormRef = ref<FormInstance>()
 
 /**
  * 跳转到QQ登录
  */
-// const to_qq_login = () => {
-//   const oOpts = {
-//     appId: "102476068",
-//     redirectURI: "https://muxidream.cn/connect_qq/callback"
-//   }
-//   QC.Login.showPopup(oOpts)
-// }
+const login_by_qq = (is_oauth = false) => {
+  return ElMessage.info('测试中，暂不开放')
+  //解决点击登录后马上切换导致误通过的BUG
+  if (!ruleForm.policy) return ElMessage.error('请先阅读并勾选隐私政策！')
+  to_qq_oauth(is_oauth, isPC.value)
+}
 
 //表单数据
 const ruleForm = reactive<loginForm>({
@@ -150,5 +158,10 @@ const login = async () => {
 .other_login_div {
   display: flex;
   align-items: center;
+}
+
+.login_icon {
+  width: 20px;
+  margin: 0 5px;
 }
 </style>

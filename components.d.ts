@@ -78,7 +78,6 @@ declare module 'vue' {
     TitleDiv: typeof import('./src/components/TitleDiv.vue')['default']
     UploadAudio: typeof import('./src/components/UploadAudio.vue')['default']
     UploadImage: typeof import('./src/components/UploadImage.vue')['default']
-    UploadImgInfo: typeof import('./src/components/UploadImgInfo.vue')['default']
     VolumeComp: typeof import('./src/components/smallComp/VolumeComp.vue')['default']
   }
 }

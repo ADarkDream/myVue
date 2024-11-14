@@ -8,7 +8,15 @@
       <div><el-button @click="router.push({ name: 'music' })">点击前往音乐播放器demo</el-button></div>
       <h2>本地图片幻灯片(试题)</h2>
       <!-- <Slider /> -->
+      <!-- {{ isLock }} -->
       <UploadAudio />
+      <p class="other_login_div">
+        <el-text>其他登录方式(测试中)：</el-text>
+        <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq(true)' alt="QQ登录_小窗口"
+          title="小窗口" />
+        <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq()' alt="QQ登录_新窗口"
+          title="新窗口" />
+      </p>
     </el-main>
     <!--    <div class="center">-->
 
@@ -121,12 +129,27 @@
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
 //components
-import Slider from '@/pages/Slider.vue'
+// import Slider from '@/pages/Slider.vue'
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 import UploadAudio from "@/components/UploadAudio.vue";
-
+import useOAuth from "@/hooks/user/useOAuth";
+// import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 const router = useRouter()
+// const musicPlayStore = useMusicPlayStore()
+
+// const { isLock } = toRefs(musicPlayStore)
+const responsiveStore = useResponsiveStore()
+const { isPC } = toRefs(responsiveStore)
+const { to_qq_oauth } = useOAuth()
 
 
+
+/**
+ * 跳转到QQ登录
+ */
+const login_by_qq = (is_oauth = false) => {
+  to_qq_oauth(is_oauth, isPC.value)
+}
 </script>
 <style scoped>
 .el-container {

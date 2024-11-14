@@ -38,7 +38,6 @@
 <script setup lang="ts">
 import { ref, reactive, shallowRef, onUnmounted, toRefs } from 'vue'
 import { useRoute, useRouter } from "vue-router";
-import { ElMessage, ElLoading } from "element-plus";
 import { IToolbarConfig, IEditorConfig } from '@wangeditor/editor'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'

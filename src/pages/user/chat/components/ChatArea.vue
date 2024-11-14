@@ -82,7 +82,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, toRefs } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { ElMessage } from "element-plus";
 import { Promotion } from "@element-plus/icons-vue";
 //stores
 import { useChatInfoStore } from "@/store/user/chat/useChatInfoStore";

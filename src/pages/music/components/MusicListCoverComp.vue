@@ -32,11 +32,11 @@
 
 <script setup lang="ts">
 import { ref, toRefs } from 'vue'
-import { Delete, Edit } from '@element-plus/icons-vue';
+import { Delete, Edit, MoreFilled } from '@element-plus/icons-vue';
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-//hooks
 import { useResponsiveStore } from "@/store/useResponsiveStore";
+//hooks
 import useTimestamp from "@/hooks/useTimestamp";
 import useMusicList from '@/hooks/music/useMusicList';
 import useMusic from '@/hooks/music/useMusic';
@@ -46,7 +46,7 @@ import LikeHeart from "@/components/smallComp/LikeHeart.vue";
 import type { MusicListInfo } from "@/types/music";
 //files
 import defaultAlbumArt from "@/assets/music/music.svg";
-import { ElMessage } from 'element-plus';
+
 
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()

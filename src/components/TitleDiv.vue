@@ -123,6 +123,10 @@
                   <SVG_music class="el-icon" />
                   &ensp;音乐播放器demo
                 </el-dropdown-item>
+                <!--默默的博客-->
+                <el-dropdown-item @click="toBlogs()" :icon="EditPen">
+                  &ensp;默默的博客(建设中)
+                </el-dropdown-item>
                 <!--设置-->
                 <el-dropdown-item @click="showSetting = !showSetting" :icon="Tools">
                   设置
@@ -232,6 +236,10 @@
                 <SVG_music class="el-icon" />
                 &ensp;音乐播放器demo
               </el-dropdown-item>
+              <!--默默的博客-->
+              <el-dropdown-item @click="toBlogs()" :icon="EditPen">
+                &ensp;默默的博客(建设中)
+              </el-dropdown-item>
               <!--设置-->
               <el-dropdown-item :icon="Tools" @click="showSetting = !showSetting">
                 设置
@@ -296,14 +304,14 @@
 import { onMounted, reactive, ref, watch, toRefs } from 'vue'
 import {
   ArrowLeftBold, Avatar, BellFilled,
-  Comment, Download,
+  Comment, EditPen, Download,
   HomeFilled,
   Moon, MoreFilled, Operation,
   Sunny, Switch, SwitchButton,
   Tools,
   UserFilled
 } from "@element-plus/icons-vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+
 import { useRouter, useRoute } from "vue-router";
 //stores
 import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
@@ -320,6 +328,7 @@ import RegisterFormComp from "@/components/form/RegisterFormComp.vue";
 import VolumeComp from "@/components/smallComp/VolumeComp.vue";
 //utils
 import { emitter } from "@/utils/emitter";
+import titleDiv from "@/utils/titleDiv"
 //types
 import { NoticeActiveNum } from "@/types/global";
 //files
@@ -343,7 +352,7 @@ const { isDark, isPC, isHome, isForum } = toRefs(responsiveStore)
 const { toggleBG } = useTitleDiv()
 
 
-
+const routes = ['/oauth']
 const showPlayer = ref(false)
 //控制头像的显示
 const showHeadImg = ref(isLogin.value)
@@ -360,7 +369,7 @@ const html = (document.querySelector('html') as HTMLElement)
 const body = (document.querySelector('body') as HTMLElement)
 
 const goTo = (name: string) => router.push({ name })
-
+const toBlogs = () => window.open('https://blogs.muxidream.cn')
 
 //网页初次渲染函数
 onMounted(() => {

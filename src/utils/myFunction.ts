@@ -120,6 +120,21 @@ const myFunction = {
     //     return true;
     // }
 
+
+    /**
+     * 生成随机验证码
+     * @param length 验证码长度,默认为6位
+     * @returns 
+     */
+    generateRandomCode: (length = 6) => {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'
+        let code = ''
+        while (code.length < length) {
+            const randomIndex = Math.floor(Math.random() * chars.length)
+            code += chars[randomIndex]
+        }
+        return code
+    },
     //获取随机N张重返未来1999背景图片
     getBG: async (sort?: number, limitNum?: number) => {
         try {

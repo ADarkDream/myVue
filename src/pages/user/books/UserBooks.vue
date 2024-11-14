@@ -55,7 +55,6 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
 import { Delete, Edit, MoreFilled, Share } from "@element-plus/icons-vue";
 import axios from "axios";
 //stores

@@ -9,8 +9,8 @@ interface Article {
     text: string,
     area: string,
     tags: string,
-    created_time: number,
-    updated_time: number
+    created_time: Date,
+    updated_time: Date
 }
 
 //管理界面的文章评论
@@ -34,4 +34,4 @@ interface CommentInfo {
     headImgUrl: string
 }
 
-export { Article, Comment, CommentInfo }
+export type { Article, Comment, CommentInfo }

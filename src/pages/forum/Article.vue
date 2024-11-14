@@ -108,7 +108,6 @@ import { nextTick, onMounted, reactive, ref, toRefs } from "vue";
 import { useRoute, useRouter } from 'vue-router'
 import axios from "axios";
 import { ArrowLeftBold, Refresh, Delete, MoreFilled, WarnTriangleFilled } from "@element-plus/icons-vue";
-import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
 import hljs from 'highlight.js/lib/common';
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
@@ -148,9 +147,20 @@ let { getDiffTime } = useTimeStamp()
 
 
 //文章信息
-const article = reactive({}) as Article
+const article = ref<Article>({
+  id: 0,
+  title: '',
+  status: 0,
+  author: '',
+  coverUrl: '',
+  text: '',
+  area: '',
+  tags: '',
+  created_time: new Date(),
+  updated_time: new Date()
+})
 //评论列表
-const comments: CommentInfo[] = reactive([])
+const comments = ref<CommentInfo[]>([])
 
 //region刷新，获取文章
 async function getArticle() {
@@ -168,12 +178,12 @@ async function getArticle() {
     const { comments: commentsData } = result.data
     console.log(!!comments)
     // ElMessage.success(msg)
-    Object.assign(article, result.data.article)
+    article.value = result.data.article
     //判断返回的数据中是否有评论
     if (!!commentsData && commentsData.length !== 0) {
-      comments.splice(0, comments.length)
+      comments.value.splice(0, comments.value.length)
       commentsData.forEach((item: CommentInfo) => {
-        comments.push(item);
+        comments.value.push(item);
       });
     }
     await nextTick()
@@ -351,7 +361,7 @@ onMounted(async () => {
   await getArticle()//获取文章和评论
   await nextTick(() => {//页面渲染完毕才计算高度
     fixImageWidth()//修改图片宽度
-    if (comments.length === 0) console.log('没有评论')
+    if (comments.value.length === 0) console.log('没有评论')
     else {//有评论时获取输入评论框距离页面顶部的距离
       commentsBoxOffsetTop.value = commentBox.value.offsetTop
     }

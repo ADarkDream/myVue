@@ -6,7 +6,6 @@
 import { onBeforeMount, onBeforeUnmount, nextTick, ref, toRefs } from 'vue'
 import { useRouter } from "vue-router";
 import { useRoute } from 'vue-router';
-import { ElMessage } from 'element-plus'
 //stores
 import { useChatInfoStore } from "@/store/user/chat/useChatInfoStore";
 import { useChatMsgStore } from "@/store/user/chat/useChatMsgStore";

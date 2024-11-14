@@ -35,10 +35,7 @@
                 <el-button link target="_blank" type="primary"
                   @click="copyText('904688184', 'QQ群号', 'https://qm.qq.com/q/Oq8R7YS6sM')" title="点击前往QQ">
                   金兔子特供部门🐰
-                </el-button>
-                ,
-                <el-text style="color: orangered">资源来自网络,侵权请联系删除</el-text>
-                。
+                </el-button>。
               </el-text>
               <el-text tag="p">
                 3.若首页导航网站无法访问，请使用Chrome、Edge、Firefox等浏览器或尝试VPN，也可能是因为该网站维护中【也可能是网站已关闭，太久没校验了】。
@@ -55,14 +52,12 @@
                 。
               </el-text>
               <el-text tag="p">
-                5.本站正在持续更新和适配移动端，如
-                <el-text type="warning">UI错位</el-text>
-                或
-                <el-text type="danger">功能出错</el-text>
-                请
-                <el-button link title="前往反馈" type="primary" @click="changePage(3, 2)">留言反馈</el-button>
+                5.本站正在持续更新和适配移动端，如UI错位或功能出错请 <el-button link title="前往反馈" type="primary"
+                  @click="changePage(3, 2)">留言反馈</el-button>
                 。
               </el-text>
+              <el-text tag="p" type="danger">6.
+                本站所提供的所有资源均来自网络,侵权请联系删除</el-text>
             </el-card>
           </el-collapse-item>
           <el-collapse-item title="友情链接" :name="2">
@@ -73,7 +68,7 @@
                   lsgfish-resource-sharing
                 </el-button>
               </el-link>
-              <el-link target="_blank" v-if="false" href="https://answer.lilemy.cn/" title="小新问答">
+              <el-link target="_blank" href="https://answer.lilemy.cn/" title="小新问答">
                 <el-button><img src="@/assets/logo.xiaoxin.png" alt="" style="width: 25px">&ensp;
                   小新问答
                 </el-button>
@@ -111,9 +106,27 @@
           <!--    待更新的功能-->
           <el-collapse-item title="待更新的功能" :name="1">
             <template v-for="item in noUpdated" :key="item.id">
-              <el-button text :icon="Edit">{{ item.content }}</el-button>
-              <br>
+              <p><el-icon>
+                  <Edit />
+                </el-icon> {{ item.content }}</p>
             </template>
+            <p><el-icon>
+                <Edit />
+              </el-icon>
+              其他：<el-text type="info" size="small" tag="p">
+                1. 导航网站的介绍页<br>
+                2. 文章的封面设置<br>
+                3. 新闻页面优化<br>
+                4. 音乐——歌词<br>
+                5. 文章和评论、公告都没有限制查询条数，每次都查询所有文章以及对应的所有评论<br>
+                6. 给登录和注册加一张竖屏背景图或磨砂效果<br>
+                7. 重构1999下载界面，重构角色图片关系表，添加其他9图，更换瀑布流实现插件<br>
+                8. SSG或SSR优化<br>
+                9. 按需引入elementplus组件和样式并减小打包体积：<br>
+                10. 聊天界面时间不能实时更新，可以设置监听器，切换分钟时页面的getDiffTime重新加载一下<br>
+                11. GenAI Script
+              </el-text>
+            </p>
           </el-collapse-item>
           <el-collapse-item title="已更新的公告" :name="2">
             <el-timeline style="padding-left: 0"><br>
@@ -130,7 +143,7 @@
       </el-collapse-transition>
     </el-tab-pane>
     <!--联系和反馈-->
-    <el-tab-pane :name="3" label="联系和反馈">
+    <el-tab-pane :name="3" label="联系与反馈">
       <el-collapse-transition class="noticeContent">
         <el-collapse v-model="showFlag.active_num" v-show="showFlag.show_num === 3" accordion style="border: none">
           <!--联系方式-->
@@ -152,8 +165,8 @@
                 <el-input type="text" v-model.trim="contact" maxlength="30" placeholder="[选填]可在此填写联系方式"></el-input>
               </el-form-item>
               <el-form-item>
-                <el-input type="textarea" v-model.trim="content" minlength="5" maxlength="200" :autosize="true"
-                  show-word-limit placeholder="[必填]可在此提交建议、bug反馈或其他内容" />
+                <el-input type="textarea" v-model.trim="content" minlength="5" maxlength="200" show-word-limit
+                  placeholder="[必填]可在此提交建议、bug反馈或其他内容" />
               </el-form-item>
             </el-form>
             <el-button type="primary" @click="submitFeedback">提交反馈</el-button>

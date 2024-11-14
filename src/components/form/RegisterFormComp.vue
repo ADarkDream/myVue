@@ -34,7 +34,7 @@
 
 <script lang="ts" setup>
 import { onUnmounted, reactive, ref } from 'vue'
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 import axios from "axios"
 //utils
 import verifyRules from "@/utils/verifyRules";

@@ -4,6 +4,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
+import Icons from 'unplugin-icons/vite'
+import IconsResolver from 'unplugin-icons/resolver'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import VueSetupExtend from 'vite-plugin-vue-setup-extend'
 import legacy from "@vitejs/plugin-legacy"
@@ -61,12 +63,32 @@ export default ({ mode, command }: { mode: string, command: string }) => {
                 // launchEditor: 'webstorm',
             }),
             VueSetupExtend(),
-            // 以下两项是为配置Element-plus自动按需导入
+
             AutoImport({
-                resolvers: [ElementPlusResolver()],
+                // 自动导入 Vue 相关函数，如：ref, reactive, toRef 等
+                imports: ['vue'],
+                resolvers: [
+                    // 自动导入 Element Plus 相关函数，如：ElMessage, ElMessageBox... (带样式)
+                    ElementPlusResolver(),
+                    // 自动导入图标组件
+                    IconsResolver({
+                        prefix: 'Icon',
+                    }),
+                ]
             }),
             Components({
-                resolvers: [ElementPlusResolver()],
+
+                resolvers: [
+                    // 自动导入 Element Plus 组件
+                    ElementPlusResolver(),
+                    // 自动注册图标组件
+                    IconsResolver({
+                        enabledCollections: ['ep'],
+                    }),
+                ],
+            }),
+            Icons({
+                autoInstall: true,
             }),
             legacy({
                 targets: ["defaults", "ie 11"]

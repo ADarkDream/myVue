@@ -45,7 +45,6 @@
 
 <script setup lang="ts">
 import { computed, ref, toRefs } from "vue";
-import { ElMessage } from "element-plus";
 import { Back } from "@element-plus/icons-vue";
 //stores
 import { useMusicSearchStore } from "@/store/music/useMusicSearchStore";

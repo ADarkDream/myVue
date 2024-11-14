@@ -45,7 +45,6 @@
 
 <script setup lang="ts">
 import { computed, toRefs, watch } from "vue";
-import { ElMessage } from "element-plus";
 
 //stores
 import { useMusicListDrawerStore } from "@/store/music/useMusicListDrawerStore";
@@ -81,7 +80,7 @@ const isOpen = computed({
 
 
 const open = () => {
-  options.value.sort = '/album/cover'
+  options.value.sort = 'album/cover'
   options.value.imgUrl = computed(() => {
     const { pic_url, default_cover_url } = formData.value
     if (pic_url) return pic_url

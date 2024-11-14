@@ -16,7 +16,6 @@
 
 <script lang="ts" setup>
 import { reactive, ref, toRefs } from 'vue'
-import { ElMessage } from 'element-plus'
 //stores
 import { useChatInfoStore } from '@/store/user/chat/useChatInfoStore'
 

@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from "@/pages/home/Home.vue"//常用，不异步加载
-// const Home = () => import("@/pages/home/Home.vue")
+
+
+// import Home from "@/pages/home/Home.vue"//常用，不异步加载
+const Home = () => import("@/pages/home/Home.vue")
 const Forum = () => import("@/pages/forum/Forum.vue");
 const AdminLogin = () => import("@/pages/admin/AdminLogin.vue");
 const AdminCenter = () => import("@/pages/admin/AdminCenter.vue");
@@ -12,7 +14,7 @@ const UserManagement = () => import("@/pages/user/UserManagement.vue");
 const UserEdit = () => import("@/pages/user/UserEdit.vue");
 const UserBooks = () => import("@/pages/user/books/UserBooks.vue")
 const UserBook = () => import("@/pages/user/books/UserBook.vue")
-
+const OAuth = () => import("@/pages/user/OAuth/OAuth.vue")
 const Article = () => import("@/pages/forum/Article.vue");
 const Center = () => import("@/pages/forum/Center.vue")
 const AdminArticlesManagement = () => import("@/pages/admin/AdminArticlesManagement.vue");
@@ -174,6 +176,11 @@ const router = createRouter({
                 }]
             }
             ]
+        },
+        {
+            path: "/oauth",
+            name: "oauth",
+            component: OAuth,
         },
         {
             path: "/reverse1999",

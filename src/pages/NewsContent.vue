@@ -106,7 +106,7 @@
 import { nextTick, onMounted, onUnmounted, reactive, ref, toRefs } from "vue";
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeftBold, Refresh, Comment, Delete, MoreFilled, WarnTriangleFilled } from "@element-plus/icons-vue";
-import { ElMessage, ElMessageBox, ElLoading } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import axios from "axios";
 import hljs from 'highlight.js/lib/common';
 //stores

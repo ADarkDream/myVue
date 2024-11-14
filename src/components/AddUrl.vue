@@ -34,7 +34,6 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { ElMessage } from "element-plus";
 import axios from "axios";
 //types
 import type { Navigation } from '@/types/url'

@@ -34,7 +34,6 @@
 <script setup lang="ts">
 import axios from "axios";
 import { onBeforeUnmount, onMounted, reactive, ref, toRefs } from "vue";
-import { ElMessage } from "element-plus";
 import { CloseBold, UploadFilled } from "@element-plus/icons-vue";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";

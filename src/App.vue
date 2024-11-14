@@ -19,7 +19,6 @@
 import { computed, ref, toRefs } from 'vue';
 import { RouterView } from 'vue-router';
 import axios from "axios";
-import { ElMessage } from "element-plus";
 import zhCn from 'element-plus/es/locale/lang/zh-cn' //elementPlus国际化
 import en from 'element-plus/es/locale/lang/en' //elementPlus国际化
 //components
@@ -37,7 +36,7 @@ const isPC = ref(true)
 window.addEventListener('resize', () => checkIsPC())
 
 function checkIsPC() {
-  console.log('屏幕变化了')
+  // console.log('屏幕变化了')
   //获取当前屏幕宽度
 
   isPC.value = document.body.clientWidth > 980;
