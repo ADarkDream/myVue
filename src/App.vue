@@ -61,7 +61,7 @@ checkLocalToken()
 
 const language = ref('zh-cn')
 const locale = computed(() => (language.value === 'zh-cn' ? zhCn : en))
-
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL
 
 
 // axios 公共配置,请求拦截器和响应拦截器

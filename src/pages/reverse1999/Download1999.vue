@@ -180,7 +180,7 @@
               </el-text>
               <br>
               <el-button v-if="!showPayCode" @click="showPayCode = true" type="success">点击展示微信赞赏码</el-button>
-              <el-image v-else style="width: 200px" lazy :src="baseUrl.qiniuHttpsUrl + '/files/payCode.png'" />
+              <el-image v-else style="width: 200px" lazy :src="pay_code_src" />
             </el-collapse-item>
           </el-collapse>
         </el-card>
@@ -266,8 +266,6 @@ import axios from "axios";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
-
-import { useBaseUrl } from '@/hooks/useBaseUrl'
 import useTitleDiv from '@/hooks/useTitleDiv';
 //components
 import DownloadNotice from "@/pages/reverse1999/components/DownloadNotice.vue";
@@ -279,16 +277,17 @@ import userInfo from '@/utils/userInfo';
 import { Notice, NoticeActiveNum, ResultData } from "@/types/global";
 //files
 import logo from '@/assets/logo-small.png'
+import { api_getNotice } from '@/apis/notice';
 
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
-const { isLogin, useUserBGUrl, bgUrl, localBgUrl } = toRefs(userInfoStore)
+const { isLogin, useUserBGUrl, localBgUrl } = toRefs(userInfoStore)
 const { isPC, elSize, screenWidth, containerHeight } = toRefs(responsiveStore)
 const { updateLocalUserInfo } = userInfoStore
 const { toggleBG } = useTitleDiv()
-const baseUrl = useBaseUrl()
+
 const { copyText, deepEqual } = myFunction
 const { updateImgUrl } = userInfo
 //呼出公告面板
@@ -345,6 +344,8 @@ const showPayCode = ref(false)//是否显示收款码
 const fee = ref(0)
 //单次最大下载数量
 const downloadLimitNum = ref(25)
+
+const pay_code_src = ref(import.meta.env.VITE_QINIU_URL + '/files/payCode.png')
 
 onMounted(() => {
   getVersion()
@@ -471,12 +472,9 @@ function getVersion() {
 //获取已发布公告
 const getNotices = async () => {
   try {
-    const result = await axios({
-      url: '/getNotices',
-      params: { sort: ['completed', 'unCompleted', 'others'] }
-    })
-    console.log(result)
-    const { noticeList } = result.data
+    const { data } = await api_getNotice(['updateNotes', 'noUpdated'])
+    const { noticeList } = data!
+
     // ElMessage.success( result.data.msg)
     completed.splice(0, completed.length)
     unCompleted.splice(0, unCompleted.length)
@@ -715,7 +713,7 @@ const downloadImg = async (url: string, imgName: string, imgPath: string) => {
   if (isOpenProxy.value)   //如果有端口代理
     imageUrl = url.replace('https://gamecms-res.sl916.com', 'http://localhost:3000/download1999')
   else if (!!imgPath) //没有端口代理
-    imageUrl = baseUrl.qiniuHttpsUrl + imgPath.replace(/^\./, '')//七牛云备份,去掉路径中第一个点
+    imageUrl = import.meta.env.VITE_QINIU_URL + imgPath.replace(/^\./, '')//七牛云备份,去掉路径中第一个点
   else//没有端口代理且服务器没有备份
     imageUrl = url.replace(axios.defaults.baseURL + '/download1999', 'http://localhost:3000/download1999')
   try {

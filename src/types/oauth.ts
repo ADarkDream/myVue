@@ -38,4 +38,27 @@ interface QQOAuthCheck {
     key: string
 }
 
-export type { CallbackOAuth, QQOAuthCheck }
+/**
+ * postMessage窗口通信验证参数
+ */
+interface PostMessageCheck {
+    /**
+     * 发信者身份
+     */
+    role: 'visitor' | 'verifier',
+    /**
+     * 发信进程
+     */
+    step: number,
+    data: Step_0 | Step_1
+}
+/**
+ * 发信进程 0
+ */
+type Step_0 = { type: string, key: string }
+/**
+ * 发信进程 1
+ */
+type Step_1 = { verify: number, msg: string }
+
+export type { CallbackOAuth, QQOAuthCheck, PostMessageCheck, Step_0, Step_1 }

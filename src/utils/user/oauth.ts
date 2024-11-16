@@ -1,19 +1,31 @@
 import axios from "axios"
 import { ElMessage } from "element-plus"
-import config from "@/config"
 import titleDiv from "../titleDiv"
 import type { ResultData } from "@/types/global"
+import { userInfo } from "os"
+import { UserInfo } from "@/types/user"
 declare const QC: any
 
 export default {
     /**
-     * 请求后端，登录QQ
+     * 请求后端，提交QQ认证的token信息
+     * @param access_token -用户的身份认证
+     * @param expired_time -身份认证有效期
+     * @param type -本次认证的功能(登录/绑定/注册？)
+     * @returns 
      */
-    login_by_qq: async (access_token: string, expired_time: Date) => {
+    qq_oauth: async (access_token: string, expired_time: Date, type = 'login') => {
+        let msg = '登录'
+        let url = '/login_qq'
+        if (type === 'connect') {
+            msg = '绑定'
+            url = '/connect_qq'
+        }
+        // else if (type==='')
         const flag = QC.Login.check()
         if (!flag || !access_token || !expired_time) {
-            ElMessage.warning('登录失败！')
-            return false
+            ElMessage.warning(msg + '失败！')
+            return { flag: false, msg: msg + '失败！' }
         }
         // !外部是否需要await
         // QC.Login.getMe(async (appId: string, accessToken: string) => {
@@ -21,20 +33,30 @@ export default {
         //     console.log('accessToken', accessToken);
         // QC.api()
         try {
-            const result = await axios<ResultData<undefined>>({
-                url: '/login_qq',
+            const result = await axios<ResultData<{ userInfo: UserInfo }>>({
+                url,
                 method: "POST",
                 data: { access_token, expired_time }
             })
-            console.log('/login_by_qq返回的数据为：', result.data)
-            const { status } = result.data
-            return status === 200
+            console.log('qq_oauth返回的数据为：', result.data)
+            const { status, msg, data } = result.data
+            //登录成功
+            if (status === 200 && data) return { flag: true, userInfo: data.userInfo, msg }
+            //绑定成功
+            else if (status === 200) return { flag: true, msg }
+            //失败
+            else return { flag: false, msg }
         } catch (err) {
-            console.error('login_by_qq出错了')
-            console.error(err);
-            return false
+            console.error('qq_oauth验证出现错误')
+            console.error(err)
+            return { flag: false, msg: 'QQ OAuth验证出现错误' }
         }
     },
+
+
+
+
+
     /**
      * 清洗从回调地址链接中返回的QQ OAuth参数
      */

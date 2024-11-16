@@ -12,10 +12,9 @@
       <UploadAudio />
       <p class="other_login_div">
         <el-text>其他登录方式(测试中)：</el-text>
-        <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq(true)' alt="QQ登录_小窗口"
-          title="小窗口" />
-        <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq()' alt="QQ登录_新窗口"
-          title="新窗口" />
+        <el-button type="primary" size="default" @click="login_by_qq(true)">QQ登录_小窗口</el-button>
+        <el-button type="primary" size="default" @click="login_by_qq()">QQ登录_新窗口</el-button>
+        <el-button type="primary" size="default" @click="connect_by_qq(true)">QQ绑定_新窗口</el-button>
       </p>
     </el-main>
     <!--    <div class="center">-->
@@ -131,15 +130,18 @@ import { useRouter } from "vue-router";
 //components
 // import Slider from '@/pages/Slider.vue'
 import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import UploadAudio from "@/components/UploadAudio.vue";
 import useOAuth from "@/hooks/user/useOAuth";
 // import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 const router = useRouter()
+const userInfoStore = useUserInfoStore()
 // const musicPlayStore = useMusicPlayStore()
 
 // const { isLock } = toRefs(musicPlayStore)
 const responsiveStore = useResponsiveStore()
 const { isPC } = toRefs(responsiveStore)
+const { isLogin } = toRefs(userInfoStore)
 const { to_qq_oauth } = useOAuth()
 
 
@@ -148,8 +150,14 @@ const { to_qq_oauth } = useOAuth()
  * 跳转到QQ登录
  */
 const login_by_qq = (is_oauth = false) => {
-  to_qq_oauth(is_oauth, isPC.value)
+  to_qq_oauth({ is_oauth, isPC: isPC.value })
 }
+const connect_by_qq = (is_oauth = false) => {
+
+  if (!isLogin.value) return ElMessage.info('请先登录')
+  to_qq_oauth({ is_oauth, isPC: isPC.value, type: 'connect' })
+}
+
 </script>
 <style scoped>
 .el-container {

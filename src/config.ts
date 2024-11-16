@@ -1,13 +1,6 @@
-/**
- * 是否是开发环境
- */
-const is_dev = process.env.NODE_ENV === 'development'
+import { connect } from "http2"
 
 const config = {
-    /**
-     * 项目主要地址
-     */
-    host: is_dev ? 'http://127.0.0.1:5173' : 'https://muxidream.cn',
     /**
      * QQ OAuth的主要地址
      */
@@ -17,9 +10,15 @@ const config = {
      */
     options_qq: {
         appId: "102483810",
-        redirectURI: is_dev ? 'http://127.0.0.1:5173' : "https://muxidream.cn/oauth?reffer=qq",
+        redirectURI: "https://muxidream.cn/oauth?reffer=qq",
     },
-
+    /** 
+     * OAuth通信的类型参数
+     */
+    oauth_type: {
+        login: '登录',
+        connect: '绑定'
+    } as Record<string, string>
 
 }
 export default config

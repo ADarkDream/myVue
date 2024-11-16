@@ -31,3 +31,5 @@ coverage
 /sitemap.xml
 /sitemap.xml.gz
 myVue.code-workspace
+
+helper.json

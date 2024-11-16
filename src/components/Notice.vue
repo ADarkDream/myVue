@@ -162,10 +162,11 @@
           <el-collapse-item title="留言反馈" :name="2">
             <el-form style="margin: 0 5%">
               <el-form-item>
-                <el-input type="text" v-model.trim="contact" maxlength="30" placeholder="[选填]可在此填写联系方式"></el-input>
+                <el-input type="text" v-model.trim="feedback.contact" maxlength="30"
+                  placeholder="[选填]可在此填写联系方式"></el-input>
               </el-form-item>
               <el-form-item>
-                <el-input type="textarea" v-model.trim="content" minlength="5" maxlength="200" show-word-limit
+                <el-input type="textarea" v-model.trim="feedback.content" minlength="5" maxlength="200" show-word-limit
                   placeholder="[必填]可在此提交建议、bug反馈或其他内容" />
               </el-form-item>
             </el-form>
@@ -183,113 +184,52 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import axios from "axios";
-import { onMounted, reactive, ref } from "vue";
-import { Edit } from "@element-plus/icons-vue";
 import { ElCollapseTransition, ElMessage, TabsPaneContext } from 'element-plus'
+
+//stores
+import { useNoticeStore } from '@/store/useNoticeStore'
 //hooks
-import useTimeStamp from "@/hooks/useTimestamp";
+// import useTimeStamp from "@/hooks/useTimestamp";
+import useNotice from "@/hooks/useNotice";
 //components
 import Approve from "@/components/Approve.vue";
 //utils
 import myFunction from "@/utils/myFunction";
-//types
-import { Notice } from "@/types/global";
+import titleDiv from "@/utils/titleDiv";
 
-
+const noticeStore = useNoticeStore()
+const { updateNotes, noUpdated, feedback } = toRefs(noticeStore)
 const { copyText } = myFunction
-const { getDiffTime } = useTimeStamp()
+// const { getDiffTime } = useTimeStamp()
+const { getNotices, submitFeedback } = useNotice()
 const router = useRouter()
 
 const { showFlag, changePage } = defineProps(['showFlag', 'changePage'])//切换页面的参数
 
-const updateNotes = reactive<Notice[]>([])//已更新的公告
-const noUpdated = reactive<Notice[]>([])//未更新的公告
-const contact = ref('')//反馈联系方式
-const content = ref('')//反馈内容
+
+
 
 
 onMounted(() => {
-  getNotices()//获取公告
+  if (showFlag.show_num === 2 && updateNotes.value.length === 0)
+    getNotices()//获取公告
 })
 
 /*点击tabs标签时触发*/
 const tabClick = (pane: TabsPaneContext, ev: Event) => {
+  if (pane.paneName === 2 && updateNotes.value.length === 0)
+    getNotices()//获取公告
   if (pane.paneName === 1) changePage(1, 1)
   else changePage(pane.paneName, 2)
 }
 
-//获取已发布公告
-const getNotices = async () => {
-  try {
-    const result = await axios({
-      url: '/getNotices',
-      params: { sort: ['updateNotes', 'noUpdated'] }
-    })
-    // console.log(result)
-    const { noticeList } = result.data
-    updateNotes.splice(0, updateNotes.length)
-    noUpdated.splice(0, noUpdated.length)
-    noticeList.forEach((item: Notice) => {
-      if (item.created_time === item.updated_time) item.time = '发布时间：' + getDiffTime(item.created_time)
-      else item.time = '发布时间：' + getDiffTime(item.created_time) + '  上次修订于：' + getDiffTime(item.updated_time)
-      if (item.sort === 'updateNotes') updateNotes.push(item)
-      if (item.sort === 'noUpdated') noUpdated.push(item)
-    })
-  } catch (error) {
-    console.log('发生错误：')
-    console.dir(error)
-  }
-}
 
-
-//上传反馈内容
-const submitFeedback = async () => {
-  console.log(content.value.length)
-  if (content.value === '') return ElMessage.error('反馈内容不能为空')
-  if (contact.value.length > 30) return ElMessage.error('联系方式超出长度限制')
-  if (content.value.length < 5 || content.value.length > 200) return ElMessage.error('反馈内容应为5-200个字符')
-  try {
-    const result = await axios({
-      url: '/submitFeedback',
-      method: 'post',
-      data: {
-        contact: contact.value,
-        content: content.value
-      }
-    })
-    console.log('result', result)
-    contact.value = ''
-    content.value = ''
-    ElMessage.success(result.data.msg)
-  } catch (error) {
-    console.log('发生错误：')
-    console.dir(error)
-  }
-}
-
-
-//清除全部cookie
-const delAllCookie = () => {
-  const cookies = document.cookie.split(";")
-
-  cookies.forEach(cookie => {
-    const [name] = cookie.split("=");
-    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
-  })
-
-  if (cookies.length > 0) {
-    const domain = `.${location.host.split('.').slice(-2).join('.')}` // 顶级域名
-    cookies.forEach(cookie => {
-      const [name] = cookie.split("=")
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`
-    })
-  }
-  console.log('已删除全部本地cookie');
-}
+/**
+ * 清除Clarity的cookie(本地全部ookie)
+ */
 const clear_Clarity_cookie = () => {
   // window.clarity('consent', false)
-  delAllCookie()
+  titleDiv.delAllCookie()
   ElMessage.success('已重置同意，刷新后可选择拒绝cookie')
   setTimeout(() => { location.reload() }, 1500)
 }

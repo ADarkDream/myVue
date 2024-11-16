@@ -16,7 +16,7 @@
       <el-text>其他登录方式(测试中)：</el-text>
       <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq(true)' alt="QQ登录_小窗口"
         title="小窗口" />
-      <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq()' alt="QQ登录_新窗口" title="新窗口" />
+      <!-- <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq()' alt="QQ登录_新窗口" title="新窗口" /> -->
     </p>
     <el-button class="submitBtn" @click="submitForm()" :loading="isLoading">登录</el-button>
     <br>
@@ -38,11 +38,14 @@ import verifyRules from "@/utils/verifyRules";
 import titleDiv from '@/utils/titleDiv';
 //types
 import type { loginForm } from "@/types/form";
+import { ResultData } from '@/types/global';
+import { UserInfo } from '@/types/user';
+
 
 const { showNotice } = titleDiv
-
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
+const { isLogin } = toRefs(userInfoStore)
 const { updateLocalUserInfo } = userInfoStore
 const { isPC } = toRefs(responsiveStore)
 const { to_qq_oauth } = useOAuth()
@@ -53,11 +56,10 @@ const ruleFormRef = ref<FormInstance>()
  * 跳转到QQ登录
  */
 const login_by_qq = (is_oauth = false) => {
-  return ElMessage.info('测试中，暂不开放')
-  //解决点击登录后马上切换导致误通过的BUG
   if (!ruleForm.policy) return ElMessage.error('请先阅读并勾选隐私政策！')
-  to_qq_oauth(is_oauth, isPC.value)
+  to_qq_oauth({ is_oauth, isPC: isPC.value })
 }
+
 
 //表单数据
 const ruleForm = reactive<loginForm>({
@@ -116,7 +118,7 @@ const login = async () => {
     //解决点击登录后马上切换导致误通过的BUG
     if (!ruleForm.policy) return
     const { email, password } = ruleForm
-    const result = await axios({
+    const result = await axios<ResultData<{ userInfo: UserInfo }>>({
       url: '/login',
       method: 'post',
       data: {
@@ -125,9 +127,9 @@ const login = async () => {
       }
     })
 
-    console.log(result.data)
-
-    const { userInfo } = result.data
+    // console.log(result.data)
+    if (!result.data.data) return ElMessage.error('登录失败')
+    const { userInfo } = result.data.data
     updateLocalUserInfo(userInfo)
     //成功提示信息
     ElMessage.success(`用户 ${userInfo.username} 登录成功`)

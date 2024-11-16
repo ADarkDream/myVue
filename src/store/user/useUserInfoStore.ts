@@ -3,17 +3,16 @@ import { computed, ref, toRefs } from "vue";
 import { ElMessage } from "element-plus";
 import { jwtDecode } from "jwt-decode";
 //hooks
-import { useBaseUrl } from '@/hooks/useBaseUrl'
+
 //types
 import type { Token, UserInfo } from '@/types/user';
 
 
 // 定义并暴露一个store
 export const useUserInfoStore = defineStore('user_info', () => {
-    const baseUrl = useBaseUrl()
 
     //获取本地存储的用户信息userInfo中的数据
-    const imageSrc = baseUrl.qiniuHttpsUrl + '/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png'
+    const imageSrc = import.meta.env.VITE_QINIU_URL + '/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png'
     //是否使用本地背景图
     const useUserBGUrl = ref(false)
     //本地背景图

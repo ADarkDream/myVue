@@ -43,8 +43,27 @@ export default {
             console.log('检查出错，结果为：', false)
             return false
         }
-    }
+    },
+    /**
+     * 清除全部cookie
+     */
+    delAllCookie: () => {
+        const cookies = document.cookie.split(";")
 
+        cookies.forEach(cookie => {
+            const [name] = cookie.split("=");
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+        })
+
+        if (cookies.length > 0) {
+            const domain = `.${location.host.split('.').slice(-2).join('.')}` // 顶级域名
+            cookies.forEach(cookie => {
+                const [name] = cookie.split("=")
+                document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`
+            })
+        }
+        console.log('已删除全部本地cookie');
+    }
 
 }
 

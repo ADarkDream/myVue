@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
     //    "types": ["vite/client"],
-    //    "module": "esnext",
-    //    "target": "exnext",
+    // "module": "esnext",
+    //使用 import.meta.dev需要配置下面两排
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "Node",
     //允许 TS编译器在将代码编译为较旧版本的 JavaScript 时，正确地处理ES2015及以上版本中引入的迭代协议。
     "downlevelIteration": true,
     //用于支持 CommonJS 模块的按需导入
@@ -41,9 +44,6 @@
     //  "@/*": ["./*"]
     // }
   },
-  //使用 import.meta.dev需要配置下面两排
-  //  "--module": "es2022",
-  //  "moduleResolution": "Node",
   "include": [
     "src/**/*.ts",
     "src/types/**/*.d.ts",
@@ -55,13 +55,13 @@
   "exclude": [
     "node_modules"
   ],
-  "files": [],
+  // "files": [],
   "references": [
-    {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
-    }
+    // {
+    //   "path": "./tsconfig.node.json"
+    // },
+    // {
+    //   "path": "./tsconfig.app.json"
+    // }
   ]
 }

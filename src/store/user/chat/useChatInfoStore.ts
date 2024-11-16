@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia'
-import { computed, reactive, ref, toRefs } from 'vue'
+import { computed, reactive } from 'vue'
 import { io } from "socket.io-client";
-import { useUserInfoStore } from '@/store/user/useUserInfoStore';
-import { useBaseUrl } from '@/hooks/useBaseUrl'
+
 import type { PlayerInfo } from '@/types/chat';
 
 
-const baseUrl = useBaseUrl()
+
 
 // 定义并暴露一个store
 export const useChatInfoStore = defineStore('chatInfo', () => {
@@ -44,7 +43,7 @@ export const useChatInfoStore = defineStore('chatInfo', () => {
 
 
     const socket = io(//socket放在pinia中可全局共享，不会创建多余的连接
-        baseUrl.chatBaseUrl,//连接的后端主地址
+        import.meta.env.VITE_SOCKET_URL,//连接的后端主地址
         {
             auth: playerInfo,
             path: '/chatting/',//设置后端socket服务器的接口路径(访问网站主地址/chatting/)

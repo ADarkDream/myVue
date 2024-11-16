@@ -15,6 +15,10 @@
           </el-button>
           <el-text :size="elSize" type="info" v-if="isDisabled" style="border: 1px solid #b5b7ba;padding: 0 2px">未实名
           </el-text>
+          <div class="connectDiv" v-if="isDisabled">
+            <el-button @click="to_qq_oauth({ is_oauth: true, isPC: isPC, type: 'connect' })">
+              绑定QQ</el-button>
+          </div>
           <el-input v-model.trim="newName" @keyup.enter="checkNewName(newName)" @blur="isUpdateName"
             v-show="!isDisabled" :placeholder="username" minlength="2" maxlength="10" show-word-limit />
         </div>
@@ -149,6 +153,7 @@ import useUser from '@/hooks/user/useUser';
 import UploadImage from "@/components/UploadImage.vue";
 //utils
 import { emitter } from "@/utils/emitter";
+import useOAuth from '@/hooks/user/useOAuth';
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
@@ -168,7 +173,7 @@ const { resetUpload } = uploadFileStore
 
 const { isPC, elSize } = toRefs(responsiveStore)
 const { updateUserInfo } = useUser()
-
+const { to_qq_oauth } = useOAuth()
 
 const changeAvatar = () => {
   options.value = {
@@ -658,6 +663,11 @@ const hideForm = () => {
     width: 100%;
     font-size: 14px;
     padding: 0;
+  }
+
+  .connectDiv {
+    display: inline-block;
+    margin-left: 10px
   }
 }
 </style>
