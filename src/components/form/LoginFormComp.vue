@@ -13,7 +13,7 @@
       <el-button style="position: absolute;right: 0" link @click="resetForm()">重置表单</el-button>
     </el-form-item>
     <p class="other_login_div">
-      <el-text>其他登录方式(测试中)：</el-text>
+      <el-text>其他登录方式：</el-text>
       <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq(true)' alt="QQ登录_小窗口"
         title="小窗口" />
       <!-- <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq()' alt="QQ登录_新窗口" title="新窗口" /> -->
@@ -56,8 +56,10 @@ const ruleFormRef = ref<FormInstance>()
  * 跳转到QQ登录
  */
 const login_by_qq = (is_oauth = false) => {
+  ElMessage.info('先注册邮箱，再绑定QQ，然后才能使用QQ登录')
   if (!ruleForm.policy) return ElMessage.error('请先阅读并勾选隐私政策！')
   to_qq_oauth({ is_oauth, isPC: isPC.value })
+
 }
 
 

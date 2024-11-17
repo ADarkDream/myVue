@@ -29,14 +29,19 @@ export default {
     },
     /**
      * 检查网址是否属于某个域名
-     * @param url -要检查的网址链接
+     * @param url -要检查的网址链接(几级都可以)
      * @param domain -要匹配的域名
+     * - "http://www.example.com", "example.com" // true
+     * - "http://sub.example.com", "example.com" // true
      */
     isURLFromDomain: (url: string, domain: string) => {
         try {
             console.log(`检查网址${url}是否属于${domain}`);
             const parsedUrl = new URL(url)
-            const flag = parsedUrl.hostname.endsWith(`.${domain}`) || url === domain
+            // 移除可能的 'www.' 前缀以进行更通用的匹配
+            const hostnameWithoutWWW = parsedUrl.hostname.replace(/^www\./, '');
+            // 检查是否完整匹配或作为子域名匹配
+            const flag = hostnameWithoutWWW === domain || hostnameWithoutWWW.endsWith(`.${domain}`);
             console.log('检查结果为：', flag)
             return flag
         } catch (error) {

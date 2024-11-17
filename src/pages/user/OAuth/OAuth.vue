@@ -5,27 +5,19 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
-//stores
-import { useUserInfoStore } from '@/store/user/useUserInfoStore';
+import useOAuth from '@/hooks/user/useOAuth';
 //utils
 import titleDiv from '@/utils/titleDiv';
 import oauth from '@/utils/user/oauth';
 //types
-import { CallbackOAuth, QQOAuthCheck, PostMessageCheck, Step_0 } from '@/types/oauth'
-import config from '@/config';
+import { PostMessageCheck, Step_0 } from '@/types/oauth'
 
 
 const route = useRoute()
 const router = useRouter()
-const userInfoStore = useUserInfoStore()
-const { updateLocalUserInfo } = userInfoStore
-
+const { to_login_by_qq } = useOAuth()
 //全屏加载窗口
 const loading = ref()
-
-
-const OAuthCheck = reactive<QQOAuthCheck>({ origin: import.meta.env.VITE_HOST, type: '', key: '' })
-
 
 /**
  * 开关全屏加载界面
@@ -53,108 +45,74 @@ const toggle_loading = (is_loading = true) => {
 /**
  * 判断是否是登录跳转
  */
-onMounted(() => {
-    const { reffer } = route.query
+onMounted(async () => {
+    const { reffer, display, pathname } = route.query
+    console.log(reffer, display);
 
     if (reffer) {
         toggle_loading()
-        window.addEventListener("message", receiveMessage, false)
-    }
-    else {
+    } else {//直接访问登录验证地址
         ElMessage.warning('未检测到登录信息')
         setTimeout(() => router.replace({ name: 'home' }), 1000)
     }
 
-    // setTimeout(() => {
-    //     ElMessage.warning('登录超时')
-    //     router.replace({ name: 'home' })
-    // }, 1000)
+    if (reffer === 'qq' && display === 'mobile') {
+        //清洗地址栏数据
+        const data = oauth.clean_qq_path(route.fullPath)
+        //刷新之前需要先清除地址栏参数，否则会重复返回当前页面
+        await to_login_by_qq({ ...data, pathname: pathname as string })
+        toggle_loading(false)
+        // window.postMessage({ role: 'verifier', step: 1, msg: '已通过验证', data: { ...data, reffer } }, import.meta.env.VITE_BASE_IP)
+        // window.close()
+    }
+    window.addEventListener("message", receiveMessage, false)
 })
 
-
-/**
- * 出错，关闭窗口或返回
- */
-const is_error = () => {
-    try {
-        window.postMessage({ role: 'verifier', step: 1, data: { verify: 0, msg: '登录出错' } }, import.meta.env.VITE_HOST)
-        router.back()
-        toggle_loading(false)
-    } catch (err) {
-        console.error('is_error出错了:')
-        console.error(err)
-    }
-}
-
-
-/**
- * reffer=qq
- * 窗口通信验证并登录/绑定
- */
-const to_qq_oauth = async () => {
-    try {
-        console.log('当前是QQ鉴权')
-        console.log('获取地址栏信息')
-        //清洗地址栏数据
-        const { access_token, expired_time, type, key } = oauth.clean_qq_path(route.fullPath)
-
-        if (OAuthCheck.type === type && OAuthCheck.key === key) {//验证发信源
-
-            console.log('发送到服务器,前往' + config.oauth_type[type])
-            //登录、绑定或注册
-            const { flag, userInfo, msg } = await oauth.qq_oauth(access_token, expired_time, type)
-            //登录
-            if (flag && userInfo) {
-                updateLocalUserInfo(userInfo)
-                //成功提示信息
-                ElMessage.success(`用户 ${userInfo.username} 登录成功`)
-            } else if (flag) ElMessage.success(msg)
-            window.postMessage({ role: 'verifier', step: 1, data: { verify: flag ? 1 : 0, msg: config.oauth_type[type] + (flag ? '成功' : '失败') } }, import.meta.env.VITE_HOST)
-        }
-    } catch (err) {
-        console.error('to_qq_oauth出错了:')
-        console.error(err)
-        is_error()
-    }
-}
-
-
 /*postMessage跨域*/
-
+const is_receive = ref(false)
 /**
  * 监听窗口通信
  */
 const receiveMessage = async (event: MessageEvent) => {
     try {
-        if (!titleDiv.isURLFromDomain(event.origin, import.meta.env.VITE_HOST)) return
-
+        console.log('origin', event.origin)
+        if (is_receive.value) return
+        //非开发环境下，检测来源链接是否属于项目主域名下
+        if (!import.meta.env.DEV && !titleDiv.isURLFromDomain(event.origin, import.meta.env.VITE_HOST)) return
+        console.log('子窗口收到', event.data)
         const { role, step, data } = event.data as PostMessageCheck
-        if (!event.source || role !== 'visitor') return  //请求者属于visitor，本页面属于 verifier，防止同站循环发送接收
+        if (!event.source || role !== 'visitor' || step !== 0) return  //请求者属于visitor，本页面属于 verifier，防止同站循环发送接收
 
+        console.log('获取地址栏信息')
+        console.log('origin', event.origin);
 
+        //清洗地址栏数据
+        const { access_token, expired_time, type, key } = oauth.clean_qq_path(route.fullPath)
 
-        if (step === 0) {//初次接收验证信息
-            const { type, key } = data as Step_0
-            console.log(event.data)
-            OAuthCheck.key = key
-            OAuthCheck.type = type
-            console.log('验证成功')
-            window.postMessage({ role: 'verifier', step: 0, data: { msg: '已接受到验证' } }, import.meta.env.VITE_HOST)
-            //移除窗口通信监听
-            removeEventListener('message', receiveMessage)
-            if (route.query.reffer === 'qq') await to_qq_oauth()
+        if (data.type === type && (data as Step_0).key === key) {//验证发信源
+            //定时器发送验证信息
+            is_receive.value = true
+            console.log('验证成功，返回验证', import.meta.env.VITE_BASE_IP)
+
+            //打开父窗口
+            const opener = window.opener
+            if (opener) opener.postMessage({ role: 'verifier', step: 1, msg: '已通过验证', data: { access_token, expired_time, type, reffer: route.query.reffer } }, import.meta.env.VITE_BASE_IP)
+            else console.log('父窗口不存在')
         }
+        //移除窗口通信监听
+        // removeEventListener('message', receiveMessage)
     } catch (err) {
         console.error('receiveMessage出错了:')
         console.error(err)
-        is_error()
+
+        //打开父窗口
+        const opener = window.opener
+        if (opener) opener.postMessage({ role: 'verifier', step: 1, data: { verify: 0, msg: '登录出错' } }, import.meta.env.VITE_BASE_IP)
+        else console.log('父窗口不存在')
+        router.back()
+        toggle_loading(false)
     }
 }
 </script>
 
-<style scoped>
-.el-container {
-    /*  background-color: rgba(176, 163, 149, 255)*/
-    background: var(--el-color-primary-light-9);
-}
-</style>
+<style scoped></style>
