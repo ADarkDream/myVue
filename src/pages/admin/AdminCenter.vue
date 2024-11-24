@@ -24,7 +24,7 @@
           <router-link :to="{ name: 'adminFeedbackManagement' }">
             <el-menu-item index="6" @click="change(6)">反馈管理</el-menu-item>
           </router-link>
-          <router-link :to="{ name: 'admin1999ImagesManagement' }">
+          <router-link :to="{ name: 'images' }">
             <el-menu-item index="7" @click="change(7)">1999图片管理</el-menu-item>
           </router-link>
         </el-menu>
@@ -123,6 +123,7 @@ onMounted(() => {
 .header1 {
   font-size: 25px;
   line-height: 60px;
+  padding-top: 0;
 }
 
 .header2 {

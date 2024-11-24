@@ -47,7 +47,7 @@ interface ImgParams {
 }
 
 //图片分类
-enum ImgSort {
+declare enum ImgSort {
     Tall = 0,//竖屏图
     Wide = 1,//横屏图
     All = 2//全选

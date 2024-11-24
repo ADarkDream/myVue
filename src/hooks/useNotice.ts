@@ -11,27 +11,69 @@ import { Notice } from "@/types/global";
 
 export default function () {
     const noticeStore = useNoticeStore()
-    const { updateNotes, noUpdated, feedback } = toRefs(noticeStore)
+    const { updateNotes, noUpdated, completed, unCompleted, others, feedback } = toRefs(noticeStore)
     const { clearFeedback } = noticeStore
     const { getDiffTime } = useTimeStamp()
 
     //获取已发布公告
-    const getNotices = async () => {
+    const getNotices = async (types: string[]) => {
         try {
-            const { data } = await api_getNotice(['updateNotes', 'noUpdated'])
+            const temp_types = new Set(types)
+            let temp_updateNotes: Notice[] = []
+            let temp_noUpdated: Notice[] = []
+            let temp_completed: Notice[] = []
+            let temp_unCompleted: Notice[] = []
+            let temp_others: Notice[] = []
+
+            //清除本地已有的请求
+            types.forEach((type: string) => {
+                console.log(type);
+
+                if (type === 'updateNotes' && updateNotes.value.length !== 0) {
+                    // temp_updateNotes = updateNotes.value
+                    temp_types.delete(type)
+                }
+                else if (type === 'noUpdated' && noUpdated.value.length !== 0) {
+                    // temp_noUpdated = noUpdated.value
+                    temp_types.delete(type)
+                }
+                else if (type === 'completed' && completed.value.length !== 0) {
+                    // temp_completed = completed.value
+                    temp_types.delete(type)
+                }
+                else if (type === 'unCompleted' && unCompleted.value.length !== 0) {
+                    // temp_unCompleted = unCompleted.value
+                    temp_types.delete(type)
+                }
+                else if (type === 'others' && others.value.length !== 0) {
+                    // temp_others = others.value
+                    temp_types.delete(type)
+                }
+            })
+            if (temp_types.size === 0) return
+
+            const rest_types = [...temp_types]
+            const { data } = await api_getNotice(rest_types)
             const { noticeList } = data!
 
-            const temp_updateNotes: Notice[] = []
-            const temp_noUpdated: Notice[] = []
             noticeList.forEach((item: Notice) => {
                 if (item.created_time === item.updated_time) item.time = '发布时间：' + getDiffTime(item.created_time)
                 else item.time = '发布时间：' + getDiffTime(item.created_time) + '  上次修订于：' + getDiffTime(item.updated_time)
 
                 if (item.sort === 'updateNotes') temp_updateNotes.push(item)
                 else if (item.sort === 'noUpdated') temp_noUpdated.push(item)
+                else if (item.sort === 'completed') temp_completed.push(item)
+                else if (item.sort === 'unCompleted') temp_unCompleted.push(item)
+                else if (item.sort === 'others') temp_others.push(item)
             })
-            updateNotes.value = temp_updateNotes
-            noUpdated.value = temp_noUpdated
+
+            rest_types.forEach((type: string) => {
+                if (type === 'updateNotes') updateNotes.value = temp_updateNotes
+                else if (type === 'noUpdated') noUpdated.value = temp_noUpdated
+                else if (type === 'completed') completed.value = temp_completed
+                else if (type === 'unCompleted') unCompleted.value = temp_unCompleted
+                else if (type === 'others') others.value = temp_others
+            })
         } catch (error) {
             console.log('发生错误：')
             console.dir(error)

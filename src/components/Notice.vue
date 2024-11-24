@@ -68,9 +68,9 @@
                   lsgfish-resource-sharing
                 </el-button>
               </el-link>
-              <el-link target="_blank" href="https://answer.lilemy.cn/" title="小新问答">
+              <el-link target="_blank" href="https://lilemy.cn/" title="小新知识分享平台">
                 <el-button><img src="@/assets/logo.xiaoxin.png" alt="" style="width: 25px">&ensp;
-                  小新问答
+                  小新知识分享平台
                 </el-button>
               </el-link>
             </template>
@@ -184,7 +184,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { ElCollapseTransition, ElMessage, TabsPaneContext } from 'element-plus'
+import { Edit } from "@element-plus/icons-vue";
 
 //stores
 import { useNoticeStore } from '@/store/useNoticeStore'
@@ -212,13 +212,13 @@ const { showFlag, changePage } = defineProps(['showFlag', 'changePage'])//切换
 
 onMounted(() => {
   if (showFlag.show_num === 2 && updateNotes.value.length === 0)
-    getNotices()//获取公告
+    getNotices(['updateNotes', 'noUpdated'])//获取公告
 })
 
 /*点击tabs标签时触发*/
 const tabClick = (pane: TabsPaneContext, ev: Event) => {
   if (pane.paneName === 2 && updateNotes.value.length === 0)
-    getNotices()//获取公告
+    getNotices(['updateNotes', 'noUpdated'])//获取公告
   if (pane.paneName === 1) changePage(1, 1)
   else changePage(pane.paneName, 2)
 }

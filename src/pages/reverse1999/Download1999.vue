@@ -265,8 +265,12 @@ import axios from "axios";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useNoticeStore } from '@/store/useNoticeStore'
+import { useReverse1999Store } from '@/store/reverse1999/useReverse1999Store'
 //hooks
 import useTitleDiv from '@/hooks/useTitleDiv';
+import useNotice from "@/hooks/useNotice";
+import useReverse1999 from '@/hooks/reverse1999/useReverse1999';
 //components
 import DownloadNotice from "@/pages/reverse1999/components/DownloadNotice.vue";
 //utils
@@ -274,20 +278,23 @@ import titleDiv from '@/utils/titleDiv';
 import myFunction from "@/utils/myFunction";
 import userInfo from '@/utils/userInfo';
 //types
-import { Notice, NoticeActiveNum, ResultData } from "@/types/global";
+import { NoticeActiveNum, ResultData } from "@/types/global";
 //files
 import logo from '@/assets/logo-small.png'
-import { api_getNotice } from '@/apis/notice';
-
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
+const noticeStore = useNoticeStore()
+const reverse1999Store = useReverse1999Store()
 const { isLogin, useUserBGUrl, localBgUrl } = toRefs(userInfoStore)
 const { isPC, elSize, screenWidth, containerHeight } = toRefs(responsiveStore)
+const { completed, unCompleted, others } = toRefs(noticeStore)
+const { versionInfo, diffRoleInfo: roleInfo, campInfo, raceInfo } = toRefs(reverse1999Store)
 const { updateLocalUserInfo } = userInfoStore
 const { toggleBG } = useTitleDiv()
-
+const { getNotices } = useNotice()
+const { getVersion } = useReverse1999()
 const { copyText, deepEqual } = myFunction
 const { updateImgUrl } = userInfo
 //呼出公告面板
@@ -311,10 +318,7 @@ const oldCondition = reactive<ImgParams>({
 
 //筛选
 const activeIndex = ref<string | undefined>('2')  //激活的折叠面板序号
-const versionInfo = reactive<VersionInfo[]>([])    //存版本信息
-const roleInfo = reactive<Role[]>([]) //存角色信息
-const campInfo = reactive<string[]>([]) //存阵营信息
-const raceInfo = reactive<string[]>([]) //存种族信息
+
 
 const checkAllVersions = ref(false)   //全选版本
 const isIndeterminateVersion = ref(false)  //全选版本按钮状态
@@ -325,8 +329,7 @@ const isIndeterminateNoRole = ref(false)  //全选无角色按钮状态
 const campName = ref<string>('')      //阵营名称
 const raceName = ref<string>('')      //种族名称
 
-const completed = reactive<Notice[]>([])      //筛选下方的公告列表：完成和未完成的功能
-const unCompleted = reactive<Notice[]>([])
+
 
 const showUrl = ref(false)     //控制开源地址的显示
 const isShowDownloadNotice = ref(false)     //控制下载须知界面的显示
@@ -341,35 +344,38 @@ const colNum = ref<number>(isPC.value ? 5 : 1)    //修改显示列数
 const autoFlag = ref(true)    //是否开启自动布局
 const isChoose = ref(0)   //是否是批量选择状态
 const showPayCode = ref(false)//是否显示收款码
-const fee = ref(0)
+const fee = ref(Number(others.value[0]?.content) || 0)
 //单次最大下载数量
 const downloadLimitNum = ref(25)
 
 const pay_code_src = ref(import.meta.env.VITE_QINIU_URL + '/files/payCode.png')
 
-onMounted(() => {
-  getVersion()
-  getNotices()
+onMounted(async () => {
+  await Promise.all([
+    getVersion({ version: true, role: 'diff' }),
+    getNotices(['completed', 'unCompleted', 'others'])
+  ])
+
   ElMessage.warning('如果页面出错请刷新两下，刷新后还没有可能是网站在升级，请稍后访问')
 })
 
 
 //全选版本：单选按钮的状态改变
 const handleCheckAllVersionChange = (val: boolean) => {
-  if (val) versionInfo.forEach(item => condition.version.push(item.version.toString()))
+  if (val) versionInfo.value.forEach(item => condition.version.push(item.version.toString()))
   else condition.version = []
   isIndeterminateVersion.value = false  //取消全选按钮符号 -
 }
 //单选版本：全选按钮的状态改变
 const handleCheckedVersionsChange = () => {
   const checkedCount = condition.version.length
-  checkAllVersions.value = checkedCount === versionInfo.length //全选时变更按钮为√
-  isIndeterminateVersion.value = checkedCount > 0 && checkedCount < versionInfo.length//未全选时变更按钮为 -
+  checkAllVersions.value = checkedCount === versionInfo.value.length //全选时变更按钮为√
+  isIndeterminateVersion.value = checkedCount > 0 && checkedCount < versionInfo.value.length//未全选时变更按钮为 -
 }
 
 //全选角色：单选按钮的状态改变
 const handleCheckAllRoleChange = (val: boolean) => {
-  if (val) roleInfo.forEach(item => condition.roles.push(item.id))
+  if (val) roleInfo.value.forEach(item => condition.roles.push(item.id))
   else condition.roles = []
   isIndeterminateRole.value = false  //取消全选按钮符号 -
   console.log(condition.roles)
@@ -377,8 +383,8 @@ const handleCheckAllRoleChange = (val: boolean) => {
 //单选角色：全选按钮的状态改变
 const handleCheckedRolesChange = () => {
   const checkedCount = condition.roles.length
-  checkAllRoles.value = checkedCount === roleInfo.length //全选时变更按钮为√
-  isIndeterminateRole.value = checkedCount > 0 && checkedCount < roleInfo.length//未全选时变更按钮为 -
+  checkAllRoles.value = checkedCount === roleInfo.value.length //全选时变更按钮为√
+  isIndeterminateRole.value = checkedCount > 0 && checkedCount < roleInfo.value.length//未全选时变更按钮为 -
   console.log(condition.roles)
 }
 
@@ -400,7 +406,7 @@ const handleCheckCampChange = (val: boolean) => {
   const newList: Set<number> = new Set(condition.roles)  //Set()不会保存重复值
   console.log(newList)
   //遍历角色列表
-  roleInfo.forEach(item => {
+  roleInfo.value.forEach(item => {
     //val=true代表全选按钮被勾选，再添加和删除Set()函数newList中的值
     //Set()的has()判断是否存在该元素，add()添加不重复的元素，delete()直接删除该元素而不是数组下标
     if (typeFlag.value === 1) {//筛选阵营
@@ -439,64 +445,16 @@ function reset() {
 }
 
 
-//获取版本列表并添加到菜单
-function getVersion() {
-  axios({
-    url: '/getVersion',
-    params: { version: true, role: 'diff' }
-  }).then(result => {
-    console.log(result)
-    const { versionList, roleList } = result.data.data
-    //更新版本列表
-    versionInfo.splice(0, versionInfo.length, ...versionList)
-    // console.log('versionInfo', versionInfo)
-    //更新角色列表
-    roleInfo.splice(0, roleInfo.length, ...roleList)
-    //获取阵营列表
-    const campList = new Set<string>()
-    const raceList = new Set<string>()
-    roleInfo.forEach(item => {
-      campList.add(item.camp)
-      raceList.add(item.race)
-    })
-    campList.delete('')   //删除空值
-    campInfo.splice(0, campInfo.length, ...campList)
-    raceInfo.splice(0, campInfo.length, ...raceList)
-  }).catch(error => {
-    console.log('发生错误：')
-    console.log(error)
-    ElMessage.error('发生错误：' + error.message)
-  })
-}
 
-//获取已发布公告
-const getNotices = async () => {
-  try {
-    const { data } = await api_getNotice(['updateNotes', 'noUpdated'])
-    const { noticeList } = data!
-
-    // ElMessage.success( result.data.msg)
-    completed.splice(0, completed.length)
-    unCompleted.splice(0, unCompleted.length)
-    noticeList.forEach((item: Notice) => {
-      if (item.sort === 'completed') completed.push(item)
-      if (item.sort === 'unCompleted') unCompleted.push(item)
-      if (item.sort === 'others') fee.value = Number(item.content)//赞赏费
-    })
-  } catch (error) {
-    console.log('发生错误：')
-    console.dir(error)
-  }
-}
 
 
 //筛选图片
 const getImages = async () => {
   if (!!isChoose.value) selectBtn(2) //如果是选择状态，则退出
   //如果全选版本，则直接全部清除
-  if (condition.version.length === versionInfo.length) condition.version.splice(0, condition.version.length)
+  if (condition.version.length === versionInfo.value.length) condition.version.splice(0, condition.version.length)
   //如果全选角色和无角色，则直接清除全部角色选择
-  if (condition.roles.length === roleInfo.length + 1) {
+  if (condition.roles.length === roleInfo.value.length + 1) {
     condition.roles.splice(0, condition.roles.length)
     checkAllRoles.value = false
     checkNoRole.value = false

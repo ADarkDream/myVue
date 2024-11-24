@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, toRefs } from 'vue'
-import { ElMessage, type FormInstance } from "element-plus";
+import type { FormInstance } from "element-plus";
 import axios from "axios";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";

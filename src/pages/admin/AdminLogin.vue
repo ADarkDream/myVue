@@ -1,32 +1,45 @@
 <template>
-  <el-dialog v-model="centerDialogVisible" title="管理员登录界面" align-center width="500" style="opacity: 0.8;"
-    :show-close="false">
-    <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="(Rules)" label-width="auto" label-position="top">
+  <div class="loginForm">
+    <h2>Admin Login</h2>
+    <div class="user-box">
+      <input type="text" v-model.lazy.trim="ruleForm.email" name="" required>
+      <label>Email</label>
+    </div>
+    <div class="user-box">
+      <input type="password" name="" required>
+      <label>Password</label>
+    </div>
+    <div>
+      <el-button @click="submitForm(ruleFormRef)" :loading="loading">Login</el-button>
+    </div>
+  </div>
+  <el-form ref="ruleFormRef" v-show="false" :model="ruleForm" status-icon :rules="Rules" label-width="auto"
+    class="loginForm" label-position="top">
 
-      <el-form-item prop="email">
-        <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" />
-      </el-form-item>
-      <el-form-item prop="password">
-        <el-input v-model.lazy.trim="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)" type="password"
-          autocomplete="off" placeholder="输入密码" />
-      </el-form-item>
-
-
-      <div class="btn">
-        <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="loading">登录</el-button>
-      </div>
-    </el-form>
-  </el-dialog>
+    <el-form-item prop="email" class="user-box">
+      <el-input v-model.lazy.trim="ruleForm.email" autocomplete="off" />
+      <label>输入邮箱</label>
+    </el-form-item>
+    <el-form-item prop="password" class="user-box">
+      <el-input v-model.lazy.trim="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)" type="password"
+        autocomplete="off" />
+      <label>输入密码</label>
+    </el-form-item>
+    <!-- <div class="btn">
+    <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+    <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="loading">登录</el-button>
+  </div>-->
+  </el-form>
 </template>
 
 <script lang="ts" setup>
-import axios from "axios";
 import { reactive, ref, toRefs } from 'vue'
 import { useRouter } from "vue-router";
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from 'element-plus'
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import verifyRules from "@/utils/verifyRules";
+import { api_login_admin } from "@/apis/admin";
 
 
 const router = useRouter()
@@ -36,7 +49,6 @@ const userInfoStore = useUserInfoStore()
 const { isAdmin } = toRefs(userInfoStore)
 
 
-const centerDialogVisible = ref(true)
 //管理员登录判断
 if (isAdmin.value) router.replace({ name: 'adminUsersManagement' })
 
@@ -52,66 +64,28 @@ const ruleForm = reactive({
 const ruleFormRef = ref<FormInstance>()
 
 
-//验证邮箱
-const checkEmail = (rule: any, value: any, callback: any) => {
-  if (!value) {
-    return callback(new Error('邮箱不能为空！请输入邮箱地址！'))
-  }
-  setTimeout(() => {
-    let reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+(([.\-])[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/i;
-    if (!reg.test(value)) {
-      callback(new Error('请输入正确的邮箱地址！'))
-    } else {
-      callback()
-    }
-  }, 1000)
-}
-//验证密码
-const validatePassword = (rule: any, value: any, callback: any) => {
-  if (!value) {
-    callback(new Error('密码不能为空！请输入密码！'))
-  }
-  setTimeout(() => {
-    let reg = /^([A-Za-z\d\-&.,()\s]+)+$/i;
-    if (!reg.test(value) || value.length < 6 || value.length > 18) {
-      callback(new Error('请输入6-18位不含特殊字符的密码！'))
-    } else {
-      callback()
-    }
-  }, 1000
-  )
-}
-
 
 //用哪些表单验证规则
-const Rules = reactive<FormRules<typeof ruleForm>>({
-  email: [{ validator: checkEmail, trigger: 'blur' }],
-  password: [{ validator: validatePassword, trigger: 'blur' }],
-
+const Rules = ref<FormRules<typeof ruleForm>>({
+  email: [{ validator: verifyRules.email, required: true, trigger: 'blur' }],
+  password: [{ validator: verifyRules.password, required: true, trigger: 'blur' }]
 })
 //endregion
 
 
 //region 提交表单,登录或注册
 //再次通过formEL的值判断表单验证是否通过
-let loading = ref(false)
-const submitForm = (formEL: FormInstance | undefined) => {
+const loading = ref(false)
+const submitForm = async (formEL: FormInstance | undefined) => {
   //设置按钮两秒禁用
   loading.value = true
-  setTimeout(() => {
+  const isOk = await formEL?.validate()
+  if (!isOk) {
     loading.value = false
-  }, 2000)
-  if (!formEL) return
-  formEL.validate((res) => {
-    if (res) {
-
-      //此处调用axios上传
-      login()
-    } else {
-      ElMessage.error('操作失败')
-      return false
-    }
-  })
+    return
+  } else {
+    await login()
+  }
 }
 
 
@@ -122,37 +96,23 @@ const resetForm = (formEL: FormInstance | undefined) => {
   if (!formEL) return
   formEL.resetFields()
 }
-//把重置表单暴露给父组件
-defineExpose({ resetForm })
 //endregion
 
 
 //region登录账号
-function login() {
-  // console.log('login')
-  const { email, password } = ruleForm
-  axios({
-    url: '/login',
-    method: 'post',
-    data: {
-      isAdmin: true,
-      email: email.toLowerCase(),
-      password
-    }
-  }).then((result) => {
-    console.log(result)
-    const { userInfo } = result.data
-    sessionStorage.setItem('userInfo', JSON.stringify(userInfo))
-    //成功提示信息
+const login = async () => {
+  try {
+    const { data } = await api_login_admin(ruleForm)
+    loading.value = false
+    if (!data) return
+    const { userInfo } = data
     ElMessage.success(`管理员  ${userInfo.username} 登录成功`)
-    sessionStorage.setItem('isLogin', '1')
-    sessionStorage.setItem('isAdmin', '1')
-    //刷新当前页面，解决TitleDiv不更新的问题
-    location.reload()
-  }).catch(error => {
+    userInfoStore.updateLocalUserInfo(userInfo)
+    router.replace({ name: 'adminUsersManagement' })
+  } catch (error) {
     console.log('发生错误：')
     console.log(error)
-  })
+  }
 }
 
 //endregion
@@ -162,24 +122,85 @@ function login() {
 
 
 <style scoped>
-.el-form {
-  width: 50%;
-  margin: 5% 25%;
+.loginForm {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  padding: 40px;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, .5);
+  box-sizing: border-box;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
+  border-radius: 10px;
 }
 
-.btn {
-  display: flex;
-  justify-content: center;
+.loginForm h2 {
+  margin: 0 0 30px;
+  padding: 0;
+  color: #fff;
+  text-align: center;
 }
 
-@media (max-width: 780px) {
-  .el-form {
-    width: 80%;
-    margin: 3% auto;
-  }
+.loginForm .user-box {
+  position: relative;
+}
 
-  .el-input {
-    width: 100%;
-  }
+.loginForm .user-box input {
+  width: 100%;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 30px;
+  border: none;
+  border-bottom: 1px solid #fff;
+  outline: none;
+  background: transparent;
+}
+
+.loginForm .user-box label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #fff;
+  pointer-events: none;
+  transition: .5s;
+}
+
+.loginForm .user-box input:focus~label,
+.loginForm .user-box input:valid~label {
+  top: -20px;
+  left: 0;
+  color: #03e9f4;
+  font-size: 12px;
+}
+
+.loginForm form a {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px;
+  color: #03e9f4;
+  font-size: 16px;
+  text-decoration: none;
+  text-transform: uppercase;
+  overflow: hidden;
+  transition: .5s;
+  margin-top: 40px;
+  letter-spacing: 4px
+}
+
+.el-button {
+  background-color: transparent;
+  color: whitesmoke;
+  border: none;
+  font-size: 16px;
+}
+
+.el-button:hover {
+  background-color: transparent;
+  color: var(--el-color-primary);
+  scale: 1.2;
 }
 </style>
