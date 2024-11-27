@@ -20,3 +20,5 @@ declare module '*.vue' {
     export default component
 }
 
+//因为这是js库，在ts环境中需要额外声明
+declare module 'file-saver'

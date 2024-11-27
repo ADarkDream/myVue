@@ -100,9 +100,9 @@
       <el-text tag="p" type="primary" style="margin: 5px auto" v-if="!isAdmin">
         个人收集略有不足，如有错漏还请向我反馈。非常感谢！暂时关闭游客编辑功能。
         <el-text type="danger">本页面暂未适配移动端</el-text>。</el-text>
-      <el-table ref="tableRef" :data="tableData" style="width: 100%" :max-height="screenHeight - 260" stripe border
-        highlight-current-row table-layout="auto" :default-sort="{ prop: 'imgIndex', order: 'custom' }"
-        @sort-change="handleSortChange" fit>
+      <el-table ref="tableRef" :data="tableData" style="width: 100%"
+        :max-height="isPC ? (screenHeight - 240) : (screenHeight - 190)" stripe border highlight-current-row
+        table-layout="auto" :default-sort="{ prop: 'imgIndex', order: 'custom' }" @sort-change="handleSortChange" fit>
         <el-table-column prop="imgIndex" label="页序" width="100" align="center" sortable>
           <template #default="scope">
             <span>{{ scope.$index + 1 }}</span>

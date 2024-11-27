@@ -82,9 +82,10 @@
                       {{ item }}
                     </el-checkbox>
                   </div>
-                  <el-text type="primary">角色所属种族：</el-text>
-                  <el-checkbox-group v-model="condition.roles" style="text-align: left"
+
+                  <el-checkbox-group v-model="condition.roles" style="text-align: left;draggable:false"
                     @change="handleCheckedRolesChange">
+                    <el-text type="primary">角色常用名称：</el-text>
                     <el-checkbox v-for="item in roleInfo" :key="item.id" :label="item.name" :value="item.id" />
                   </el-checkbox-group>
                 </el-form-item>

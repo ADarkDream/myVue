@@ -67,7 +67,8 @@ interface Role {
     camp: string,
     race: string,
     otherTags: string,
-    created_time: string,
+    created_time?: Date,
+    updated_time?: Date
 }
 
 //1999版本信息

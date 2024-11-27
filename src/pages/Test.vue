@@ -17,111 +17,7 @@
         <el-button type="primary" size="default" @click="connect_by_qq(true)">QQ绑定_新窗口</el-button>
       </p>
     </el-main>
-    <!--    <div class="center">-->
 
-    <!--  <div class="card">-->
-    <!--    <div class="additional">-->
-    <!--      <div class="user-card">-->
-    <!--        <div class="level center">-->
-    <!--          Level 13-->
-    <!--        </div>-->
-    <!--        <div class="points center">-->
-    <!--          5,312 Points-->
-    <!--        </div>-->
-    <!--        </div>-->
-    <!--      <div class="more-info">-->
-    <!--        <h1>Jane Doe</h1>-->
-    <!--        <div class="coords">-->
-    <!--          <span>Group Name</span>-->
-    <!--          <span>Joined January 2019</span>-->
-    <!--        </div>-->
-    <!--        <div class="coords">-->
-    <!--          <span>Position/Role</span>-->
-    <!--          <span>City, Country</span>-->
-    <!--        </div>-->
-    <!--        <div class="stats">-->
-    <!--          <div>-->
-    <!--            <div class="title">Awards</div>-->
-    <!--            <i class="fa fa-trophy"></i>-->
-    <!--            <div class="value">2</div>-->
-    <!--          </div>-->
-    <!--          <div>-->
-    <!--            <div class="title">Matches</div>-->
-    <!--            <i class="fa fa-gamepad"></i>-->
-    <!--            <div class="value">27</div>-->
-    <!--          </div>-->
-    <!--          <div>-->
-    <!--            <div class="title">Pals</div>-->
-    <!--            <i class="fa fa-group"></i>-->
-    <!--            <div class="value">123</div>-->
-    <!--          </div>-->
-    <!--          <div>-->
-    <!--            <div class="title">Coffee</div>-->
-    <!--            <i class="fa fa-coffee"></i>-->
-    <!--            <div class="value infinity">∞</div>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <!--    <div class="general">-->
-    <!--      <h1>Jane Doe</h1>-->
-    <!--      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a volutpat mauris, at molestie lacus. Nam vestibulum sodales odio ut pulvinar.</p>-->
-    <!--      <span class="more">Mouse over the card for more info</span>-->
-    <!--    </div>-->
-    <!--  </div>-->
-
-    <!--  <div class="card green">-->
-    <!--    <div class="additional">-->
-    <!--      <div class="user-card">-->
-    <!--        <div class="level center">-->
-    <!--          Level 13-->
-    <!--        </div>-->
-    <!--        <div class="points center">-->
-    <!--          5,312 Points-->
-    <!--        </div>-->
-    <!--       </div>-->
-    <!--      <div class="more-info">-->
-    <!--        <h1>Jane Doe</h1>-->
-    <!--        <div class="coords">-->
-    <!--          <span>Group Name</span>-->
-    <!--          <span>Joined January 2019</span>-->
-    <!--        </div>-->
-    <!--        <div class="coords">-->
-    <!--          <span>Position/Role</span>-->
-    <!--          <span>City, Country</span>-->
-    <!--        </div>-->
-    <!--        <div class="stats">-->
-    <!--          <div>-->
-    <!--            <div class="title">Awards</div>-->
-    <!--            <i class="fa fa-trophy"></i>-->
-    <!--            <div class="value">2</div>-->
-    <!--          </div>-->
-    <!--          <div>-->
-    <!--            <div class="title">Matches</div>-->
-    <!--            <i class="fa fa-gamepad"></i>-->
-    <!--            <div class="value">27</div>-->
-    <!--          </div>-->
-    <!--          <div>-->
-    <!--            <div class="title">Pals</div>-->
-    <!--            <i class="fa fa-group"></i>-->
-    <!--            <div class="value">123</div>-->
-    <!--          </div>-->
-    <!--          <div>-->
-    <!--            <div class="title">Coffee</div>-->
-    <!--            <i class="fa fa-coffee"></i>-->
-    <!--            <div class="value infinity">∞</div>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <!--    <div class="general">-->
-    <!--      <h1>Jane Doe</h1>-->
-    <!--      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a volutpat mauris, at molestie lacus. Nam vestibulum sodales odio ut pulvinar.</p>-->
-    <!--      <span class="more">Mouse over the card for more info</span>-->
-    <!--    </div>-->
-    <!--  </div>-->
-
-    <!--</div>-->
   </el-container>
 </template>
 
@@ -157,6 +53,7 @@ const connect_by_qq = (is_oauth = false) => {
   if (!isLogin.value) return ElMessage.info('请先登录')
   to_qq_oauth({ is_oauth, isPC: isPC.value, type: 'connect' })
 }
+
 
 </script>
 <style scoped>
