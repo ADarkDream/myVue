@@ -51,4 +51,17 @@ interface UserInfo {
   [key: string]: unknown
 }
 
-export type { TokenUserInfo, Token, UserInfo }
+/**
+ * 管理员信息
+ */
+interface AdminInfo {
+  uid?: number,
+  username: string,
+  email: string,
+  headImgId?: number,
+  headImgUrl?: string,
+  isSupperAdmin?: boolean,
+  [key: string]: unknown
+}
+
+export type { TokenUserInfo, Token, UserInfo, AdminInfo }

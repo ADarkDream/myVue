@@ -1,49 +1,56 @@
 <template>
   <el-container>
     <el-header>
-      News
+      <h1>News</h1>
       <!--      <el-button @click="getNewsChannel">获取频道</el-button>-->
-      <br>
-      新闻条数：
-      <el-input style="width: 50px;margin-right: 50px" v-model="newsNum" placeholder="新闻条数" />
-
-      <el-button v-for="(item, index) in channelList" :key="index" @click="getNews(item)">{{ item }}</el-button>
+      <div style="display: flex;justify-content: center;">
+        <el-text>新闻条数：</el-text>
+        <el-input v-model="newsNum" placeholder="新闻条数" style="width: 75px" />
+        &ensp;<el-text>类别：</el-text>
+        <div v-if="isPC">
+          <el-button v-for="(item, index) in channelList" type="text" :key="index" @click="getNews(item)">{{
+            item
+          }}</el-button>
+        </div>
+        <el-select v-else v-model="channel" placeholder="新闻类别" filterable @change="getNews(channel)"
+          style="width: 75px;">
+          <el-option v-for="(item, index) in channelList" :key="index" :label="item" :value="item">
+          </el-option>
+        </el-select>
+      </div>
     </el-header>
-    <el-main>
-      <el-scrollbar :height="screenHeight - 175">
-        <!--新闻列表区-->
-        <div class="card" v-for="item in newsList" @click="">
-          <div class="articleCover">
-            <el-image :src="item.pic" style="height: 200px;width: 200px; " fit="cover">
-              <template #error>
-                <div class="image-slot">
-                  <el-icon style="width: 50px">
-                    <icon-picture />
-                  </el-icon>
-                </div>
-              </template>
-            </el-image>
+    <el-main :height="isPC ? (screenHeight - 175) : (screenHeight - 120)">
+      <!--新闻列表区-->
+      <div class="card" v-for="item in newsList">
+        <div class="articleCover">
+          <el-image :src="item.pic" fit="cover">
+            <template #error>
+              <div class="image-slot">
+                <el-icon>
+                  <icon-picture />
+                </el-icon>
+              </div>
+            </template>
+          </el-image>
+        </div>
+
+        <div class="articleInfo">
+          <el-text tag="p" class="title" size="large" truncated>{{ item.title }}</el-text>
+
+          <!--            <el-text size="small" tag="sub" truncated v-html="item.content"></el-text>-->
+          <div class="link">
+            <el-link type="primary" target="_blank" :href="isPC ? item.weburl : item.url"
+              :title="'点击前往' + isPC ? 'PC' : '移动' + '端'">点击跳转</el-link>
+
           </div>
-          <div class="articleInfo">
-            <div>
-              <el-text size="large" truncated>{{ item.title }}</el-text>
-            </div>
-            <div>
-              <!--            <el-text size="small" tag="sub" truncated v-html="item.content"></el-text>-->
-              <el-link type="primary" :href="item.weburl">PC端</el-link>&ensp;<el-link type="primary" :href="item.url">
-                移动端
-              </el-link>
-            </div>
-            <div class="footer">
-              <el-text size="small" tag="b" style="width: 30%" truncated>{{ item.src }}</el-text>
-              <el-text size="small" truncated>
-                &ensp;&ensp;发布于:{{ item.time }}
-              </el-text>
-            </div>
+          <div class="footer">
+            <el-text size="small" tag="b" truncated>{{ item.src }}</el-text>
+            <el-text size="small" truncated>
+              &ensp;&ensp;发布于:{{ item.time }}
+            </el-text>
           </div>
         </div>
-      </el-scrollbar>
-
+      </div>
     </el-main>
   </el-container>
 </template>
@@ -55,8 +62,9 @@ import axios from "axios";
 //stores
 import { useResponsiveStore } from "@/store/useResponsiveStore";
 
+
 const responsiveStore = useResponsiveStore()
-const { screenHeight } = toRefs(responsiveStore)
+const { screenHeight, isPC } = toRefs(responsiveStore)
 const channel = ref('政治')//频道
 const newsNum = ref(10)//新闻条数
 // const channelList = reactive([])
@@ -68,7 +76,19 @@ const channelList = reactive([
   '股票', '星座', '女性',
   '育儿'
 ])
-const newsList = reactive([])
+
+type News = {
+  title: string,
+  content: string,
+  type: string,
+  pic: string,
+  weburl: string,
+  url: string,
+  src: string,
+  time: string
+}
+
+const newsList = reactive<News[]>([])
 
 onMounted(() => {
   // getNewsChannel()//获取频道列表
@@ -123,27 +143,47 @@ function getNews(type: string) {
 
 
 .card {
-  /*width: 100%;*/
-  margin: 0 15%;
   display: flex;
-  justify-content: space-between;
+  padding: 5px 10%;
 }
 
-.articleCover {
-  display: inline-block;
-  width: 20%;
-  margin: auto;
-}
-
-.articleCover img {
-  margin: 0;
+.articleCover,
+.articleCover .el-image {
+  width: 200px;
+  height: 200px;
 }
 
 .articleInfo {
-  display: inline-block;
-  width: 75%;
-  height: 100%;
+  padding-left: 20px;
   text-align: left;
-  margin-left: 5%;
+
+
+
+  .title,
+  .link,
+  .footer {
+    padding: 5px 0
+  }
+
+}
+
+@media (max-width: 780px) {
+  .card {
+    padding: 5px;
+  }
+
+  .articleCover,
+  .articleCover .el-image {
+    width: 100px;
+    height: 100px;
+  }
+
+  .articleInfo {
+    height: 100px;
+
+    .title {
+      width: 220px;
+    }
+  }
 }
 </style>

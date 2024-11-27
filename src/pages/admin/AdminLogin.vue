@@ -103,7 +103,7 @@ const login = async () => {
     if (!data) return
     const { userInfo } = data
     ElMessage.success(`管理员  ${userInfo.username} 登录成功`)
-    userInfoStore.updateLocalUserInfo(userInfo)
+    userInfoStore.updateLocalUserInfo(userInfo, true)
     router.replace({ name: 'adminUsersManagement' })
   } catch (error) {
     console.log('发生错误：')

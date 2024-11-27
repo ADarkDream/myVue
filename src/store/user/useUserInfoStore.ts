@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 //hooks
 
 //types
-import type { Token, UserInfo } from '@/types/user';
+import type { AdminInfo, Token, UserInfo } from '@/types/user';
 
 
 // 定义并暴露一个store
@@ -27,16 +27,39 @@ export const useUserInfoStore = defineStore('user_info', () => {
         headImgUrl: imageSrc,
     })
 
+    const adminInfo = ref<AdminInfo>({
+        uid: 0,
+        username: '',
+        email: '',
+        headImgUrl: ''
+    })
+
     const token_user = ref('')
     const token_admin = ref('')
     //当前的token
     const token = computed(() => token_admin.value || token_user.value)
     // if (userInfo.headImgUrl === '') userInfo.headImgUrl = imageSrc
-    const uid = computed({ get: () => userInfo.value.uid, set: (val: number) => userInfo.value.uid = val })
-    const email = computed({ get: () => userInfo.value.email, set: (val: string) => userInfo.value.email = val })
-    const username = computed({ get: () => userInfo.value.username, set: (val: string) => userInfo.value.username = val })
+    const uid = computed({
+        get: () => adminInfo.value.uid || userInfo.value.uid,
+        set: (val: number) => isAdmin.value ? adminInfo.value.uid = val : userInfo.value.uid = val
+    })
+    const email = computed({
+        get: () => adminInfo.value.email || userInfo.value.email,
+        set: (val: string) => isAdmin.value ? adminInfo.value.email = val : userInfo.value.email = val
+    })
+    const username = computed({
+        get: () => adminInfo.value.username || userInfo.value.username,
+        set: (val: string) => isAdmin.value ? adminInfo.value.username = val : userInfo.value.username = val
+    })
     const signature = computed({ get: () => userInfo.value.signature, set: (val: string) => userInfo.value.signature = val })
-    const headImgUrl = computed({ get: () => userInfo.value.headImgUrl, set: (val: string) => userInfo.value.headImgUrl = val })
+    const headImgUrl = computed({
+        get: () => adminInfo.value.headImgUrl || userInfo.value.headImgUrl,
+        set: (val: string) => isAdmin.value ? adminInfo.value.headImgUrl = val : userInfo.value.headImgUrl = val
+    })
+    const isSupperAdmin = computed({
+        get: () => adminInfo.value.isSupperAdmin || false,
+        set: (val: boolean) => adminInfo.value.isSupperAdmin = val
+    })
     /**
      * 用户设置的背景图
      */
@@ -58,15 +81,21 @@ export const useUserInfoStore = defineStore('user_info', () => {
      * !需要修改类型
      * @param newUserInfo 
      */
-    function updateLocalUserInfo(newUserInfo: UserInfo) {
+    function updateLocalUserInfo(newUserInfo: UserInfo, is_admin = false) {
+        if (is_admin) {
+            (Object.keys(newUserInfo) as (keyof AdminInfo)[]).forEach(key => {
+                adminInfo.value[key] = newUserInfo[key]
+            })
+        } else {
+            (Object.keys(newUserInfo) as (keyof UserInfo)[]).forEach(key => {
+                // 如果 userInfo 没有这个 key，则新建该 key
+                if (!(key in userInfo.value)) {
+                    (userInfo.value)[key] = undefined; // 初始化新键
+                }
+                userInfo.value[key] = newUserInfo[key]
+            })
+        }
         console.log('更新了newUserInfo');
-        (Object.keys(newUserInfo) as (keyof UserInfo)[]).forEach(key => {
-            // 如果 userInfo 没有这个 key，则新建该 key
-            if (!(key in userInfo.value)) {
-                (userInfo.value)[key] = undefined; // 初始化新键
-            }
-            userInfo.value[key] = newUserInfo[key]
-        })
         checkLocalToken()
     }
 
@@ -89,7 +118,11 @@ export const useUserInfoStore = defineStore('user_info', () => {
         } else {
             isLogin.value = true
             isAdmin.value = tokenInfo.value.isAdmin === '1'
-            if (isAdmin.value) delete tokenInfo.value.isAdmin
+            if (isAdmin.value) {
+                delete tokenInfo.value.isAdmin
+                //因为管理员信息没有持久化，所以刷新之后需要重新赋值
+                if (!adminInfo.value.username) Object.assign(adminInfo.value, tokenInfo.value)
+            }
         }
         //如果用户有背景图且选择使用，则使用用户指定的图，否则使用本地背景图
         if (bgUrl.value && useUserBGUrl.value) {
@@ -188,7 +221,7 @@ export const useUserInfoStore = defineStore('user_info', () => {
         pick: ['userInfo', 'token_user', 'useUserBGUrl', 'localBgUrl'],
         storage: localStorage
     }, {
-        pick: ['token_admin', 'isLogin', 'isAdmin'],
+        pick: ['token_admin', 'isLogin'],
         storage: sessionStorage
     }]
 })
