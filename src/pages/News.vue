@@ -19,38 +19,40 @@
         </el-select>
       </div>
     </el-header>
-    <el-main :height="isPC ? (screenHeight - 175) : (screenHeight - 120)">
-      <!--新闻列表区-->
-      <div class="card" v-for="item in newsList">
-        <div class="articleCover">
-          <el-image :src="item.pic" fit="cover">
-            <template #error>
-              <div class="image-slot">
-                <el-icon>
-                  <icon-picture />
-                </el-icon>
-              </div>
-            </template>
-          </el-image>
-        </div>
-
-        <div class="articleInfo">
-          <el-text tag="p" class="title" size="large" truncated>{{ item.title }}</el-text>
-
-          <!--            <el-text size="small" tag="sub" truncated v-html="item.content"></el-text>-->
-          <div class="link">
-            <el-link type="primary" target="_blank" :href="isPC ? item.weburl : item.url"
-              :title="'点击前往' + isPC ? 'PC' : '移动' + '端'">点击跳转</el-link>
-
+    <el-main>
+      <el-scrollbar :height="isPC ? (screenHeight - 220) : (screenHeight - 120)">
+        <!--新闻列表区-->
+        <div class="card" v-for="item in newsList">
+          <div class="articleCover">
+            <el-image :src="item.pic" fit="cover" :draggable="false" lazy>
+              <template #error>
+                <div class="image-slot">
+                  <el-icon>
+                    <icon-picture />
+                  </el-icon>
+                </div>
+              </template>
+            </el-image>
           </div>
-          <div class="footer">
-            <el-text size="small" tag="b" truncated>{{ item.src }}</el-text>
-            <el-text size="small" truncated>
-              &ensp;&ensp;发布于:{{ item.time }}
-            </el-text>
+
+          <div class="articleInfo">
+            <el-text tag="p" class="title" size="large" truncated>{{ item.title }}</el-text>
+
+            <!--            <el-text size="small" tag="sub" truncated v-html="item.content"></el-text>-->
+            <div class="link">
+              <el-link type="primary" target="_blank" :href="isPC ? item.weburl : item.url"
+                :title="'点击前往' + isPC ? 'PC' : '移动' + '端'">点击跳转</el-link>
+
+            </div>
+            <div class="footer">
+              <el-text size="small" tag="b" truncated>{{ item.src }}</el-text>
+              <el-text size="small" truncated>
+                &ensp;&ensp;发布于:{{ item.time }}
+              </el-text>
+            </div>
           </div>
         </div>
-      </div>
+      </el-scrollbar>
     </el-main>
   </el-container>
 </template>
