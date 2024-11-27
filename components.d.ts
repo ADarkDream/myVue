@@ -13,6 +13,7 @@ declare module 'vue' {
     Approve: typeof import('./src/components/Approve.vue')['default']
     Aside: typeof import('./src/components/Aside.vue')['default']
     EditEngines: typeof import('./src/components/EditEngines.vue')['default']
+    ElAffix: typeof import('element-plus/es')['ElAffix']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']

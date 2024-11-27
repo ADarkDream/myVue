@@ -10,7 +10,7 @@ interface Options {
     /**
      * 显示的文件地址(如果有的话)
      */
-    imgUrl: string,
+    url: string,
     /**
      * 文件状态，0为待审核，1为正常，2为审核未通过
      */

@@ -80,12 +80,8 @@ const submitForm = async (formEL: FormInstance | undefined) => {
   //设置按钮两秒禁用
   loading.value = true
   const isOk = await formEL?.validate()
-  if (!isOk) {
-    loading.value = false
-    return
-  } else {
-    await login()
-  }
+  if (isOk) await login()
+  loading.value = false
 }
 
 

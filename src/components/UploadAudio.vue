@@ -3,8 +3,8 @@
   <div class="uploadAudio" :style="isAdmin ? '' : 'flex-direction: column;'">
     <el-upload ref="upload" class="uploadDiv" :show-file-list="false" :on-change="fileChange" :on-exceed="handleExceed"
       :limit="1" :auto-upload="false" drag accept="image/img,image/png,image/jpg,image/jpeg">
-      <el-image class="uploadImg" :class="{ isBg: options.sort === 'bg' && options.imgUrl }" fit="cover" title="点击上传图像"
-        :src="options.imgUrl">
+      <el-image class="uploadImg" :class="{ isBg: options.sort === 'bg' && options.url }" fit="cover" title="点击上传图像"
+        :src="options.url">
         <template #error>
           <div style="width: 100%;">
             <SVG_plus class="svg" />
@@ -58,7 +58,7 @@
     <!--  头像大图浏览框-->
     <el-dialog v-model="imgFullDialogVisible" style="background-color: transparent;"
       @click="imgFullDialogVisible = !imgFullDialogVisible" fullscreen :show-close="false">
-      <img :src="options.imgUrl" alt="Preview Image" />
+      <img :src="options.url" alt="Preview Image" />
     </el-dialog>
   </div>
 
@@ -108,7 +108,7 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   const file = files[0] as UploadRawFile
   computedMd5(file)
   changeBtnsFlag.value = true
-  options.value.imgUrl = URL.createObjectURL(file)
+  options.value.url = URL.createObjectURL(file)
   uploadFile.value = file
 }
 </script>

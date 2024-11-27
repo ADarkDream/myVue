@@ -8,7 +8,7 @@ import type { Options, Image } from '@/types/upload';
 export const useUploadFileStore = defineStore('upload_file', () => {
     const options = ref<Options>({
         sort: 'headImg',//文件分类(文件夹)
-        imgUrl: '',//显示的文件地址(如果有的话)
+        url: '',//显示的文件地址(如果有的话)
         status: 0,//文件状态，0为待审核，1为正常，2为审核未通过
         maxSize: 2,//限制文件最大兆数(MB)
         type: "image"//文件类型,默认为图片(后缀)
@@ -40,7 +40,7 @@ export const useUploadFileStore = defineStore('upload_file', () => {
         md5.value = ''
         uploadFile.value = undefined
         // changeBtnsFlag.value = false
-        options.value.imgUrl = ''
+        options.value.url = ''
     }
 
     /**
@@ -50,7 +50,7 @@ export const useUploadFileStore = defineStore('upload_file', () => {
         //还原成默认
         options.value = {
             sort: 'headImg',
-            imgUrl: '',
+            url: '',
             status: 0,
             maxSize: 2,
             type: "image"

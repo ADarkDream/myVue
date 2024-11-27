@@ -1,9 +1,9 @@
 <template>
-  <el-scrollbar :height="containerHeight + 'px'">
+  <el-scrollbar :height="containerHeight + 'px'" ref="scrollbar">
     <el-container>
-      <el-header style="opacity: 0.85;">
+      <el-header>
         <el-card style="position: relative">
-          <el-image class="logo" :src="logo" v-if="isPC" />
+          <el-image class="logo" :src="logo" v-if="isPC" draggable="false" />
           <h1>1999国服官图(以影像之)下载 </h1>
           <el-collapse v-model="activeIndex" accordion>
             <el-collapse-item title="资源文档" name="1">
@@ -185,65 +185,55 @@
           </el-collapse>
         </el-card>
       </el-header>
-      <el-button-group class="btnGroup" type="info" :size="elSize" v-show="isShow">
-        <el-button @click="autoCol" :type="autoFlag ? 'primary' : 'info'">
-          <svg t="1718341380597" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
-            xmlns="http://www.w3.org/2000/svg" p-id="5304" width="200" height="200">
-            <path
-              d="M832 896H730.56l-72.576-210.24H361.856L293.44 896H192l270.848-768h98.24L832 896zM629.504 598.976L522.112 279.68c-3.392-10.176-7.04-28.096-11.008-53.504H508.8c-3.392 23.168-7.232 40.96-11.456 53.504l-106.56 319.296h238.72z"
-              p-id="5305"></path>
-          </svg>
-          <span>自动</span></el-button>
-        <el-button @click="colNum = 3; autoFlag = false"
-          :type="autoFlag === false && colNum === 3 ? 'primary' : 'info'">
-          <svg t="1718333094288" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
-            xmlns="http://www.w3.org/2000/svg" p-id="2024" width="200" height="200">
-            <path
-              d="M469.333333 138.666667v277.333333a53.393333 53.393333 0 0 1-53.333333 53.333333H138.666667a53.393333 53.393333 0 0 1-53.333334-53.333333V138.666667a53.393333 53.393333 0 0 1 53.333334-53.333334h277.333333a53.393333 53.393333 0 0 1 53.333333 53.333334z m416-53.333334H608a53.393333 53.393333 0 0 0-53.333333 53.333334v277.333333a53.393333 53.393333 0 0 0 53.333333 53.333333h277.333333a53.393333 53.393333 0 0 0 53.333334-53.333333V138.666667a53.393333 53.393333 0 0 0-53.333334-53.333334zM416 554.666667H138.666667a53.393333 53.393333 0 0 0-53.333334 53.333333v277.333333a53.393333 53.393333 0 0 0 53.333334 53.333334h277.333333a53.393333 53.393333 0 0 0 53.333333-53.333334V608a53.393333 53.393333 0 0 0-53.333333-53.333333z m469.333333 0H608a53.393333 53.393333 0 0 0-53.333333 53.333333v277.333333a53.393333 53.393333 0 0 0 53.333333 53.333334h277.333333a53.393333 53.393333 0 0 0 53.333334-53.333334V608a53.393333 53.393333 0 0 0-53.333334-53.333333z"
-              fill="currentColor" p-id="2025"></path>
-          </svg>
-          <span>3列</span>
-        </el-button>
-        <el-button @click="colNum = 5; autoFlag = false"
-          :type="autoFlag === false && colNum === 5 ? 'primary' : 'info'">
-          <svg t="1718332863471" class="el-icon" viewBox="0 0 1024 1024" version="1.1"
-            xmlns="http://www.w3.org/2000/svg" p-id="1704" width="200" height="200">
-            <path
-              d="M768 768 1024 768 1024 1024 768 1024 768 768ZM384 768 640 768 640 1024 384 1024 384 768ZM0 768 256 768 256 1024 0 1024 0 768ZM768 384 1024 384 1024 640 768 640 768 384ZM384 384 640 384 640 640 384 640 384 384ZM0 384 256 384 256 640 0 640 0 384ZM768 0 1024 0 1024 256 768 256 768 0ZM384 0 640 0 640 256 384 256 384 0ZM0 0 256 0 256 256 0 256 0 0Z"
-              fill="currentColor" p-id="1705"></path>
-          </svg>
-          <span>5列</span>
-        </el-button>
-      </el-button-group>
-
-
-      <!--    第三方库，瀑布流标签-->
-      <wc-flow-layout :gap="10" :cols="colNum">
-        <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl, item.imgName, $event)"
-          class="preImg" :id="'imgDiv-' + item.imgIndex">
-          <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-' + item.imgIndex" :max-scale="7" :min-scale="0.2"
-            :preview-src-list="isChoose !== 0 ? [] : previewImgList" :initial-index="item.imgIndex" fit="scale-down"
-            lazy>
-            <template #error>
-              <div class="image-slot">
-                <el-icon style="width: 50px">
-                  <icon-picture />
-                </el-icon>
-              </div>
-            </template>
-          </el-image>
+      <el-affix position="top" :offset="isPC ? 50 : 40">
+        <div class="floatBar" v-show="isShow">
+          <el-button @click="scrollToTop" :icon="Top" type="info">返回顶部</el-button>
+          <el-button-group class="btnGroup" type="info">
+            <el-button @click="autoCol" :type="autoFlag ? 'primary' : 'info'">
+              <SVG_auto class="el-icon" /> <span>自动</span>
+            </el-button>
+            <el-button @click="colNum = 3; autoFlag = false"
+              :type="autoFlag === false && colNum === 3 ? 'primary' : 'info'">
+              <SVG_grid_four class="el-icon" />
+              <span>3列</span>
+            </el-button>
+            <el-button @click="colNum = 5; autoFlag = false"
+              :type="autoFlag === false && colNum === 5 ? 'primary' : 'info'">
+              <SVG_grid_nine class="el-icon" />
+              <span>5列</span>
+            </el-button>
+          </el-button-group>
         </div>
-      </wc-flow-layout>
+
+      </el-affix>
+      <el-main>
+        <!--    第三方库，瀑布流标签-->
+        <wc-flow-layout :gap="10" :cols="colNum">
+          <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl, item.imgName, $event)"
+            class="preImg" :id="'imgDiv-' + item.imgIndex">
+            <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-' + item.imgIndex" :max-scale="7" :min-scale="0.2"
+              :preview-src-list="isChoose !== 0 ? [] : previewImgList" :initial-index="item.imgIndex" fit="scale-down"
+              lazy>
+              <template #error>
+                <div class="image-slot">
+                  <el-icon style="width: 50px">
+                    <icon-picture />
+                  </el-icon>
+                </div>
+              </template>
+            </el-image>
+          </div>
+        </wc-flow-layout>
+      </el-main>
+      <!--  下载须知公告界面-->
+      <el-dialog v-model="isShowDownloadNotice" :width="isPC ? '60%' : '90%'" :show-close="!isPC" style="z-index: 100"
+        destroy-on-close>
+        <template #header><span style="font-size: 24px">下载须知</span></template>
+        <DownloadNotice :showFlag="showFlag" :showPayCodePanel="showPayCodePanel"
+          :downloadLimitNum="downloadLimitNum" />
+      </el-dialog>
     </el-container>
-
   </el-scrollbar>
-
-  <!--  下载须知公告界面-->
-  <el-dialog v-model="isShowDownloadNotice" :width="isPC ? '60%' : '90%'" :show-close="!isPC" style="z-index: 100"
-    destroy-on-close>
-    <template #header><span style="font-size: 24px">下载须知</span></template>
-    <DownloadNotice :showFlag="showFlag" :showPayCodePanel="showPayCodePanel" :downloadLimitNum="downloadLimitNum" />
-  </el-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -259,6 +249,7 @@ import {
   Search,
   Select,
   Warning,
+  Top,
 } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import axios from "axios";
@@ -281,6 +272,10 @@ import userInfo from '@/utils/userInfo';
 import { NoticeActiveNum, ResultData } from "@/types/global";
 //files
 import logo from '@/assets/logo-small.png'
+import SVG_auto from '@/assets/reverse1999/auto.svg?component'
+import SVG_grid_four from '@/assets/reverse1999/grid_four.svg?component'
+import SVG_grid_nine from '@/assets/reverse1999/grid_nine.svg?component'
+
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
@@ -349,6 +344,15 @@ const fee = ref(Number(others.value[0]?.content) || 0)
 const downloadLimitNum = ref(25)
 
 const pay_code_src = ref(import.meta.env.VITE_QINIU_URL + '/files/payCode.png')
+
+const scrollbar = ref();
+
+const scrollToTop = () => {
+  if (scrollbar.value) {
+    const wrap = scrollbar.value.wrapRef; // 获取滚动容器
+    wrap.scrollTo({ top: 0, behavior: 'smooth' }); // 平滑滚动到顶部
+  }
+};
 
 onMounted(async () => {
   await Promise.all([
@@ -487,6 +491,7 @@ const getImages = async () => {
 
     imgList.forEach((item, index) => {
       item.imgIndex = index  //imgIndex用于排序，但不连续,所以要重排
+      item.imgName = item.newName
       previewImgList.push(item.imgUrl)
     })
     console.log(imgList)
@@ -564,6 +569,7 @@ const setBackground = async (url: string, name: string) => {
     updateLocalUserInfo({ bgId: imageInfo.id })
     toggleBG({ newBgUrl: url })
     useUserBGUrl.value = true
+    ElMessage.success('设置背景图成功,已保存到云端')
   } catch (error) {
     console.log('发生错误：')
     console.log(error)
@@ -729,12 +735,18 @@ const showPayCodePanel = () => {
   isShowDownloadNotice.value = false
   activeIndex.value = '5'
 }
-console.log('isPC', isPC.value)
+
 </script>
 <style scoped>
+html {
+  scroll-behavior: smooth
+}
+
 .el-header {
   height: auto;
   padding: 0;
+  opacity: 0.85;
+  margin-bottom: 10px;
 }
 
 .roleSort {
@@ -763,10 +775,10 @@ console.log('isPC', isPC.value)
   background-color: gray;
 }
 
-.btnGroup {
+.floatBar {
   display: flex;
-  justify-content: right;
-  margin: 10px 0;
+  justify-content: space-between;
+  margin: 0 20px;
 }
 
 
@@ -813,6 +825,9 @@ console.log('isPC', isPC.value)
     margin-right: 15px;
   }
 
+  .floatBar {
+    margin: 0 10px
+  }
 }
 
 

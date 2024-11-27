@@ -178,9 +178,10 @@ const { to_qq_oauth } = useOAuth()
 const changeAvatar = () => {
   options.value = {
     sort: 'headImg',
-    imgUrl: '',
+    url: '',
     status: 0,
-    maxSize: 2
+    maxSize: 2,
+    type: "image"
   }
   dialogVisible.value = true
 

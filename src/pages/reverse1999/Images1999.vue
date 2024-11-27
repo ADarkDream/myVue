@@ -549,6 +549,10 @@ const deleteImage = (index: number, data: ReverseImgInfo) => {
 
 
 <style scoped>
+.el-container {
+  background-color: var(--el-bg-color);
+}
+
 .demo-pagination-block+.demo-pagination-block {
   margin-top: 10px;
 }

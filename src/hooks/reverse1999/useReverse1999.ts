@@ -14,10 +14,6 @@ export default function () {
             let temp_r = undefined
             if (version && versionInfo.value.length === 0) temp_v = version
             if ((role === 'all' && allRoleInfo.value.length === 0) || (role === 'diff' && diffRoleInfo.value.length === 0)) temp_r = role
-            console.log(version, role);
-
-            console.log('temp_v', temp_v, 'temp_r', temp_r);
-            console.log(!temp_v && !temp_r);
 
             if (!temp_v && !temp_r) return
 

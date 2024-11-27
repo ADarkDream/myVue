@@ -20,7 +20,7 @@ export default function () {
         //显示菜单组
         changeBtnsFlag.value = true
         //将用户上传的图片转换成url赋值给头像
-        options.value.imgUrl = URL.createObjectURL(file.raw!)
+        options.value.url = URL.createObjectURL(file.raw!)
         //取消本次上传的文件
         uploadFile.value = file.raw
         computedMd5(file.raw!)

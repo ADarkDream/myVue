@@ -185,7 +185,7 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import { Edit } from "@element-plus/icons-vue";
-
+import { TabsPaneContext } from "element-plus";
 //stores
 import { useNoticeStore } from '@/store/useNoticeStore'
 //hooks
@@ -196,6 +196,7 @@ import Approve from "@/components/Approve.vue";
 //utils
 import myFunction from "@/utils/myFunction";
 import titleDiv from "@/utils/titleDiv";
+
 
 const noticeStore = useNoticeStore()
 const { updateNotes, noUpdated, feedback } = toRefs(noticeStore)

@@ -62,7 +62,7 @@ const { updateImgUrl } = userInfo
 const changeBgUrl = () => {
   options.value = {
     sort: 'bg',
-    imgUrl: '',
+    url: '',
     status: 0,
     maxSize: 2
   }

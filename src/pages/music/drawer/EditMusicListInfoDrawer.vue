@@ -81,7 +81,8 @@ const isOpen = computed({
 
 const open = () => {
   options.value.sort = 'album/cover'
-  options.value.imgUrl = computed(() => {
+  options.value.type = 'image'
+  options.value.url = computed(() => {
     const { pic_url, default_cover_url } = formData.value
     if (pic_url) return pic_url
     else if (default_cover_url) return default_cover_url
@@ -94,7 +95,7 @@ watch(isLoading, (newVal, oldVal) => {
 
   if (newVal === false && fileInfo.value) {
     formData.value.pic_url = fileInfo.value.imgUrl
-    options.value.imgUrl = formData.value.pic_url
+    options.value.url = formData.value.pic_url
   }
 })
 
