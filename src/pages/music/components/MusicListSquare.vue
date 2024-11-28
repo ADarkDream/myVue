@@ -9,7 +9,7 @@
         <MusicListCoverComp :musicListInfo="item" />
       </div>
     </div>
-    <el-divider />
+    <br>
     <div class="title"><span>我创建的歌单</span>
       <el-button link :icon="Plus" @click="showEditMusicListInfoDrawer(true)">{{ isPC ? '创建歌单' : '' }}</el-button>
     </div>

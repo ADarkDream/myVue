@@ -57,7 +57,9 @@ export default ({ mode, command }: { mode: string, command: string }) => {
                 },
             }),
             //SVG插件
-            svgLoader(),
+            svgLoader({
+                svgo: true//移除svg内不必要的元数据
+            }),
             //调试插件,默认启动vscode
             VueDevTools({
                 // launchEditor: 'webstorm',
@@ -91,7 +93,7 @@ export default ({ mode, command }: { mode: string, command: string }) => {
                 autoInstall: true,
             }),
             legacy({
-                targets: ["defaults", "ie 11"]
+                targets: ["defaults", "ie 11"]//需要支持的浏览器，defaults是各大浏览器最新的两个版本
             }),
             //压缩成gzip，减少传输的资源大小，提高网站资源加载速度
             compression({
@@ -124,6 +126,7 @@ export default ({ mode, command }: { mode: string, command: string }) => {
             // drop: ['console', 'debugger'], // 删除 开发和生产环境下的所有的console 和 debugger
         },
         build: {
+            minify: 'esbuild',//压缩代码
             chunkSizeWarningLimit: 1500,//配置文件大小提醒限制，默认500
             rollupOptions: {
                 output: {
@@ -173,10 +176,10 @@ export default ({ mode, command }: { mode: string, command: string }) => {
                     //     return id.toString().split('node_modules/')[1].split('/')[0].toString()
                     // }
                     // },
-                    //  // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容hash值
-                    //         entryFileNames: 'assets/js/[name].[hash].js', // 用于命名代码拆分时创建的共享块的输出命名
-                    //         chunkFileNames: 'assets/js/[name].[hash].js', // 用于输出静态资源的命名，[ext]表示文件扩展名
-                    //         assetFileNames: 'assets/[ext]/[name].[hash].[ext]'
+                    // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容hash值
+                    entryFileNames: 'assets/js/[name].[hash].js', // 用于命名代码拆分时创建的共享块的输出命名
+                    chunkFileNames: 'assets/js/[name].[hash].js', // 用于输出静态资源的命名，[ext]表示文件扩展名
+                    assetFileNames: 'assets/[ext]/[name].[hash].[ext]'
                 }
             }
         },

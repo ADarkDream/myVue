@@ -1,13 +1,10 @@
 <template>
   <!--新建歌单的窗口-->
-  <el-drawer v-model="isShowEditMusicListInfoDrawer" :show-close="false" direction="btt" :append-to-body="true"
-    size="50%" destroy-on-close @open="open" @close="resetUpload()">
-    <template #header>
-      <div style="display: flex;justify-content: space-between">
-        <el-button link @click="isShowEditMusicListInfoDrawer = false">取消</el-button>
-        <el-button link :disabled="isLoading" @click="editMusicListInfo">{{ isCreateFlag ? '创建' : '修改' }}</el-button>
-      </div>
-    </template>
+  <div class="editMusicListInfoDrawer">
+    <div class="header">
+      <el-button link @click="isShowEditMusicListInfoDrawer = false">取消</el-button>
+      <el-button link :disabled="isLoading" @click="editMusicListInfo">{{ isCreateFlag ? '创建' : '修改' }}</el-button>
+    </div>
     <el-form :model="formData" label-position="top">
       <el-row :gutter="20" style="display: flex;justify-content: center;">
         <el-col :xs="8" :sm="12" :md="12" :lg="6" :xl="6">
@@ -40,12 +37,11 @@
         </el-col>
       </el-row>
     </el-form>
-  </el-drawer>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { computed, toRefs, watch } from "vue";
-
 //stores
 import { useMusicListDrawerStore } from "@/store/music/useMusicListDrawerStore";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
@@ -66,9 +62,7 @@ const uploadFileStore = useUploadFileStore()
 const { uid } = toRefs(userInfoStore)
 const { isShowEditMusicListInfoDrawer, formData, isCreateFlag } = toRefs(musicListDrawerStore)
 const { options, isLoading, fileInfo } = toRefs(uploadFileStore)
-const { resetUpload } = uploadFileStore
 const { createMusicList, updateMusicList } = useMusicList()
-
 
 
 //歌单是否公开
@@ -78,8 +72,7 @@ const isOpen = computed({
 })
 
 
-
-const open = () => {
+onMounted(() => {
   options.value.sort = 'album/cover'
   options.value.type = 'image'
   options.value.url = computed(() => {
@@ -88,12 +81,10 @@ const open = () => {
     else if (default_cover_url) return default_cover_url
     else return ''
   }).value
-}
+})
 
 watch(isLoading, (newVal, oldVal) => {
-  if (newVal === oldVal) console.log('11111');
-
-  if (newVal === false && fileInfo.value) {
+  if (newVal !== oldVal && newVal === false && fileInfo.value) {
     formData.value.pic_url = fileInfo.value.imgUrl
     options.value.url = formData.value.pic_url
   }
@@ -135,16 +126,16 @@ const editMusicListInfo = async () => {
 </script>
 
 <style scoped>
+.header {
+  display: flex;
+  justify-content: space-between
+}
+
 .el-form {
   width: 80%;
   margin: 0 auto;
 
 }
-
-
-
-
-
 
 
 /*region单选框样式*/

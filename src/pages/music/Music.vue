@@ -73,41 +73,56 @@
       </el-tab-pane>
     </el-tabs>
     <!-- 搜索抽屉 -->
-    <SearchMusic />
+    <el-drawer v-model="isShowSearchPanel" :with-header="false" :size="drawerSize - (isPC ? 45 : 45) + 'px'"
+      direction="btt" show-close>
+      <SearchMusicDrawer />
+    </el-drawer>
     <!-- 上传音乐抽屉 -->
     <!-- <UpdateMusic /> -->
     <!-- 歌单列表抽屉 -->
-    <MusicListDrawer />
+    <el-drawer v-model="isShowMusicListDrawer" :size="drawerSize - (isPC ? 39 : 39) + 'px'" direction="btt" show-close>
+      <template #header>
+        <div class="title">收藏到歌单</div>
+      </template>
+      <MusicListDrawer />
+    </el-drawer>
     <!--新建歌单的抽屉-->
-    <EditMusicListInfoDrawer />
+    <el-drawer v-model="isShowEditMusicListInfoDrawer" :with-header="false" :show-close="false" direction="btt"
+      :append-to-body="true" size="50%" destroy-on-close @close="resetUpload()">
+      <EditMusicListInfoDrawer />
+    </el-drawer>
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, toRefs } from 'vue';
+import { computed, onMounted, onUnmounted, ref, toRefs, defineAsyncComponent } from 'vue';
 import { Plus, Setting, Tickets } from "@element-plus/icons-vue";
 import { useRoute, useRouter } from "vue-router";
 //stores
-import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
-import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { useUserInfoStore } from '@/store/user/useUserInfoStore';
 import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useUploadFileStore } from "@/store/upload/uploadFileStore";
+import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
+import { useMusicListStore } from "@/store/music/useMusicListStore";
+import { useMusicSearchStore } from '@/store/music/useMusicSearchStore';
+import { useMusicListDrawerStore } from '@/store/music/useMusicListDrawerStore'
 //hooks
 
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import useMusicList from "@/hooks/music/useMusicList";
 //components
 import MusicAdd from '@/pages/music/components/MusicAdd.vue';
-import SearchMusic from "@/pages/music/components/SearchMusic.vue";
 import PlayList from "@/pages/music/components/PlayList.vue";
 import MusicListSquare from "@/pages/music/components/MusicListSquare.vue";
 import MusicSettings from "@/pages/music/components/MusicSettings.vue";
 import MusicList from "@/pages/music/components/MusicList.vue";
 import UpdateMusic from '@/pages/music/components/UpdateMusic.vue'
-import MusicListDrawer from '@/pages/music/drawer/MusicListDrawer.vue';
-import EditMusicListInfoDrawer from "@/pages/music/drawer/EditMusicListInfoDrawer.vue";
+const SearchMusicDrawer = defineAsyncComponent(() => import('@/pages/music/drawer/SearchMusicDrawer.vue'))
+const MusicListDrawer = defineAsyncComponent(() => import('@/pages/music/drawer/MusicListDrawer.vue'))
+const EditMusicListInfoDrawer = defineAsyncComponent(() => import('@/pages/music/drawer/EditMusicListInfoDrawer.vue'))
+// import MusicListDrawer from '@/pages/music/drawer/MusicListDrawer.vue';
+// import EditMusicListInfoDrawer from "@/pages/music/drawer/EditMusicListInfoDrawer.vue";
 //files
 import SVG_music_list from '@/assets/music/music_list.svg?component'
-
 
 
 
@@ -118,20 +133,24 @@ const musicConfigStore = useMusicConfigStore()
 const musicListStore = useMusicListStore()
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
+const searchStore = useMusicSearchStore()
+const musicListDrawerStore = useMusicListDrawerStore()
+const uploadFileStore = useUploadFileStore()
 //页面背景配置
 const { activePanelIndex } = toRefs(musicConfigStore)
 const { bgSettings, changePanelIndex } = musicConfigStore
 const { isLogin } = toRefs(userInfoStore)
-
-const { isPC, containerHeight } = toRefs(responsiveStore)
+const { isShowSearchPanel } = toRefs(searchStore)
+const { isShowMusicListDrawer, isShowEditMusicListInfoDrawer } = toRefs(musicListDrawerStore)
+const { isPC, drawerSize, containerHeight } = toRefs(responsiveStore)
 const { touchstart, positionComputed } = responsiveStore
+const { resetUpload } = uploadFileStore
 const { addMusicToPlay } = useMusicPlay()
 const { getCloudMusicList, getMusicList } = useMusicList()
 
 const playList = computed(() => musicListStore.playList)
 
 const music = ref<HTMLDivElement>()
-
 
 
 const toggleToMusicList = async ({ cloud_music_list_id, music_list_id, latest }: {
@@ -187,11 +206,6 @@ onMounted(async () => {
     //手指离开屏幕
     music.value.addEventListener("touchend", touchend, false)
   }
-
-
-  // await Promise.all([
-
-  // ])
 })
 
 onUnmounted(() => {
@@ -204,7 +218,6 @@ const touchend = (e: TouchEvent) => {
   console.log('离开屏幕')
   positionComputed(e, activePanelIndex, 0, 4)
 }
-
 </script>
 
 <style scoped>

@@ -1,46 +1,40 @@
 <template>
-  <el-drawer class="searchMusicDrawer" v-model="isShowSearchPanel" :with-header="false"
-    :size="drawerSize - (isPC ? 45 : 45) + 'px'" @touchstart="(e: TouchEvent) => e.stopPropagation()"
-    @touchend="(e: TouchEvent) => e.stopPropagation()" direction="btt" show-close>
-    <div class="container">
-      <div class="header">
-        <div class="searchDiv">
-          <el-button :icon="Back" size="small" @click="isShowSearchPanel = false"></el-button>
-          <el-input class="search" v-model.trim="keyWords" @keyup.enter="searchMusic()" placeholder="歌曲名或歌手名"
-            clearable />
-          <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
-        </div>
-        <el-radio-group v-model="searchConfig.type" size="small" style="height: 30px;">
-          <el-radio-button label="单曲" :value="1" />
-          <el-radio-button label="专辑" :value="10" />
-          <el-radio-button label="歌手" :value="100" />
-          <el-radio-button label="歌单" :value="1000" />
-          <el-radio-button label="用户" :value="1002" />
-          <el-radio-button label="歌词" :value="1006" />
-        </el-radio-group>
-        <HotSearchWords :changeKeyWords="changeKeyWords" style="height: 30px;overflow: hidden;" />
+  <div class="searchMusicDrawer">
+    <div class="header">
+      <div class="searchDiv">
+        <el-button :icon="Back" size="small" @click="isShowSearchPanel = false"></el-button>
+        <el-input class="search" v-model.trim="keyWords" @keyup.enter="searchMusic()" placeholder="歌曲名或歌手名" clearable />
+        <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
       </div>
-      <div v-if="showResult">
-        <music-list-songs-list v-if="searchResultType === 1 && showResult" :songsList="searchResult"
-          :height="searchDivHeight" :isSearchList="true" />
-        <div v-else-if="searchResultType === 10 && showResult">
-          <div class="songInfo" v-for="(album, index) in searchResult" :key="index">
-            <el-text>{{ index + 1 }}、{{ album.name || '未命名' }} -
-              <!-- {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }} -->
-            </el-text>&ensp;
-            <!-- <el-text>{{ album.publish_time }}</el-text> -->
-          </div>
-        </div>
-        <div class="footer">
-          <el-pagination v-model:current-page="page" :page-size="10"
-            :layout="isPC ? 'prev, pager, next,total' : 'prev, pager, next'" :total="totalNum"
-            @current-change="searchMusic()" />
-        </div>
-      </div>
-      <el-empty v-else description=" " style="padding: 0" image="/fool.png" :image-size="350" />
+      <el-radio-group v-model="searchConfig.type" size="small" style="height: 30px;">
+        <el-radio-button label="单曲" :value="1" />
+        <el-radio-button label="专辑" :value="10" />
+        <el-radio-button label="歌手" :value="100" />
+        <el-radio-button label="歌单" :value="1000" />
+        <el-radio-button label="用户" :value="1002" />
+        <el-radio-button label="歌词" :value="1006" />
+      </el-radio-group>
+      <HotSearchWords :changeKeyWords="changeKeyWords" style="height: 30px;overflow: hidden;" />
     </div>
-  </el-drawer>
-
+    <div v-if="showResult">
+      <music-list-songs-list v-if="searchResultType === 1 && showResult" :songsList="searchResult"
+        :height="searchDivHeight" :isSearchList="true" />
+      <div v-else-if="searchResultType === 10 && showResult">
+        <div class="songInfo" v-for="(album, index) in searchResult" :key="index">
+          <el-text>{{ index + 1 }}、{{ album.name || '未命名' }} -
+            <!-- {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }} -->
+          </el-text>&ensp;
+          <!-- <el-text>{{ album.publish_time }}</el-text> -->
+        </div>
+      </div>
+      <div class="footer">
+        <el-pagination v-model:current-page="page" :page-size="10"
+          :layout="isPC ? 'prev, pager, next,total' : 'prev, pager, next'" :total="totalNum"
+          @current-change="searchMusic()" />
+      </div>
+    </div>
+    <el-empty v-else description=" " style="padding: 0" image="/fool.png" :image-size="350" />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -52,7 +46,6 @@ import { useResponsiveStore } from "@/store/useResponsiveStore";
 //components
 import HotSearchWords from "@/pages/music/components/HotSearchWords.vue";
 import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
-import MusicListCoverComp from "./MusicListCoverComp.vue";
 
 const searchStore = useMusicSearchStore()
 const responsiveStore = useResponsiveStore()
@@ -104,7 +97,7 @@ const searchMusic = async () => {
 </script>
 
 <style scoped>
-.container {
+.searchMusicDrawer {
   --timing: 0.3s;
   --width-of-input: 80%;
   --height-of-input: 40px;
@@ -162,7 +155,7 @@ const searchMusic = async () => {
 
 /*移动端布局*/
 @media (max-width: 780px) {
-  .container {
+  .searchMusicDrawer {
     --width-of-input: 100%;
     --height-of-input: 25px;
   }

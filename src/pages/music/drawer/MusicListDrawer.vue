@@ -1,10 +1,5 @@
 <template>
-    <el-drawer class="MusicListDrawer" v-model="isShowMusicListDrawer" :size="drawerSize - (isPC ? 39 : 39) + 'px'"
-        @touchstart="(e: TouchEvent) => e.stopPropagation()" @touchend="(e: TouchEvent) => e.stopPropagation()"
-        direction="btt" show-close>
-        <template #header>
-            <div class="title">收藏到歌单</div>
-        </template>
+    <div class="MusicListDrawer">
         <div class="musicDiv" @click="showEditMusicListInfoDrawer(true)">
             <div class="img"><el-icon>
                     <Plus />
@@ -14,7 +9,7 @@
                 新建歌单
             </div>
         </div>
-        <template v-for="item in myMusicListInfo" :key="index">
+        <div v-for="(item, index) in myMusicListInfo" :key="index">
             <div class="musicDiv" @click="connectMusicToList(item.music_list_id)">
                 <div class="img"
                     :style="'--coverImage:' + `url(${item.pic_url || item.default_cover_url || defaultAlbumArt})`">
@@ -27,18 +22,16 @@
                     <el-text>——{{ formatDate(new Date(item.updated_time)) }}</el-text>
                 </div>
             </div>
-        </template>
-    </el-drawer>
+        </div>
+    </div>
 </template>
 <script lang="ts" setup>
 import { toRefs } from "vue";
 import { Plus } from '@element-plus/icons-vue'
 //stores
-import { useMusicListDrawerStore } from '@/store/music/useMusicListDrawerStore'
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
-import { useResponsiveStore } from '@/store/useResponsiveStore';
 //hooks
-
 import useTimestamp from "@/hooks/useTimestamp";
 import useMusicList from "@/hooks/music/useMusicList";
 import useMusic from "@/hooks/music/useMusic";
@@ -46,21 +39,17 @@ import useMusic from "@/hooks/music/useMusic";
 import defaultAlbumArt from "@/assets/music/music.svg";
 
 
-
-const musicListDrawerStore = useMusicListDrawerStore()
+const userInfoStore = useUserInfoStore()
+const { uid } = toRefs(userInfoStore)
 const musicListStore = useMusicListStore()
-const { isShowMusicListDrawer } = toRefs(musicListDrawerStore)
 const { myMusicListInfo } = toRefs(musicListStore)
-const { connectMusicToList } = useMusicList()
-const responsiveStore = useResponsiveStore()
-const { isPC, drawerSize } = toRefs(responsiveStore)
+const { getMusicListsInfo, connectMusicToList } = useMusicList()
 const { formatDate } = useTimestamp()
 const { showEditMusicListInfoDrawer } = useMusic()
-
-
-
-
-
+onMounted(async () => {
+    //获取用户的个人歌单列表
+    await getMusicListsInfo({ is_login: true, user_id: uid.value }, true)
+})
 </script>
 <style scoped>
 .MusicListDrawer {
