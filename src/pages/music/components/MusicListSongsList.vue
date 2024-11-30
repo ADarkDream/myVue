@@ -1,6 +1,48 @@
 <template>
   <div ref="containerRef" :style="{ height: (height || (drawerSize - 80)) + 'px', overflow: 'scroll' }"
-    v-if="songsList.length !== 0">
+    v-show="songsList.length !== 0">
+    <!-- <div class="scroll-container">
+      <div class="actual-height-container">
+        <div class="translate-container">
+          <div v-for="(item, index) in actualRenderData" class="musicDiv">
+            <div>
+              <div class="songInfo">
+                <el-text>{{ index + 1 }}、{{ item.name || '未命名' }} -
+                  {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }}
+                </el-text>&ensp;
+                <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text>
+              </div>
+              <div class="btns">
+                <el-button link @click="playTheMusic(item, index)" size="small"
+                  :type="thisMusic.id === item.id && isPlaying ? '' : 'primary'">
+                  {{ thisMusic.id === item.id && isPlaying ? '暂停' : '播放' }}
+                </el-button>
+                <el-button link @click="addMusicList([item], { isReplace: true })" size="small" type="primary">
+                  添加
+                </el-button>
+                <el-button link size="small" type="primary" @click="showMusicListDrawer([item.id])">
+                  收藏
+                </el-button>
+                <el-button link v-if="item.cloud_music_id || item.id" @click="musicPlayUtils.shareMusicLink(item)"
+                  size="small" type="primary">
+                  分享
+                </el-button>
+                <el-button link v-if="item.cloud_music_id" @click="musicListUtils.goToCloudMusic(item.cloud_music_id)"
+                  target="_blank" size="small" type="primary">
+                  前往网易云
+                </el-button>
+                <el-button link v-if="isOwner" @click="deleteMusic(item.id, index)" size="small" type="danger">
+                  删除
+                </el-button>
+              </div>
+            </div>
+            <div class="playIcon">
+              <SVG_music_playing_indicator v-show="item.id === thisMusic.id" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
     <template v-for="(item, index) in songsList" :key="index">
       <div class="musicDiv">
         <div>
@@ -61,6 +103,7 @@ import musicListUtils from "@/utils/music/musicList";
 import type { CloudSongInfo } from "@/types/music";
 //files
 import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.svg?component'
+// import useVirtualList from "@/hooks/useVirtualList";
 
 
 const musicListStore = useMusicListStore()
@@ -77,8 +120,8 @@ const { showMusicListDrawer } = useMusic()
 const { addMusicToPlay, toggleMusic, play } = useMusicPlay()
 const { deleteMusicFromList } = useMusicList()
 
-const { songsList, height, isSearchList, isOwner } = defineProps(['songsList', 'height', 'isSearchList', 'isOwner']) as { songsList: CloudSongInfo[], height: number, isSearchList?: boolean, isOwner: boolean }
-
+const props = defineProps(['songsList', 'height', 'isSearchList', 'isOwner']) as { songsList: CloudSongInfo[], height: number, isSearchList?: boolean, isOwner: boolean }
+const { songsList, height, isSearchList, isOwner } = toRefs(props)
 const containerRef = ref()
 
 
@@ -111,6 +154,23 @@ const deleteMusic = async (id: number, index: number) => {
 //   console.log('滚动了');
 // }
 
+
+// const actualRenderData = ref(songsList.value)
+// console.log('actualRenderData', actualRenderData.value);
+// watch(songsList, (newVal, oldVal) => {
+//   if (newVal !== oldVal) {
+//     const data = useVirtualList({
+//       data: ref(newVal), // 列表项数据
+//       scrollContainer: ".scroll-container", // 滚动容器
+//       actualHeightContainer: ".actual-height-container", // 渲染实际高度的容器
+//       translateContainer: ".translate-container", // 需要偏移的目标元素,
+//       itmeContainer: '.musicDiv',// 列表项
+//       itemHeight: 50,// 列表项的大致高度
+//       size: 10,// 单次渲染数量
+//     });
+//     actualRenderData.value = data.actualRenderData.value
+//   }
+// })
 </script>
 <style scoped>
 .playListBar {

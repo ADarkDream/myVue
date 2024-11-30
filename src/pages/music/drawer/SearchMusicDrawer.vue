@@ -6,7 +6,7 @@
         <el-input class="search" v-model.trim="keyWords" @keyup.enter="searchMusic()" placeholder="歌曲名或歌手名" clearable />
         <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
       </div>
-      <el-radio-group v-model="searchConfig.type" size="small" style="height: 30px;">
+      <el-radio-group v-model="searchConfig.type" size="small" style="height: 30px;" v-if="false">
         <el-radio-button label="单曲" :value="1" />
         <el-radio-button label="专辑" :value="10" />
         <el-radio-button label="歌手" :value="100" />

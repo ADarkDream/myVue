@@ -56,8 +56,9 @@
                 </el-row>
             </el-form-item>
         </el-form>
-        <el-text type="danger">用户上传的音乐(此页面高度待调整)</el-text>
+        <!-- <el-text type="danger">用户上传的音乐(此页面高度待调整)</el-text> -->
         <!-- 用户上传的音乐 -->
+        <h2>用户上传的音乐</h2>
         <MusicListSongsList :songs-list="customMusicList" :height="350" />
     </div>
 </template>
@@ -114,10 +115,10 @@ const search_song_or_list = async (str: string, isSong: boolean) => {
     str = str.toString()
     //网址规则
     const reg_url = /https?:\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[0-9a-zA-Z-._~:/?#[\]@!$&'()*+,;=]*)?/
-    //歌单规则
-    const reg_palylist = /https?:\/\/music\.163\.com\/#\/(?:[a-zA-Z0-9\/]+\/)?playlist\?id=([0-9]+)/
-    //歌曲规则
-    const reg_song = /https?:\/\/music\.163\.com\/#\/song\?id=([0-9]+)/
+    //歌单链接规则
+    const reg_palylist = /https?:\/\/(?:[a-zA-Z0-9-]+\.)?music\.163\.com\/(?:m\/|#\/)?(?:[a-zA-Z0-9\/]+\/)?playlist\?id=([0-9]+)/
+    //歌曲链接规则
+    const reg_song = /https?:\/\/music\.163\.com\/(?:#\/)?song\?id=([0-9]+)/
 
     let id = 0
 
