@@ -121,11 +121,15 @@
                 <!--音乐播放器-->
                 <el-dropdown-item @click="goTo('music')">
                   <SVG_music class="el-icon" />
-                  &ensp;音乐播放器demo
+                  &ensp;音乐播放器
                 </el-dropdown-item>
                 <!--默默的博客-->
                 <el-dropdown-item @click="toBlogs()" :icon="EditPen">
                   &ensp;默默的博客(建设中)
+                </el-dropdown-item>
+                <!--默默的其他作品-->
+                <el-dropdown-item @click="toDemos()" :icon="Platform">
+                  &ensp;默默的其他作品
                 </el-dropdown-item>
                 <!--设置-->
                 <el-dropdown-item @click="showSetting = !showSetting" :icon="Tools">
@@ -234,11 +238,15 @@
               <!--音乐播放器-->
               <el-dropdown-item @click="goTo('music')">
                 <SVG_music class="el-icon" />
-                &ensp;音乐播放器demo
+                &ensp;音乐播放器
               </el-dropdown-item>
               <!--默默的博客-->
               <el-dropdown-item @click="toBlogs()" :icon="EditPen">
                 &ensp;默默的博客(建设中)
+              </el-dropdown-item>
+              <!--默默的其他作品-->
+              <el-dropdown-item @click="toDemos()" :icon="Platform">
+                &ensp;默默的其他作品
               </el-dropdown-item>
               <!--设置-->
               <el-dropdown-item :icon="Tools" @click="showSetting = !showSetting">
@@ -304,7 +312,7 @@
 import { onMounted, reactive, ref, watch, toRefs } from 'vue'
 import {
   ArrowLeftBold, Avatar, BellFilled,
-  Comment, EditPen, Download,
+  Comment, EditPen, Platform, Download,
   HomeFilled,
   Moon, MoreFilled, Operation,
   Sunny, Switch, SwitchButton,
@@ -352,7 +360,6 @@ const { isDark, isPC, isHome, isForum } = toRefs(responsiveStore)
 const { toggleBG } = useTitleDiv()
 
 
-const routes = ['/oauth']
 const showPlayer = ref(false)
 //控制头像的显示
 const showHeadImg = ref(isLogin.value)
@@ -370,6 +377,7 @@ const body = (document.querySelector('body') as HTMLElement)
 
 const goTo = (name: string) => router.push({ name })
 const toBlogs = () => window.open('https://blogs.muxidream.cn')
+const toDemos = () => window.open('https://demos.muxidream.cn')
 
 //网页初次渲染函数
 onMounted(() => {

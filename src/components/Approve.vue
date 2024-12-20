@@ -60,7 +60,7 @@ const noticeList = reactive([//底部轮播
     fun: gotoChat
   }, {
     id: 3,
-    str: '欢迎前往音乐播放器demo测试',
+    str: '欢迎前往音乐播放器测试',
     fun: gotoMusic
   }, {
     id: 4,

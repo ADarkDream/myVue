@@ -118,7 +118,7 @@ const search_song_or_list = async (str: string, isSong: boolean) => {
     //歌单链接规则
     const reg_palylist = /https?:\/\/(?:[a-zA-Z0-9-]+\.)?music\.163\.com\/(?:m\/|#\/)?(?:[a-zA-Z0-9\/]+\/)?playlist\?id=([0-9]+)/
     //歌曲链接规则
-    const reg_song = /https?:\/\/music\.163\.com\/(?:#\/)?song\?id=([0-9]+)/
+    const reg_song = /https?:\/\/(?:[a-zA-Z0-9-]+\.)?music\.163\.com\/(?:m\/|#\/)?(?:[a-zA-Z0-9\/]+\/)?song\?id=([0-9]+)/
 
     let id = 0
 

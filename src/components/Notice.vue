@@ -9,43 +9,35 @@
             <el-card class="introduction">
               <el-text tag="p">
                 1.本站为社交化导航网站，提供
-                <el-button link title="首页导航" type="primary" @click="router.push({ name: 'home' })">站点导航
-                </el-button>
-                、
-                <el-button link title="论坛文章" type="primary" target="_blank" @click="router.push({ name: 'forum' })">
-                  论坛交流
-                </el-button>
-                、
-                <el-button link title="重返未来相关界面" type="primary" @click="router.push({ name: 'reverse1999' })">
-                  重返未来官图筛选和下载
-                </el-button>
-                、
-                <el-button link title="在线音乐播放" type="primary" @click="router.push({ name: 'music' })">
-                  在线音乐播放
-                </el-button>
+                <div v-for="(item, index) in siteLink" :key="item.id" style="display: inline">
+                  <el-button link :title="item.title" :type="item.type" @click="router.push({ name: item.pathName })">{{
+                    item.name }}
+                  </el-button>
+                  <span v-if="index !== siteLink.length - 1">、</span>
+                </div>
                 等功能。
               </el-text>
               <el-text tag="p">
                 2.工具资源群：
                 <el-button link target="_blank" type="primary"
-                  @click="copyText('1005993749', 'QQ群号', 'https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V')"
-                  title="点击前往QQ">Resource sharing群
+                  @click="copyText(contactGroup[0].value, contactGroup[0].name, contactGroup[0].url)"
+                  :title="contactGroup[0].title">{{ contactGroup[0].name }}
                 </el-button>
-                、重返未来群：
+                ;重返未来群：
                 <el-button link target="_blank" type="primary"
-                  @click="copyText('904688184', 'QQ群号', 'https://qm.qq.com/q/Oq8R7YS6sM')" title="点击前往QQ">
-                  金兔子特供部门🐰
+                  @click="copyText(contactGroup[1].value, contactGroup[1].name, contactGroup[1].url)"
+                  :title="contactGroup[1].title">{{ contactGroup[1].name }}
                 </el-button>。
               </el-text>
               <el-text tag="p">
-                3.若首页导航网站无法访问，请使用Chrome、Edge、Firefox等浏览器或尝试VPN，也可能是因为该网站维护中【也可能是网站已关闭，太久没校验了】。
+                3.若首页导航网站无法访问，请使用Chrome、Edge、Firefox等浏览器或尝试VPN，也可能是因为该网站维护中或已关闭【太久没校验了】。
               </el-text>
               <el-text tag="p">4.你可以
                 <el-text tag="a" type="success"
                   href="https://mp-00526be3-cd12-41bd-84f7-bfbce63bb7d0.cdn.bspapp.com/test1/BookMarks_2023_8_15_2.zip"
                   title="下载书签">下载
                 </el-text>
-                并解压出HTML文件，导入到自己的浏览器收藏夹。导入步骤可参考相关教程视频：
+                并解压出HTML文件，导入到自己的浏览器收藏夹。导入步骤可参考教程视频：
                 <el-text tag="a" target="_blank" type="primary" href="https://www.bilibili.com/video/BV1rr4y1S79J/"
                   title="B站教程视频">点击此处
                 </el-text>
@@ -56,29 +48,30 @@
                   @click="changePage(3, 2)">留言反馈</el-button>
                 。
               </el-text>
-              <el-text tag="p" type="danger">6.
-                本站所提供的所有资源均来自网络,侵权请联系删除</el-text>
+              <el-text tag="p" type="danger">6.本站所提供的所有资源均来自网络,侵权请联系删除。</el-text>
+              <el-text tag="p">7.快速记忆本站域名：<el-text type="success">muxi</el-text><el-text
+                  type="primary">dream</el-text>.<el-text type="info">cn</el-text>，分别指<el-text
+                  type="success">木夕</el-text><el-text type="primary">梦</el-text>，而<el-text
+                  type="success">木夕</el-text>是<el-text type="primary">梦</el-text>这个字的拆解；<el-text
+                  type="info">cn</el-text>是中国国家顶级域名，代指中国。</el-text>
             </el-card>
           </el-collapse-item>
           <el-collapse-item title="友情链接" :name="2">
-            <template class="friendLinks">
-              <el-link target="_blank" href="https://letsgofishing5.github.io/lsgfish-resource-sharing/"
-                title="资源收藏与分享">
-                <el-button><img src="../assets/home/custom.png" alt="" style="width: 25px">&ensp;
-                  lsgfish-resource-sharing
+            <div class="friendLinks">
+              <el-link v-for="(item, index) in friendlyLink" :key="index" target="_blank" :href="item.url"
+                :title="item.title">
+                <el-button><el-image :src="item.imgUrl || customIco" alt="" style="width: 25px">
+                    <template #error>
+                      <img :src="customIco" alt="" style="width: 25px">
+                    </template></el-image> &ensp;
+                  {{ item.name }}
                 </el-button>
               </el-link>
-              <el-link target="_blank" href="https://lilemy.cn/" title="小新知识分享平台">
-                <el-button><img src="@/assets/logo.xiaoxin.png" alt="" style="width: 25px">&ensp;
-                  小新知识分享平台
-                </el-button>
-              </el-link>
-            </template>
+            </div>
           </el-collapse-item>
           <el-collapse-item title="隐私政策" :name="3">
             <el-card class="privacyStatement">
-              <p>
-                本站与 Microsoft Clarity 合作，通过行为指标、热图和会话回放来捕捉您使用本站的轨迹，以改进本站的产品和服务。网站使用数据是通过第一方和第三方
+              <p>本站与 Microsoft Clarity 合作，通过行为指标、热图和会话回放来捕捉您使用本站的轨迹，以改进本站的产品和服务。网站使用数据是通过第一方和第三方
                 Cookie 以及其他跟踪技术捕获的，以确定产品和服务的受欢迎程度和在线活动。此外，本站将这些信息用于网站优化。有关
                 Microsoft 如何收集和使用您的数据的更多信息，请访问
                 <el-button link type="primary" :href="'https://privacy.microsoft.com/zh-CN/privacystatement'">Microsoft
@@ -113,18 +106,8 @@
             <p><el-icon>
                 <Edit />
               </el-icon>
-              其他：<el-text type="info" size="small" tag="p">
-                1. 导航网站的介绍页<br>
-                2. 文章的封面设置<br>
-                3. 新闻页面优化<br>
-                4. 音乐——歌词<br>
-                5. 文章和评论、公告都没有限制查询条数，每次都查询所有文章以及对应的所有评论<br>
-                6. 给登录和注册加一张竖屏背景图或磨砂效果<br>
-                7. 重构1999下载界面，重构角色图片关系表，添加其他9图，更换瀑布流实现插件<br>
-                8. SSG或SSR优化<br>
-                9. 按需引入elementplus组件和样式并减小打包体积：<br>
-                10. 聊天界面时间不能实时更新，可以设置监听器，切换分钟时页面的getDiffTime重新加载一下<br>
-                11. GenAI Script
+              其他：<el-text v-for="(item, index) in otherNoUpdated" type="info" size="small" tag="p">
+                {{ index + 1 }}.{{ item.text }}
               </el-text>
             </p>
           </el-collapse-item>
@@ -149,11 +132,8 @@
           <!--联系方式-->
           <el-collapse-item title="联系方式" :name="1">
             <template style="display: flex;justify-content: space-around">
-              <el-button link tag="a" type="primary"
-                @click="copyText('50011502001039', 'QQ号', 'tencent://message/?uin=1224021291')">QQ
-              </el-button>
-              <el-button link tag="a" type="primary"
-                @click="copyText('50011502001039', '微博主页链接', 'https://weibo.com/u/6869134755')">微博
+              <el-button v-for="item in contact" :key="item.id" link tag="a" type="primary"
+                @click="copyText(item.value, item.title, item.url)">{{ item.name }}
               </el-button>
             </template>
 
@@ -196,6 +176,8 @@ import Approve from "@/components/Approve.vue";
 //utils
 import myFunction from "@/utils/myFunction";
 import titleDiv from "@/utils/titleDiv";
+//files
+import customIco from "@/assets/home/custom.png"
 
 
 const noticeStore = useNoticeStore()
@@ -208,8 +190,48 @@ const router = useRouter()
 const { showFlag, changePage } = defineProps(['showFlag', 'changePage'])//切换页面的参数
 
 
+//站点链接
+const siteLink = [
+  { id: 1, type: "primary", title: "首页导航", name: "站点导航", pathName: "home", url: "" },
+  { id: 2, type: "primary", title: "论坛文章", name: "论坛文章", pathName: "forum", url: "" },
+  { id: 3, type: "primary", title: "重返未来相关界面", name: "重返未来官图筛选和下载", pathName: "reverse1999", url: "" },
+  { id: 4, type: "primary", title: "在线音乐播放", name: "在线音乐播放", pathName: "music", url: "" },
+]
 
+//联系方式
+const contactGroup = [
+  { id: 1, title: "点击前往QQ", name: "Resource sharing群", value: "1005993749", url: "https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V", imgUrl: "" },
+  { id: 2, title: "点击前往QQ", name: "金兔子特供部门🐰", value: "904688184", url: "https://qm.qq.com/q/Oq8R7YS6sM", imgUrl: "" },
+]
 
+//联系方式
+const contact = [
+  { id: 1, title: "QQ号", name: "QQ", value: "1224021291", url: "tencent://message/?uin=1224021291", imgUrl: "" },
+  { id: 2, title: "微博首页地址", name: "微博", value: "https://weibo.com/u/6869134755", url: "https://weibo.com/u/6869134755", imgUrl: "" },
+  { id: 3, title: "Gitee首页地址", name: "Gitee", value: "https://gitee.com/MuXi-Dream", url: "https://gitee.com/MuXi-Dream", imgUrl: "" },
+  { id: 4, title: "GitHub首页地址", name: "GitHub", value: "https://github.com/ADarkDream", url: "https://github.com/ADarkDream", imgUrl: "" },
+]
+
+//友情链接
+const friendlyLink = [
+  { id: 1, title: "资源收藏与分享", name: "lsgfish-resource-sharing", url: "" },
+  { id: 2, title: "小新书", name: "小新书", url: "https://lilemy.cn/", imgUrl: "https://lilemy.cn/favicon.ico" },
+]
+
+//其他待做
+const otherNoUpdated = [
+  { id: 1, text: "导航网站的介绍页" },
+  { id: 2, text: "文章的封面设置" },
+  { id: 3, text: "新闻页面优化" },
+  { id: 4, text: "音乐——歌词" },
+  { id: 5, text: "文章和评论、公告都没有限制查询条数，每次都查询所有文章以及对应的所有评论" },
+  { id: 6, text: "给登录和注册加一张竖屏背景图或磨砂效果" },
+  { id: 7, text: "重构1999下载界面，重构角色图片关系表，添加其他9图，更换瀑布流实现插件" },
+  { id: 8, text: "SSG或SSR优化" },
+  { id: 9, text: "按需引入elementplus组件和样式并减小打包体积：" },
+  { id: 10, text: "聊天界面时间不能实时更新，可以设置监听器，切换分钟时页面的getDiffTime重新加载一下" },
+  { id: 11, text: "GenAI Script" },
+]
 
 onMounted(() => {
   if (showFlag.show_num === 2 && updateNotes.value.length === 0)

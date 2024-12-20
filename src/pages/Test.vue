@@ -5,7 +5,7 @@
       <div style="margin-top: 30px;padding: 20px">
         <el-button @click="router.push({ name: 'chat' })">点击前往聊天室demo</el-button>
       </div>
-      <div><el-button @click="router.push({ name: 'music' })">点击前往音乐播放器demo</el-button></div>
+      <div><el-button @click="router.push({ name: 'music' })">点击前往音乐播放器</el-button></div>
       <h2>本地图片幻灯片(试题)</h2>
       <!-- <Slider /> -->
       <!-- {{ isLock }} -->

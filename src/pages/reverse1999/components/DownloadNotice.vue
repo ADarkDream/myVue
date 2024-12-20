@@ -108,7 +108,7 @@
               <Transition name="transition1">
                 <el-link v-if="showUrl" type="primary" href="https://github.com/ADarkDream/Download-Reverse1999"
                   target="_blank">
-                  Github
+                  GitHub
                 </el-link>
               </Transition>
               查看详细的说明
