@@ -28,8 +28,7 @@ coverage
 *.sw?
 
 *.tsbuildinfo
-/sitemap.xml
-/sitemap.xml.gz
-myVue.code-workspace
 
 helper.json
+public/sitemap.xml
+public/sitemap.xml.gz

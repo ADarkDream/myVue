@@ -29,14 +29,14 @@
           </p>
           <p>
             1.点击下载
-            <el-link href="https://wwo.lanzout.com/ifh7w228mjod" target="_blank" type="success">
-              EXE格式(38.5MB)[密码:1999]
+            <el-link href="https://wwqb.lanzout.com/iN0An2iuvrrg" target="_blank" type="success">
+              EXE格式(14.7MB)
             </el-link>
             ，双击运行，允许联网即可。
           </p>
           <p>
             2.点击下载
-            <el-link href="https://wwo.lanzout.com/i7vSy2298l5i" target="_blank" type="success">JS脚本压缩包(11KB)
+            <el-link href="https://wwqb.lanzout.com/inNks2iuwojg" target="_blank" type="success">JS脚本压缩包(2.4MB)
             </el-link>
             。使用方式：电脑配有
             <el-link type="primary"
@@ -46,8 +46,16 @@
             ，在脚本所在目录的CMD窗口输入命令
             <el-text type="primary">node i</el-text>
             安装依赖，然后输入
-            <el-text type="primary">node 1999server.js</el-text>
+            <el-text type="primary">npm run server</el-text>
             即可运行。
+          </p>
+          <p>3.另有下载器
+            <el-link href="https://wwqb.lanzout.com/iNPEp2iuvrih" target="_blank" type="success">
+              EXE格式(14.9MB)
+            </el-link>，使用方式请查看 <el-link type="primary"
+              @click="copyText('https://gitee.com/MuXi-Dream/download-reverse1999', '默默的Gitee链接', 'https://gitee.com/MuXi-Dream/download-reverse1999')"
+              title="点击前往download-reverse1999">Gitee
+            </el-link>
           </p>
           <p>
             <b>

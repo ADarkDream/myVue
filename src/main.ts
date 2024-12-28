@@ -44,3 +44,31 @@ app.use(hljsVuePlugin)//代码高亮，标签
 app.use(pinia)
 app.mount('#app')
 
+
+//全局初始化
+// document.addEventListener('DOMContentLoaded', () => {
+//     //微博JS SDK初始化
+//     console.log(12345, new Date().getTime());
+//     console.log(wb);
+//     wb.init({
+//         debug: false,
+//         appkey: '1271732898',
+//         timestamp: new Date(),//生成签名的时间戳
+//         noncestr: 'momo',//生成签名的随机串
+//         signature: 'momo',//签名
+//         scope: [//需要使用的JS接口列表
+//             'getNetworkType',
+//             // 'setBrowserTitle',
+//             // 'setSharingContent',
+//             // 'openMenu',
+//             // 'scanQRCode',
+//             // 'pickContact'
+//         ]
+//     });
+//     wb.ready(() => {
+//         console.warn("## init success");
+//     });
+//     wb.error((res) => {
+//         console.error("## init error: " + res);
+//     });
+// })

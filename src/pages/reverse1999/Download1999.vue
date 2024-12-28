@@ -127,6 +127,7 @@
                   <span v-else-if="isChoose === 1">取消全选</span>
                   <span v-else>退出勾选</span>
                 </el-button>
+                <el-button v-if="isChoose && isPC" type="success" @click="checkPort()">检查本地代理</el-button>
                 <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
                 </el-button>
                 <br>
@@ -614,30 +615,27 @@ function selectBtn(num?: number) {
 
 }
 
-//端口代理是否开启的标志
+//本地代理服务器是否开启的标志
 const isOpenProxy = ref(false)
 
-//检查代理端口是否打开
+//检查本地代理服务器是否打开
 const checkPort = async () => {
   try {
-    const result = await axios({
-      url: 'http://127.0.0.1:3000/',
-    })
-    console.log(result)
-    const { status, msg } = result.data
-    if (status === 200) {
-      ElMessage.success(msg)
+    const result = await axios('http://127.0.0.1:3000')
+    console.log("result", result);
+
+    if (result?.data?.status === 200) {
+      ElMessage.success(result?.data?.msg)
       isOpenProxy.value = true
       // return true
     } else {
       isOpenProxy.value = false
-      ElMessage.error('代理端口未正确运行，请检查错误原因')
+      ElMessage.error('本地代理服务器未正确运行，请检查错误原因')
       // return false
     }
   } catch (error) {
-    console.log('发生错误：')
-    console.log(error)
-    ElMessage.error('代理端口检查发生错误')
+    console.error('发生错误：', error)
+    ElMessage.error('本地代理服务器检查发生错误')
     isOpenProxy.value = false
   }
 }
@@ -678,10 +676,11 @@ const downloadImg = async (url: string, imgName: string, imgPath: string) => {
   //将下载链接替换为可使用地址
   if (isOpenProxy.value)   //如果有端口代理
     imageUrl = url.replace('https://gamecms-res.sl916.com', 'http://localhost:3000/download1999')
-  else if (!!imgPath) //没有端口代理
+  else if (!!imgPath) { //没有端口代理
     imageUrl = import.meta.env.VITE_QINIU_URL + imgPath.replace(/^\./, '')//七牛云备份,去掉路径中第一个点
-  else//没有端口代理且服务器没有备份
+  } else {//没有端口代理且服务器没有备份
     imageUrl = url.replace(axios.defaults.baseURL + '/download1999', 'http://localhost:3000/download1999')
+  }
   try {
     const response = await fetch(imageUrl)
     const blob = await response.blob()
