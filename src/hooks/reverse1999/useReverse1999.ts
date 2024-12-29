@@ -35,19 +35,27 @@ export default function () {
             else if (temp_r === 'all') allRoleInfo.value = roleList
             else return
             //获取阵营列表
-            const campList = new Set<string>()
-            const raceList = new Set<string>()
+            const campObj = {} as Record<string, number>
+            const raceObj = {} as Record<string, number>
             roleList.forEach(item => {
-                campList.add(item.camp)
-                raceList.add(item.race)
+                if (!item.camp || !item.race) return
+                if (!campObj[item.camp]) campObj[item.camp] = 1
+                else campObj[item.camp] += 1
+                if (!raceObj[item.race]) raceObj[item.race] = 1
+                else raceObj[item.race] += 1
             })
-            console.log('list', campList, raceList);
 
-            campList.delete('')   //删除空值
-            raceList.delete('')
+            campInfo.value = Object.keys(campObj).map(item => {
+                return { name: item, count: campObj[item] }
+            })
+            raceInfo.value = Object.keys(raceObj).map(item => {
+                return { name: item, count: raceObj[item] }
+            })
+            // raceInfo.value = Object.keys(raceObj).map(item => {
+            //     return `${item}[${raceObj[item]}]`
+            // })
 
-            campInfo.value = Array.from(campList)
-            raceInfo.value = Array.from(raceList)
+
             console.log(campInfo.value, raceInfo.value);
 
         } catch (error) {

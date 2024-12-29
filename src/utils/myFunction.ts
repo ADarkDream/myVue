@@ -156,14 +156,15 @@ const myFunction = {
     },
 
 
-    //清除未修改的数据,如果未修改返回{}
-    diffObj: <T>(newData: T, oldData: T) => {
-        return Object.keys(newData).concat(Object.keys(oldData))
-            .filter(key => newData[key as keyof T] !== oldData[key as keyof T])
-            .reduce((result: Record<string, any>, key) => {
-                result[key] = newData[key as keyof T] // 返回newData对象的属性
-                return result //最后返回的结果属于ReverseImgInfo的一部分
-            }, {})
+    diffObj: <T>(newData: T, oldData: T): Partial<T> => {
+        const result: Partial<T> = {};
+        const keys = new Set([...Object.keys(newData), ...Object.keys(oldData)]);
+        keys.forEach((key) => {
+            if (newData[key as keyof T] !== oldData[key as keyof T]) {
+                result[key as keyof T] = newData[key as keyof T];
+            }
+        });
+        return result;
     },
 
     //el-table中按时间顺序和逆序排列

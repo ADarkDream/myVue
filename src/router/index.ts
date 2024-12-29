@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
-
 // import Home from "@/pages/home/Home.vue"//常用，不异步加载
 const Home = () => import("@/pages/home/Home.vue")
 const Forum = () => import("@/pages/forum/Forum.vue");

@@ -98,7 +98,7 @@
     </el-header>
     <el-main>
       <el-text tag="p" type="primary" style="margin: 5px auto" v-if="!isAdmin">
-        个人收集略有不足，如有错漏还请向我反馈。非常感谢！暂时关闭游客编辑功能。
+        个人收集略有不足，如有错漏还请向我反馈。非常感谢！注册登录之后可编辑。
         <el-text type="danger">本页面暂未适配移动端</el-text>。</el-text>
       <el-table ref="tableRef" :data="tableData" style="width: 100%"
         :max-height="isPC ? (screenHeight - 240) : (screenHeight - 190)" stripe border highlight-current-row
@@ -111,7 +111,7 @@
         <el-table-column prop="id" label="ID" min-width="50" align="center" sortable v-if="isAdmin" />
         <el-table-column prop="version" label="版本" min-width="100" align="center">
           <template #default="scope">
-            <div v-if="isEditRow === scope.$index">
+            <div v-if="isAdmin && isEditRow === scope.$index">
               <el-select placeholder="选择版本" v-model="imgInfo.version">
                 <el-option v-for="item in versionOption" :key="item.value" :label="item.text" :value="item.value" />
               </el-select>
@@ -125,7 +125,7 @@
         </el-table-column>
         <el-table-column prop="imgUrl" sum-text :label="isEditRow === -1 ? '图片' : '链接'" width="130" align="center">
           <template #default="scope">
-            <div v-if="isEditRow === scope.$index">
+            <div v-if="isAdmin && isEditRow === scope.$index">
               <el-input type="textarea" v-model="imgInfo.imgUrl" placeholder="请输入图片链接" />
             </div>
             <!--preview-teleported解决图片显示不全的问题-->
@@ -155,7 +155,7 @@
         </el-table-column>
         <el-table-column prop="newName" label="图片名" min-width="150" align="center">
           <template #default="scope">
-            <div v-if="isEditRow === scope.$index">
+            <div v-if="isAdmin && isEditRow === scope.$index">
               <el-input type="textarea" v-model="imgInfo.newName" placeholder="请输入图片名称" />
             </div>
             <div v-else>
@@ -165,7 +165,7 @@
         </el-table-column>
         <el-table-column prop="oldName" label="官方原名" min-width="150" align="center">
           <template #default="scope">
-            <div v-if="isEditRow === scope.$index">
+            <div v-if="isAdmin && isEditRow === scope.$index">
               <el-input type="textarea" v-model="imgInfo.oldName" placeholder="请输入图片名称" />
             </div>
             <div v-else>
@@ -180,16 +180,17 @@
         <el-table-column prop="created_time" label="整理时间" min-width="150" align="center">
           <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" min-width="100" align="center" v-if="isAdmin">
+        <el-table-column fixed="right" label="操作" min-width="100" align="center">
           <template #default="scope">
             <div v-if="isEditRow !== scope.$index">
               <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row)">
+              <el-button link type="danger" size="small" :disabled="!isAdmin"
+                @click="deleteRow(scope.$index, scope.row)">
                 删除
               </el-button>
             </div>
             <div v-else>
-              <el-button link type="primary" size="small" @click="handleCancel">取消
+              <el-button link type="info" size="small" @click="handleCancel">取消
               </el-button>
               <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(imgInfo, scope.row)">
                 更新
@@ -241,7 +242,7 @@ const userInfoStore = useUserInfoStore()
 
 const { screenHeight, isPC } = toRefs(responsiveStore)
 const { allRoleInfo, campInfo, versionOption } = toRefs(reverse1999Store)
-const { isAdmin } = toRefs(userInfoStore)
+const { isAdmin, isLogin } = toRefs(userInfoStore)
 const { getTime } = useTimeStamp()
 const { getVersion } = useReverse1999()
 const { deepEqual, diffObj } = myFunction
@@ -368,9 +369,9 @@ const getVersionInfo = async () => {
 
     sourceData.value = campInfo.value.map((item, index) => {
       const children = allRoleInfo.value.map(role => {
-        if (role.camp === item) return { label: role.name, value: role.id }
+        if (role.camp === item.name) return { label: role.name, value: role.id }
       }).filter(item => item !== undefined)//过滤掉空值
-      return { label: item, value: index, children }
+      return { label: item.name, value: index, children }
     })
 
     console.log('sourceData', sourceData)
@@ -463,6 +464,7 @@ const isEditRow = ref<number>(-1)//编辑标记
 
 //编辑图片信息(修改编辑标记)
 const handleEdit = (index: number, row: ReverseImgInfo) => {
+  if (!isLogin.value) return ElMessage.warning('只有用户或管理员才能编辑图片信息')
   isEditRow.value = index //编辑的行
   if (!!row.tags) roleIDList.value = row.tags.split(',')//角色id数组
   else roleIDList.value = []
@@ -502,14 +504,14 @@ function updateRow(data: ReverseImgInfo, oldData: ReverseImgInfo) {
     }
   }).then(result => {
     // console.log(result)
-    const { msg } = result.data
+    const { status, msg } = result.data
     //判断是否修改文件路径
     // if (newPath !== undefined) data.imgPath = newPath
     //将修改后的信息显示出来
     Object.assign(oldData, data)
     //去除编辑标记
     isEditRow.value = -1
-    ElMessage.success(msg)
+    if (status === 200) ElMessage.success(msg)
   }).catch(error => {
     console.log('发生错误：')
     console.log(error)

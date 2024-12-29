@@ -40,7 +40,7 @@
             </el-collapse-item>
             <el-collapse-item title="筛选条件【所有条件不选则默认全选】" name="2">
               <el-form :label-position="isPC ? 'left' : 'top'" :size="elSize">
-                <el-form-item label="选择版本：">
+                <el-form-item label="选择版本[默认全选]：" style="flex-direction: column">
                   <el-checkbox v-model="checkAllVersions" :indeterminate="isIndeterminateVersion"
                     @change="handleCheckAllVersionChange">
                     全选
@@ -51,38 +51,41 @@
                       :value="item.version" />
                   </el-checkbox-group>
                 </el-form-item>
-                <el-form-item label="选择角色：">
+                <el-form-item label="选择角色[默认全选]：" style="flex-direction: column">
+                  <!-- <el-checkbox v-model="checkAllRoles" :indeterminate="isIndeterminateRole"
+                    @change="handleCheckAllRoleChange"><el-text type="primary">全选角色</el-text>
+                  </el-checkbox> -->
                   <el-button-group size="small" type="primary" :style="isPC ? 'margin:5px' : 'margin:5px auto'">
                     <el-button @click="reset">清空所有选择</el-button>
                     <el-button @click="router.push({ name: 'images' })">图片信息表</el-button>
                     <el-button @click="router.push({ name: 'roles' })">角色信息表</el-button>
                   </el-button-group>
-                  <div class="roleSort">
+
+                  <!-- <div class="roleSort">
                     <el-text type="primary">是否包含角色：</el-text>
                     <el-checkbox v-model="checkAllRoles" :indeterminate="isIndeterminateRole"
-                      @change="handleCheckAllRoleChange">全选角色(仅包含角色)
+                      @change="handleCheckAllRoleChange">全选
                     </el-checkbox>
                     <el-checkbox v-model="checkNoRole" :indeterminate="isIndeterminateNoRole"
                       @change="handleCheckNoRoleChange">全选无角色(或未命名角色)
                     </el-checkbox>
-                  </div>
+                  </div> -->
                   <div class="roleSort">
                     <!--遍历阵营-->
                     <el-text type="primary">角色所属阵营：</el-text>
-                    <el-checkbox v-for="(item, index) in campInfo" :key="index" @click="roleTypeChange(item, '')"
-                      @change="handleCheckCampChange">
-                      {{ item }}
+                    <el-checkbox v-for="({ name, count }, index) in campInfo" :key="index"
+                      @click="roleTypeChange(name, '')" @change="handleCheckCampChange">
+                      {{ name }}[{{ count }}]
                     </el-checkbox>
                   </div>
                   <div class="roleSort">
                     <!--遍历种族-->
                     <el-text type="primary">角色所属种族：</el-text>
-                    <el-checkbox v-for="(item, index) in raceInfo" :key="index" @click="roleTypeChange('', item)"
-                      @change="handleCheckCampChange">
-                      {{ item }}
+                    <el-checkbox v-for="({ name, count }, index) in raceInfo" :key="index"
+                      @click="roleTypeChange('', name)" @change="handleCheckCampChange">
+                      {{ name }}[{{ count }}]
                     </el-checkbox>
                   </div>
-
                   <el-checkbox-group v-model="condition.roles" style="text-align: left;draggable:false"
                     @change="handleCheckedRolesChange">
                     <el-text type="primary">角色常用名称：</el-text>
@@ -183,7 +186,7 @@
               </el-text>
               <br>
               <el-button v-if="!showPayCode" @click="showPayCode = true" type="success">点击展示微信赞赏码</el-button>
-              <el-image v-else style="width: 200px" lazy :src="pay_code_src" />
+              <el-image v-else style="width: 200px" :src="pay_code_src" />
             </el-collapse-item>
           </el-collapse>
         </el-card>
@@ -209,25 +212,25 @@
         </div>
 
       </el-affix>
-      <el-main>
-        <!--    第三方库，瀑布流标签-->
-        <wc-flow-layout :gap="10" :cols="colNum">
-          <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl, item.imgName, $event)"
-            class="preImg" :id="'imgDiv-' + item.imgIndex">
-            <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-' + item.imgIndex" :max-scale="7" :min-scale="0.2"
-              :preview-src-list="isChoose !== 0 ? [] : previewImgList" :initial-index="item.imgIndex" fit="scale-down"
-              lazy>
-              <template #error>
-                <div class="image-slot">
-                  <el-icon style="width: 50px">
-                    <icon-picture />
-                  </el-icon>
-                </div>
-              </template>
-            </el-image>
-          </div>
-        </wc-flow-layout>
-      </el-main>
+
+      <!--    第三方库，瀑布流标签 不能包裹在el-container中,懒加载会失效-->
+      <wc-flow-layout :gap="10" :cols="colNum">
+        <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl, item.imgName, $event)"
+          class="preImg" :id="'imgDiv-' + item.imgIndex">
+          <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-' + item.imgIndex" :max-scale="7" :min-scale="0.2"
+            :preview-src-list="isChoose !== 0 ? [] : previewImgList" :initial-index="item.imgIndex" fit="scale-down"
+            lazy>
+            <template #error>
+              <div class="image-slot">
+                <el-icon style="width: 50px">
+                  <icon-picture />
+                </el-icon>
+              </div>
+            </template>
+          </el-image>
+        </div>
+      </wc-flow-layout>
+
       <!--  下载须知公告界面-->
       <el-dialog v-model="isShowDownloadNotice" :width="isPC ? '60%' : '90%'" :show-close="!isPC" style="z-index: 100"
         destroy-on-close>
@@ -307,7 +310,7 @@ const condition = reactive<ImgParams>({
 }
 )
 //用户上一次查询的参数
-const oldCondition = reactive<ImgParams>({
+const oldCondition = ref<ImgParams>({
   version: ['all'],
   roles: [],
   sort: 2,
@@ -381,18 +384,25 @@ const handleCheckedVersionsChange = () => {
 }
 
 //全选角色：单选按钮的状态改变
-const handleCheckAllRoleChange = (val: boolean) => {
-  if (val) roleInfo.value.forEach(item => condition.roles.push(item.id))
+const handleCheckAllRoleChange = (checkAll: boolean) => {
+  console.log("checkAll", checkAll);
+  if (checkAll) roleInfo.value.forEach(item => {
+    if (!item.id) console.log(item.id, item);
+
+    condition.roles.push(item.id)
+  })
   else condition.roles = []
   isIndeterminateRole.value = false  //取消全选按钮符号 -
-  console.log(condition.roles)
+  // console.log("触发全选事件", condition.roles)
 }
 //单选角色：全选按钮的状态改变
 const handleCheckedRolesChange = () => {
+  console.log(condition.roles.length, roleInfo.value.length);
+
   const checkedCount = condition.roles.length
   checkAllRoles.value = checkedCount === roleInfo.value.length //全选时变更按钮为√
   isIndeterminateRole.value = checkedCount > 0 && checkedCount < roleInfo.value.length//未全选时变更按钮为 -
-  console.log(condition.roles)
+  // console.log("触发单选事件", condition.roles)
 }
 
 const typeFlag = ref(1)
@@ -431,9 +441,9 @@ const handleCheckCampChange = (val: boolean) => {
 //全选无角色时：全选按钮的状态改变
 const handleCheckNoRoleChange = (val: boolean) => {
   const newList = new Set(condition.roles)  //Set()不会保存重复值
-  if (val) newList.add(1999) //没有角色的图存的角色id为1999
-  else newList.delete(1999)
-  condition.roles.splice(0, condition.roles.length, ...newList)
+  // if (val) newList.add(0) //没有角色的图存的角色id为0
+  // else newList.delete(0)
+  condition.roles = [...newList]
 }
 
 //重置角色选择
@@ -466,19 +476,20 @@ const getImages = async () => {
     checkAllRoles.value = false
     checkNoRole.value = false
   }
+  console.log("筛选条件:", condition, oldCondition.value);
 
   //判断筛选条件是否改变
-  if (deepEqual(condition, oldCondition, true)) return ElMessage.info('筛选条件未作改变，已取消查询')
-  else {
-    // 将 a 的值同步到 b，包括空值
-    Object.keys(oldCondition).forEach(key => {
+  if (deepEqual(condition, oldCondition.value, true)) return ElMessage.info('筛选条件未作改变，已取消查询')
+  // else {
+  // 将 a 的值同步到 b，包括空值
+  // Object.keys(oldCondition.value).forEach(key => {
 
-      if (condition.hasOwnProperty(key)) {
-        oldCondition[key] = condition[key]
-      } else delete oldCondition[key];  // 删除 b 中 a 中不存在的属性
+  //   if (condition.hasOwnProperty(key)) {
+  //     oldCondition.value[key] = oldCondition.value[key]
+  //   } else delete oldCondition.value[key];  // 删除 b 中 a 中不存在的属性
 
-    })
-  }
+  // })
+  // }
   try {
     const result = await axios<ResultData<{ imgList: ReverseImg[] }>>({
       url: '/getWallpaper',
@@ -498,7 +509,15 @@ const getImages = async () => {
       previewImgList.push(item.imgUrl)
     })
     console.log(imgList)
+    // 将 a 的值同步到 b，包括空值
+    // Object.keys(oldCondition.value).forEach(key => {
 
+    //   if (condition.hasOwnProperty(key)) {
+    //     oldCondition.value[key] = oldCondition.value[key]
+    //   } else delete oldCondition.value[key];  // 删除 b 中 a 中不存在的属性
+
+    // })
+    oldCondition.value = JSON.parse(JSON.stringify(condition))
     autoCol()   //再次触发自动布局
     // activeIndex.value = undefined
   } catch (error) {

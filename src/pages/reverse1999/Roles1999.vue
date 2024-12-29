@@ -14,13 +14,15 @@
             <el-col :md="3" :sm="4">
               <el-select v-model="searchInfo.camp" default-first-option>
                 <el-option label="全选阵营" value="" />
-                <el-option v-for="(item, index) in campInfo" :key="index" :label="item" :value="item" />
+                <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'"
+                  :value="name" />
               </el-select>
             </el-col>
             <el-col :md="3" :sm="4">
               <el-select v-model="searchInfo.race" default-first-option>
                 <el-option label="全选种族" value="" />
-                <el-option v-for="(item, index) in raceInfo" :key="index" :label="item" :value="item" />
+                <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'"
+                  :value="name" />
               </el-select>
             </el-col>
             <el-col :md="3" :sm="4">
@@ -48,13 +50,15 @@
         <el-col :sm="4">
           <el-select v-model="searchInfo.camp" default-first-option>
             <el-option label="全选阵营" value="" />
-            <el-option v-for="(item, index) in campInfo" :key="index" :label="item" :value="item" />
+            <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'"
+              :value="name" />
           </el-select>
         </el-col>
         <el-col :sm="4">
           <el-select v-model="searchInfo.race" default-first-option>
             <el-option label="全选种族" value="" />
-            <el-option v-for="(item, index) in raceInfo" :key="index" :label="item" :value="item" />
+            <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'"
+              :value="name" />
           </el-select>
         </el-col>
         <el-col :sm="3">
@@ -85,11 +89,12 @@
           <template #default="scope">
             <template v-if="isEditRow === scope.$index">
               <el-select placeholder="选择阵营" v-model="newInfo.camp" default-first-option>
-                <el-option v-for="(item, index) in campInfo" :key="index" :label="item" :value="item" />
+                <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'"
+                  :value="name" />
               </el-select>
             </template>
-            <template v-for="(item, index) in campInfo" :key="index" v-else>
-              <div v-if="item === scope.row.camp">{{ item }}</div>
+            <template v-else>
+              {{ scope.row.camp }}
             </template>
           </template>
         </el-table-column>
@@ -99,11 +104,12 @@
           <template #default="scope">
             <template v-if="isEditRow === scope.$index">
               <el-select placeholder="选择种族" v-model="newInfo.race" default-first-option>
-                <el-option v-for="(item, index) in raceInfo" :key="index" :label="item" :value="item" />
+                <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'"
+                  :value="name" />
               </el-select>
             </template>
-            <template v-for="(item, index) in raceInfo" :key="index" v-else>
-              <div v-if="item === scope.row.race">{{ item }}</div>
+            <template v-else>
+              {{ scope.row.race }}
             </template>
           </template>
         </el-table-column>
@@ -120,16 +126,18 @@
         <el-table-column prop="updated_time" label="更新时间" min-width="70" align="center">
           <template #default="scope">{{ getDiffTime(scope.row.updated_time) }}</template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" min-width="100" align="center" v-if="isAdmin">
+        <el-table-column fixed="right" label="操作" min-width="100" align="center">
           <template #default="scope">
-            <div v-if="isEditRow !== scope.$index">
+            <div v-if="scope.row.id === 0"></div>
+            <div v-else-if="isEditRow !== scope.$index">
               <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row.id)">
+              <el-button link type="danger" size="small" :disabled="!isAdmin"
+                @click="deleteRow(scope.$index, scope.row.id)">
                 删除
               </el-button>
             </div>
             <div v-else>
-              <el-button link type="primary" size="small" @click="handleCancel">取消
+              <el-button link type="info" size="small" @click="handleCancel">取消
               </el-button>
               <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newInfo, scope.row)">
                 更新
@@ -191,7 +199,7 @@ const { getVersion } = useReverse1999()
 
 //屏幕高度
 const { screenHeight, isPC } = toRefs(responsiveStore)
-const { isAdmin } = toRefs(userInfoStore)
+const { isAdmin, isLogin } = toRefs(userInfoStore)
 
 onMounted(async () => {
   await getVersion({ version: false, role: 'all' })
@@ -298,6 +306,7 @@ const isEditRow = ref<number>(-1)
 
 //编辑角色信息(修改编辑标记)
 const handleEdit = (index: number, row: Role) => {
+  if (!isLogin.value) return ElMessage.warning('只有用户或管理员才能编辑角色信息')
   isEditRow.value = index
   newInfo.value = Object.assign(newInfo.value, row)
 }
@@ -332,14 +341,14 @@ function updateRow(data: Role, id: number, oldData: Role) {
   //     }
   //   }).then(result => {
   //     // console.log(result)
-  //     const {msg} = result.data
+  //     const {status,msg} = result.data
   //     //更新修订时间为当前时间
   //     data.updated_time = new Date().toISOString()
   //     //将修改后的信息显示出来
   //     Object.assign(oldData, data)
   //     //去除编辑标记
   //     isEditRow.value = -1
-  //     ElMessage.success(msg)
+  //     if (status === 200)  ElMessage.success(msg)
   //   }).catch(error => {
   //     console.log('发生错误：')
   //     console.log(error)
@@ -351,6 +360,7 @@ function updateRow(data: Role, id: number, oldData: Role) {
 
 
 const deleteRow = (index: number, id: number) => {
+  if (!isAdmin.value) return ElMessage.warning('只有管理员才能删除角色信息')
   ElMessageBox.confirm(
     '确认删除该角色信息吗?',
     'Warning',
@@ -423,13 +433,13 @@ const export_excel = () => {
 
   // 创建工作簿
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "1999角色表");
+  XLSX.utils.book_append_sheet(workbook, worksheet, "重返未来1999角色表");
 
   // 导出 Excel
   // XLSX.writeFile(workbook, "1999角色表(部分).xlsx") // 可以直接保存，但saveAs兼容更好
   const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
   const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-  saveAs(blob, "1999角色表(部分).xlsx");
+  saveAs(blob, "重返未来1999角色表(部分).xlsx");
 }
 
 
