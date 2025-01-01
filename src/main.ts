@@ -1,5 +1,3 @@
-import './assets/main.css'
-
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from "@/router";
@@ -13,7 +11,6 @@ import 'element-plus/theme-chalk/base.css'
 //导入夜间主题
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'wc-flow-layout'
-
 import pinia from '@/store'
 
 /*调色盘*/
@@ -29,7 +26,8 @@ import "highlight.js/styles/github-dark.css";// 选择你喜欢的主题样式
 import '@/assets/custom_el.css'
 // 自定义动画样式
 import '@/assets/animation.css'
-
+//自定义主题样式
+import '@/assets/main.css'
 
 
 const app = createApp(App)

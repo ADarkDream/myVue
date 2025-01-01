@@ -3,7 +3,7 @@
 // (双重密码确认的规则validatePassword单独在RegisterForm,不知道咋传参ruleForm.password)
 
 const verifyRules = {
-	//验证昵称
+	/**验证昵称*/
 	userName: (rule: any, value: string, callback: any) => {
 		if (!value) {
 			callback(new Error('昵称不能为空，请输入2-10位中文、字母、或数字！'))
@@ -17,7 +17,7 @@ const verifyRules = {
 			}
 		}, 1000)
 	},
-	//验证邮箱
+	/**验证邮箱*/
 	email: (rule: any, value: string, callback: any) => {
 		if (!value) {
 			callback(new Error('邮箱不能为空！请输入邮箱地址！'))
@@ -31,7 +31,7 @@ const verifyRules = {
 			}
 		}, 1000)
 	},
-	//验证密码
+	/**验证密码*/
 	password: (rule: any, value: string, callback: any) => {
 		if (!value) {
 			callback(new Error('密码不能为空！请输入密码！'))
@@ -55,7 +55,7 @@ const verifyRules = {
 	// 			callback()
 	// 		}
 	// 	},
-	//验证邮箱验证码
+	/**验证邮箱验证码*/
 	emailCode: (rule: any, value: string, callback: any) => {
 		if (value === '') {
 			callback(new Error('请输入邮箱验证码，大小写敏感！'))
@@ -65,7 +65,7 @@ const verifyRules = {
 			callback()
 		}
 	},
-	//验证隐私政策
+	/**验证隐私政策*/
 	policy: (rule: any, value: boolean, callback: any) => {
 		if (value === false) callback(new Error('请先阅读并勾选隐私政策！'))
 		else callback()
@@ -83,6 +83,12 @@ const verifyRules = {
 	// 		return callback(new Error('请输入正确的邮箱地址！'))
 	// 	else
 	// 		return callback()
-	// }
+	// },
+	/**验证非空字符串*/
+	text: (rule: any, value: string | number, callback: any) => {
+		if (!value && value !== '0' && value !== 0) callback(new Error('该字段不能为空！'))
+		else callback()
+	},
+
 }
 export default verifyRules

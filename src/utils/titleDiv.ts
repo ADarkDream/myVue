@@ -68,7 +68,6 @@ export default {
             })
         }
         console.log('已删除全部本地cookie');
-    }
-
+    },
 }
 

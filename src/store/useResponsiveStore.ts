@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, reactive, type Ref } from "vue";
+import { ref, reactive, type Ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 export const useResponsiveStore = defineStore('responsive', () => {
@@ -10,8 +10,10 @@ export const useResponsiveStore = defineStore('responsive', () => {
     //容器高度
     const containerHeight = ref<number>(isPC.value ? (screenHeight.value - 80) : (screenHeight.value - 40))
     const isDark = ref<boolean>(sessionStorage.getItem('isDark') === '1' || false)
-    const isHome = ref<boolean>(router.currentRoute.value.path === '/')
-    const isForum = ref<boolean>(!!router.currentRoute.value.path.concat('/forum'))
+    const isHome = ref<boolean>(true)
+    const isForum = ref<boolean>(false)
+    const isReverse1999 = ref<boolean>(false)
+    const showPlayer = ref(false)
     //控制PC和手机的dialog宽度
     const dialogWidth = ref<string>(isPC.value ? '50%' : '90%')
     const dialogWidth2 = ref<string>(isPC.value ? '40%' : '80%')
@@ -27,9 +29,7 @@ export const useResponsiveStore = defineStore('responsive', () => {
     //     dialogWidth.value = '50%'
     //     dialogWidth2.value = '40%'
     // }
-    window.addEventListener('resize', () => {
-        screen()
-    })
+
 
     function screen() {
         //获取当前屏幕宽度
@@ -69,7 +69,7 @@ export const useResponsiveStore = defineStore('responsive', () => {
         }
     }
 
-    //region移动端计算滑动距离来实现左右翻页
+    //#region移动端计算滑动距离来实现左右翻页
     //移动端鼠标滑动
     const direction = reactive({
         start_x: 0,
@@ -142,9 +142,33 @@ export const useResponsiveStore = defineStore('responsive', () => {
                 // ElMessage.info("点击！")
                 break
         }
+
+    }
+    //#endregion
+
+    //判断当前页面,改变导航栏的按钮显隐
+    // checkRoute(router.currentRoute.value.path)
+
+    function checkRoute(path: string) {
+        console.log('检查路由：', path)
+        isHome.value = path === '/'
+        isForum.value = path.includes('/forum')
+        isReverse1999.value = isHome.value || path.includes('/reverse1999')
+        //初始不显示，显示之后就不再判断
+        if (!showPlayer.value)
+            showPlayer.value = path.includes('/music')
     }
 
-    //endregion
+    //监听页面调整
+    window.addEventListener('resize', () => {
+        screen()
+    })
+    //监听路由变化
+    watch(router.currentRoute, (newValue, oldValue) => {
+        if (newValue === oldValue) return
+        checkRoute(newValue.path)
+    })
+
     // 向外暴露
     return {
         screen,
@@ -158,6 +182,8 @@ export const useResponsiveStore = defineStore('responsive', () => {
         isDark,
         isHome,
         isForum,
+        isReverse1999,
+        showPlayer,
         dialogWidth,
         dialogWidth2,
         elSize,

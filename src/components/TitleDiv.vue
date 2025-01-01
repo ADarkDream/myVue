@@ -4,52 +4,44 @@
     <el-row class="title" v-if="isPC">
       <!--左上角-->
       <el-col :lg="5" :md="6" :sm="8" class="title-left">
-        <!--    返回键-->
-        <el-button :icon="ArrowLeftBold" @click="router.back()" v-if="!isHome">返回</el-button>
-        <!--首页-->
-        <el-button @click="goTo('home')" plain :icon="HomeFilled" v-if="!isHome">首页</el-button>
-        <!--更换壁纸-->
-        <el-button :icon="Switch" class="bgBtn" @click="toggleBG({ getNewBg: true })" v-if="isHome">更换壁纸</el-button>
-        <!--重返未来-->
-        <el-button :icon="Download" class="bgBtn" @click="goTo('download')" v-if="isHome">
-          重返未来
-        </el-button>
-        <!--日夜切换-->
-        <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日" class="isDarkBtn">
-          <template #active-action>
-            <el-icon>
-              <Moon />
-            </el-icon>
-          </template>
-          <template #inactive-action>
-            <el-icon>
-              <Sunny />
-            </el-icon>
-          </template>
-        </el-switch>
+        <el-space spacer="">
+          <div v-if="!isHome">
+            <!--返回键-->
+            <el-button :icon="ArrowLeftBold" @click="router.back()">返回</el-button>
+            <!--首页-->
+            <el-button @click="goTo('home')" plain :icon="HomeFilled">首页</el-button>
+          </div>
+          <div v-else>
+            <!--更换壁纸-->
+            <el-button :icon="Switch" class="bgBtn" @click="toggleBG({ getNewBg: true })">更换壁纸</el-button>
+            <!--重返未来-->
+            <el-button :icon="Download" class="bgBtn" @click="goTo('download')">
+              重返未来
+            </el-button>
+          </div>
+          <!--日夜切换-->
+          <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日" class="isDarkBtn">
+            <template #active-action>
+              <el-icon>
+                <Moon />
+              </el-icon>
+            </template>
+            <template #inactive-action>
+              <el-icon>
+                <Sunny />
+              </el-icon>
+            </template>
+          </el-switch>
+        </el-space>
       </el-col>
       <!--中间导航-->
       <el-col :lg="13" :md="11" :sm="8">
-        <!--            <el-space spacer="">-->
-        <!--              &lt;!&ndash;        首页&ndash;&gt;-->
-        <!--              <router-link :to="{name:'home'}" replace>-->
-        <!--                <el-button plain :icon="HomeFilled" v-show="isHome">-->
-        <!--                  首页-->
-        <!--                </el-button>-->
-        <!--              </router-link>-->
-        <!--              &lt;!&ndash;        论坛&ndash;&gt;-->
-        <!--              <router-link :to="{name:'center'}" v-show="!isHome" replace >-->
-        <!--                <el-button plain :icon="Comment">-->
-        <!--                  论坛-->
-        <!--                </el-button>-->
-        <!--              </router-link>-->
-        <!--            </el-space>-->
       </el-col>
       <!--右上角-->
       <el-col :lg="6" :md="7" :sm="8" class="title-right">
         <el-space>
           <!--播放指示器-->
-          <el-button link @click="togglePlayerVisible()" v-if="showPlayer">
+          <el-button link @click="togglePlayerVisible()" v-show="showPlayer">
             <el-tooltip content="显示播放器" placement="bottom" effect="light">
               <SVG_music class="musicIcon" :class="{ paused: !isPlaying }" />
             </el-tooltip>
@@ -118,6 +110,10 @@
                 <el-dropdown-item @click="goTo('hall')" :icon="Comment">
                   聊天室demo
                 </el-dropdown-item>
+                <!--重返未来-->
+                <el-dropdown-item @click="goTo('download')" :icon="Download" v-if="!isReverse1999">
+                  重返未来
+                </el-dropdown-item>
                 <!--音乐播放器-->
                 <el-dropdown-item @click="goTo('music')">
                   <SVG_music class="el-icon" />
@@ -143,18 +139,22 @@
     </el-row>
 
     <!--  移动端标题-->
-    <el-row class="title" v-if="!isPC" :style="(isPC || route.path === '/') ? '' : 'background-color: rgba(0,0,0,0.4)'">
+    <el-row class="title" v-if="!isPC" :style="(isPC || isHome) ? '' : 'background-color: rgba(0,0,0,0.4)'">
       <!--左上角-->
 
       <el-space class="title-left" spacer="">
-        <!--侧边导航栏-->
-        <el-button @click="emitter.emit('showAsideBtn', 2)" plain :icon="MoreFilled" v-if="isHome" />
-        <!--重返未来1999-->
-        <el-button @click="goTo('download')" plain :icon="Download" v-if="isHome" />
-        <!--    返回键-->
-        <el-button :icon="ArrowLeftBold" @click="router.back()" plain v-if="!isHome" />
-        <!--首页-->
-        <el-button @click="goTo('home')" plain :icon="HomeFilled" v-if="!isHome" />
+        <div v-if="!isHome">
+          <!--    返回键-->
+          <el-button :icon="ArrowLeftBold" @click="router.back()" plain />
+          <!--首页-->
+          <el-button @click="goTo('home')" plain :icon="HomeFilled" />
+        </div>
+        <div v-else>
+          <!--侧边导航栏-->
+          <el-button @click="emitter.emit('showAsideBtn', 2)" plain :icon="MoreFilled" />
+          <!--重返未来1999-->
+          <el-button @click="goTo('download')" plain :icon="Download" />
+        </div>
         <!--日夜切换-->
         <el-switch v-model="isDark" inline-prompt active-text="夜" inactive-text="日" :inactive-action-icon="Sunny"
           :active-action-icon="Moon" />
@@ -220,7 +220,7 @@
               <el-dropdown-item :icon="Switch" class="bgBtn" @click="toggleBG({ getNewBg: true })">更换壁纸
               </el-dropdown-item>
               <!--重返未来-->
-              <el-dropdown-item :icon="Download" class="bgBtn" @click="goTo('download')" v-if="!isHome">重返未来
+              <el-dropdown-item :icon="Download" class="bgBtn" @click="goTo('download')" v-if="!isReverse1999">重返未来
               </el-dropdown-item>
               <!--新闻-->
               <el-dropdown-item @click="goTo('news')">
@@ -234,6 +234,10 @@
               <!--临时聊天室-->
               <el-dropdown-item @click="goTo('hall')" :icon="Comment">
                 聊天室demo
+              </el-dropdown-item>
+              <!--重返未来-->
+              <el-dropdown-item @click="goTo('download')" :icon="Download" v-if="!isReverse1999">
+                重返未来
               </el-dropdown-item>
               <!--音乐播放器-->
               <el-dropdown-item @click="goTo('music')">
@@ -320,7 +324,7 @@ import {
   UserFilled
 } from "@element-plus/icons-vue";
 
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 //stores
 import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
@@ -336,7 +340,6 @@ import RegisterFormComp from "@/components/form/RegisterFormComp.vue";
 import VolumeComp from "@/components/smallComp/VolumeComp.vue";
 //utils
 import { emitter } from "@/utils/emitter";
-import titleDiv from "@/utils/titleDiv"
 //types
 import { NoticeActiveNum } from "@/types/global";
 //files
@@ -346,7 +349,6 @@ import SVG_news from '@/assets/titleDiv/news.svg?component'
 
 
 const router = useRouter()
-const route = useRoute()
 const musicPlayStore = useMusicPlayStore()
 const musicListStore = useMusicListStore()
 const userInfoStore = useUserInfoStore()
@@ -356,11 +358,11 @@ const { isShowVolumePanel, volume } = toRefs(musicPlayStore)
 const { isPlaying } = toRefs(musicListStore)
 const { isLogin, isAdmin, username, headImgUrl, localBgUrl, useUserBGUrl, errorImage } = toRefs(userInfoStore)
 const { loginOut } = userInfoStore
-const { isDark, isPC, isHome, isForum } = toRefs(responsiveStore)
+const { isDark, isPC, isHome, isForum, isReverse1999, showPlayer } = toRefs(responsiveStore)
 const { toggleBG } = useTitleDiv()
 
 
-const showPlayer = ref(false)
+
 //控制头像的显示
 const showHeadImg = ref(isLogin.value)
 //控制公告界面的显示,登陆之后默认不显示
@@ -505,33 +507,7 @@ function closeNotice() {
   })
 }
 
-//判断当前页面,改变导航栏的按钮显隐
-// checkRoute(router.currentRoute.value.path)
 
-function checkRoute(path: string) {
-  console.log('路由切换了')
-  if (path === '/') {
-    isHome.value = true
-    isForum.value = false
-    console.log('当前是首页')
-  } else if (path.includes('/forum')) {
-    console.log(path)
-    isHome.value = false
-    isForum.value = true
-    console.log('当前是论坛')
-  } else {
-    if (path.includes('/music')) {
-      showPlayer.value = true
-    }
-    isHome.value = false
-    isForum.value = false
-  }
-}
-
-watch(router.currentRoute, (newValue, oldValue) => {
-  if (newValue === oldValue) return
-  checkRoute(newValue.path)
-})
 
 //切换本地和用户设置的壁纸
 watch(useUserBGUrl, (newVal, oldVal) => {

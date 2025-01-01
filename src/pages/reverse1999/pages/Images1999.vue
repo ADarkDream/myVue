@@ -1,6 +1,7 @@
 <template>
-  <el-container>
-    <el-header>
+  <!-- <el-container>-->
+  <div>
+    <div>
       <!--    移动端筛选框-->
       <el-collapse style="margin: 0 10px" v-if="!isPC">
         <el-collapse-item title="筛选条件">
@@ -44,66 +45,69 @@
             <el-col :md="6" :sm="7">
               <el-button @click="render" type="primary">筛选/查找</el-button>
               <el-button @click="clearFilter">清除筛选</el-button>
-              <el-button type="primary" @click="router.push({ name: 'roles' })">点击前往角色表</el-button>
+              <el-button type="primary" @click="dialogVisible = true">检查更新</el-button>
+              <el-button type="success" plain @click="dialogVisible = true" disabled>导出Excel</el-button>
             </el-col>
           </el-row>
         </el-collapse-item>
       </el-collapse>
-      <el-row v-else class="header_pc" style="width: 100%;">
-        <el-col :span="3">
-          <!-- <el-button type="primary" @click="dialogVisible = true">上传图片</el-button> -->
-          <el-button type="primary" @click="router.push({ name: 'roles' })">点击前往角色表</el-button>
-        </el-col>
-        <el-col :span="3">
+      <el-row v-else class="header2">
+        <!-- <el-col :sm="3"> -->
+        <!-- <el-button type="primary" @click="dialogVisible = true">检查更新</el-button> -->
+        <!-- <el-button type="primary" @click="dialogVisible = true" disabled>上传图片</el-button> -->
+        <!-- <el-button type="primary" @click="router.push({ name: 'roles' })">点击前往角色表</el-button> -->
+        <!-- </el-col> -->
+        <el-col :sm="3">
           <el-select placeholder="选择版本" v-model="condition.version" multiple :suffix-icon="Search">
             <el-option v-for="item in versionOption" :key="item.value" :label="item.text" :value="item.value" />
           </el-select>
         </el-col>
-        <el-col :span="4">
+        <el-col :sm="4">
           <el-tree-select placeholder="包含角色" v-model="condition.roles" :data="sourceData" multiple
             :render-after-expand="false" :filter-node-method="filterNodeMethod" @change="updateRoleNames(true)"
             filterable :suffix-icon="Search" />
         </el-col>
-        <el-col :span="2">
+        <el-col :sm="2">
           <el-select v-model.trim="condition.orderBy" placeholder="排序根据">
             <el-option label="默认排序" value="" />
             <el-option label="根据id" value="id" />
             <el-option label="创建时间" value="created_time" />
           </el-select>
         </el-col>
-        <el-col :span="2">
+        <el-col :sm="2">
           <el-select :disabled="!condition.orderBy" v-model.trim="condition.order" placeholder="排序方向">
             <el-option label="正序" value="" />
             <el-option label="倒序" value="desc" />
           </el-select>
         </el-col>
-        <el-col :span="2">
+        <el-col :sm="2">
           <el-select v-model.trim="condition.mode" placeholder="是否精确查找">
             <el-option label="精准查询" value="accurate" />
             <el-option label="模糊查询" value="inaccurate" />
           </el-select>
         </el-col>
-        <el-col :span="2">
+        <el-col :sm="2">
           <el-select v-model.trim="condition.sort" placeholder="图片类型">
             <el-option label="全选" :value="2" />
             <el-option label="横屏" :value="1" />
             <el-option label="竖屏" :value="0" />
           </el-select>
         </el-col>
-        <el-col :span="6">
+        <el-col :sm="8">
           <el-button @click="render" type="primary">筛选/查找</el-button>
           <el-button @click="clearFilter">清除筛选</el-button>
+          <el-button type="primary" @click="dialogVisible = true">检查更新</el-button>
+          <el-button type="success" plain @click="dialogVisible = true" disabled>导出Excel</el-button>
+          <!-- <el-button type="primary" @click="dialogVisible = true" disabled>导出Excel</el-button> -->
         </el-col>
       </el-row>
-    </el-header>
-    <el-main>
-      <el-text tag="p" type="primary" style="margin: 5px auto" v-if="!isAdmin">
-        个人收集略有不足，如有错漏还请向我反馈。非常感谢！注册登录之后可编辑。
-        <el-text type="danger">本页面暂未适配移动端</el-text>。</el-text>
-      <el-table ref="tableRef" :data="tableData" style="width: 100%"
-        :max-height="isPC ? (screenHeight - 240) : (screenHeight - 190)" stripe border highlight-current-row
+    </div>
+    <div>
+      <el-text tag="p" style="margin: 5px auto">如有错漏还请向我反馈。注册登录之后可编辑。</el-text>
+      <el-table ref="tableRef" :data="tableData" class="myCustomElTable"
+        :max-height="isPC ? (screenHeight - 240) : (screenHeight - 210)" stripe border highlight-current-row
         table-layout="auto" :default-sort="{ prop: 'imgIndex', order: 'custom' }" @sort-change="handleSortChange" fit>
-        <el-table-column prop="imgIndex" label="页序" width="100" align="center" sortable>
+        <el-table-column prop="imgIndex" label="页序" width="80" align="center" sortable>
           <template #default="scope">
             <span>{{ scope.$index + 1 }}</span>
           </template>
@@ -123,10 +127,10 @@
             </template>
           </template>
         </el-table-column>
-        <el-table-column prop="imgUrl" sum-text :label="isEditRow === -1 ? '图片' : '链接'" width="130" align="center">
+        <el-table-column prop="imgUrl" sum-text :label="isEditRow === -1 ? '图片' : '链接'" width="200" align="center">
           <template #default="scope">
-            <div v-if="isAdmin && isEditRow === scope.$index">
-              <el-input type="textarea" v-model="imgInfo.imgUrl" placeholder="请输入图片链接" />
+            <div v-if="isEditRow === scope.$index">
+              <el-input type="textarea" v-model="imgInfo.imgUrl" :disabled="!isAdmin" placeholder="请输入图片链接" />
             </div>
             <!--preview-teleported解决图片显示不全的问题-->
             <div v-else class="preImg" :id="'imgDiv-' + imgInfo.imgIndex">
@@ -144,11 +148,12 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="roleNames" label="包含角色" min-width="200" align="center">
+        <el-table-column prop="roleNames" label="包含角色" min-width="150" align="center">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
               <el-tree-select v-model="roleIDList" :data="sourceData" multiple :render-after-expand="false"
-                :filter-node-method="filterNodeMethod" @change="updateRoleNames()" filterable />
+                :filter-node-method="filterNodeMethod" @change="updateRoleNames()" show-checkbox filterable>
+              </el-tree-select>
             </div>
             <el-text v-else type="primary">{{ scope.row.roleNames }}</el-text>
           </template>
@@ -173,12 +178,23 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="imgPath" sum-text label="服务器存储路径" width="100" align="center" v-if="isAdmin" />
-        <el-table-column prop="time" label="官方上传时间" min-width="120" align="center">
-          <template #default="scope">{{ scope.row.time }}</template>
+        <el-table-column prop="nickName" label="别称" min-width="100" align="center">
+          <template #default="scope">
+            <div v-if="isAdmin && isEditRow === scope.$index">
+              <el-input type="textarea" v-model="imgInfo.nickName" placeholder="请输入图片名称" />
+            </div>
+            <div v-else>
+              {{ scope.row.nickName }}
+            </div>
+          </template>
         </el-table-column>
-        <el-table-column prop="created_time" label="整理时间" min-width="150" align="center">
+        <el-table-column prop="imgPath" sum-text label="服务器存储路径" width="100" align="center" v-if="isAdmin" />
+        <el-table-column prop="time" label="官方上传时间" min-width="100" align="center" />
+        <!-- <el-table-column prop="created_time" label="整理时间" min-width="150" align="center">
           <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
+        </el-table-column> -->
+        <el-table-column prop="updated_time" label="上次修改时间" min-width="150" align="center">
+          <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" min-width="100" align="center">
           <template #default="scope">
@@ -204,13 +220,14 @@
           :page-sizes="[10, 25, 50, 100]" :layout="layout" :total="total" @size-change="render"
           @current-change="render" />
       </div>
-    </el-main>
+    </div>
 
     <!--图片上传框-->
     <el-dialog v-model="dialogVisible" :show-close="false" title="上传图片">
       <el-text>暂不支持</el-text>
     </el-dialog>
-  </el-container>
+  </div>
+  <!-- </el-container> -->
 </template>
 
 
@@ -266,9 +283,10 @@ const updateRoleNames = (isSearch = false) => {
   // console.log(imgInfo)
 }
 //endregion
-const currentPage = ref(1)
-const layout = computed(() => {
 
+const currentPage = ref(1)
+const total = ref(25) //总数有多少张图
+const layout = computed(() => {
   if (!isPC.value) {
     return 'total, prev, pager, next'
   } else if (total.value / condition.pageSize! > 10) {
@@ -288,7 +306,6 @@ const condition: ImgParams = reactive({
   offset: 0,
   orderBy: 'id',
   order: '',
-  isDesc: ''
 }
 )
 //用户上一次查询的参数
@@ -316,7 +333,7 @@ const imgInfo: ReverseImgInfo = reactive({
   time: 20230325,
   version: 10,
 })
-const total = ref(25) //总数有多少张图
+
 //筛选
 
 const roles = ref<Record<string, string>>({})  //存角色信息{"1": "维尔汀","2": "十四行诗","3": "APPLe"}
@@ -437,7 +454,10 @@ const getImages = async () => {
 
     const result = await axios({
       url: isAdmin.value ? '/getAllWallpaper' : '/getWallpaper',
-      params: condition
+      params: {
+        ...condition,
+        isManagement: '1'
+      }
     })
     console.log('getImages', result)
     const { status, data, msg } = result.data
@@ -551,26 +571,8 @@ const deleteImage = (index: number, data: ReverseImgInfo) => {
 
 
 <style scoped>
-.el-container {
-  background-color: var(--el-bg-color);
-}
-
-.demo-pagination-block+.demo-pagination-block {
-  margin-top: 10px;
-}
-
-.demo-pagination-block .demonstration {
-  margin-bottom: 16px;
-}
-
-.pageMenu {
-  display: flex;
-  justify-content: center;
-  padding: 10px 0;
-}
-
 /*下拉菜单的元素居左*/
-.el-select-dropdown__item {
+/* .el-select-dropdown__item {
   text-align: left;
-}
+} */
 </style>

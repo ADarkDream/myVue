@@ -1,24 +1,32 @@
 import { useReverse1999Store } from '@/store/reverse1999/useReverse1999Store'
+import { useRolesStore } from '@/store/reverse1999/useRolesStore'
+import { useUserInfoStore } from '@/store/user/useUserInfoStore'
 
-import { api_getVersion } from '@/apis/reverse1999'
+import { api_getVersion, api_addRole, api_updateRole } from '@/apis/reverse1999'
 import { VersionParams } from '@/types/reverse1999'
 import { TableFilterItem } from '@/types/global'
 
 export default function () {
     const reverse1999Store = useReverse1999Store()
+    const userInfoStore = useUserInfoStore()
+    const rolesStore = useRolesStore()
     const { versionInfo, allRoleInfo, diffRoleInfo, campInfo, raceInfo, versionOption } = toRefs(reverse1999Store)
+    const { toggleAddRoleDrawer, reSetFormData } = rolesStore
+    const { isAdmin } = toRefs(userInfoStore)
     //获取版本列表并添加到菜单
-    const getVersion = async ({ version, role }: VersionParams) => {
+    const getVersion = async ({ version, role }: VersionParams, latest = false) => {
         try {
             let temp_v = undefined
             let temp_r = undefined
-            if (version && versionInfo.value.length === 0) temp_v = version
-            if ((role === 'all' && allRoleInfo.value.length === 0) || (role === 'diff' && diffRoleInfo.value.length === 0)) temp_r = role
+            const no_local_version = versionInfo.value.length === 0
+            const no_local_role = role === 'all' ? allRoleInfo.value.length === 0 : diffRoleInfo.value.length === 0
+            if (version && (latest || no_local_version)) temp_v = version
+            if ((role === 'all' || role === 'diff') && (latest || no_local_role)) temp_r = role
 
             if (!temp_v && !temp_r) return
 
 
-            const { status, msg, data } = await api_getVersion({ version: temp_v, role: temp_r })
+            const { status, msg, data } = await api_getVersion({ version: temp_v, role: temp_r }, isAdmin.value)
             if (!data) return
             const { versionList, roleList } = data
 
@@ -57,13 +65,36 @@ export default function () {
 
 
             console.log(campInfo.value, raceInfo.value);
-
+            //用于验证刷新是否成功
+            return true
         } catch (error) {
             console.error('发生错误：')
             console.error(error)
         }
     }
 
+    const addRole = async (formData: Role) => {
+        const flag = await api_addRole(formData)
+        if (flag) {//操作成功，刷新信息并退出
+            await getVersion({ version: false, role: 'all' }, true)
+            //关闭抽屉
+            toggleAddRoleDrawer(false)
+            //重置表单
+            reSetFormData()
+        }
+    }
 
-    return { getVersion }
+    const updateRole = async (formData: Role) => {
+        const flag = await api_updateRole(formData, isAdmin.value)
+        if (flag) {//操作成功，刷新信息并退出
+            await getVersion({ version: false, role: 'all' }, true)
+            //关闭抽屉
+            toggleAddRoleDrawer(false)
+            //重置表单
+            reSetFormData()
+        }
+    }
+
+
+    return { getVersion, addRole, updateRole }
 }

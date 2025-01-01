@@ -61,6 +61,7 @@ const userInfoStore = useUserInfoStore()
 const uploadFileStore = useUploadFileStore()
 const { uid } = toRefs(userInfoStore)
 const { isShowEditMusicListInfoDrawer, formData, isCreateFlag } = toRefs(musicListDrawerStore)
+const { reSetFormData } = musicListDrawerStore
 const { options, isLoading, fileInfo } = toRefs(uploadFileStore)
 const { createMusicList, updateMusicList } = useMusicList()
 
@@ -106,19 +107,8 @@ const editMusicListInfo = async () => {
     await updateMusicList(formData.value)
 
   //重置表单
-  formData.value = {
-    music_list_id: 0,
-    name: '',
-    uid: uid.value!,
-    pic_url: '',
-    default_cover_url: '',
-    description: '',
-    status: isOpen.value ? 2 : 1,
-    songsCount: 0,
-    created_time: new Date(),
-    updated_time: new Date()
-  }
-  isOpen.value = false
+  reSetFormData()
+  // isOpen.value = false
 }
 
 

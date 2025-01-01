@@ -59,13 +59,10 @@
           <el-collapse-item title="友情链接" :name="2">
             <div class="friendLinks">
               <el-link v-for="(item, index) in friendlyLink" :key="index" target="_blank" :href="item.url"
-                :title="item.title">
-                <el-button><el-image :src="item.imgUrl || customIco" alt="" style="width: 25px">
-                    <template #error>
-                      <img :src="customIco" alt="" style="width: 25px">
-                    </template></el-image> &ensp;
-                  {{ item.name }}
-                </el-button>
+                :title="item.title"><el-image class="link_ico" :src="item.imgUrl || customIco" :alt="item.name">
+                  <template #error>
+                    <img class="link_ico" :src="customIco" :alt="item.name">
+                  </template></el-image>{{ item.name }}
               </el-link>
             </div>
           </el-collapse-item>
@@ -106,7 +103,8 @@
             <p><el-icon>
                 <Edit />
               </el-icon>
-              其他：<el-text v-for="(item, index) in otherNoUpdated" type="info" size="small" tag="p">
+              其他：<el-text v-for="(item, index) in otherNoUpdated" type="info" size="small" tag="p"
+                :style="{ 'text-decoration': item.isCompleted ? 'line-through' : 'none' }">
                 {{ index + 1 }}.{{ item.text }}
               </el-text>
             </p>
@@ -220,17 +218,17 @@ const friendlyLink = [
 
 //其他待做
 const otherNoUpdated = [
-  { id: 1, text: "导航网站的介绍页" },
-  { id: 2, text: "文章的封面设置" },
-  { id: 3, text: "新闻页面优化" },
-  { id: 4, text: "音乐——歌词" },
-  { id: 5, text: "文章和评论、公告都没有限制查询条数，每次都查询所有文章以及对应的所有评论" },
-  { id: 6, text: "给登录和注册加一张竖屏背景图或磨砂效果" },
-  { id: 7, text: "重构1999下载界面，重构角色图片关系表，添加其他9图，更换瀑布流实现插件" },
-  { id: 8, text: "SSG或SSR优化" },
-  { id: 9, text: "按需引入elementplus组件和样式并减小打包体积：" },
-  { id: 10, text: "聊天界面时间不能实时更新，可以设置监听器，切换分钟时页面的getDiffTime重新加载一下" },
-  { id: 11, text: "GenAI Script" },
+  { id: 1, text: "导航网站的介绍页", isCompleted: false },
+  { id: 2, text: "文章的封面设置", isCompleted: false },
+  { id: 3, text: "新闻页面优化", isCompleted: true },
+  { id: 4, text: "音乐——歌词", isCompleted: false },
+  { id: 5, text: "文章和评论、公告都没有限制查询条数，每次都查询所有文章以及对应的所有评论", isCompleted: false },
+  { id: 6, text: "给登录和注册加一张竖屏背景图或磨砂效果", isCompleted: false },
+  { id: 7, text: "重构1999下载界面，重构角色图片关系表，添加其他9图，更换瀑布流实现插件", isCompleted: false },
+  { id: 8, text: "SSG或SSR优化", isCompleted: false },
+  { id: 9, text: "按需引入elementplus组件和样式并减小打包体积：", isCompleted: true },
+  { id: 10, text: "聊天界面时间不能实时更新，可以设置监听器，切换分钟时页面的getDiffTime重新加载一下", isCompleted: false },
+  { id: 11, text: "GenAI Script", isCompleted: false },
 ]
 
 onMounted(() => {
@@ -264,13 +262,22 @@ const clear_Clarity_cookie = () => {
   overflow-y: scroll;
 }
 
+/* 友情链接 */
 .friendLinks {
   display: flex;
   justify-content: flex-start;
-}
+  flex-wrap: wrap;
 
-.friendLinks .el-link {
-  margin: 0 10px;
+  .el-link {
+    margin: 2px 5px;
+    font-weight: bold;
+
+    .link_ico {
+      width: 25px;
+      height: 25px;
+      padding-right: 5px;
+    }
+  }
 }
 
 p {

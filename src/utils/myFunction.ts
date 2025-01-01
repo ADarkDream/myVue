@@ -155,7 +155,7 @@ const myFunction = {
         }
     },
 
-
+    /**比较两个对象，返回不一致的数据*/
     diffObj: <T>(newData: T, oldData: T): Partial<T> => {
         const result: Partial<T> = {};
         const keys = new Set([...Object.keys(newData), ...Object.keys(oldData)]);
@@ -167,6 +167,48 @@ const myFunction = {
         return result;
     },
 
+    /**深拷贝：处理 Date、RegExp、数组、对象及 Symbol 属性*/
+    deepClone: <T>(obj: T, hash = new WeakMap()): T => {
+        if (obj === null || typeof obj !== 'object') {
+            return obj; // 基本类型直接返回
+        }
+
+        // 防止循环引用
+        if (hash.has(obj)) {
+            return hash.get(obj) as T;
+        }
+
+        // 处理 Date 对象
+        if (obj instanceof Date) {
+            return new Date(obj.getTime()) as T;
+        }
+
+        // 处理 RegExp 对象
+        if (obj instanceof RegExp) {
+            return new RegExp(obj.source, obj.flags) as T;
+        }
+
+        // 创建新对象或数组
+        const cloneObj = (Array.isArray(obj) ? [] : {}) as T;
+
+        // 保存到 WeakMap 防止循环引用
+        hash.set(obj, cloneObj);
+
+        // 递归拷贝
+        for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                (cloneObj as any)[key] = myFunction.deepClone((obj as any)[key], hash);
+            }
+        }
+
+        // 拷贝 Symbol 属性
+        const symbolKeys = Object.getOwnPropertySymbols(obj);
+        for (const symKey of symbolKeys) {
+            (cloneObj as any)[symKey] = myFunction.deepClone((obj as any)[symKey], hash);
+        }
+
+        return cloneObj;
+    },
     //el-table中按时间顺序和逆序排列
     sortByTime: (tableData, prop, order) => tableData.sort((a, b) => {
         const propA = a[prop as keyof typeof a]

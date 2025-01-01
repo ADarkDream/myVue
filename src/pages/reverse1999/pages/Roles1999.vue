@@ -1,14 +1,15 @@
 <template>
-  <el-container :style="'height:' + (screenHeight - (isPC ? 80 : 40)) + 'px;overflow:hidden'">
-    <!--    移动端筛选框-->
-    <el-header>
-      <el-collapse style="margin: 0 10px" v-if="!isPC">
+  <!-- <el-container :style="'height:' + (screenHeight - (isPC ? 80 : 40)) + 'px;overflow:hidden'"> -->
+  <!--    移动端筛选框-->
+  <div>
+    <div>
+      <!-- <el-collapse style="margin: 0 10px" v-if="!isPC">
         <el-collapse-item title="筛选条件">
-          <el-row class="header2">
-            <el-col :md="3" v-if="isAdmin">
+          <el-row class="header2"> -->
+      <!-- <el-col :md="3">
               <el-button type="primary" @click="dialogVisible = true">添加新角色</el-button>
-            </el-col>
-            <el-col :md="3" :sm="4">
+            </el-col> -->
+      <!-- <el-col :md="3" :sm="4">
               <el-input v-model.trim="searchInfo.name" placeholder="角色名称" clearable :prefix-icon="Search" />
             </el-col>
             <el-col :md="3" :sm="4">
@@ -29,21 +30,23 @@
               <el-input v-model.trim="searchInfo.otherTags" placeholder="其他标签" clearable :prefix-icon="Search" />
             </el-col>
             <el-col :md="6" :sm="7">
-              <el-button @click="filterChange" type="primary">筛选查找</el-button>
-              <el-button @click="clearFilter">清空全部筛选</el-button>
+              <el-button @click="filterChange" type="primary">查找</el-button>
+              <el-button @click="clearFilter">清空筛选条件</el-button>
+              <el-button type="primary" @click="toggleAddRoleDrawer()">添加新角色</el-button>
               <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
-              <el-button type="primary" @click="router.push({ name: 'images' })">点击前往图片表</el-button>
             </el-col>
 
           </el-row>
         </el-collapse-item>
-      </el-collapse>
+      </el-collapse> -->
+      <div v-if="!isPC"><el-button @click="dialogVisible = true" type="primary">筛选查找</el-button>
+        <el-button type="primary" @click="toggleAddRoleDrawer()">添加新角色</el-button>
+        <el-button type="success" size="small" plain @click="refreshRole()" :icon="Refresh"
+          title="刷新角色信息">刷新</el-button>
+        <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
+      </div>
       <!--    PC筛选框-->
       <el-row class="header2" v-else>
-        <el-col :sm="3">
-          <!--        <el-button type="primary" @click="dialogVisible=true" >添加新角色</el-button>-->
-          <el-button type="primary" @click="router.push({ name: 'images' })">点击前往图片表</el-button>
-        </el-col>
         <el-col :sm="4">
           <el-input v-model.trim="searchInfo.name" placeholder="角色名称" clearable :prefix-icon="Search" />
         </el-col>
@@ -64,28 +67,29 @@
         <el-col :sm="3">
           <el-input v-model.trim="searchInfo.otherTags" placeholder="其他标签" clearable :prefix-icon="Search" />
         </el-col>
-        <el-col :sm="6">
-          <el-button @click="filterChange" type="primary">筛选查找</el-button>
-          <el-button @click="clearFilter">清空全部筛选</el-button>
+        <el-col :sm="8">
+          <el-button @click="filterChange" type="primary">查找</el-button>
+          <el-button @click="clearFilter">清空筛选条件</el-button>
+          <el-button type="primary" @click="toggleAddRoleDrawer()">添加新角色</el-button>
           <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
         </el-col>
-
       </el-row>
-    </el-header>
-    <el-main>
-      <el-text type="primary">个人收集略有不足，如有错漏还请向我反馈。非常感谢！如有乐意帮忙的司辰也欢迎联系我！</el-text>
-      <el-table ref="tableRef" :data="tableData" :height="screenHeight - 230" stripe border highlight-current-row
+    </div>
+    <div>
+      <el-text>如有错漏还请向我反馈。注册登录之后可编辑。</el-text>
+      <el-table ref="tableRef" class="myCustomElTable" :data="tableData"
+        :max-height="isPC ? (screenHeight - 240) : (screenHeight - 180)" stripe flexible border highlight-current-row
         table-layout="auto" :default-sort="{ prop: 'id', order: 'custom' }" @sort-change="handleSortChange">
         <!--              @filter-change="filterChange">-->
-        <el-table-column fixed prop="id" label="序号" min-width="80" align="center" sortable />
-        <el-table-column prop="name" label="角色名" min-width="120">
+        <el-table-column prop="id" label="ID" min-width="60" align="center" fixed sortable />
+        <el-table-column prop="name" label="角色名" min-width="120" align="center" :fixed="!isPC">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
               <el-input v-model="newInfo.name" />
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="camp" label="所属阵营" min-width="120">
+        <el-table-column prop="camp" label="所属阵营" min-width="120" align="center">
           <template #default="scope">
             <template v-if="isEditRow === scope.$index">
               <el-select placeholder="选择阵营" v-model="newInfo.camp" default-first-option>
@@ -99,8 +103,6 @@
           </template>
         </el-table-column>
         <el-table-column prop="race" label="所属种族" min-width="130" align="center">
-          <!--                       :filters="sort" :column-key="'sort'">-->
-          <!--                       :filter-method="filterHandler">-->
           <template #default="scope">
             <template v-if="isEditRow === scope.$index">
               <el-select placeholder="选择种族" v-model="newInfo.race" default-first-option>
@@ -120,24 +122,42 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="created_time" label="创建时间" min-width="70" align="center" v-if="isAdmin">
-          <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
+        <el-table-column prop="created_time" label="创建时间" min-width="100" align="center" v-if="isAdmin">
+          <template #default="scope">{{ getDiffTime(scope.row.created_time) }}</template>
         </el-table-column>
-        <el-table-column prop="updated_time" label="更新时间" min-width="70" align="center">
+        <el-table-column prop="updated_time" label="更新时间" min-width="100" align="center">
           <template #default="scope">{{ getDiffTime(scope.row.updated_time) }}</template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" min-width="100" align="center">
+        <el-table-column prop="status" label="状态" min-width="100" align="center" v-if="isAdmin">
           <template #default="scope">
-            <div v-if="scope.row.id === 0"></div>
-            <div v-else-if="isEditRow !== scope.$index">
-              <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" :disabled="!isAdmin"
+            <div v-if="isEditRow === scope.$index">
+              <el-select placeholder="选择状态" v-model="newInfo.status" default-first-option>
+                <el-option v-for="{ label, value } in statusOptions" :key="value" :label :value />
+              </el-select>
+            </div>
+            <div v-else>
+              {{ statusOptions[scope.row.status!].label }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" min-width="100" align="center" :fixed="isPC ? 'right' : false">
+          <template #header v-if="isPC">
+            <div style="display: flex;justify-content: space-around;">
+              <span>操作</span><el-button type="success" size="small" plain @click="refreshRole()" :icon="Refresh"
+                title="刷新角色信息">刷新</el-button>
+            </div>
+          </template>
+          <template #default="scope">
+            <div v-if="isEditRow !== scope.$index">
+              <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)"
+                :disabled="!canEdit(scope.row.status)">编辑</el-button>
+              <el-button link type="danger" size="small" :disabled="!canDel(scope.row.status)"
                 @click="deleteRow(scope.$index, scope.row.id)">
                 删除
               </el-button>
             </div>
             <div v-else>
-              <el-button link type="info" size="small" @click="handleCancel">取消
+              <el-button link type="info" size="small" @click="exit_edit()">取消
               </el-button>
               <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newInfo, scope.row)">
                 更新
@@ -147,17 +167,44 @@
         </el-table-column>
       </el-table>
       <div class="pageMenu">
-        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[10, 25, 50, 100]"
-          :layout="isPC ? 'total, sizes, prev, pager, next, jumper' : 'total, sizes, prev, pager, next,'" :total="total"
-          :small="!isPC" @size-change="render()" @current-change="render()" />
+        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" small
+          :page-sizes="[10, 25, 50, 100]" :layout="layout" :total="total" @size-change="render"
+          @current-change="render" />
       </div>
-    </el-main>
+    </div>
 
-    <!--添加新角色-->
-    <el-dialog v-model="dialogVisible" :show-close="false" title="添加新角色">
-      <AddRole />
-    </el-dialog>
-  </el-container>
+    <!--移动端筛选框-->
+    <el-drawer v-model="dialogVisible" :with-header="false" :show-close="false" direction="ttb" :append-to-body="true"
+      size="30%">
+      <el-row class="header2">
+        <el-col :md="3" :sm="4">
+          <el-input v-model.trim="searchInfo.name" placeholder="角色名称" clearable :prefix-icon="Search" />
+        </el-col>
+        <el-col :md="3" :sm="4">
+          <el-select v-model="searchInfo.camp" default-first-option>
+            <el-option label="全选阵营" value="" />
+            <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'"
+              :value="name" />
+          </el-select>
+        </el-col>
+        <el-col :md="3" :sm="4">
+          <el-select v-model="searchInfo.race" default-first-option>
+            <el-option label="全选种族" value="" />
+            <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'"
+              :value="name" />
+          </el-select>
+        </el-col>
+        <el-col :md="3" :sm="4">
+          <el-input v-model.trim="searchInfo.otherTags" placeholder="其他标签" clearable :prefix-icon="Search" />
+        </el-col>
+        <el-col :md="6" :sm="7">
+          <el-button @click="filterChange" type="primary">查找</el-button>
+          <el-button @click="clearFilter">清空筛选条件</el-button>
+        </el-col>
+      </el-row>
+    </el-drawer>
+  </div>
+  <!-- </el-container> -->
 </template>
 
 
@@ -165,22 +212,22 @@
 import { reactive, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import type { TableInstance } from "element-plus";
-import { Search } from "@element-plus/icons-vue";
+import { Search, Refresh } from "@element-plus/icons-vue";
 import * as XLSX from "xlsx"; // 导入 xlsx
 import { saveAs } from "file-saver";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import { useResponsiveStore } from "@/store/useResponsiveStore";
 import { useReverse1999Store } from '@/store/reverse1999/useReverse1999Store'
-
+import { useRolesStore } from '@/store/reverse1999/useRolesStore';
 //hooks
 import useTimeStamp from "@/hooks/useTimestamp";
 import useReverse1999 from '@/hooks/reverse1999/useReverse1999';
 //components
-import AddRole from "@/components/AddRole.vue";
+// import AddRole from "@/pages/reverse1999/components/AddRole.vue";
 //utils
 import myFunction from "@/utils/myFunction";
-
+import fileProcess from "@/utils/fileProcess";
 //types
 
 //files
@@ -190,22 +237,17 @@ const router = useRouter()
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
 const reverse1999Store = useReverse1999Store()
-const { allRoleInfo, campInfo, raceInfo } = toRefs(reverse1999Store)
+const { allRoleInfo, campInfo, raceInfo, statusOptions } = toRefs(reverse1999Store)
+const { toggleAddRoleDrawer } = useRolesStore()
 const { getDiffTime, getTime } = useTimeStamp()
 const { diffObj } = myFunction
-const { getVersion } = useReverse1999()
+const { getVersion, updateRole } = useReverse1999()
 
 //登录判断
 
 //屏幕高度
 const { screenHeight, isPC } = toRefs(responsiveStore)
 const { isAdmin, isLogin } = toRefs(userInfoStore)
-
-onMounted(async () => {
-  await getVersion({ version: false, role: 'all' })
-  total.value = allRoleInfo.value.length//底部分页数字
-  render()
-})
 
 const tableRef = ref<TableInstance>()
 
@@ -217,7 +259,19 @@ const tableData = ref<Role[]>([])
 const currentPage = ref(1)
 //每页显示多少条数据
 const pageSize = ref(25)
-const total = ref(allRoleInfo.value.length)
+const total = ref(allRoleInfo.value.length) //总数有多少张图
+const layout = computed(() => {
+  if (!isPC.value) {
+    return 'total, prev, pager, next'
+  } else if (total.value / pageSize.value! > 10) {
+    return 'total, sizes, prev, pager, next,jumper'
+  }
+  else {
+    return 'total, sizes, prev, pager, next'
+  }
+})
+
+
 
 
 //清空全部筛选条件
@@ -271,11 +325,6 @@ function filterChange() {
 }
 
 
-
-
-
-
-
 //渲染
 function render() {
   //根据当前页码计算出应显示的数据
@@ -306,61 +355,62 @@ const isEditRow = ref<number>(-1)
 
 //编辑角色信息(修改编辑标记)
 const handleEdit = (index: number, row: Role) => {
-  if (!isLogin.value) return ElMessage.warning('只有用户或管理员才能编辑角色信息')
-  isEditRow.value = index
-  newInfo.value = Object.assign(newInfo.value, row)
+  if (isPC.value) {//PC端在表格上修改
+    isEditRow.value = index
+    newInfo.value = Object.assign(newInfo.value, row)
+  } else {//移动端用抽屉修改
+    toggleAddRoleDrawer(true, row)
+  }
 }
 
 //还原编辑标记
-function handleCancel() {
+const exit_edit = () => {
   isEditRow.value = -1
 }
 
 //对上传的数据进行格式检查
-function checkUpdateRow(newData: Role, oldData: Role) {
+const checkUpdateRow = async (newData: Role, oldData: Role) => {
   const data = <Role>diffObj(newData, oldData)
-  //判断网址信息是否修改
-  if (Object.keys(data).length === 0) return ElMessage.info('网址信息未修改，已取消上传。')
+  //判断角色信息是否修改
+  if (Object.keys(data).length === 0) return ElMessage.info('角色信息未修改，已取消上传。')
   else {
-    //校验格式
-
-
     //uid被洗掉了，手动添加
-    updateRow(data, oldData.id, oldData)
+    await updateRole({ ...data, id: newData.id })
+    //去除编辑标记
+    exit_edit()
   }
 }
 
-//上传更新的角色信息
-function updateRow(data: Role, id: number, oldData: Role) {
-  //   axios({
-  //     url: '/updateUrl',
-  //     method: 'post',
-  //     data: {
-  //       data,
-  //       id
-  //     }
-  //   }).then(result => {
-  //     // console.log(result)
-  //     const {status,msg} = result.data
-  //     //更新修订时间为当前时间
-  //     data.updated_time = new Date().toISOString()
-  //     //将修改后的信息显示出来
-  //     Object.assign(oldData, data)
-  //     //去除编辑标记
-  //     isEditRow.value = -1
-  //     if (status === 200)  ElMessage.success(msg)
-  //   }).catch(error => {
-  //     console.log('发生错误：')
-  //     console.log(error)
-  //     ElMessage.error(error.msg)
-  //   })
+
+//角色是否可编辑
+const canEdit = (status: number) => {
+  if (!isLogin.value) return false
+  else if (isAdmin.value) return true
+  else if (status === 1 || status === 2) return true
+  else return false
+}
+
+//角色是否可删除
+const canDel = (status: number) => {
+  if (status === 0) return false
+  else if (!isLogin.value) return false
+  else if (isAdmin.value) return true
+  else if (status === 1 || status === 3) return true
+  else return false
+}
+
+//刷新角色信息
+const refreshRole = async () => {
+  const flag = await getVersion({ version: false, role: 'all' }, true)
+  if (!!flag) {
+    ElMessage.success('刷新成功')
+  } else {
+    ElMessage.error('刷新失败')
+  }
 }
 
 
-
-
 const deleteRow = (index: number, id: number) => {
-  if (!isAdmin.value) return ElMessage.warning('只有管理员才能删除角色信息')
   ElMessageBox.confirm(
     '确认删除该角色信息吗?',
     'Warning',
@@ -372,7 +422,8 @@ const deleteRow = (index: number, id: number) => {
     }
   )
     .then(() => {
-      deleteRole(index, id)
+      //uid被洗掉了，手动添加
+      updateRole({ status: 0, id } as Role)
     })
     .catch(() => {
       ElMessage({
@@ -382,29 +433,12 @@ const deleteRow = (index: number, id: number) => {
     })
 }
 
-//删除角色
-const deleteRole = (index: number, id: number) => {
-  //   axios({
-  //     url: '/deleteUrl',
-  //     method: 'delete',
-  //     params: {id}
-  //   }).then((result) => {
-  //     // console.log(result)
-  //     ElMessage.success(result.data.msg)
-  //
-  //     const newArr = totalData.filter(item => item.id !== id)
-  //     totalData.splice(0, totalData.length, ...newArr)
-  //     filterChange()
-  //     // location.reload()
-  //   }).catch(error => {
-  //     console.dir('发生错误：' + error)
-  //   })
-}
-
-//创建excel表头和数据
-const cleanData = () => {
+/**
+ * 处理excel表头和数据，并导出
+ * */
+const export_excel = () => {
   //提取表头和表数据
-  const headers = ["序号", "角色名", "所属阵营", "所属种族", "其他标签", "更新时间"]
+  const headers = ["ID", "角色名", "所属阵营", "所属种族", "其他标签", "更新时间"]
   const propsIndex = ["id", "name", "camp", "race", "otherTags", "updated_time"] //收集序号
   // this.tablelabels.forEach((label, index) => {
   //     if (index !== 0) headers.push(label.label)
@@ -418,61 +452,29 @@ const cleanData = () => {
       return row[prop as keyof Role] || ""
     }).filter(item => item !== undefined)
   })
-
   // 组合数据，第一行是表头
-  return [headers, ...data]
+  const sheetData = [headers, ...data]
 
-}
-
-//生成Excel文件并保存
-const export_excel = () => {
-  // 处理数据
-  const sheetData = cleanData()
-  // 转换为工作表
-  const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-
-  // 创建工作簿
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "重返未来1999角色表");
-
-  // 导出 Excel
-  // XLSX.writeFile(workbook, "1999角色表(部分).xlsx") // 可以直接保存，但saveAs兼容更好
-  const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
-  const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-  saveAs(blob, "重返未来1999角色表(部分).xlsx");
+  //生成Excel文件并保存
+  fileProcess.save_as_excel(sheetData, "重返未来1999角色表", "重返未来1999角色表(部分)")
 }
 
 
+
+onMounted(async () => {
+  await getVersion({ version: false, role: 'all' })
+  total.value = allRoleInfo.value.length//底部分页数字
+  render()
+  watch(allRoleInfo, (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+      render()
+    }
+  })
+})
 </script>
 
 
 <style scoped>
-.el-container {
-  background-color: var(--el-color-primary-light-9);
-}
-
-
-
-.header2 {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.demo-pagination-block+.demo-pagination-block {
-  margin-top: 10px;
-}
-
-.demo-pagination-block .demonstration {
-  margin-bottom: 16px;
-}
-
-.pageMenu {
-  display: flex;
-  justify-content: center;
-  padding: 10px 0;
-}
-
 @media (max-width: 780px) {
   .header2 {
     width: 80%;
@@ -481,6 +483,53 @@ const export_excel = () => {
 
   .el-col {
     margin: 5px 0;
+  }
+
+  /*#region el-table */
+  .myCustomElTable {
+
+    .el-table__header-wrapper {
+      height: 40px;
+      line-height: 40px;
+    }
+
+    .tableItem {
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    /* .el-table__cell {
+                  overflow: hidden;
+              } */
+  }
+
+  .myCustomElTable>>>.el-table__body-header .el-table__cell {
+    padding: 0;
+  }
+
+  .myCustomElTable>>>.el-table__body-header .el-table__cell .cell {
+    padding: 0 5px;
+    text-align: center;
+  }
+
+  .myCustomElTable>>>.el-table__header tr th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .myCustomElTable>>>.el-table__row .cell {
+    padding: 0;
+  }
+
+  .myCustomElTable>>>.success-row {
+    background: #f0f9eb;
+  }
+
+  /*#endregion */
+
+  .pageMenu {
+    padding-bottom: 5px;
   }
 }
 </style>

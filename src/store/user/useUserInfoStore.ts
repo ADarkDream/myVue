@@ -12,7 +12,7 @@ import type { AdminInfo, Token, UserInfo } from '@/types/user';
 export const useUserInfoStore = defineStore('user_info', () => {
 
     //获取本地存储的用户信息userInfo中的数据
-    const imageSrc = import.meta.env.VITE_QINIU_URL + '/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png'
+    const imageSrc = import.meta.env.VITE_QINIUTHUMBNAIL_URL + '/headImg/hutao_%E7%B1%B3%E6%B8%B8%E7%A4%BE%E7%94%BB%E5%B8%88Love715_1714496199477.png'
     //是否使用本地背景图
     const useUserBGUrl = ref(false)
     //本地背景图
@@ -118,18 +118,22 @@ export const useUserInfoStore = defineStore('user_info', () => {
         } else {
             isLogin.value = true
             isAdmin.value = tokenInfo.value.isAdmin === '1'
+            const { tokenVersion, ...tempInfo } = tokenInfo.value
+            // console.log('tempInfo', tempInfo);
             if (isAdmin.value) {
                 delete tokenInfo.value.isAdmin
                 //因为管理员信息没有持久化，所以刷新之后需要重新赋值
                 if (!adminInfo.value.username) Object.assign(adminInfo.value, tokenInfo.value)
+            } else {
+                //刷新或重开浏览器之后需要重新赋值
+                Object.assign(userInfo.value, tempInfo)
             }
         }
         //如果用户有背景图且选择使用，则使用用户指定的图，否则使用本地背景图
         if (bgUrl.value && useUserBGUrl.value) {
             localBgUrl.value = bgUrl.value
         }
-        console.log('检查本地token,isLogin:', isLogin.value);
-
+        // console.log('检查本地token,isLogin:', isLogin.value, tokenInfo.value);
     }
 
     //检查newToken是管理员的还是用户的

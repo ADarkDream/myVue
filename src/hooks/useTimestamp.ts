@@ -71,9 +71,9 @@ export default function () {
             return (function () {
                 let date = new Date(timestamp)
                 if (yearsDiff < 1) {
-                    return date.getMonth() + 1 + '月' + date.getDate() + '日'//一年内
+                    return (date.getMonth() + 1) + '月' + date.getDate() + '日'//一年内
                 } else {
-                    return date.getFullYear() + '年' + date.getMonth() + 1 + '月' + date.getDate() + '日'//大于一年，显示年份
+                    return date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日'//大于一年，显示年份
                 }
             })()
         }

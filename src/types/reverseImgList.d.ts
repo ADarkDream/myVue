@@ -18,6 +18,7 @@ type ReverseImgInfo = {
     tags: string,//角色ID,例如："3,93"
     newTags?: string,
     roleNames?: string,
+    nickName?: string,
     newRoleNames?: string,
     // index: number,
     sort: number,
@@ -67,6 +68,7 @@ interface Role {
     camp: string,
     race: string,
     otherTags: string,
+    status?: number,
     created_time?: Date,
     updated_time?: Date
 }

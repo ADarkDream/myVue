@@ -1,67 +1,39 @@
 <template>
-  <el-scrollbar :height="containerHeight + 'px'" ref="scrollbar">
-    <el-container>
-      <el-header>
-        <el-card style="position: relative">
-          <el-image class="logo" :src="logo" v-if="isPC" draggable="false" />
-          <h1>1999国服官图(以影像之)下载 </h1>
-          <el-collapse v-model="activeIndex" accordion>
-            <el-collapse-item title="资源文档" name="1">
-              <template class="links">
-                <el-link type="primary" title="Github 和 Gitee" @click="showUrl = !showUrl">
-                  本项目开源地址
-                </el-link>
-                <Transition name="horizontal_slide">
-                  <el-link v-if="showUrl" type="primary" href="https://gitee.com/MuXi-Dream/download-reverse1999"
-                    target="_blank">
-                    Gitee
-                  </el-link>
-                </Transition>
-                <Transition name="horizontal_slide">
-                  <el-link v-if="showUrl" type="primary" href="https://github.com/ADarkDream/Download-Reverse1999"
-                    target="_blank">
-                    GitHub
-                  </el-link>
-                </Transition>
-                <el-link type="primary" href="https://re.bluepoch.com/home/detail.html#wallpaper" target="_blank"
-                  title="点击前往重返未来1999官网">
-                  重返未来官网下载地址
-                </el-link>
-                <el-link type="primary" href="https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999" target="_blank"
-                  title="点击前往百度网盘">
-                  百度网盘下载地址
-                </el-link>
-                <el-button link type="primary" target="_blank"
-                  @click="showNotice({ show_num: 3, active_num: 1 }); copyText('1224021291', '默默的联系方式(QQ)', 'https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719')"
-                  title="点击前往API文档(无偿但不公开)">
-                  API接口文档(需要密码请联系默默)
-                </el-button>
-              </template>
-            </el-collapse-item>
-            <el-collapse-item title="筛选条件【所有条件不选则默认全选】" name="2">
-              <el-form :label-position="isPC ? 'left' : 'top'" :size="elSize">
-                <el-form-item label="选择版本[默认全选]：" style="flex-direction: column">
-                  <el-checkbox v-model="checkAllVersions" :indeterminate="isIndeterminateVersion"
-                    @change="handleCheckAllVersionChange">
-                    全选
-                  </el-checkbox>
-                  <el-checkbox-group v-model="condition.version" style="text-align: left"
-                    @change="handleCheckedVersionsChange">
-                    <el-checkbox v-for="item in versionInfo" :key="item.version" :label="item.versionName"
-                      :value="item.version" />
-                  </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="选择角色[默认全选]：" style="flex-direction: column">
-                  <!-- <el-checkbox v-model="checkAllRoles" :indeterminate="isIndeterminateRole"
+  <!-- <el-scrollbar :height="containerHeight - 60 + 'px'" ref="scrollbar"> -->
+  <div class="download1999">
+    <div>
+      <div style="position: relative;">
+        <el-image class="logo" :src="logo" v-if="isPC" draggable="false" />
+        <h1>1999国服官图(以影像之)下载 </h1>
+        <el-collapse v-model="activeIndex" accordion>
+          <el-collapse-item title="资源文档" name="1">
+            <div class="links">
+              <el-button link target="_blank" v-for="{ id, name, title, value, url } in links" :key="id"
+                @click="copyText(value, name, url)" :title="title">{{ name
+                }}
+              </el-button>
+            </div>
+          </el-collapse-item>
+          <el-collapse-item title="筛选条件【所有条件不选则默认全选】" name="2">
+            <el-form :label-position="isPC ? 'left' : 'top'" :size="elSize">
+              <el-form-item label="选择版本[默认全选]：" style="flex-direction: column">
+                <el-checkbox v-model="checkAllVersions" :indeterminate="isIndeterminateVersion"
+                  @change="handleCheckAllVersionChange">
+                  全选
+                </el-checkbox>
+                <el-checkbox-group v-model="condition.version" style="text-align: left"
+                  @change="handleCheckedVersionsChange">
+                  <el-checkbox v-for="item in versionInfo" :key="item.version" :label="item.versionName"
+                    :value="item.version" />
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="选择角色[默认全选]：" style="flex-direction: column">
+                <!-- <el-checkbox v-model="checkAllRoles" :indeterminate="isIndeterminateRole"
                     @change="handleCheckAllRoleChange"><el-text type="primary">全选角色</el-text>
                   </el-checkbox> -->
-                  <el-button-group size="small" type="primary" :style="isPC ? 'margin:5px' : 'margin:5px auto'">
-                    <el-button @click="reset">清空所有选择</el-button>
-                    <el-button @click="router.push({ name: 'images' })">图片信息表</el-button>
-                    <el-button @click="router.push({ name: 'roles' })">角色信息表</el-button>
-                  </el-button-group>
 
-                  <!-- <div class="roleSort">
+
+                <!-- <div class="roleSort">
                     <el-text type="primary">是否包含角色：</el-text>
                     <el-checkbox v-model="checkAllRoles" :indeterminate="isIndeterminateRole"
                       @change="handleCheckAllRoleChange">全选
@@ -70,54 +42,56 @@
                       @change="handleCheckNoRoleChange">全选无角色(或未命名角色)
                     </el-checkbox>
                   </div> -->
-                  <div class="roleSort">
-                    <!--遍历阵营-->
-                    <el-text type="primary">角色所属阵营：</el-text>
-                    <el-checkbox v-for="({ name, count }, index) in campInfo" :key="index"
-                      @click="roleTypeChange(name, '')" @change="handleCheckCampChange">
-                      {{ name }}[{{ count }}]
-                    </el-checkbox>
-                  </div>
-                  <div class="roleSort">
-                    <!--遍历种族-->
-                    <el-text type="primary">角色所属种族：</el-text>
-                    <el-checkbox v-for="({ name, count }, index) in raceInfo" :key="index"
-                      @click="roleTypeChange('', name)" @change="handleCheckCampChange">
-                      {{ name }}[{{ count }}]
-                    </el-checkbox>
-                  </div>
-                  <el-checkbox-group v-model="condition.roles" style="text-align: left;draggable:false"
-                    @change="handleCheckedRolesChange">
-                    <el-text type="primary">角色常用名称：</el-text>
-                    <el-checkbox v-for="item in roleInfo" :key="item.id" :label="item.name" :value="item.id" />
-                  </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="图片类型：">
-                  <el-radio-group v-model="condition.sort">
-                    <el-radio-button label="全选" :value="2" />
-                    <el-radio-button label="横屏壁纸" :value="1" />
-                    <el-radio-button label="竖屏壁纸" :value="0" />
-                  </el-radio-group>
-                </el-form-item>
-                <el-form-item label="查询类型：">
-                  <el-radio-group v-model="condition.mode">
-                    <el-radio-button label="模糊查询" :value="'inaccurate'" />
-                    <el-radio-button label="精准查询" :value="'accurate'" />
-                  </el-radio-group>
-                  <el-icon style="margin:0 5px" @click="isShowNotice = !isShowNotice">
-                    <InfoFilled />
-                  </el-icon>
-                  <Transition name="horizontal_slide">
-                    <el-text v-show="isShowNotice">
-                      <el-text type="primary">模糊查询会优先满足版本要求</el-text>
-                      ，然后查询包含勾选的角色的图；
-                      <el-text type="warning">精准查询</el-text>
-                      只查询
-                      <el-text type="warning">同时满足所有条件</el-text>
-                      的结果
-                    </el-text>
-                  </Transition>
-                </el-form-item>
+                <div class="roleSort">
+                  <!--遍历阵营-->
+                  <el-text>角色所属阵营：</el-text>
+                  <el-checkbox v-for="({ name, count }, index) in campInfo" :key="index"
+                    @click="roleTypeChange(name, '')" @change="handleCheckCampChange">
+                    {{ name }}[{{ count }}]
+                  </el-checkbox>
+                </div>
+                <div class="roleSort">
+                  <!--遍历种族-->
+                  <el-text>角色所属种族：</el-text>
+                  <el-checkbox v-for="({ name, count }, index) in raceInfo" :key="index"
+                    @click="roleTypeChange('', name)" @change="handleCheckCampChange">
+                    {{ name }}[{{ count }}]
+                  </el-checkbox>
+                </div>
+                <el-checkbox-group v-model="condition.roles" style="text-align: left;draggable:false"
+                  @change="handleCheckedRolesChange">
+                  <el-text>角色常用名称：</el-text>
+                  <el-checkbox v-for="item in roleInfo" :key="item.id" :label="item.name" :value="item.id" />
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item label="图片类型：">
+                <el-radio-group v-model="condition.sort" size="small">
+                  <el-radio-button label="全选" :value="2" />
+                  <el-radio-button label="横屏壁纸" :value="1" />
+                  <el-radio-button label="竖屏壁纸" :value="0" />
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="查询类型：">
+                <el-radio-group v-model="condition.mode" size="small">
+                  <el-radio-button label="模糊查询" :value="'inaccurate'" />
+                  <el-radio-button label="精准查询" :value="'accurate'" />
+                </el-radio-group>
+                <el-icon style="margin:0 5px" @click="isShowNotice = !isShowNotice">
+                  <InfoFilled />
+                </el-icon>
+                <Transition name="horizontal_slide">
+                  <el-text v-show="isShowNotice">
+                    <el-text type="primary">模糊查询会优先满足版本要求</el-text>
+                    ，然后查询包含勾选的角色的图；
+                    <el-text type="warning">精准查询</el-text>
+                    只查询
+                    <el-text type="warning">同时满足所有条件</el-text>
+                    的结果
+                  </el-text>
+                </Transition>
+              </el-form-item>
+              <div style="text-align: center;">
+                <el-button @click="reset">重置</el-button>
                 <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
                 <el-button type="warning" :size="elSize" :icon="Warning" @click="showDownloadNotice()" v-show="isShow">
                   下载须知
@@ -144,102 +118,100 @@
                     删除。
                   </el-text>
                 </div>
-              </el-form>
-            </el-collapse-item>
-            <el-collapse-item title="待完善功能" style="text-align: left" name="3">
-              <template v-for="item in unCompleted.slice().reverse()" :key="item.id">
-                <el-icon>
-                  <Edit />
-                </el-icon>
-                <el-text>&ensp;{{ item.content }}</el-text>
-                <br></template>
-            </el-collapse-item>
-            <el-collapse-item title="已实现功能" style="text-align: left" name="4">
-              <template v-for="(item, index) in completed.slice().reverse()" :key="index">
-                <el-icon :color="index === 0 ? 'var(--el-color-primary' : ''">
-                  <Check />
-                </el-icon>
-                <el-text :type="index === 0 ? 'primary' : ''" style="margin: 0 5px">{{ item.content }}</el-text>
-                <el-text type="danger" v-if="index === 0">[new]</el-text>
-                <br></template>
-            </el-collapse-item>
-            <el-collapse-item title="群聊和赞赏" name="5">
-              <el-text>欢迎通过
-                <el-text @click="showNotice({ show_num: 3, active_num: 2 })" type="success" title="点击反馈">反馈
-                </el-text>
-                向默默提出功能建议或BUG。
-                也欢迎来咱们九群玩（默默不是群主）<br>
-                <el-button link type="primary" target="_blank"
-                  @click="copyText('904688184', 'QQ群号', 'https://qm.qq.com/q/Oq8R7YS6sM')" title="点击前往QQ">
-                  点击加入群聊【金兔子特供部门🐰】
-                </el-button>
-              </el-text>
-              <el-divider />
-              <el-text>如果您觉得本站有用或有趣，欢迎成为元老级赞助人！！！</el-text>
-              <br>
-              <el-text type="warning">所有收入仅用于维持网站运营。</el-text>
-              <br>
-              <el-text>赞赏者名单：</el-text>
-              <el-text type="info">(设计中)</el-text>&ensp;
-              <el-text>当前收到赞赏：
-                <el-text type="primary">{{ fee }}</el-text>&ensp;元(手动录入会有延迟)
-              </el-text>
-              <br>
-              <el-button v-if="!showPayCode" @click="showPayCode = true" type="success">点击展示微信赞赏码</el-button>
-              <el-image v-else style="width: 200px" :src="pay_code_src" />
-            </el-collapse-item>
-          </el-collapse>
-        </el-card>
-      </el-header>
-      <el-affix position="top" :offset="isPC ? 50 : 40">
-        <div class="floatBar" v-show="isShow">
-          <el-button @click="scrollToTop" :icon="Top" type="info">返回顶部</el-button>
-          <el-button-group class="btnGroup" type="info">
-            <el-button @click="autoCol" :type="autoFlag ? 'primary' : 'info'">
-              <SVG_auto class="el-icon" /> <span>自动</span>
-            </el-button>
-            <el-button @click="colNum = 3; autoFlag = false"
-              :type="autoFlag === false && colNum === 3 ? 'primary' : 'info'">
-              <SVG_grid_four class="el-icon" />
-              <span>3列</span>
-            </el-button>
-            <el-button @click="colNum = 5; autoFlag = false"
-              :type="autoFlag === false && colNum === 5 ? 'primary' : 'info'">
-              <SVG_grid_nine class="el-icon" />
-              <span>5列</span>
-            </el-button>
-          </el-button-group>
-        </div>
-
-      </el-affix>
-
-      <!--    第三方库，瀑布流标签 不能包裹在el-container中,懒加载会失效-->
-      <wc-flow-layout :gap="10" :cols="colNum">
-        <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl, item.imgName, $event)"
-          class="preImg" :id="'imgDiv-' + item.imgIndex">
-          <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-' + item.imgIndex" :max-scale="7" :min-scale="0.2"
-            :preview-src-list="isChoose !== 0 ? [] : previewImgList" :initial-index="item.imgIndex" fit="scale-down"
-            lazy>
-            <template #error>
-              <div class="image-slot">
-                <el-icon style="width: 50px">
-                  <icon-picture />
-                </el-icon>
               </div>
-            </template>
-          </el-image>
-        </div>
-      </wc-flow-layout>
 
-      <!--  下载须知公告界面-->
-      <el-dialog v-model="isShowDownloadNotice" :width="isPC ? '60%' : '90%'" :show-close="!isPC" style="z-index: 100"
-        destroy-on-close>
-        <template #header><span style="font-size: 24px">下载须知</span></template>
-        <DownloadNotice :showFlag="showFlag" :showPayCodePanel="showPayCodePanel"
-          :downloadLimitNum="downloadLimitNum" />
-      </el-dialog>
-    </el-container>
-  </el-scrollbar>
+
+            </el-form>
+          </el-collapse-item>
+          <el-collapse-item title="待完善功能" name="3">
+            <el-text tag="p" v-for="item in unCompleted.slice().reverse()" :key="item.id">
+              <el-icon>
+                <Edit />
+              </el-icon>{{ item.content }}
+            </el-text>
+          </el-collapse-item>
+          <el-collapse-item title="已实现功能" name="4">
+            <el-text tag="p" v-for="(item, index) in completed.slice().reverse()" :key="index">
+              <el-icon :color="index === 0 ? 'var(--el-color-success' : ''">
+                <Check />
+              </el-icon>
+              <el-text :type="index === 0 ? 'success' : ''" style="margin: 0 5px">{{ item.content }}</el-text>
+              <el-text type="danger" v-if="index === 0">[new]</el-text>
+            </el-text>
+          </el-collapse-item>
+          <el-collapse-item title="群聊和赞赏" style="text-align: center" name="5">
+            欢迎通过
+            <el-text @click="showNotice({ show_num: 3, active_num: 2 })" type="success" title="点击反馈">反馈
+            </el-text>
+            向默默提出功能建议或BUG。
+            也欢迎来咱们九群玩（默默不是群主）<br>
+            <el-button link type="primary" target="_blank"
+              @click="copyText('904688184', 'QQ群号', 'https://qm.qq.com/q/Oq8R7YS6sM')" title="点击前往QQ">
+              点击加入群聊【金兔子特供部门🐰】
+            </el-button>
+            <el-divider />
+            如果您觉得本站有用或有趣，欢迎成为元老级赞助人！！！
+            <br>
+            <el-text type="warning">所有收入仅用于维持网站运营。</el-text>
+            <br>
+            赞赏者名单：
+            <el-text>(设计中)</el-text>&ensp;
+            当前收到赞赏：
+            <el-text type="success">{{ fee }}</el-text>&ensp;元(手动录入会有延迟)
+            <br>
+            <el-button v-if="!showPayCode" @click="showPayCode = true" type="success">点击展示微信赞赏码</el-button>
+            <el-image v-else style="width: 200px" :src="pay_code_src" />
+          </el-collapse-item>
+        </el-collapse>
+      </div>
+    </div>
+    <el-affix position="top" target=".download1999" :offset="isPC ? 50 : 40">
+      <div class="floatBar" v-show="isShow">
+        <el-button @click="scrollToTop" :icon="Top" type="default">返回顶部</el-button>
+        <el-button-group class="btnGroup" type="info">
+          <el-button @click="autoCol" :type="autoFlag ? 'primary' : 'default'">
+            <SVG_auto class="el-icon" /> <span>自动</span>
+          </el-button>
+          <el-button @click="colNum = 3; autoFlag = false"
+            :type="autoFlag === false && colNum === 3 ? 'primary' : 'default'">
+            <SVG_grid_four class="el-icon" />
+            <span>3列</span>
+          </el-button>
+          <el-button @click="colNum = 5; autoFlag = false"
+            :type="autoFlag === false && colNum === 5 ? 'primary' : 'default'">
+            <SVG_grid_nine class="el-icon" />
+            <span>5列</span>
+          </el-button>
+        </el-button-group>
+      </div>
+
+    </el-affix>
+
+    <!--    第三方库，瀑布流标签 不能包裹在el-container中,懒加载会失效-->
+    <wc-flow-layout :gap="10" :cols="colNum">
+      <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl, item.imgName, $event)"
+        class="preImg" :id="'imgDiv-' + item.imgIndex">
+        <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-' + item.imgIndex" :max-scale="7" :min-scale="0.2"
+          :preview-src-list="isChoose !== 0 ? [] : previewImgList" :initial-index="item.imgIndex" fit="scale-down" lazy>
+          <template #error>
+            <div class="image-slot">
+              <el-icon style="width: 50px">
+                <icon-picture />
+              </el-icon>
+            </div>
+          </template>
+        </el-image>
+      </div>
+    </wc-flow-layout>
+
+    <!--  下载须知公告界面-->
+    <el-dialog v-model="isShowDownloadNotice" :width="isPC ? '60%' : '90%'" :show-close="!isPC" style="z-index: 100"
+      destroy-on-close>
+      <template #header><span style="font-size: 24px">下载须知</span></template>
+      <DownloadNotice :showFlag="showFlag" :showPayCodePanel="showPayCodePanel" :downloadLimitNum="downloadLimitNum" />
+    </el-dialog>
+  </div>
+  <!-- </el-scrollbar> -->
 </template>
 
 <script lang="ts" setup>
@@ -349,9 +321,19 @@ const fee = ref(Number(others.value[0]?.content) || 0)
 //单次最大下载数量
 const downloadLimitNum = ref(25)
 
-const pay_code_src = ref(import.meta.env.VITE_QINIU_URL + '/files/payCode.png')
+const pay_code_src = ref(import.meta.env.VITE_QINIUTHUMBNAIL_URL + '/files/payCode.png')
 
 const scrollbar = ref();
+
+//网址链接
+const links = [
+  { id: 1, title: "点击前往Gitee", name: "Gitee", value: "https://gitee.com/MuXi-Dream/download-reverse1999", url: "https://gitee.com/MuXi-Dream/download-reverse1999", imgUrl: "" },
+  { id: 2, title: "点击前往GitHub", name: "GitHub", value: "https://github.com/ADarkDream/Download-Reverse1999", url: "https://github.com/ADarkDream/Download-Reverse1999", imgUrl: "" },
+  { id: 3, title: "点击前往重返未来1999官网", name: "重返未来1999官网", value: "https://re.bluepoch.com/home/detail.html#wallpaper", url: "https://re.bluepoch.com/home/detail.html#wallpaper", imgUrl: "" },
+  { id: 4, title: "点击前往百度网盘", name: "百度网盘下载地址", value: "https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999", url: "https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999", imgUrl: "" },
+  { id: 5, title: "默默的联系方式(QQ)", name: "点击前往API文档(无偿但不公开)", value: "1224021291", url: "https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719", imgUrl: "" },
+]
+
 
 const scrollToTop = () => {
   if (scrollbar.value) {
@@ -446,12 +428,17 @@ const handleCheckNoRoleChange = (val: boolean) => {
   condition.roles = [...newList]
 }
 
-//重置角色选择
+//重置筛选条件
 function reset() {
+  //重置版本
+  condition.version = []
+  isIndeterminateVersion.value = false  //取消全选按钮符号 -
+  //重置角色
   checkAllRoles.value = false
   checkNoRole.value = false
   isIndeterminateRole.value = false
   condition.roles = []
+
   //因为没绑定阵营多选框的值，通过DOM修改多选框的选中状态
   const btns = document.querySelectorAll('.roleSort .is-checked')
   btns.forEach(item => {
@@ -459,6 +446,11 @@ function reset() {
     campName.value = item.textContent!
     handleCheckCampChange(false)
   })
+
+  //重置图片类型
+  condition.sort = 2
+  //重置查询类型
+  condition.mode = 'inaccurate'
 }
 
 
@@ -728,10 +720,16 @@ watch(screenWidth, (newVal, oldVal) => {
 function autoCol() {
   autoFlag.value = true
   if (Number((screenWidth.value / 250).toFixed(0)) === colNum.value) return
-  console.log('视口宽度', screenWidth.value)
-  console.log('计算的图片列数', Math.floor(screenWidth.value / 250))
-  colNum.value = Number(Math.floor(screenWidth.value / 250))
-  if (previewImgList.length <= 15 && isPC.value) colNum.value = Number((previewImgList.length / 2).toFixed(0)) //PC端如果图片不大于15张，则有x张就分x/2列(去除小数)
+
+  if (previewImgList.length <= 15 && isPC.value) {
+    colNum.value = Number((previewImgList.length / 3).toFixed(0)) //PC端如果图片不大于15张，则有x张就分x/3列(去除小数)
+    console.log(previewImgList.length + '张,少于15张,计算的图片列数:' + colNum.value)
+  } else {
+    const currentNum = Math.floor(screenWidth.value / 250)
+    colNum.value = Number(currentNum)
+    console.log('计算的图片列数：', currentNum)
+  }
+  console.log('视口宽度：', screenWidth.value + 'px')
 }
 
 
@@ -758,8 +756,9 @@ const showPayCodePanel = () => {
 
 </script>
 <style scoped>
-html {
-  scroll-behavior: smooth
+.download1999 {
+  background-color: transparent;
+  overflow: scroll;
 }
 
 .el-header {
@@ -772,7 +771,7 @@ html {
 .roleSort {
   width: 100%;
   text-align: left;
-  border-bottom: 1px deepskyblue dotted;
+  border-bottom: 1px currentColor dotted;
 }
 
 .links {
@@ -781,9 +780,7 @@ html {
   flex-wrap: wrap;
 }
 
-.links .el-link {
-  margin: 0 10px;
-}
+
 
 .text {
   margin-left: 30px
@@ -823,7 +820,7 @@ html {
 .logo {
   float: left;
   position: absolute;
-  top: 10px;
+  top: 0;
   left: 10px;
   height: 40px;
   border-radius: 5px;
@@ -849,6 +846,37 @@ html {
     margin: 0 10px
   }
 }
+
+/* 折叠面板的设置 */
+.el-collapse {
+  --el-collapse-header-bg-color: transparent;
+  /* --el-collapse-header-border-color: var(--el-border-color);
+  --el-collapse-header-text-color: var(--el-text-color-primary); */
+  --el-collapse-content-bg-color: transparent;
+  /* --el-collapse-content-text-color: var(--el-text-color-primary); */
+
+  /* 下划线 */
+  .el-collapse-item {
+    text-align: left;
+    border-bottom: 1px dotted rgb(103, 102, 102);
+    color: currentColor;
+
+
+    /* 多选框字体颜色和方框背景透明 */
+    .el-checkbox {
+      opacity: 0.8;
+      --el-checkbox-text-color: currentColor;
+      --el-checkbox-bg-color: transparent;
+    }
+  }
+}
+
+/*筛选条件的标题*/
+.download1999 .el-form>>>.el-form-item__label {
+  font-size: 17px;
+  color: currentColor;
+}
+
 
 
 /*region下面是Transition组件的CSS动画*/
