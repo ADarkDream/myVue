@@ -1,82 +1,45 @@
 <template>
   <!-- <el-container :style="'height:' + (screenHeight - (isPC ? 80 : 40)) + 'px;overflow:hidden'"> -->
-  <!--    移动端筛选框-->
   <div>
-    <div>
-      <!-- <el-collapse style="margin: 0 10px" v-if="!isPC">
-        <el-collapse-item title="筛选条件">
-          <el-row class="header2"> -->
-      <!-- <el-col :md="3">
-              <el-button type="primary" @click="dialogVisible = true">添加新角色</el-button>
-            </el-col> -->
-      <!-- <el-col :md="3" :sm="4">
-              <el-input v-model.trim="searchInfo.name" placeholder="角色名称" clearable :prefix-icon="Search" />
-            </el-col>
-            <el-col :md="3" :sm="4">
-              <el-select v-model="searchInfo.camp" default-first-option>
-                <el-option label="全选阵营" value="" />
-                <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'"
-                  :value="name" />
-              </el-select>
-            </el-col>
-            <el-col :md="3" :sm="4">
-              <el-select v-model="searchInfo.race" default-first-option>
-                <el-option label="全选种族" value="" />
-                <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'"
-                  :value="name" />
-              </el-select>
-            </el-col>
-            <el-col :md="3" :sm="4">
-              <el-input v-model.trim="searchInfo.otherTags" placeholder="其他标签" clearable :prefix-icon="Search" />
-            </el-col>
-            <el-col :md="6" :sm="7">
-              <el-button @click="filterChange" type="primary">查找</el-button>
-              <el-button @click="clearFilter">清空筛选条件</el-button>
-              <el-button type="primary" @click="toggleAddRoleDrawer()">添加新角色</el-button>
-              <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
-            </el-col>
-
-          </el-row>
-        </el-collapse-item>
-      </el-collapse> -->
-      <div v-if="!isPC"><el-button @click="dialogVisible = true" type="primary">筛选查找</el-button>
-        <el-button type="primary" @click="toggleAddRoleDrawer()">添加新角色</el-button>
-        <el-button type="success" size="small" plain @click="refreshRole()" :icon="Refresh"
-          title="刷新角色信息">刷新</el-button>
+    <!--PC筛选框-->
+    <el-row class="header2" v-if="isPC">
+      <el-col :sm="4">
+        <el-input v-model.trim="searchInfo.name" @change="filterChange()" placeholder="角色名称" clearable
+          :prefix-icon="Search" />
+      </el-col>
+      <el-col :sm="4">
+        <el-select v-model="searchInfo.camp" @change="filterChange()" default-first-option>
+          <el-option label="全选阵营" value="" />
+          <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'" :value="name" />
+        </el-select>
+      </el-col>
+      <el-col :sm="4">
+        <el-select v-model="searchInfo.race" @change="filterChange()" default-first-option>
+          <el-option label="全选种族" value="" />
+          <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'" :value="name" />
+        </el-select>
+      </el-col>
+      <el-col :sm="3">
+        <el-input v-model.trim="searchInfo.otherTags" @change="filterChange()" placeholder="其他标签" clearable
+          :prefix-icon="Search" />
+      </el-col>
+      <el-col :sm="8">
+        <!-- <el-button @click="filterChange" type="primary">查找</el-button> -->
+        <el-button @click="clearFilter">清空筛选条件</el-button>
+        <el-button type="primary" @click="toggleAddRoleDrawer()">新增角色</el-button>
+        <el-button type="success" plain @click="refreshRole()" :icon="Refresh" title="刷新角色信息">刷新</el-button>
         <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
-      </div>
-      <!--    PC筛选框-->
-      <el-row class="header2" v-else>
-        <el-col :sm="4">
-          <el-input v-model.trim="searchInfo.name" placeholder="角色名称" clearable :prefix-icon="Search" />
-        </el-col>
-        <el-col :sm="4">
-          <el-select v-model="searchInfo.camp" default-first-option>
-            <el-option label="全选阵营" value="" />
-            <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'"
-              :value="name" />
-          </el-select>
-        </el-col>
-        <el-col :sm="4">
-          <el-select v-model="searchInfo.race" default-first-option>
-            <el-option label="全选种族" value="" />
-            <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'"
-              :value="name" />
-          </el-select>
-        </el-col>
-        <el-col :sm="3">
-          <el-input v-model.trim="searchInfo.otherTags" placeholder="其他标签" clearable :prefix-icon="Search" />
-        </el-col>
-        <el-col :sm="8">
-          <el-button @click="filterChange" type="primary">查找</el-button>
-          <el-button @click="clearFilter">清空筛选条件</el-button>
-          <el-button type="primary" @click="toggleAddRoleDrawer()">添加新角色</el-button>
-          <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
-        </el-col>
-      </el-row>
+      </el-col>
+    </el-row>
+    <!--移动端筛选框-->
+    <div v-else>
+      <el-button @click="dialogVisible = true" type="primary">筛选/查找</el-button>
+      <el-button type="primary" @click="toggleAddRoleDrawer()">新增角色</el-button>
+      <el-button type="success" size="small" plain @click="refreshRole()" :icon="Refresh" title="刷新角色信息">刷新</el-button>
+      <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
     </div>
     <div>
-      <el-text>如有错漏还请向我反馈。注册登录之后可编辑。</el-text>
+      <el-text tag="p" type="primary" style="font-weight: bold;">如有错漏还请向我反馈。注册登录之后可编辑。</el-text>
       <el-table ref="tableRef" class="myCustomElTable" :data="tableData"
         :max-height="isPC ? (screenHeight - 240) : (screenHeight - 180)" stripe flexible border highlight-current-row
         table-layout="auto" :default-sort="{ prop: 'id', order: 'custom' }" @sort-change="handleSortChange">
@@ -141,12 +104,12 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" min-width="100" align="center" :fixed="isPC ? 'right' : false">
-          <template #header v-if="isPC">
+          <!-- <template #header v-if="isPC">
             <div style="display: flex;justify-content: space-around;">
               <span>操作</span><el-button type="success" size="small" plain @click="refreshRole()" :icon="Refresh"
-                title="刷新角色信息">刷新</el-button>
+                title="刷新角色信息"></el-button>
             </div>
-          </template>
+          </template> -->
           <template #default="scope">
             <div v-if="isEditRow !== scope.$index">
               <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)"
@@ -172,30 +135,31 @@
           @current-change="render" />
       </div>
     </div>
-
-    <!--移动端筛选框-->
-    <el-drawer v-model="dialogVisible" :with-header="false" :show-close="false" direction="ttb" :append-to-body="true"
-      size="30%">
-      <el-row class="header2">
+    <!--移动端筛选框2-->
+    <el-drawer v-model="dialogVisible" title="筛选角色" :show-close="false" direction="btt" :append-to-body="true"
+      size="40%">
+      <el-row>
         <el-col :md="3" :sm="4">
-          <el-input v-model.trim="searchInfo.name" placeholder="角色名称" clearable :prefix-icon="Search" />
+          <el-input v-model.trim="searchInfo.name" @change="filterChange()" placeholder="角色名称" clearable
+            :prefix-icon="Search" />
         </el-col>
         <el-col :md="3" :sm="4">
-          <el-select v-model="searchInfo.camp" default-first-option>
+          <el-select v-model="searchInfo.camp" @change="filterChange()" default-first-option>
             <el-option label="全选阵营" value="" />
             <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'"
               :value="name" />
           </el-select>
         </el-col>
         <el-col :md="3" :sm="4">
-          <el-select v-model="searchInfo.race" default-first-option>
+          <el-select v-model="searchInfo.race" @change="filterChange()" default-first-option>
             <el-option label="全选种族" value="" />
             <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'"
               :value="name" />
           </el-select>
         </el-col>
         <el-col :md="3" :sm="4">
-          <el-input v-model.trim="searchInfo.otherTags" placeholder="其他标签" clearable :prefix-icon="Search" />
+          <el-input v-model.trim="searchInfo.otherTags" @change="filterChange()" placeholder="其他标签" clearable
+            :prefix-icon="Search" />
         </el-col>
         <el-col :md="6" :sm="7">
           <el-button @click="filterChange" type="primary">查找</el-button>
@@ -213,8 +177,6 @@ import { reactive, ref, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import type { TableInstance } from "element-plus";
 import { Search, Refresh } from "@element-plus/icons-vue";
-import * as XLSX from "xlsx"; // 导入 xlsx
-import { saveAs } from "file-saver";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import { useResponsiveStore } from "@/store/useResponsiveStore";
@@ -355,6 +317,7 @@ const isEditRow = ref<number>(-1)
 
 //编辑角色信息(修改编辑标记)
 const handleEdit = (index: number, row: Role) => {
+  if (!isLogin.value) return ElMessage.warning('注册登录后可编辑')
   if (isPC.value) {//PC端在表格上修改
     isEditRow.value = index
     newInfo.value = Object.assign(newInfo.value, row)
@@ -384,8 +347,9 @@ const checkUpdateRow = async (newData: Role, oldData: Role) => {
 
 //角色是否可编辑
 const canEdit = (status: number) => {
-  if (!isLogin.value) return false
-  else if (isAdmin.value) return true
+  // if (!isLogin.value) return false
+  // else
+  if (isAdmin.value) return true
   else if (status === 1 || status === 2) return true
   else return false
 }
@@ -425,12 +389,7 @@ const deleteRow = (index: number, id: number) => {
       //uid被洗掉了，手动添加
       updateRole({ status: 0, id } as Role)
     })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '删除操作已取消',
-      })
-    })
+    .catch(() => ElMessage.info('删除操作已取消'))
 }
 
 /**
@@ -479,6 +438,7 @@ onMounted(async () => {
   .header2 {
     width: 80%;
     margin: 0 auto;
+    padding-top: 10px;
   }
 
   .el-col {

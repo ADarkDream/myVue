@@ -408,12 +408,7 @@ const deleteRow = (id: number, isDraft: number) => {
       if (isDraft === 0) deleteMyArticle(id)
       else if (isDraft === 1) deleteMyDraft(id)
     })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '删除操作已取消',
-      })
-    })
+    .catch(() => ElMessage.info('删除操作已取消'))
 }
 </script>
 

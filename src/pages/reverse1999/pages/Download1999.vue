@@ -101,10 +101,10 @@
                   :icon="isChoose !== 0 ? CloseBold : Select" @click="selectBtn()" v-show="isShow">
                   <span v-if="isChoose === 0">多选
                   </span>
-                  <span v-else-if="isChoose === 1">取消全选</span>
+                  <span v-else-if="isChoose === 1">清空选择</span>
                   <span v-else>退出勾选</span>
                 </el-button>
-                <el-button v-if="isChoose && isPC" type="success" @click="checkPort()">检查本地代理</el-button>
+                <el-button v-if="imgList.length && isPC" type="success" @click="checkPort()">检查本地代理</el-button>
                 <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
                 </el-button>
                 <br>
@@ -165,7 +165,7 @@
         </el-collapse>
       </div>
     </div>
-    <el-affix position="top" target=".download1999" :offset="isPC ? 50 : 40">
+    <el-affix position="top" target=".download1999" :offset="isPC ? 50 : 85">
       <div class="floatBar" v-show="isShow">
         <el-button @click="scrollToTop" :icon="Top" type="default">返回顶部</el-button>
         <el-button-group class="btnGroup" type="info">
@@ -184,7 +184,6 @@
           </el-button>
         </el-button-group>
       </div>
-
     </el-affix>
 
     <!--    第三方库，瀑布流标签 不能包裹在el-container中,懒加载会失效-->
@@ -253,6 +252,7 @@ import logo from '@/assets/logo-small.png'
 import SVG_auto from '@/assets/reverse1999/auto.svg?component'
 import SVG_grid_four from '@/assets/reverse1999/grid_four.svg?component'
 import SVG_grid_nine from '@/assets/reverse1999/grid_nine.svg?component'
+import { api_getImage } from '@/apis/reverse1999';
 
 
 const router = useRouter()
@@ -307,9 +307,9 @@ const raceName = ref<string>('')      //种族名称
 const showUrl = ref(false)     //控制开源地址的显示
 const isShowDownloadNotice = ref(false)     //控制下载须知界面的显示
 const isShowNotice = ref(false)//控制模糊和精准搜索的说明是否显示
-const imgList = reactive<ReverseImg[]>([])  //展示列表，存的图片信息对象
-const previewImgList = reactive<string[]>([]) //大图展示列表，存的图片链接
-const downloadList = reactive<ReverseImg[]>([])   //下载图片的列表
+const imgList = ref<ReverseImg[]>([])  //展示列表，存的图片信息对象
+const previewImgList = ref<string[]>([]) //大图展示列表，存的图片链接
+const downloadList = ref<ReverseImg[]>([])   //下载图片的列表
 
 const isShow = ref(false)//显示布局按钮组
 const colNum = ref<number>(isPC.value ? 5 : 1)    //修改显示列数
@@ -483,24 +483,18 @@ const getImages = async () => {
   // })
   // }
   try {
-    const result = await axios<ResultData<{ imgList: ReverseImg[] }>>({
-      url: '/getWallpaper',
-      params: condition,
-    })
-    console.log(result)
-    const { status, data } = result.data
-    if (status === 300) return//没有查询结果则不进行以下操作
-    isShow.value = true //显示布局按钮
+    const data = await api_getImage(condition)
     if (!data) return
-    imgList.splice(0, imgList.length, ...data.imgList)
-    previewImgList.splice(0, previewImgList.length)
+    isShow.value = true //显示布局按钮
 
-    imgList.forEach((item, index) => {
+    imgList.value = data.imgList as ReverseImg[]
+    previewImgList.value = []
+    imgList.value.forEach((item, index) => {
       item.imgIndex = index  //imgIndex用于排序，但不连续,所以要重排
       item.imgName = item.newName
-      previewImgList.push(item.imgUrl)
+      previewImgList.value.push(item.imgUrl)
     })
-    console.log(imgList)
+    console.log(imgList.value)
     // 将 a 的值同步到 b，包括空值
     // Object.keys(oldCondition.value).forEach(key => {
 
@@ -545,6 +539,7 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
     menu!.appendChild(downloadBtn)
     menu!.appendChild(setBG)
   } else {//进入多选状态,根据id里面的数字获取是第几张图
+    console.log('当前是多选状态');
     const imgNum = target.id.match(/\d+/g)![0]
     const imgDiv = document.querySelector(`#imgDiv-${imgNum}`)
     const isChecked = imgDiv!.classList.contains('checked')
@@ -552,16 +547,19 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
       //取消选中样式
       imgDiv!.classList.remove('checked')
       //遍历下载列表，删除取消选中的图片链接
-      for (let i = downloadList.length - 1; i >= 0; i--) {
-        if (downloadList[i].imgName === name) downloadList.splice(i, 1)
+      for (let i = downloadList.value.length - 1; i >= 0; i--) {
+        if (downloadList.value[i].imgName === name) downloadList.value.splice(i, 1)
       }
     } else {
       //添加选中样式及下载链接
       imgDiv!.classList.add('checked')
-      downloadList.push(imgList[Number(imgNum)])
+      downloadList.value.push(imgList.value[Number(imgNum)])
     }
-    //console.log(downloadList)
-    console.log('isChecked', !isChecked)
+    //判断下载列表是否为空,修改多选状态
+    if (downloadList.value.length === 0) isChoose.value = 2
+    else isChoose.value = 1
+    // console.log("下载列表：", downloadList.value)
+    // console.log("图片列表：", imgList.value);
   }
 }
 
@@ -593,37 +591,37 @@ const setBackground = async (url: string, name: string) => {
 }
 
 
-//进入和退出多选状态(num=0进入多选,1取消全选,2退出多选)
+/**
+ * 进入和退出多选状态
+ * @param num -控制图片选择状态
+ * - `0` 退出多选
+ * - `1` 取消全选
+ * - `2` 进入多选
+ * */
 function selectBtn(num?: number) {
   const preList = document.querySelectorAll('.preImg')
   console.log('selectBtn的num', num)
-  if (!!num) isChoose.value = num
+  if (typeof num === 'number' && [0, 1, 2].includes(num)) isChoose.value = num
   if (isChoose.value === 0) { //进入多选状态
     isChoose.value = 1
     //将所有呈现的图片添加选中状态
     preList.forEach(item => {
       item.classList.add('checked')
     })
-    //将所有呈现的图片加入下载列表
-    downloadList.splice(0, downloadList.length, ...imgList)
-  } else if (isChoose.value === 1) {//取消全选
+    //将所有呈现的图片加入下载列表(深拷贝)
+    downloadList.value = [...imgList.value]
+    return
+  } else if (isChoose.value === 1) {//清空选择
     isChoose.value = 2
-    //给所有呈现的图片移除选中状态
-    preList.forEach(item => {
-      item.classList.remove('checked')
-    })
-    //清空下载列表
-    downloadList.splice(0, downloadList.length)
-  } else if (isChoose.value === 2) {  //退出多选状态
+  } else if (isChoose.value === 2) {//退出多选状态
     isChoose.value = 0
-    //给所有呈现的图片移除选中状态
-    preList.forEach(item => {
-      item.classList.remove('checked')
-    })
-    //清空下载列表
-    downloadList.splice(0, downloadList.length)
   }
-
+  //给所有呈现的图片移除选中状态
+  preList.forEach(item => {
+    item.classList.remove('checked')
+  })
+  //清空下载列表
+  downloadList.value = []
 }
 
 //本地代理服务器是否开启的标志
@@ -654,10 +652,11 @@ const checkPort = async () => {
 
 //批量下载壁纸
 const downloadImages = async () => {
+  const length = downloadList.value.length
+  if (length === 0) return ElMessage.warning('请先勾选需要下载的图片！')
   ElMessage.info('如有任何问题，请先查看下载须知')
-  if (downloadList.length === 0) return ElMessage.error('请先勾选需要下载的图片！')
-  else if (downloadList.length <= 10) {//下载数量不大于10
-    // ElMessage.success('当前下载数量不大于10，可以直接下载')
+
+  if (length <= downloadLimitNum.value) {//下载数量不大于限定数量
     let flag = true
     if (!isPC.value) await ElMessageBox.confirm('移动端浏览器可能无法批量下载，是否继续？', {
       confirmButtonText: '继续下载',
@@ -665,15 +664,15 @@ const downloadImages = async () => {
     }).then(() => ElMessage.info('如等待之后没有下载，请更换浏览器或长按图片保存'))
       .catch(() => flag = false)
     if (!flag) return
-    console.log(downloadList)
-    downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName, item.imgPath))
+    console.log("下载列表：", downloadList)
+    downloadList.value.forEach(item => downloadImg(item.imgUrl, item.imgName, item.imgPath!))
     selectBtn(2)
   } else {//下载数量大于5
     await checkPort()
     if (!!isOpenProxy.value) {
       ElMessage.success('正在通过代理端口进行下载，感谢您的耐心合作ღ( ´･ᴗ･` )')
       console.log(downloadList)
-      downloadList.forEach(item => downloadImg(item.imgUrl, item.imgName, item.imgPath))
+      downloadList.value.forEach(item => downloadImg(item.imgUrl, item.imgName, item.imgPath!))
       selectBtn(2) //取消多选
     } else return ElMessage.error('当前下载数量大于10且未开启代理，请先查看下载须知→下载大量')
   }
@@ -721,9 +720,9 @@ function autoCol() {
   autoFlag.value = true
   if (Number((screenWidth.value / 250).toFixed(0)) === colNum.value) return
 
-  if (previewImgList.length <= 15 && isPC.value) {
-    colNum.value = Number((previewImgList.length / 3).toFixed(0)) //PC端如果图片不大于15张，则有x张就分x/3列(去除小数)
-    console.log(previewImgList.length + '张,少于15张,计算的图片列数:' + colNum.value)
+  if (previewImgList.value.length <= 15 && isPC.value) {
+    colNum.value = Number((previewImgList.value.length / 3).toFixed(0)) //PC端如果图片不大于15张，则有x张就分x/3列(去除小数)
+    console.log(previewImgList.value.length + '张,少于15张,计算的图片列数:' + colNum.value)
   } else {
     const currentNum = Math.floor(screenWidth.value / 250)
     colNum.value = Number(currentNum)

@@ -73,6 +73,7 @@ export default function () {
         }
     }
 
+    //新增角色
     const addRole = async (formData: Role) => {
         const flag = await api_addRole(formData)
         if (flag) {//操作成功，刷新信息并退出
@@ -84,6 +85,7 @@ export default function () {
         }
     }
 
+    //修改角色
     const updateRole = async (formData: Role) => {
         const flag = await api_updateRole(formData, isAdmin.value)
         if (flag) {//操作成功，刷新信息并退出

@@ -27,7 +27,7 @@ export default function () {
 
             //清除本地已有的请求
             types.forEach((type: string) => {
-                console.log(type);
+                console.log("本地已有公告类型：", type);
 
                 if (type === 'updateNotes' && updateNotes.value.length !== 0) {
                     // temp_updateNotes = updateNotes.value

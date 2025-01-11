@@ -217,12 +217,7 @@ const deleteRow = (index: number, id: number) => {
       deleteComment(index, id)
       console.log(index, id)
     })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '删除操作已取消',
-      })
-    })
+    .catch(() => ElMessage.info('删除操作已取消'))
 }
 
 //删除评论

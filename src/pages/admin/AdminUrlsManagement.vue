@@ -412,12 +412,7 @@ const deleteRow = (index: number, id: number) => {
     .then(() => {
       deleteUrl(index, id)
     })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '删除操作已取消',
-      })
-    })
+    .catch(() => ElMessage.info('删除操作已取消'))
 }
 
 //删除网址

@@ -16,6 +16,28 @@ export const useReverse1999Store = defineStore('reverse1999', () => {
     const campInfo = ref<{ name: string, count: number }[]>([])
     //角色种族列表
     const raceInfo = ref<{ name: string, count: number }[]>([])
+    /**版本数字-名称字典*/
+    const versionNameDictionary = computed(() => versionInfo.value.reduce((dict: Record<number, string>, { version, versionName }) => {
+        dict[version] = versionName
+        return dict;
+    }, {}))
+
+    /**角色id-名称字典*/
+    const roleNameDictionary = computed(() => allRoleInfo.value.reduce((dict: Record<number, string>, role) => {
+        dict[role.id] = role.name;
+        return dict;
+    }, {}))
+
+    /**根据阵营分类的角色树*/
+    const roleTree = computed(() => campInfo.value.map(camp => {
+        const children = allRoleInfo.value.map(role => {//去除已删除的角色，将角色根据阵营分组
+            if (role.status !== 0 && role.camp === camp.name) return { label: role.name, value: role.id }
+        }).filter(item => item !== undefined)//过滤掉空值
+        return { label: camp.name, value: camp.name, children }
+    }))
+
+
+
     //版本选项
     const versionOption = ref<TableFilterItem<number>[]>([])
     /**是否可修改、编辑的状态*/
@@ -32,7 +54,7 @@ export const useReverse1999Store = defineStore('reverse1999', () => {
 
     //切换面板
     const changePanelIndex = (index: number | string) => {
-        console.log("index", index);
+        console.log("当前面板序号：", index);
         switch (index) {
             case 0:
             case 'download':
@@ -52,11 +74,12 @@ export const useReverse1999Store = defineStore('reverse1999', () => {
             default:
                 router.push({ name: 'download' })
                 activePanelIndex.value = 0
+                ElMessage.info('开发中')
                 break
         }
     }
 
-    return { activePanelIndex, versionInfo, allRoleInfo, diffRoleInfo, campInfo, raceInfo, versionOption, statusOptions, changePanelIndex }
+    return { activePanelIndex, versionInfo, allRoleInfo, diffRoleInfo, campInfo, raceInfo, versionNameDictionary, roleNameDictionary, roleTree, versionOption, statusOptions, changePanelIndex }
 }, {
     persist: {
         pick: ['versionInfo', 'allRoleInfo', 'diffRoleInfo', 'campInfo', 'raceInfo', 'versionOption'],

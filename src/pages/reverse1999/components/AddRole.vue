@@ -25,7 +25,7 @@
     </el-form-item> -->
     <div>
       <el-button @click="resetForm">重置</el-button>
-      <el-button type="primary" @click="submitForm()" :loading="isLoading">{{ isEdit ? '修改' : '添加新的'
+      <el-button type="primary" @click="submitForm()" :loading="isLoading">{{ isEdit ? '修改' : '添加'
         }}角色信息</el-button>
     </div>
   </el-form>

@@ -2,20 +2,26 @@
   <el-container>
     <el-main>
       <h1>本页面为功能测试页</h1>
-      <div style="margin-top: 30px;padding: 20px">
-        <el-button @click="router.push({ name: 'chat' })">点击前往聊天室demo</el-button>
+      <div style="margin-top: 10px;padding: 20px">
+        <el-button-group>
+          <el-button @click="router.push({ name: 'chat' })">点击前往聊天室demo</el-button>
+          <el-button @click="router.push({ name: 'music' })">点击前往音乐播放器</el-button>
+        </el-button-group>
+
+
       </div>
-      <div><el-button @click="router.push({ name: 'music' })">点击前往音乐播放器</el-button></div>
-      <h2>本地图片幻灯片(试题)</h2>
-      <!-- <Slider /> -->
-      <!-- {{ isLock }} -->
+      <el-divider direction="horizontal">本地图片幻灯片</el-divider>
+      <Slider />
+      <el-divider direction="horizontal">文件上传测试</el-divider>
       <UploadAudio />
-      <p class="other_login_div">
+      <p class="other_login_div" v-if="false">
         <el-text>其他登录方式(测试中)：</el-text>
         <el-button type="primary" size="default" @click="login_by_qq(true)">QQ登录_小窗口</el-button>
         <el-button type="primary" size="default" @click="login_by_qq()">QQ登录_新窗口</el-button>
         <el-button type="primary" size="default" @click="connect_by_qq(true)">QQ绑定_新窗口</el-button>
       </p>
+      <el-divider direction="horizontal">WIKI测试题</el-divider>
+      <Example />
     </el-main>
 
   </el-container>
@@ -24,10 +30,12 @@
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
 //components
-// import Slider from '@/pages/Slider.vue'
+import UploadAudio from "@/components/UploadAudio.vue";
+import Example from "./Example.vue";
+import Slider from '@/pages/Slider.vue'
 import { useResponsiveStore } from "@/store/useResponsiveStore";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import UploadAudio from "@/components/UploadAudio.vue";
+
 import useOAuth from "@/hooks/user/useOAuth";
 // import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 const router = useRouter()

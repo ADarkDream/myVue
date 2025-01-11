@@ -70,6 +70,7 @@ declare module 'vue' {
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
+    ElTreeSelectV2: typeof import('element-plus/es')['ElTreeSelectV2']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     LikeHeart: typeof import('./src/components/smallComp/LikeHeart.vue')['default']
     LoginFormComp: typeof import('./src/components/form/LoginFormComp.vue')['default']

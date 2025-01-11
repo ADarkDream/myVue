@@ -435,12 +435,7 @@ const deleteRow = (index: number, row: UserInfo, isAdmin: boolean) => {
     .then(() => {
       deleteUser(index, uid, isAdmin)
     })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '删除操作已取消',
-      })
-    })
+    .catch(() => ElMessage.info('删除操作已取消'))
 }
 
 //删除用户账号

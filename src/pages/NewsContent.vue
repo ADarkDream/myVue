@@ -318,16 +318,8 @@ const deleteRow = (id: number) => {
       showClose: false
     }
   )
-    .then(() => {
-      console.log(111)
-      deleteComment(id)
-    })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: '删除操作已取消',
-      })
-    })
+    .then(() => deleteComment(id))
+    .catch(() => ElMessage.info('删除操作已取消'))
 }
 
 //删除评论

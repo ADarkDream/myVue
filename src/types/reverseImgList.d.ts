@@ -15,7 +15,8 @@ type ReverseImgInfo = {
     imgUrl: string,
     version: number,
     // versionName: string,
-    tags: string,//角色ID,例如："3,93"
+    roleIds?: number[],//角色ID数组，如[3,93]
+    tags?: string,
     newTags?: string,
     roleNames?: string,
     nickName?: string,
@@ -29,15 +30,15 @@ type ReverseImgInfo = {
 }
 
 //角色阵营的树状选择框
-interface SourceData {
+interface TreeItem {
     label: string,
-    value: number,
-    children?: SourceData[]
+    value: number | string,
+    children?: TreeItem[]
 }
 
 //图片查询的参数
 interface ImgParams {
-    version: string[],
+    version: number[] | string[],//版本号,或者["all"]
     roles: number[],
     sort: ImgSort,
     mode: 'accurate' | 'inaccurate',//0是模糊查询
@@ -45,6 +46,7 @@ interface ImgParams {
     offset?: number//当前页码
     orderBy?: string,//倒序查询的依据
     order?: string //'desc'为倒序查询,与orderBy同时存在时生效
+    isManagement?: string //是否是管理模式
 }
 
 //图片分类

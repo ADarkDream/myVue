@@ -10,7 +10,5 @@ import type { CloudSongInfo } from "@/types/music";
 const { copyText } = myFunction
 
 const roles = {
-
-
 }
 export default roles
