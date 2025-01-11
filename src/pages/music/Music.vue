@@ -228,7 +228,7 @@ const touchend = (e: TouchEvent) => {
   box-sizing: border-box;
   padding: 0 10px;
   width: 100%;
-  --music-bg-color: #ffffff;
+  --music-bg-color: #fff;
   --music-bg-opacity: 0.5;
   /*背景透明度*/
   --music-bg-filter: 0;

@@ -7,7 +7,6 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    AddRole: typeof import('./src/components/AddRole.vue')['default']
     AddSearchEngine: typeof import('./src/components/AddSearchEngine.vue')['default']
     AddUrl: typeof import('./src/components/AddUrl.vue')['default']
     Approve: typeof import('./src/components/Approve.vue')['default']
@@ -70,7 +69,6 @@ declare module 'vue' {
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
-    ElTreeSelectV2: typeof import('element-plus/es')['ElTreeSelectV2']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     LikeHeart: typeof import('./src/components/smallComp/LikeHeart.vue')['default']
     LoginFormComp: typeof import('./src/components/form/LoginFormComp.vue')['default']

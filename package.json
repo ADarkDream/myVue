@@ -16,7 +16,6 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "@highlightjs/vue-plugin": "github:highlightjs/vue-plugin",
-    "@vue/language-server": "^2.1.6",
     "@wangeditor/editor-for-vue": "^5.1.12",
     "axios": "^1.6.8",
     "bignumber.js": "^9.1.2",
@@ -29,7 +28,6 @@
     "mitt": "^2.1.0",
     "pinia": "^2.2.4",
     "pinia-plugin-persistedstate": "^4.1.1",
-    "scss": "^0.2.4",
     "sitemap": "^8.0.0",
     "socket.io-client": "^4.7.5",
     "spark-md5": "^3.0.2",
@@ -47,6 +45,7 @@
     "@types/spark-md5": "^3.0.4",
     "@vitejs/plugin-legacy": "^5.3.2",
     "@vitejs/plugin-vue": "^5.0.4",
+    "@vue/language-server": "^2.1.6",
     "@vue/tsconfig": "^0.5.1",
     "npm-run-all2": "^6.1.2",
     "sass": "^1.77.8",

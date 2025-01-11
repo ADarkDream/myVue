@@ -60,5 +60,12 @@ p {
 
 :root {
     --svg-custom-width: 30px;
-    --svg-custom-fill: #fff;
+    --svg-custom-fill: currentColor;
+}
+
+/** 夜间模式 */
+.dark {
+    body {
+        background-color: var(--color-background);
+    }
 }

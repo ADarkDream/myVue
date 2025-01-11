@@ -5,7 +5,7 @@
     <div class="play-panel" :class="{ active: infoBarActive }">
       <span ref="musicName" class="name" :class="{ scroll: isScrollName }" :style="transformX">{{
         isLoading ? '加载中' : thisMusic.name || '未命名'
-      }}——<span class="artist">
+        }}——<span class="artist">
           {{
             isLoading ? '加载中' : thisMusic.artists.map(artist => artist.name).join('&') || '未知艺术家'
           }}
@@ -14,7 +14,7 @@
         <el-slider v-model="currentTime" @change="changeCurrentTime" :min="0" :max="duration" :show-tooltip="false" />
         <div class="time"><span>{{
           formatMusicTime(currentTime)
-        }}</span><span>{{ formatMusicTime(duration) }}</span></div>
+            }}</span><span>{{ formatMusicTime(duration) }}</span></div>
       </div>
     </div>
     <div class="control-panel" :class="{ active: controlPanelActive }">
@@ -34,12 +34,12 @@
         <!--右侧面板-->
         <div class="options">
           <!--锁-->
-          <span @click="lockThePlayer">
+          <div @click="lockThePlayer">
             <SVG_lock v-if="isLock" class="control_icon small_icon" />
             <SVG_unlock v-else class="control_icon small_icon" />
-          </span>
+          </div>
           <!--播放模式-->
-          <span @click="toggleMode()">
+          <div @click="toggleMode()">
             <!--列表循环-->
             <SVG_list_loop v-if="modeIndex === 0" class="control_icon" /> <!--顺序播放-->
             <!-- 顺序播放 -->
@@ -48,18 +48,18 @@
             <SVG_random_play v-else-if="modeIndex === 2" class="control_icon" />
             <!--单曲循环-->
             <SVG_single_loop v-else-if="modeIndex === 3" class="control_icon" />
-          </span>
+          </div>
           <!--音量控制-->
-          <span @click="toggleVolumePanelVisible">
+          <div @click="toggleVolumePanelVisible">
             <!--静音-->
             <SVG_volume__mute v-if="volume === 0" class="control_icon small_icon" />
             <!--音量-->
             <SVG_volume_voice v-else class="control_icon small_icon" />
-          </span>
+          </div>
           <!--播放列表-->
-          <span @click="isShowPlayList = !isShowPlayList">
+          <div @click="isShowPlayList = !isShowPlayList">
             <SVG_music_list class="control_icon" />
-          </span>
+          </div>
         </div>
       </div>
     </div>
@@ -228,7 +228,7 @@ if ("mediaSession" in navigator) {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 /*播放器的样式*/
 .player {
   padding: 0;
@@ -313,7 +313,6 @@ if ("mediaSession" in navigator) {
 
   .control-panel {
     position: relative;
-    background-color: #fff;
     border-radius: 15px;
     width: 100%;
     height: 80px;
@@ -375,14 +374,12 @@ if ("mediaSession" in navigator) {
 
 
     .controls {
-      /*   display: flex;
-         justify-content: flex-end;*/
       height: 80px;
       padding: 0 0 0 30%;
       background-color: var(--el-bg-color);
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 2fr;
-      width: 70%;
+      border-radius: 5px;
 
       svg {
         fill: #c2c6cf;
@@ -439,8 +436,11 @@ if ("mediaSession" in navigator) {
   /*播放器右侧按键布局*/
 
   .options {
-    flex-wrap: wrap;
     text-align: right;
+
+    div {
+      display: inline-block;
+    }
   }
 }
 

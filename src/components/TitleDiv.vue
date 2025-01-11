@@ -607,7 +607,6 @@ emitter.on('showNotice', (item: NoticeActiveNum) => {
 .headImg {
   width: 200px;
   margin-bottom: 20px;
-  fill: CurrentColor
 }
 
 .setting {
@@ -676,6 +675,12 @@ emitter.on('showNotice', (item: NoticeActiveNum) => {
     width: 100%;
     padding: 0;
     margin: 0;
+  }
+}
+
+.dark {
+  .headImg {
+    fill: CurrentColor;
   }
 }
 </style>

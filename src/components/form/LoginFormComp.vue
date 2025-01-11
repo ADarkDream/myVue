@@ -8,7 +8,7 @@
       <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码" />
     </el-form-item>
     <el-form-item prop="policy" autocomplete="off">
-      <input type="checkbox" v-model="ruleForm.policy">&ensp;我已阅读并同意
+      <input type="checkbox" v-model="ruleForm.policy"><el-text> &ensp;我已阅读并同意</el-text>
       <el-button link type="primary" @click="showPolicy">隐私政策</el-button>
       <el-button style="position: absolute;right: 0" link @click="resetForm()">重置表单</el-button>
     </el-form-item>
