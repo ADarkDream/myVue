@@ -71,6 +71,11 @@ export const useReverse1999Store = defineStore('reverse1999', () => {
                 router.push({ name: 'images' })
                 activePanelIndex.value = 2
                 break
+            case 3:
+            case 'versions':
+                router.push({ name: 'versions' })
+                activePanelIndex.value = 3
+                break
             default:
                 router.push({ name: 'download' })
                 activePanelIndex.value = 0

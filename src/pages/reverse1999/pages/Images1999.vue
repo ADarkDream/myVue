@@ -57,7 +57,7 @@
       </div>
     </div>
     <div>
-      <el-text tag="p" type="primary" style="font-weight: bold;">如有错漏还请向我反馈。注册登录之后可编辑。</el-text>
+      <el-text tag="p" type="warning">如有错漏还请向我反馈。注册登录之后可编辑。</el-text>
       <el-table ref="tableRef" :data="tableData" class="myCustomElTable"
         :max-height="isPC ? (screenHeight - 240) : (screenHeight - 180)" stripe border highlight-current-row
         table-layout="auto" :default-sort="{ prop: 'imgIndex', order: 'custom' }" @sort-change="handleSortChange" fit>
@@ -363,7 +363,7 @@ function handleSortChange({ prop, order }: Sort<ReverseImgInfo>) {
 //获取全部图片
 onMounted(async () => {
   //获取版本列表并添加到菜单
-  await getVersion({ version: true, role: 'all' })
+  await getVersion({ version: "diff", role: 'all' })
   await render()
 })
 
@@ -535,6 +535,8 @@ const deleteImage = (index: number, data: ReverseImgInfo) => {
 /**检查1999官方以影像之是否有更新 */
 const checkReverseUpdate = () => {
   ElMessage.info('开发中')
+
+
 }
 
 

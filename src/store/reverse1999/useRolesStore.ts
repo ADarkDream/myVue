@@ -18,18 +18,8 @@ export const useRolesStore = defineStore('1999_roles', () => {
     /**true编辑状态，false是增加角色*/
     const isEdit = ref(false)
 
-    /**要是否显示搜索面板*/
+    /**要是否显示面板*/
     const isShowAddRoleDrawer = ref(false)
-
-
-    /**要收藏或要删除的数据库音乐id数组(选中状态的id数组)*/
-    const music_id_list = ref<number[]>([])
-
-    /**是否显示编辑歌单信息的抽屉*/
-    const isShowEditMusicListInfoDrawer = ref(false)
-
-    /**创建歌单或编辑歌单信息的标记*/
-    const isCreateFlag = ref(true)
 
     /**如果是编辑，保留编辑前的信息*/
     const oldFormData = ref<Role>({
@@ -83,5 +73,5 @@ export const useRolesStore = defineStore('1999_roles', () => {
 
 
 
-    return { isLoading, isEdit, isShowAddRoleDrawer, music_id_list, isShowEditMusicListInfoDrawer, isCreateFlag, oldFormData, formData, reSetFormData, toggleAddRoleDrawer }
+    return { isLoading, isEdit, isShowAddRoleDrawer, oldFormData, formData, reSetFormData, toggleAddRoleDrawer }
 })

@@ -39,7 +39,7 @@
       <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
     </div>
     <div>
-      <el-text tag="p" type="primary" style="font-weight: bold;">如有错漏还请向我反馈。注册登录之后可编辑。</el-text>
+      <el-text tag="p" type="warning">如有错漏还请向我反馈。注册登录之后可编辑。</el-text>
       <el-table ref="tableRef" class="myCustomElTable" :data="tableData"
         :max-height="isPC ? (screenHeight - 240) : (screenHeight - 180)" stripe flexible border highlight-current-row
         table-layout="auto" :default-sort="{ prop: 'id', order: 'custom' }" @sort-change="handleSortChange">
@@ -365,7 +365,7 @@ const canDel = (status: number) => {
 
 //刷新角色信息
 const refreshRole = async () => {
-  const flag = await getVersion({ version: false, role: 'all' }, true)
+  const flag = await getVersion({ role: 'all' }, true)
   if (!!flag) {
     ElMessage.success('刷新成功')
   } else {

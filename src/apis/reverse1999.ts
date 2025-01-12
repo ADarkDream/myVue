@@ -1,8 +1,9 @@
 import { ResultData } from "@/types/global";
+import { VersionParams } from '@/types/reverse1999'
 import axios from "axios";
 
 /**获取版本列表或角色列表*/
-export const api_getVersion = async (params: { version?: boolean, role?: 'all' | 'diff' }, isAdmin = false) => {
+export const api_getVersion = async (params: VersionParams, isAdmin = false) => {
     const result = await axios<ResultData<{ versionList: VersionInfo[], roleList: Role[] }>>({
         url: isAdmin ? '/getAllVersion' : '/getVersion',
         params

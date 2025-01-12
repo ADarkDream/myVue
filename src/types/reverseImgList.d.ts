@@ -75,12 +75,19 @@ interface Role {
     updated_time?: Date
 }
 
-//1999版本信息
+/**1999版本信息*/
 interface VersionInfo {
+    index?: number,
+    time?: number[],
     version: number,
     versionName: string
 }
 
+/**添加1999版本信息的参数*/
+interface AddVersionParams extends VersionInfo {
+    halfText: string,
+    halfName: string
+}
 
 
 

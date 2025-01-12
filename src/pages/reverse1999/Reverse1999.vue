@@ -37,13 +37,22 @@
                 <template #label>
                     <el-text class="tab-label">
                         <el-icon>
+                            <Document />
+                        </el-icon>&ensp;版本信息
+                    </el-text>
+                </template>
+            </el-tab-pane>
+            <el-tab-pane :name="4">
+                <template #label>
+                    <el-text class="tab-label">
+                        <el-icon>
                             <Setting />
                         </el-icon>&ensp;设置
                     </el-text>
                 </template>
                 <MusicSettings />
             </el-tab-pane>
-            <el-tab-pane :name="4">
+            <el-tab-pane :name="5">
                 <template #label>
                     <el-text class="tab-label">
                         <el-icon>
@@ -140,8 +149,8 @@ const isKeepAlive = computed(() => {
 
 });
 
-//前三个页面显示子页面，之后的隐藏
-const isShowOtherPage = computed(() => [0, 1, 2].includes(activePanelIndex.value))
+//前四个页面显示子页面，之后的隐藏
+const isShowOtherPage = computed(() => [0, 1, 2, 3].includes(activePanelIndex.value))
 //子页面高度
 const containerStyle = computed(() => ({ height: `${containerHeight.value - 60}px` }));
 

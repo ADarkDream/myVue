@@ -271,7 +271,7 @@ onMounted(async () => {
 .engine {
   height: 40px;
   width: 40px;
-  margin-left: -5px;
+
   background-color: transparent;
   border: transparent;
 }

@@ -1,6 +1,24 @@
 //el-form表单验证规则
 // (密码验证没有强度验证)
 // (双重密码确认的规则validatePassword单独在RegisterForm,不知道咋传参ruleForm.password)
+// 验证单个 8 位数字是否是有效的年月日格式
+function isValidDate(num: number) {
+	if (typeof num !== "number" || num.toString().length !== 8) return false; // 确保是8位数字
+	const str = num.toString();
+	const year = parseInt(str.slice(0, 4), 10);
+	const month = parseInt(str.slice(4, 6), 10);
+	const day = parseInt(str.slice(6, 8), 10);
+
+	// 验证日期合法性
+	const date = new Date(year, month - 1, day); // JavaScript 中月份从 0 开始
+	return (
+		date.getFullYear() === year &&
+		date.getMonth() === month - 1 &&
+		date.getDate() === day
+	);
+}
+
+
 
 const verifyRules = {
 	/**验证昵称*/
@@ -88,6 +106,12 @@ const verifyRules = {
 	text: (rule: any, value: string | number, callback: any) => {
 		if (!value && value !== '0' && value !== 0) callback(new Error('该字段不能为空！'))
 		else callback()
+	},
+	/**验证8位数字的日期格式【数组】*/
+	timeArray: (rule: any, value: number[], callback: any) => {
+		if (!value?.length) callback() // 允许空数组
+		else if (value.every(isValidDate)) callback() // 使用封装的单个日期验证函数
+		else callback(new Error('格式不正确，应为8位数字的日期格式！'))
 	},
 
 }

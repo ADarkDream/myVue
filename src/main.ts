@@ -29,6 +29,8 @@ import '@/assets/animation.css'
 //自定义主题样式
 import '@/assets/main.css'
 
+// import '@/assets/base.css'
+
 
 const app = createApp(App)
 //全局导入ElementPlus的图标

@@ -344,7 +344,7 @@ const scrollToTop = () => {
 
 onMounted(async () => {
   await Promise.all([
-    getVersion({ version: true, role: 'diff' }),
+    getVersion({ version: "diff", role: 'diff' }),
     getNotices(['completed', 'unCompleted', 'others'])
   ])
 

@@ -1,15 +1,15 @@
 <template>
   <el-form ref="editRoleFormRef" class="editRoleForm" :model="formData" status-icon :rules="Rules" label-width="auto">
-    <el-form-item label="角色名称" prop="name" autocomplete="off" required>
+    <el-form-item label="角色名称" prop="name" autocomplete="off">
       <!-- <el-input v-model="formData.name" placeholder="必填" /> -->
       <el-input v-model.lazy.trim="formData.name" placeholder="角色名称" clearable />
     </el-form-item>
-    <el-form-item label="角色阵营" prop="camp" autocomplete="off" required>
+    <el-form-item label="角色阵营" prop="camp" autocomplete="off">
       <el-select v-model="formData.camp">
         <el-option v-for="{ name } in campInfo" :key="name" :label="name" :value="name" />
       </el-select>
     </el-form-item>
-    <el-form-item label="角色种族" prop="race" autocomplete="off" required>
+    <el-form-item label="角色种族" prop="race" autocomplete="off">
       <el-select v-model="formData.race">
         <el-option v-for="{ name } in raceInfo" :key="name" :label="name" :value="name" />
       </el-select>
@@ -20,9 +20,6 @@
     <el-form-item label="其他标签" prop="otherTags" autocomplete="off">
       <el-input v-model.trim="formData.otherTags" placeholder="其他标签,以英文逗号分隔" clearable />
     </el-form-item>
-    <!-- <el-form-item label="角色图标">
-      <el-input v-model="form.img" placeholder="选填，角色图标链接或base64编码图片" />
-    </el-form-item> -->
     <div>
       <el-button @click="resetForm">重置</el-button>
       <el-button type="primary" @click="submitForm()" :loading="isLoading">{{ isEdit ? '修改' : '添加'

@@ -22,14 +22,11 @@ const AdminUrlsManagement = () => import("@/pages/admin/AdminUrlsManagement.vue"
 const AdminImagesManagement = () => import("@/pages/admin/AdminImagesManagement.vue");
 const AdminFeedbackManagement = () => import("@/pages/admin/AdminFeedbackManagement.vue");
 const AdminCommentsManagement = () => import("@/pages/admin/AdminCommentsManagement.vue");
-// const dddd = () => import("@/pages/reverse1999/components/Download1999.vue");//常用，不异步加载
 const Reverse1999 = () => import("@/pages/reverse1999/Reverse1999.vue");
 const Download1999 = () => import("@/pages/reverse1999/pages/Download1999.vue");//常用，不异步加载
 const Roles1999 = () => import("@/pages/reverse1999/pages/Roles1999.vue");
 const Images1999 = () => import("@/pages/reverse1999/pages/Images1999.vue");
-// const Download1999 = () => import("@/pages/reverse1999/components/Download1999.vue");
-// const Roles1999 = () => import("@/pages/reverse1999/Roles1999.vue");
-// const Images1999 = () => import("@/pages/reverse1999/Images1999.vue");
+const Versions1999 = () => import("@/pages/reverse1999/pages/Versions1999.vue");
 const Test = () => import("@/pages/Test.vue");
 const News = () => import("@/pages/News.vue");
 const NewsContent = () => import("@/pages/NewsContent.vue");
@@ -206,6 +203,11 @@ const router = createRouter({
                 name: "images",
                 path: 'images',
                 component: Images1999,
+                meta: { keepAlive: true }
+            }, {
+                name: "versions",
+                path: 'versions',
+                component: Versions1999,
                 meta: { keepAlive: true }
             }]
         },

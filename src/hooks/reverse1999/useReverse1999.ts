@@ -20,7 +20,7 @@ export default function () {
             let temp_r = undefined
             const no_local_version = versionInfo.value.length === 0
             const no_local_role = role === 'all' ? allRoleInfo.value.length === 0 : diffRoleInfo.value.length === 0
-            if (version && (latest || no_local_version)) temp_v = version
+            if ((version === 'all' || version === 'diff') && (latest || no_local_version)) temp_v = version
             if ((role === 'all' || role === 'diff') && (latest || no_local_role)) temp_r = role
 
             if (!temp_v && !temp_r) return
@@ -41,6 +41,7 @@ export default function () {
             //更新角色列表
             if (temp_r === 'diff') diffRoleInfo.value = roleList
             else if (temp_r === 'all') allRoleInfo.value = roleList
+            else if (temp_v) return versionList?.length > 0 //只获取版本信息的情况下，返回是否成功的标注
             else return
             //获取阵营列表
             const campObj = {} as Record<string, number>
