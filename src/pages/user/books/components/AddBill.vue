@@ -1,6 +1,5 @@
 <template>
-  <el-form ref="addBillFormRef" :model="addBillForm" label-width="auto" :size="elSize"
-    :style="isPC ? 'margin:0 5%' : ''">
+  <el-form ref="addBillFormRef" :model="addBillForm" label-width="auto" :style="isPC ? 'margin:0 5%' : ''">
     <el-form-item prop="name" label="账单条目">
       <el-input v-model="addBillForm.name" maxlength="10" placeholder="输入账单条目" />
     </el-form-item>
@@ -72,7 +71,7 @@ const responsiveStore = useResponsiveStore()
 const { formatDate } = useTimestamp()
 
 const { cancelAddBill, thisBill, url } = defineProps(['cancelAddBill', 'thisBill', 'url'])
-const { isPC, elSize } = toRefs(responsiveStore)
+const { isPC } = toRefs(responsiveStore)
 
 const addBillFormRef = ref<FormInstance>()
 const addBillForm = reactive<NewBill>({

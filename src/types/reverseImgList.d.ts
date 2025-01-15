@@ -77,10 +77,11 @@ interface Role {
 
 /**1999版本信息*/
 interface VersionInfo {
-    index?: number,
-    time?: number[],
+    id?: number,
     version: number,
-    versionName: string
+    versionName: string,
+    time?: number[] | string[],
+    status?: number
 }
 
 /**添加1999版本信息的参数*/

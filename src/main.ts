@@ -23,13 +23,13 @@ import 'highlight.js/lib/common';//直接加载常用代码语言
 import "highlight.js/styles/github-dark.css";// 选择你喜欢的主题样式
 // import highlightDirective from './utils/highlightDirective';//引入highlightDirective.ts
 //自定义的el组件样式
-import '@/assets/custom_el.css'
+import '@/assets/css/custom_el.css'
 // 自定义动画样式
-import '@/assets/animation.css'
+import '@/assets/css/animation.css'
 //自定义主题样式
-import '@/assets/main.css'
+import '@/assets/css/main.css'
 
-// import '@/assets/base.css'
+// import '@/assets/css/base.css'
 
 
 const app = createApp(App)
@@ -38,10 +38,10 @@ const app = createApp(App)
 //     app.component(key, component)
 // }
 // app.use(ElementPlus)
+app.use(pinia)
 app.use(router)
 app.use(VSwatches)//调色盘
 app.use(hljsVuePlugin)//代码高亮，标签
-app.use(pinia)
 app.mount('#app')
 
 

@@ -11,7 +11,35 @@ export const api_getVersion = async (params: VersionParams, isAdmin = false) => 
     console.log('/返回的数据为：', result.data)
     return result.data
 }
+/**添加1999角色*/
+export const api_addVersion = async (versionInfo: VersionInfo) => {
+    const result = await axios({
+        url: '/addVersion',
+        method: "POST",
+        data: versionInfo
+    })
+    console.log('/api_addVersion返回的数据为：', result.data)
+    const { status, msg } = result.data
+    if (status === 200) {
+        ElMessage.success(msg)
+        return true
+    } else return false
+}
 
+/**用户和管理员修改和删除1999版本信息*/
+export const api_updateVersion = async (versionInfo: VersionInfo, isAdmin = false) => {
+    const result = await axios({
+        url: isAdmin ? '/updateAllVersion' : '/updateVersion',
+        method: "POST",
+        data: versionInfo
+    })
+    console.log('/api_updateVersion返回的数据为：', result.data)
+    const { status, msg } = result.data
+    if (status === 200) {
+        ElMessage.success(msg)
+        return true
+    } else return false
+}
 /**添加1999角色*/
 export const api_addRole = async (roleInfo: Role) => {
     const result = await axios({

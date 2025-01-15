@@ -80,10 +80,10 @@ const pageRender = (number?: number) => {
 
 onMounted(() => {
   //用户登录判断
-  if (!isLogin.value) {
-    if (document.referrer.includes('muxidream')) return router.back()
-    return router.push({ name: 'home' })
-  }
+  // if (!isLogin.value) {
+  //   if (document.referrer.includes('muxidream')) return router.back()
+  //   return router.push({ name: 'home' })
+  // }
   pageRender()
   emitter.on('pageRender', pageRender)
   console.log('开启了pageRender的emitter监听')

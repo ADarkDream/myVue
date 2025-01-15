@@ -1,13 +1,14 @@
 <template>
   <!-- <el-container>-->
-  <div>
+  <div class="images1999">
     <div>
       <!--PC筛选框  -->
       <el-row v-if="isPC" class="header2">
         <el-col :sm="3">
           <el-select placeholder="选择版本" v-model="condition.version" multiple collapse-tags collapse-tags-tooltip
             :suffix-icon="Search">
-            <el-option v-for="item in versionOption" :key="item.value" :label="item.text" :value="item.value" />
+            <el-option v-for="item in diffVersionInfo" :key="item?.version" :label="item?.versionName"
+              :value="item?.version" />
           </el-select>
         </el-col>
         <el-col :sm="4">
@@ -49,128 +50,125 @@
         </el-col>
       </el-row>
       <!--移动端筛选框-->
-      <div v-else>
+      <div class="header" v-else>
         <el-button @click="dialogVisible = true" type="primary">筛选/查找</el-button>
         <el-button type="success" plain @click="checkReverseUpdate()">检查更新</el-button>
         <el-button type="success" plain @click="render(true)" :icon="Refresh" title="刷新图片信息">刷新</el-button>
         <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
       </div>
     </div>
-    <div>
-      <el-text tag="p" type="warning">如有错漏还请向我反馈。注册登录之后可编辑。</el-text>
-      <el-table ref="tableRef" :data="tableData" class="myCustomElTable"
-        :max-height="isPC ? (screenHeight - 240) : (screenHeight - 180)" stripe border highlight-current-row
-        table-layout="auto" :default-sort="{ prop: 'imgIndex', order: 'custom' }" @sort-change="handleSortChange" fit>
-        <el-table-column prop="imgIndex" label="页序" width="80" align="center" sortable>
-          <template #default="scope">
-            <span>{{ scope.$index + 1 }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="id" label="ID" min-width="60" align="center" sortable v-if="isAdmin" />
-        <el-table-column prop="version" label="版本" min-width="100" align="center">
-          <template #default="scope">
-            <el-select placeholder="选择版本" v-model="imgInfo.version" v-if="showEdit(scope.$index)">
-              <el-option v-for="item in versionOption" :key="item.value" :label="item.text" :value="item.value" />
-            </el-select>
-            <el-text v-else>
-              {{ versionNameDictionary[scope.row.version] }}
-            </el-text>
-          </template>
-        </el-table-column>
-        <el-table-column prop="imgUrl" sum-text :label="isEditRow === -1 ? '图片' : '链接'" width="200" align="center">
-          <template #default="scope">
-            <el-input type="textarea" v-model="imgInfo.imgUrl" :disabled="!isAdmin" placeholder="请输入图片链接"
-              v-if="isEditRow === scope.$index" />
-            <!--preview-teleported解决图片显示不全的问题-->
-            <div v-show="isEditRow !== scope.$index" class="preImg" :id="'imgDiv-' + imgInfo.imgIndex">
-              <el-image :src="scope.row.imgUrl" :zoom-rate="1.2" :id="'img-' + scope.row.imgIndex" :max-scale="7"
-                :min-scale="0.2" :preview-src-list="previewImgList" :initial-index="scope.row.imgIndex" fit="scale-down"
-                lazy :preview-teleported="true">
-                <template #error>
-                  <div class="image-slot">
-                    <el-icon style="width: 50px">
-                      <icon-picture />
-                    </el-icon>
-                  </div>
-                </template>
-              </el-image>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="roleNames" label="包含角色" min-width="150" align="center">
-          <template #default="scope">
-            <el-tree-select v-model="roleIDList" :data="roleTree" @change="updateRoleNames()" multiple
-              :render-after-expand="false" show-checkbox filterable v-if="isEditRow === scope.$index">
-            </el-tree-select>
-            <el-text type="primary" v-else>{{ scope.row.roleNames }}</el-text>
-          </template>
-        </el-table-column>
-        <el-table-column prop="newName" label="图片名" min-width="150" align="center">
-          <template #default="scope">
-            <el-input type="textarea" v-model="imgInfo.newName" placeholder="请输入图片名称" v-if="showEdit(scope.$index)" />
-            <span v-else>
-              {{ scope.row.newName }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="oldName" label="官方原名" min-width="150" align="center">
-          <template #default="scope">
-            <div v-if="showEdit(scope.$index)">
-              <el-input type="textarea" v-model="imgInfo.oldName" placeholder="请输入图片名称" />
-            </div>
-            <div v-else>
-              {{ scope.row.oldName }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="nickName" label="别称" min-width="100" align="center">
-          <template #default="scope">
-            <div v-if="showEdit(scope.$index)">
-              <el-input type="textarea" v-model="imgInfo.nickName" placeholder="请输入图片名称" />
-            </div>
-            <div v-else>
-              {{ scope.row.nickName }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="imgPath" sum-text label="服务器存储路径" width="110" align="center" v-if="isAdmin" />
-        <el-table-column prop="time" label="官方上传时间" min-width="110" align="center" />
-        <!-- <el-table-column prop="created_time" label="整理时间" min-width="150" align="center">
+    <el-table ref="tableRef" :data="tableData" class="myCustomElTable"
+      :max-height="mainPanelConentHeight - (isPC ? 100 : 70)" stripe border highlight-current-row table-layout="auto"
+      :default-sort="{ prop: 'imgIndex', order: 'custom' }" @sort-change="handleSortChange" fit>
+      <el-table-column prop="imgIndex" label="页序" width="80" align="center" sortable>
+        <template #default="scope">
+          <span>{{ scope.$index + 1 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="id" label="ID" min-width="60" align="center" sortable v-if="isAdmin" />
+      <el-table-column prop="version" label="版本" min-width="100" align="center">
+        <template #default="scope">
+          <el-select placeholder="选择版本" v-model="imgInfo.version" v-if="showEdit(scope.$index)">
+            <el-option v-for="item in diffVersionInfo" :key="item?.version" :label="item?.versionName"
+              :value="item?.version" />
+          </el-select>
+          <el-text v-else>
+            {{ versionNameDictionary[scope.row.version] }}
+          </el-text>
+        </template>
+      </el-table-column>
+      <el-table-column prop="imgUrl" sum-text :label="isEditRow === -1 ? '图片' : '链接'" width="200" align="center">
+        <template #default="scope">
+          <el-input type="textarea" v-model="imgInfo.imgUrl" :disabled="!isAdmin" placeholder="请输入图片链接"
+            v-if="isEditRow === scope.$index" />
+          <!--preview-teleported解决图片显示不全的问题-->
+          <div v-show="isEditRow !== scope.$index" class="preImg" :id="'imgDiv-' + imgInfo.imgIndex">
+            <el-image :src="scope.row.imgUrl" :zoom-rate="1.2" :id="'img-' + scope.row.imgIndex" :max-scale="7"
+              :min-scale="0.2" :preview-src-list="previewImgList" :initial-index="scope.row.imgIndex" fit="scale-down"
+              lazy :preview-teleported="true">
+              <template #error>
+                <div class="image-slot">
+                  <el-icon style="width: 50px">
+                    <icon-picture />
+                  </el-icon>
+                </div>
+              </template>
+            </el-image>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="roleNames" label="包含角色" min-width="150" align="center">
+        <template #default="scope">
+          <el-tree-select v-model="roleIDList" :data="roleTree" @change="updateRoleNames()" multiple
+            :render-after-expand="false" show-checkbox filterable v-if="isEditRow === scope.$index">
+          </el-tree-select>
+          <el-text type="primary" v-else>{{ scope.row.roleNames }}</el-text>
+        </template>
+      </el-table-column>
+      <el-table-column prop="newName" label="图片名" min-width="150" align="center">
+        <template #default="scope">
+          <el-input type="textarea" v-model="imgInfo.newName" placeholder="请输入图片名称" v-if="showEdit(scope.$index)" />
+          <span v-else>
+            {{ scope.row.newName }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="oldName" label="官方原名" min-width="150" align="center">
+        <template #default="scope">
+          <div v-if="showEdit(scope.$index)">
+            <el-input type="textarea" v-model="imgInfo.oldName" placeholder="请输入图片名称" />
+          </div>
+          <div v-else>
+            {{ scope.row.oldName }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="nickName" label="别称" min-width="100" align="center">
+        <template #default="scope">
+          <div v-if="showEdit(scope.$index)">
+            <el-input type="textarea" v-model="imgInfo.nickName" placeholder="请输入图片名称" />
+          </div>
+          <div v-else>
+            {{ scope.row.nickName }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="imgPath" sum-text label="服务器存储路径" width="110" align="center" v-if="isAdmin" />
+      <el-table-column prop="time" label="官方上传时间" min-width="110" align="center" />
+      <!-- <el-table-column prop="created_time" label="整理时间" min-width="150" align="center">
           <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
         </el-table-column> -->
-        <el-table-column prop="updated_time" label="上次修改时间" min-width="150" align="center">
-          <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作" min-width="100" align="center">
-          <template #header v-if="isPC">
-            <div style="display: flex;justify-content: space-around;">
-              <span>操作</span><el-button type="success" size="small" plain @click="render(true)" :icon="Refresh"
-                title="刷新图片信息"></el-button>
-            </div>
-          </template>
-          <template #default="scope">
-            <div v-if="isEditRow !== scope.$index">
-              <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" :disabled="!isAdmin"
-                @click="deleteRow(scope.$index, scope.row)">
-                删除
-              </el-button>
-            </div>
-            <div v-else>
-              <el-button link type="info" size="small" @click="handleCancel">取消
-              </el-button>
-              <el-button link type="primary" size="small" @click.prevent="checkReverseUpdateRow(imgInfo, scope.row)">
-                更新
-              </el-button>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pageMenu">
-        <el-pagination v-model:current-page="currentPage" v-model:page-size="condition.pageSize" small
-          :page-sizes="[10, 25, 50, 100]" :layout="layout" :total="total" @size-change="render()"
-          @current-change="render()" />
-      </div>
+      <el-table-column prop="updated_time" label="上次修改时间" min-width="150" align="center">
+        <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
+      </el-table-column>
+      <el-table-column fixed="right" label="操作" min-width="100" align="center">
+        <template #header v-if="isPC">
+          <div style="display: flex;justify-content: space-around;">
+            <span>操作</span><el-button type="success" size="small" plain @click="render(true)" :icon="Refresh"
+              title="刷新图片信息"></el-button>
+          </div>
+        </template>
+        <template #default="scope">
+          <div v-if="isEditRow !== scope.$index">
+            <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button link type="danger" size="small" :disabled="!isAdmin" @click="deleteRow(scope.$index, scope.row)">
+              删除
+            </el-button>
+          </div>
+          <div v-else>
+            <el-button link type="info" size="small" @click="handleCancel">取消
+            </el-button>
+            <el-button link type="primary" size="small" @click.prevent="checkReverseUpdateRow(imgInfo, scope.row)">
+              更新
+            </el-button>
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="pageMenu">
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="condition.pageSize" size="small"
+        :page-sizes="[10, 25, 50, 100]" :layout="layout" :total="total" @size-change="render()"
+        @current-change="render()" />
     </div>
 
     <!--移动端筛选框2-->
@@ -180,7 +178,8 @@
         <el-col :sm="3">
           <el-select placeholder="选择版本" v-model="condition.version" multiple collapse-tags collapse-tags-tooltip
             :suffix-icon="Search">
-            <el-option v-for="item in versionOption" :key="item.value" :label="item.text" :value="item.value" />
+            <el-option v-for="item in diffVersionInfo" :key="item?.version" :label="item?.versionName"
+              :value="item?.version" />
           </el-select>
         </el-col>
         <el-col :sm="4">
@@ -248,8 +247,8 @@ const responsiveStore = useResponsiveStore()
 const reverse1999Store = useReverse1999Store()
 const userInfoStore = useUserInfoStore()
 
-const { screenHeight, isPC } = toRefs(responsiveStore)
-const { allRoleInfo, versionOption } = toRefs(reverse1999Store)
+const { mainPanelConentHeight, screenHeight, isPC } = toRefs(responsiveStore)
+const { allRoleInfo, diffVersionInfo } = toRefs(reverse1999Store)
 const versionNameDictionary = computed(() => reverse1999Store.versionNameDictionary)
 const roleNameDictionary = computed(() => reverse1999Store.roleNameDictionary)
 const roleTree = computed(() => reverse1999Store.roleTree)

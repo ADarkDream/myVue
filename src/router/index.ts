@@ -1,4 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { toRefs } from 'vue';
+import { useUserInfoStore } from '@/store/user/useUserInfoStore';
+
+
 // import Home from "@/pages/home/Home.vue"//常用，不异步加载
 const Home = () => import("@/pages/home/Home.vue")
 const Forum = () => import("@/pages/forum/Forum.vue");
@@ -36,209 +40,235 @@ const ChatHall = () => import("@/pages/user/chat/ChatHall.vue")
 const Chatroom = () => import("@/pages/user/chat/ChatRoom.vue")
 const Talk = () => import("@/pages/user/chat/Talk.vue")
 const Music = () => import("@/pages/music/Music.vue")
+
+const routes = [
+    //     {
+    //     path: '/',//主页首次加载重定向到Home页面
+    //     redirect: '/Home'
+    // },
+    {
+        name: 'home',//首页
+        path: '/',
+        component: Home
+    },
+    {
+        path: '/forum',//论坛
+        component: Forum,
+        children: [{
+            name: 'forum',
+            path: '',//重定向
+            redirect: { name: 'center' }
+        },
+        {
+            name: 'center',//大厅
+            path: 'center',
+            component: Center
+        },
+        {
+            name: 'article',//文章阅读界面
+            path: 'article',
+            component: Article,
+        }]
+    },
+    {//聊天大厅
+        name: 'chat',
+        path: '/Chat',
+        component: ChatCenter,
+        redirect: { name: 'hall' },
+        children: [{
+            name: 'hall',
+            path: 'hall',
+            component: ChatHall,
+        }, {//聊天室
+            name: 'room',
+            path: 'room',
+            component: Chatroom,
+        }, {//双人聊天室
+            name: 'talk',
+            path: 'talk',
+            component: Talk,
+        }]
+    },
+    {
+        name: 'music',
+        path: '/music',
+        component: Music
+    },
+    {
+        name: 'adminLogin',
+        path: '/admin/login',
+        component: AdminLogin
+    },
+    {
+        path: '/admin',
+        component: AdminCenter,
+        children: [{
+            name: 'adminCenter',
+            path: ' ',//重定向
+            redirect: { name: 'adminUsersManagement' }
+        }, {
+            name: 'adminUsersManagement',
+            path: 'user',
+            component: AdminUsersManagement
+        }, {
+            name: 'adminArticlesManagement',
+            path: 'articles',
+            component: AdminArticlesManagement
+        }, {
+            name: 'adminCommentsManagement',
+            path: 'comments',
+            component: AdminCommentsManagement
+        }, {
+            name: 'adminNoticesManagement',
+            path: 'notices',
+            component: AdminNoticesManagement
+        }, {
+            name: 'adminUrlsManagement',
+            path: 'urls',
+            component: AdminUrlsManagement
+        }, {
+            name: 'adminImagesManagement',
+            path: 'images',
+            component: AdminImagesManagement
+        }, {
+            name: 'adminFeedbackManagement',
+            path: 'feedback',
+            component: AdminFeedbackManagement
+        }, {
+            name: 'admin1999ImagesManagement',
+            path: '1999Images',
+            component: Admin1999ImagesManagement
+        },
+        ]
+    },
+    {
+        path: '/user',//用户界面
+        component: UserCenter,
+        children: [{
+            name: 'userCenter',
+            path: ' ',//重定向
+            redirect: { name: 'userInfo' }
+        }, {
+            name: 'userInfo',//用户个人信息界面
+            path: 'info',
+            component: UserInfo
+        }, {//暂时没用
+            name: 'userPreference',//用户偏好设置界面
+            path: 'preference',
+            component: UserPreference
+        }, {
+            name: 'userManagement',//用户管理界面
+            path: 'management',
+            component: UserManagement
+        },
+        {
+            name: 'userEdit',//发布文章界面
+            path: "edit",
+            component: UserEdit
+        },
+        {
+            path: 'books',
+            children: [{
+                name: 'books',//账本界面
+                path: '',
+                component: UserBooks
+            }, {
+                name: 'book',//账单界面
+                path: 'book',
+                component: UserBook
+            }]
+        }
+        ]
+    },
+    {
+        path: "/oauth",
+        name: "oauth",
+        component: OAuth,
+    },
+    {
+        path: "/reverse1999",
+        component: Reverse1999,
+        children: [{
+            name: 'reverse1999',
+            path: '',//重定向
+            redirect: { name: 'download' }
+        }, {
+            name: "download",
+            path: 'download',
+            component: Download1999,
+            meta: { keepAlive: true }
+        }, {
+            name: "roles",
+            path: 'roles',
+            component: Roles1999,
+            meta: { keepAlive: true }
+        }, {
+            name: "images",
+            path: 'images',
+            component: Images1999,
+            meta: { keepAlive: true }
+        }, {
+            name: "versions",
+            path: 'versions',
+            component: Versions1999,
+            meta: { keepAlive: true }
+        }]
+    },
+    {
+        path: '/test',
+        name: 'test',
+        component: Test
+    },
+    {
+        name: "notFound",
+        path: "/:pathMatch(.*)*",//匹配所有路由，找不到就显示404NotFound
+        component: NotFound,
+    },
+    {
+        path: '/News',
+        children: [{
+            name: 'news',
+            path: '',//重定向
+            redirect: { name: 'newsCenter' }
+        }, {
+            name: 'newsCenter',
+            path: 'center',
+            component: News,
+        }, {
+            name: 'newsContent',
+            path: 'newsContent',
+            component: NewsContent,
+        }]
+    },
+]
 const router = createRouter({
     history: createWebHistory(),//路由器工作模式，有web和hash两种，web上线后需要服务器配置，hash地址栏会出现#号
-    routes: [
-        //     {
-        //     path: '/',//主页首次加载重定向到Home页面
-        //     redirect: '/Home'
-        // },
-        {
-            name: 'home',//首页
-            path: '/',
-            component: Home
-        },
-        {
-            path: '/forum',//论坛
-            component: Forum,
-            children: [{
-                name: 'forum',
-                path: '',//重定向
-                redirect: { name: 'center' }
-            },
-            {
-                name: 'center',//大厅
-                path: 'center',
-                component: Center
-            },
-            {
-                name: 'article',//文章阅读界面
-                path: 'article',
-                component: Article,
-            }]
-        },
-        {//聊天大厅
-            name: 'chat',
-            path: '/Chat',
-            component: ChatCenter,
-            redirect: { name: 'hall' },
-            children: [{
-                name: 'hall',
-                path: 'hall',
-                component: ChatHall,
-            }, {//聊天室
-                name: 'room',
-                path: 'room',
-                component: Chatroom,
-            }, {//双人聊天室
-                name: 'talk',
-                path: 'talk',
-                component: Talk,
-            }]
-        },
-        {
-            name: 'music',
-            path: '/music',
-            component: Music
-        },
-        {
-            name: 'adminLogin',
-            path: '/admin/login',
-            component: AdminLogin
-        },
-        {
-            path: '/admin',
-            component: AdminCenter,
-            children: [{
-                name: 'adminCenter',
-                path: ' ',//重定向
-                redirect: { name: 'adminUsersManagement' }
-            }, {
-                name: 'adminUsersManagement',
-                path: 'user',
-                component: AdminUsersManagement
-            }, {
-                name: 'adminArticlesManagement',
-                path: 'articles',
-                component: AdminArticlesManagement
-            }, {
-                name: 'adminCommentsManagement',
-                path: 'comments',
-                component: AdminCommentsManagement
-            }, {
-                name: 'adminNoticesManagement',
-                path: 'notices',
-                component: AdminNoticesManagement
-            }, {
-                name: 'adminUrlsManagement',
-                path: 'urls',
-                component: AdminUrlsManagement
-            }, {
-                name: 'adminImagesManagement',
-                path: 'images',
-                component: AdminImagesManagement
-            }, {
-                name: 'adminFeedbackManagement',
-                path: 'feedback',
-                component: AdminFeedbackManagement
-            }, {
-                name: 'admin1999ImagesManagement',
-                path: '1999Images',
-                component: Admin1999ImagesManagement
-            },
-            ]
-        },
-        {
-            path: '/user',//用户界面
-            component: UserCenter,
-            children: [{
-                name: 'userCenter',
-                path: ' ',//重定向
-                redirect: { name: 'userInfo' }
-            }, {
-                name: 'userInfo',//用户个人信息界面
-                path: 'info',
-                component: UserInfo
-            }, {//暂时没用
-                name: 'userPreference',//用户偏好设置界面
-                path: 'preference',
-                component: UserPreference
-            }, {
-                name: 'userManagement',//用户管理界面
-                path: 'management',
-                component: UserManagement
-            },
-            {
-                name: 'userEdit',//发布文章界面
-                path: "edit",
-                component: UserEdit
-            },
-            {
-                path: 'books',
-                children: [{
-                    name: 'books',//账本界面
-                    path: '',
-                    component: UserBooks
-                }, {
-                    name: 'book',//账单界面
-                    path: 'book',
-                    component: UserBook
-                }]
-            }
-            ]
-        },
-        {
-            path: "/oauth",
-            name: "oauth",
-            component: OAuth,
-        },
-        {
-            path: "/reverse1999",
-            component: Reverse1999,
-            children: [{
-                name: 'reverse1999',
-                path: '',//重定向
-                redirect: { name: 'download' }
-            }, {
-                name: "download",
-                path: 'download',
-                component: Download1999,
-                meta: { keepAlive: true }
-            }, {
-                name: "roles",
-                path: 'roles',
-                component: Roles1999,
-                meta: { keepAlive: true }
-            }, {
-                name: "images",
-                path: 'images',
-                component: Images1999,
-                meta: { keepAlive: true }
-            }, {
-                name: "versions",
-                path: 'versions',
-                component: Versions1999,
-                meta: { keepAlive: true }
-            }]
-        },
-        {
-            path: '/test',
-            name: 'test',
-            component: Test
-        },
-        {
-            name: "notFound",
-            path: "/:pathMatch(.*)*",//匹配所有路由，找不到就显示404NotFound
-            component: NotFound,
-        },
-        {
-            path: '/News',
-            children: [{
-                name: 'news',
-                path: '',//重定向
-                redirect: { name: 'newsCenter' }
-            }, {
-                name: 'newsCenter',
-                path: 'center',
-                component: News,
-            }, {
-                name: 'newsContent',
-                path: 'newsContent',
-                component: NewsContent,
-            }]
-        },
-    ]
+    routes
+})
 
+router.beforeEach((to, from, next) => {
+    console.log("to", to);
+
+    console.log("from", from);
+
+    const { isLogin, isAdmin } = toRefs(useUserInfoStore())
+    if (to.path.includes('/admin')) {
+        if (isAdmin.value) {
+            next()
+        } else if (from.fullPath === '/') {
+            next({ name: 'home' })
+        } else {
+            router.back()
+        }
+    } else if (to.path.includes('/user')) {
+        if (isLogin.value) {
+            next()
+        } else if (from.fullPath === '/') {
+            next({ name: 'home' })
+        } else {
+            router.back()
+        }
+    } else next()
 })
 
 export default router

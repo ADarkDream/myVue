@@ -1,5 +1,5 @@
 <template>
-    <div ref="reverse1999" class="music" :style="{ height: containerHeight + 'px', ...bgSettings }">
+    <div ref="reverse1999" class="mainPanel" :style="bgSettings">
         <el-tabs class="tabs" v-model="activePanelIndex" @click="changePanelIndex(activePanelIndex)">
             <el-tab-pane :name="0">
                 <template #label>
@@ -78,12 +78,14 @@
 
                 </div>
             </el-tab-pane>
-            <!-- 使用 keep-alive 缓存页面 -->
-            <router-view v-slot="{ Component }" v-show="isShowOtherPage">
-                <keep-alive v-if="isKeepAlive">
-                    <component :is="Component" :style="containerStyle" />
-                </keep-alive>
-                <component v-else :is="Component" :style="containerStyle" />
+            <!-- 使用 keep-alive 缓存页面, slot props 动态渲染路由组件 -->
+            <router-view v-slot="{ Component }">
+                <Transition :name="toRight ? 'list' : 'relist'">
+                    <keep-alive v-if="isKeepAlive">
+                        <component :is="Component" :style="containerStyle" v-show="isShowOtherPage" />
+                    </keep-alive>
+                    <component v-else :is="Component" :style="containerStyle" v-show="isShowOtherPage" />
+                </Transition>
             </router-view>
         </el-tabs>
         <!--新建角色的抽屉-->
@@ -97,11 +99,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, toRefs, defineAsyncComponent } from 'vue';
 import { Download, Picture, Document, Setting, Tickets } from "@element-plus/icons-vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 //stores
-import { useUserInfoStore } from '@/store/user/useUserInfoStore';
 import { useResponsiveStore } from "@/store/useResponsiveStore";
-import { useUploadFileStore } from "@/store/upload/uploadFileStore";
 import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
 import { useRolesStore } from '@/store/reverse1999/useRolesStore';
 import { useReverse1999Store } from '@/store/reverse1999/useReverse1999Store';
@@ -116,27 +116,23 @@ import MusicSettings from '../music/components/MusicSettings.vue';
 
 
 const route = useRoute()
-const router = useRouter()
-
-// console.log(route.name);
 
 
-const userInfoStore = useUserInfoStore()
+
 const responsiveStore = useResponsiveStore()
 const musicConfigStore = useMusicConfigStore()
-const uploadFileStore = useUploadFileStore()
 const rolesStore = useRolesStore()
 const reverse1999Store = useReverse1999Store()
 //页面背景配置
 
-const { isLogin } = toRefs(userInfoStore)
+
 const { bgSettings } = musicConfigStore
-const { isPC, drawerSize, containerHeight } = toRefs(responsiveStore)
+const { containerHeight } = toRefs(responsiveStore)
 const { touchstart, positionComputed } = responsiveStore
-const { resetUpload } = uploadFileStore
+
 const { isShowAddRoleDrawer, isEdit } = toRefs(rolesStore)
 const { reSetFormData } = rolesStore
-const { activePanelIndex } = toRefs(reverse1999Store)
+const { activePanelIndex, toRight } = toRefs(reverse1999Store)
 const { changePanelIndex } = reverse1999Store
 
 const reverse1999 = ref<HTMLDivElement>()
@@ -152,7 +148,7 @@ const isKeepAlive = computed(() => {
 //前四个页面显示子页面，之后的隐藏
 const isShowOtherPage = computed(() => [0, 1, 2, 3].includes(activePanelIndex.value))
 //子页面高度
-const containerStyle = computed(() => ({ height: `${containerHeight.value - 60}px` }));
+const containerStyle = computed(() => ({}));
 
 const beforeCloseDrawer = () => {
     ElMessageBox.confirm(
@@ -173,11 +169,12 @@ const beforeCloseDrawer = () => {
 }
 
 onMounted(async () => {
-    // console.log(route);
+    console.log("route", route);
     const { name } = route
     if (name) {
         changePanelIndex(name as string | number || 0)
     }
+    // changePanelIndex()
     //如果是移动端，监听左右滑动
     // if (!isPC.value && music.value) {
     //     music.value.addEventListener("touchstart", touchstart, false)
@@ -197,125 +194,3 @@ const touchend = (e: TouchEvent) => {
     // positionComputed(e, activePanelIndex, 0, 4)/
 }
 </script>
-
-<style scoped>
-.music {
-    display: flex;
-    justify-content: space-between;
-    position: relative;
-    box-sizing: border-box;
-    padding: 0 10px;
-    width: 100%;
-    --music-bg-color: #ffffff;
-    --music-bg-opacity: 0.5;
-    /*背景透明度*/
-    --music-bg-filter: 0;
-    /*背景模糊度*/
-    --music-bg-saturate: 1;
-    /*背景饱和度*/
-    backdrop-filter: blur(calc(var(--music-bg-filter) * 1px)) saturate(var(--music-bg-saturate));
-}
-
-.el-text {
-    --el-text-color: currentColor;
-}
-
-.music:before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    left: 0;
-    top: 0;
-    border-radius: 10px;
-    background-color: var(--music-bg-color);
-    opacity: var(--music-bg-opacity);
-}
-
-.music .tabs {
-    width: 100%;
-
-    .tab-label {
-        font-size: 16px;
-    }
-}
-
-
-/*移动端布局*/
-@media (max-width: 780px) {
-    .music {
-        padding: 0;
-        backdrop-filter: none;
-    }
-
-    .music:before {
-        border-radius: 0;
-    }
-
-    .music .tabs {
-
-        .tab-label {
-            font-size: 13px;
-        }
-
-    }
-
-}
-
-/*夜间模式*/
-.dark .music {
-    --music-bg-opacity: 0 !important;
-}
-</style>
-<style>
-/*.music .el-tabs__content{
-  overflow-y: scroll;
-}*/
-.header2 {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-
-.myCustomElTable {
-    width: 100%;
-    border-radius: 5px 5px 0 0;
-    opacity: 0.8;
-}
-
-
-.demo-pagination-block+.demo-pagination-block {
-    margin-top: 10px;
-}
-
-.demo-pagination-block .demonstration {
-    margin-bottom: 16px;
-}
-
-/* 子组件底部页码选择器样式 */
-.pageMenu {
-    display: flex;
-    justify-content: center;
-    padding-top: 5px;
-    background-color: var(--el-bg-color);
-    border-radius: 0 0 5px 5px;
-    opacity: 0.8;
-}
-
-/*移动端布局*/
-@media (max-width: 780px) {
-    .el-drawer__body {
-        padding: 5px;
-    }
-
-    .music .tabs {
-        .el-tabs__nav-scroll {
-            padding: 0 10px;
-        }
-
-        .el-tabs__item {
-            padding-right: 0;
-        }
-    }
-}
-</style>

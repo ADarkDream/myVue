@@ -2,15 +2,15 @@
   <el-container>
     <el-header>
       <div style="display: flex;justify-content: space-between;padding-bottom:5px">
-        <el-button-group :size="elSize" type="primary">
+        <el-button-group type="primary">
           <el-button @click="changeDateType('day')">日</el-button>
           <el-button @click="changeDateType('week')">周</el-button>
           <el-button @click="changeDateType('month')">月</el-button>
         </el-button-group>
         <el-date-picker v-if="isPC" style="max-width: 250px" v-model="dateRange" type="daterange" range-separator="To"
-          start-placeholder="选择账单开始日期" end-placeholder="选择账单结束日期" :size="elSize" unlink-panels @change="getBillList"
+          start-placeholder="选择账单开始日期" end-placeholder="选择账单结束日期" unlink-panels @change="getBillList"
           :disabled-date="disabledDate" value-format="YYYY-MM-DD" />
-        <el-button-group :size="elSize">
+        <el-button-group>
           <el-button @click="getNewDateRange('minus')"><span v-if="dateStr === '日'">前一{{ dateStr }}</span><span
               v-else>上一{{
                 dateStr
@@ -26,7 +26,7 @@
         </el-button-group>
       </div>
       <el-date-picker style="max-width: 250px" v-if="!isPC" v-model="dateRange" type="daterange" range-separator="To"
-        start-placeholder="选择账单开始日期" end-placeholder="选择账单结束日期" :size="elSize" unlink-panels @change="getBillList"
+        start-placeholder="选择账单开始日期" end-placeholder="选择账单结束日期" unlink-panels @change="getBillList"
         :disabled-date="disabledDate" value-format="YYYY-MM-DD" />
     </el-header>
     <el-empty v-if="isNull" description="暂无账单">
@@ -87,7 +87,7 @@
         <el-text> 已销账单：
           <el-switch v-model="isShowDelLine" active-text="显示" inactive-text="隐藏" inline-prompt />
         </el-text>
-        <el-button :size="elSize" @click="showBillPanel" type="primary" :style="isPC ? '' : 'margin: 4px 5px'">添加账单
+        <el-button @click="showBillPanel" type="primary" :style="isPC ? '' : 'margin: 4px 5px'">添加账单
         </el-button>
       </div>
 
@@ -122,7 +122,7 @@ const {
 
 const responsiveStore = useResponsiveStore()
 const { getTime, getDiffTime, formatDate } = useTimestamp()
-const { isPC, elSize, screenHeight } = toRefs(responsiveStore)
+const { isPC, screenHeight } = toRefs(responsiveStore)
 
 
 const bookData = useBookStore()

@@ -13,7 +13,7 @@
               username
             }}
           </el-button>
-          <el-text :size="elSize" type="info" v-if="isDisabled" style="border: 1px solid #b5b7ba;padding: 0 2px">未实名
+          <el-text type="info" v-if="isDisabled" style="border: 1px solid #b5b7ba;padding: 0 2px">未实名
           </el-text>
           <div class="connectDiv" v-if="isDisabled">
             <el-button @click="to_qq_oauth({ is_oauth: true, isPC: isPC, type: 'connect' })">
@@ -22,7 +22,7 @@
           <el-input v-model.trim="newName" @keyup.enter="checkNewName(newName)" @blur="isUpdateName"
             v-show="!isDisabled" :placeholder="username" minlength="2" maxlength="10" show-word-limit />
         </div>
-        <el-button-group :size="elSize" class="account">
+        <el-button-group class="account">
           <el-button @click="showEditForm('修改邮箱')">修改邮箱</el-button>
           <el-button @click="showEditForm('修改密码')">修改密码</el-button>
           <br v-if="isPC">
@@ -68,7 +68,7 @@
           type="textarea" maxlength="50" show-word-limit placeholder="这千千万万个故事里，许会有一颗与你我一般无二的心。" />
       </el-card>
       <div style="margin: 5px auto">试用性功能[无需登录]：
-        <el-button @click="router.push({ name: 'chat' })" :size="elSize" type="info">聊天室</el-button>
+        <el-button @click="router.push({ name: 'chat' })" type="info">聊天室</el-button>
       </div>
     </el-main>
 
@@ -171,7 +171,7 @@ const { options, isLoading, fileInfo } = toRefs(uploadFileStore)
 const { resetUpload } = uploadFileStore
 
 
-const { isPC, elSize } = toRefs(responsiveStore)
+const { isPC } = toRefs(responsiveStore)
 const { updateUserInfo } = useUser()
 const { to_qq_oauth } = useOAuth()
 

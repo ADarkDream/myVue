@@ -5,10 +5,6 @@
     <title>默默的小站</title>
     <meta charset="UTF-8">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <!-- QQCard -->
-    <!-- <meta itemprop="name" content="默默的小站" />
-    <meta itemprop="image" content="https://muxidream.cn/favicon_144x144.png" />
-    <meta name="description" itemprop="description" content="这千千万万个故事里，许会有一颗与你我一般无二的心。" /> -->
     <meta content="默默" name="author" />
     <meta content="一个社交化导航网站，致力于资源分享，及重返未来1999游戏资源站。社区建设中..." name="description" />
     <link rel="manifest" href="/manifest.json" />
@@ -18,57 +14,6 @@
     <link rel="apple-touch-icon-precomposed" href="/favicon_144x144.png">
     <!-- <link rel="stylesheet" href="@/assets/base.css" type="text/css"> -->
     <style>
-        body {
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            overflow-x: hidden;
-        }
-
-        /*夜间模式*/
-        .dark {
-            /* 自定义深色背景颜色 */
-            --el-bg-color: #626aef;
-            --w-e-textarea-bg-color: #333;
-            --w-e-textarea-color: #fff;
-        }
-
-        a {
-            text-decoration: none;
-        }
-
-        /*去除未被访问的a标签的下划线*/
-        a:link {
-            text-decoration: none;
-        }
-
-        /*去除已经被访问过的a标签的下划线*/
-        a:visited {
-            text-decoration: none;
-        }
-
-        /*去除鼠标悬停时的a标签的下划线*/
-        a:hover {
-            text-decoration: none;
-        }
-
-        /*去除正在点击的a标签的下划线（鼠标按下，尚未松开）*/
-        a:active {
-            text-decoration: none;
-        }
-
-        /*去除获得焦点的a标签的下划线（被鼠标点击过）*/
-        a:focus {
-            text-decoration: none;
-        }
-
-        @media (max-width: 780px) {
-            body {
-                overflow-Y: visible;
-            }
-        }
-
         /*#region 以下是网站加载动画的样式*/
         #loading-mask {
             position: fixed;
@@ -79,6 +24,13 @@
             user-select: none;
             z-index: 9999;
             overflow: hidden;
+            background-color: #fff;
+            transition: opacity 0.3s ease;
+        }
+
+        /* 根据当前是否是黑夜模式更换加载动画背景颜色 */
+        .dark #loading-mask {
+            background-color: #000;
         }
 
         #loading-mask>svg {
@@ -97,6 +49,7 @@
             font-size: 150px;
         }
 
+        /* 描边动画 */
         @keyframes stroke {
             0% {
                 fill: rgba(72, 138, 20, 0);
@@ -152,26 +105,46 @@
     </div>
     <div id="app"></div>
 </body>
-<script type="module" src="./src/main.ts"></script>
 <!--网站加载动画的黑夜模式设置  -->
 <script type="text/javascript">
     //首次加载，根据是否是深色偏好设置夜间模式
-    const isDark = sessionStorage.getItem('isDark') === '1' || window.matchMedia('(prefers-color-scheme: dark)').matches
-    if (isDark) sessionStorage.setItem('isDark', '1')
-    else sessionStorage.setItem('isDark', '0')
+    const html = document.querySelector('html')
     //获取加载遮罩
     const mask = document.querySelector('#loading-mask')
+    const responsive = JSON.parse(sessionStorage.getItem('responsive') || '{}')
+    console.log("responsive", responsive);
 
-    //加载事件，每次加载页面触发
+    const isDark = responsive?.isDark || window.matchMedia('(prefers-color-scheme: dark)').matches || false
+
+    if (isDark) {
+        html.classList.add('dark')
+    } else {
+        html.classList.remove('dark')
+    }
+
+    //如果首次加载没有设置夜间模式，新增
+    // if (!Object.keys(responsive).length) {
+    //     sessionStorage.setItem('responsive', JSON.stringify({
+    //         ...responsive,
+    //         isDark
+    //     }))
+    // }
+
+    //加载事件，刷新或首次加载页面触发
     document.onreadystatechange = function () {
-        //根据当前是否是黑夜模式更换加载动画背景颜色
-        mask.style.backgroundColor = isDark ? '#000' : '#FFF'
         // 页面正在加载
         if (document.readyState === 'loading') mask.style.display = 'block'
         // 页面加载完毕
-        else if (document.readyState === 'complete') mask.style.display = 'none'
+        else if (document.readyState === 'complete') {
+            mask.style.opacity = 0
+            setTimeout(() => {
+                mask.style.display = "none"
+            }, 300)
+        }
     }
 </script>
+<script type="module" src="./src/main.ts"></script>
+
 <% if (VITE_NODE_ENV==='production' ) { %>
     <!-- 仅在生产模式下使用该js弹出隐私政策 -->
     <script type="text/javascript" src="https://www.termsfeed.com/public/cookie-consent/4.2.0/cookie-consent.js"

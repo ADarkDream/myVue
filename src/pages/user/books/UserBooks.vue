@@ -1,7 +1,7 @@
 <template>
   <el-container :style="'height:' + containerHeight + 'px'">
     <el-header>
-      <el-button :size="elSize" type="primary" @click="dialogVisible = true">添加账本</el-button>
+      <el-button type="primary" @click="dialogVisible = true">添加账本</el-button>
     </el-header>
     <el-main>
       <el-empty style="margin: 0 auto" v-if="books.length === 0" description="暂无账本" />
@@ -33,11 +33,11 @@
           </template>
         </template>
         <div>
-          <el-input v-if="isEditID === item.bid" :size="elSize" v-model.trim="newBookInfo.intro" maxlength="30" />
+          <el-input v-if="isEditID === item.bid" v-model.trim="newBookInfo.intro" maxlength="30" />
           <el-text v-else>{{ item.intro || '暂无说明' }}</el-text>
         </div>
         <template #footer>
-          <el-button-group v-if="isEditID === item.bid" :size="elSize" style="margin-top: 5px">
+          <el-button-group v-if="isEditID === item.bid" style="margin-top: 5px">
             <el-button type="primary" plain @click.stop="isEditID = 0">取消</el-button>
             <el-button type="success" @click.stop="updateBook(false, index)">保存</el-button>
           </el-button-group>
@@ -70,7 +70,7 @@ import myFunction from "@/utils/myFunction";
 import { Book } from '@/types/books'
 
 const responsiveStore = useResponsiveStore()
-const { elSize, dialogWidth, containerHeight, isPC } = toRefs(responsiveStore)
+const { dialogWidth, containerHeight, isPC } = toRefs(responsiveStore)
 const { getTime } = useTimestamp()
 
 const { deepEqual, copyText } = myFunction

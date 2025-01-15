@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container class="homePanel">
     <!--  侧边栏-->
     <el-aside direction="vertical">
       <Aside :showContent="showContent" />
@@ -20,7 +20,7 @@
       <!--        命里有时终须有，命里无时梦里有。-->
       <!--      </el-button><br>-->
       <!--备案号-->
-      <Approve :noWrap="true" :class="{ 'footer': true, 'sticky': isSticky }" />
+      <Approve :noWrap="true" />
       <!--      </div>-->
     </el-footer>
   </el-container>
@@ -75,12 +75,17 @@ function showContent(isHide = false) {
 </script>
 
 <style scoped>
+.homePanel {
+  width: 100%;
+  height: 100%;
+}
+
 Aside {
   position: absolute;
   bottom: 0;
-  top: 50px;
+  /* top: 50px; */
   left: 0;
-  width: 8%;
+  /* width: 8%; */
   height: 100%;
   z-index: 100;
 }
@@ -121,23 +126,10 @@ Aside {
 }
 */
 
-.footer {
-  width: 100%;
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
 
 #jinrishici-sentence {
   font-size: 20px;
   bottom: 20px;
-}
-
-.sticky {
-  position: sticky;
 }
 
 .content {

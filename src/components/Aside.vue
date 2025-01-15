@@ -124,7 +124,7 @@
     <!--    </el-menu-item>-->
   </el-menu>
   <!--    侧边栏折叠和展开-->
-  <el-menu class="change " @click="isCollapse = !isCollapse" :collapse="true" v-if="isPC">
+  <el-menu class="change" @click="isCollapse = !isCollapse" :collapse="true" v-if="isPC">
     <el-menu-item index="0">
       <el-icon>
         <Switch />
@@ -321,8 +321,8 @@ emitter.on('showAsideBtn', handler)
 
 .change {
   position: absolute;
-  bottom: 50px;
-  width: 60px;
+  bottom: 0;
+  /* width: 100%; */
   border: transparent;
   background-color: transparent;
 }

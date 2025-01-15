@@ -1,13 +1,22 @@
 // 引入defineStore用于创建store
-import { TableFilterItem } from '@/types/global'
 import { defineStore } from 'pinia'
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 export const useReverse1999Store = defineStore('reverse1999', () => {
     const router = useRouter()
-    //版本信息
+    //全部版本信息
     const versionInfo = ref<VersionInfo[]>([])
+    //部分(有壁纸的)版本信息
+    const diffVersionInfo = computed(() => {
+        const Arr = versionInfo.value
+            .map(info => {
+                const { version, versionName, time, status } = info
+                return time?.length && status !== 0 ? { version, versionName } : null
+            })
+            .filter(Boolean) as VersionInfo[] // 明确类型
+        return Arr.length ? Arr : [{ version: 1999, versionName: '未知版本' }]
+    })
     //全部角色列表
     const allRoleInfo = ref<Role[]>([])
     //部分(有壁纸的)角色列表
@@ -36,10 +45,6 @@ export const useReverse1999Store = defineStore('reverse1999', () => {
         return { label: camp.name, value: camp.name, children }
     }))
 
-
-
-    //版本选项
-    const versionOption = ref<TableFilterItem<number>[]>([])
     /**是否可修改、编辑的状态*/
     const statusOptions = ref([
         { label: '已删除', value: 0 },
@@ -51,30 +56,32 @@ export const useReverse1999Store = defineStore('reverse1999', () => {
 
     //当前面板序号
     const activePanelIndex = ref(0)
+    //面板切换动画方向
+    const toRight = ref(true)
 
     //切换面板
     const changePanelIndex = (index: number | string) => {
         console.log("当前面板序号：", index);
         switch (index) {
-            case 0:
             case 'download':
-                router.push({ name: 'download' })
                 activePanelIndex.value = 0
+            case 0:
+                router.push({ name: 'download' })
                 break
-            case 1:
             case 'roles':
-                router.push({ name: 'roles' })
                 activePanelIndex.value = 1
+            case 1:
+                router.push({ name: 'roles' })
                 break
-            case 2:
             case 'images':
-                router.push({ name: 'images' })
                 activePanelIndex.value = 2
+            case 2:
+                router.push({ name: 'images' })
                 break
-            case 3:
             case 'versions':
-                router.push({ name: 'versions' })
                 activePanelIndex.value = 3
+            case 3:
+                router.push({ name: 'versions' })
                 break
             default:
                 router.push({ name: 'download' })
@@ -82,12 +89,18 @@ export const useReverse1999Store = defineStore('reverse1999', () => {
                 ElMessage.info('开发中')
                 break
         }
-    }
 
-    return { activePanelIndex, versionInfo, allRoleInfo, diffRoleInfo, campInfo, raceInfo, versionNameDictionary, roleNameDictionary, roleTree, versionOption, statusOptions, changePanelIndex }
+    }
+    watch(activePanelIndex, (newValue, oldValue) => {
+        // if (newValue === oldValue) return
+        toRight.value = newValue > oldValue
+        console.log("面板切换动画方向：", newValue > oldValue);
+
+    })
+    return { activePanelIndex, toRight, diffVersionInfo, versionInfo, allRoleInfo, diffRoleInfo, campInfo, raceInfo, versionNameDictionary, roleNameDictionary, roleTree, statusOptions, changePanelIndex }
 }, {
     persist: {
-        pick: ['versionInfo', 'allRoleInfo', 'diffRoleInfo', 'campInfo', 'raceInfo', 'versionOption'],
+        pick: ['versionInfo', 'allRoleInfo', 'diffRoleInfo', 'campInfo', 'raceInfo'],
         storage: sessionStorage
     }
 }

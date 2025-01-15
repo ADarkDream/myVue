@@ -72,9 +72,7 @@ const dialogVisible = ref(false)
 //获取导航分类信息
 const getUrlListInfo = async () => {
   try {
-    const result = await axios<ResultData<WebsiteInfoItem[]>>({
-      url: '/getUrlListInfo',
-    })
+    const result = await axios<ResultData<WebsiteInfoItem[]>>('/getUrlListInfo')
     console.log(result.data)
     const { data } = result.data
     cloudList.splice(0, cloudList.length, ...data!)

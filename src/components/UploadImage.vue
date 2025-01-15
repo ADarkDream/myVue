@@ -42,9 +42,9 @@
       </div>
       <div class="changeBtns" v-show="changeBtnsFlag">
         <el-button-group>
-          <el-button @click="cancelUpload" type="danger" :size="elSize">删除</el-button>
-          <el-button @click="imgFullDialogVisible = true" :size="elSize">浏览</el-button>
-          <el-button type="primary" @click="uploadImage(uploadFile!)" :loading="isLoading" :size="elSize">{{
+          <el-button @click="cancelUpload" type="danger">删除</el-button>
+          <el-button @click="imgFullDialogVisible = true">浏览</el-button>
+          <el-button type="primary" @click="uploadImage(uploadFile!)" :loading="isLoading">{{
             isLoading
               ?
               '审核中' : '上传'
@@ -83,7 +83,7 @@ const responsiveStore = useResponsiveStore()
 const { isAdmin } = toRefs(userInfoStore)
 const { options, isLoading, uploadFile, changeBtnsFlag } = toRefs(uploadFileStore)
 const { cancelUpload } = uploadFileStore
-const { elSize, isPC } = toRefs(responsiveStore)
+const { isPC } = toRefs(responsiveStore)
 const { fileChange, computedMd5, uploadImage } = useUploadImage()
 
 

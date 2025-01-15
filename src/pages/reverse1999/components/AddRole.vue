@@ -70,18 +70,16 @@ const submitForm = async () => {
   try {
     const flag = await editRoleFormRef.value.validate()
     console.log('表单验证结果：', flag);
-    if (flag) {
-      if (isEdit.value) {//修改或删除角色
-        const newData = <Role>diffObj(formData.value, oldFormData.value)
-        //判断角色信息是否修改
-        if (Object.keys(newData).length === 0) {
+    if (!flag) return
 
-
-          ElMessage.info('角色信息未修改，已取消上传。')
-        } else await updateRole({ ...newData, id: formData.value.id })
-      } else {//新增角色
-        await addRole(formData.value)
-      }
+    if (isEdit.value) {//修改或删除角色
+      const newData = <Role>diffObj(formData.value, oldFormData.value)
+      //判断角色信息是否修改
+      if (!Object.keys(newData).length) {
+        ElMessage.info('角色信息未修改，已取消上传。')
+      } else await updateRole({ ...newData, id: formData.value.id })
+    } else {//新增角色
+      await addRole(formData.value)
     }
   } catch (error) {
     console.log('发生错误：', error);

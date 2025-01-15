@@ -27,7 +27,7 @@
             <div style="display: flex;justify-content: space-evenly">
               <el-text type="primary" v-for="item in members">{{ item.username }}</el-text>
             </div>
-            <el-button v-if="uid === bookInfo.uid" :size="elSize" style="margin: 10px auto" type="primary" @click="copyText(`【默默的小站】注册登陆之后可前往https://muxidream.cn/user/books加入协作账本【${bookInfo.name}】，账本ID：${bookInfo.bid}，协作码：${bookInfo.key},协作码仅一次有效。`, '账本ID和协作码')
+            <el-button v-if="uid === bookInfo.uid" style="margin: 10px auto" type="primary" @click="copyText(`【默默的小站】注册登陆之后可前往https://muxidream.cn/user/books加入协作账本【${bookInfo.name}】，账本ID：${bookInfo.bid}，协作码：${bookInfo.key},协作码仅一次有效。`, '账本ID和协作码')
               ">邀请协作
             </el-button>
           </div>
@@ -84,7 +84,7 @@ const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
 
 const { formatDate } = useTimestamp()
-const { isPC, elSize, dialogWidth, screenHeight } = toRefs(responsiveStore)
+const { isPC, dialogWidth, screenHeight } = toRefs(responsiveStore)
 const { copyText } = myFunction
 // import {numPlus} = useComputed()
 const { uid } = userInfoStore

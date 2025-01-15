@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref, reactive, type Ref, watch } from "vue";
+import { ref, reactive, type Ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 
 export const useResponsiveStore = defineStore('responsive', () => {
@@ -8,8 +8,10 @@ export const useResponsiveStore = defineStore('responsive', () => {
     const screenHeight = ref<number>(window.innerHeight)
     const isPC = ref<boolean>(screenWidth.value > 980)
     //容器高度
-    const containerHeight = ref<number>(isPC.value ? (screenHeight.value - 80) : (screenHeight.value - 40))
-    const isDark = ref<boolean>(sessionStorage.getItem('isDark') === '1' || false)
+    const containerHeight = computed(() => (isPC.value ? (screenHeight.value - 80) : (screenHeight.value - 40)))
+    const mainPanelConentHeight = computed(() => screenHeight.value - 100)
+    //首次加载，根据是否是深色偏好设置夜间模式
+    const isDark = ref<boolean>(sessionStorage.getItem('isDark') === '1' || window.matchMedia('(prefers-color-scheme: dark)').matches || false)
     const isHome = ref<boolean>(true)
     const isForum = ref<boolean>(false)
     const isReverse1999 = ref<boolean>(false)
@@ -19,9 +21,6 @@ export const useResponsiveStore = defineStore('responsive', () => {
     const dialogWidth2 = ref<string>(isPC.value ? '40%' : '80%')
     //抽屉高度
     const drawerSize = ref<number>(isPC.value ? screenHeight.value - 70 : screenHeight.value - 30)
-
-    //elSize已经在main.ts中定义了，可删除
-    const elSize = ref<string>(isPC.value ? 'default' : 'small')
     // if (!isPC.value) {
     //     dialogWidth.value = '90%'
     //     dialogWidth2.value = '80%'
@@ -42,14 +41,12 @@ export const useResponsiveStore = defineStore('responsive', () => {
             isPC.value = false
             dialogWidth.value = '90%'
             dialogWidth2.value = '80%'
-            elSize.value = 'small'
             containerHeight.value = screenHeight.value - 40
         } else {
             console.log('当前是PC')
             isPC.value = true
             dialogWidth.value = '50%'
             dialogWidth2.value = '40%'
-            elSize.value = 'default'
             containerHeight.value = screenHeight.value - 80
         }
     }
@@ -178,6 +175,7 @@ export const useResponsiveStore = defineStore('responsive', () => {
         screenWidth,
         screenHeight,
         containerHeight,
+        mainPanelConentHeight,
         isPC,
         isDark,
         isHome,
@@ -186,7 +184,12 @@ export const useResponsiveStore = defineStore('responsive', () => {
         showPlayer,
         dialogWidth,
         dialogWidth2,
-        elSize,
         drawerSize
     }
+}, {
+    persist: {
+        pick: ['isDark'],
+        storage: sessionStorage,
+    }
+
 })

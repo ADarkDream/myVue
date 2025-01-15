@@ -12,7 +12,7 @@
       <el-space>
         <el-switch v-model="item.isShow" @click="hideUserEngine(item)" inline-prompt active-text="显示"
           inactive-text="隐藏" />
-        <el-button type="danger" :icon="Delete" :size="elSize" @click="deleteEngine(item.id)" circle />
+        <el-button type="danger" :icon="Delete" @click="deleteEngine(item.id)" circle />
       </el-space>
     </el-card>
   </el-scrollbar>
@@ -43,7 +43,7 @@ import { EngineData } from "@/types/url";
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
 const { isLogin } = toRefs(userInfoStore)
-const { dialogWidth2, elSize, isPC } = toRefs(responsiveStore)
+const { dialogWidth2, isPC } = toRefs(responsiveStore)
 
 
 const {

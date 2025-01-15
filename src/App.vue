@@ -1,23 +1,26 @@
 <template>
   <el-config-provider :locale="locale" :size="isPC ? 'default' : 'small'">
     <el-container class="app">
-
+      <!-- <LoadingMask :show="isLoading" /> -->
       <!--    顶部导航栏-->
-      <el-header class="shade">
+      <el-header class="shade" mode="out-in">
         <TitleDiv />
       </el-header>
       <!-- 主要呈现部分(Home / Forum)-->
-      <el-main class="main">
-        <router-view />
-      </el-main>
-
+      <div class="main">
+        <router-view v-slot="{ Component }">
+          <transition name="fade">
+            <component :is="Component" v-if="Component" class="view-component" view-component />
+          </transition>
+        </router-view>
+      </div>
     </el-container>
   </el-config-provider>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, toRefs } from 'vue';
-import { RouterView } from 'vue-router';
+import { useRouter } from 'vue-router';
 import axios from "axios";
 import zhCn from 'element-plus/es/locale/lang/zh-cn' //elementPlus国际化
 import en from 'element-plus/es/locale/lang/en' //elementPlus国际化
@@ -25,10 +28,14 @@ import en from 'element-plus/es/locale/lang/en' //elementPlus国际化
 import TitleDiv from "@/components/TitleDiv.vue";
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useResponsiveStore } from '@/store/useResponsiveStore';
 
-const userInfoStore = useUserInfoStore()
-const { token } = toRefs(userInfoStore)
-const { setTokenByType, checkLocalToken } = userInfoStore
+
+const { token } = toRefs(useUserInfoStore())
+const { setTokenByType, checkLocalToken } = useUserInfoStore()
+const { screenHeight } = toRefs(useResponsiveStore())
+
+const router = useRouter();
 
 const isPC = ref(true)
 
@@ -167,8 +174,34 @@ axios.interceptors.response.use((response) => {
   return Promise.reject(error)
 })
 
-</script>
 
+const isLoading = ref(true); // 控制加载状态
+
+// 首次进入网站时显示加载动画
+onMounted(() => {
+  isLoading.value = false; // 首次渲染完成后关闭加载动画
+});
+
+// 监听路由跳转
+// router.beforeEach((to, from, next) => {
+//   isLoading.value = true; // 路由开始跳转时显示加载动画
+//   console.log('路由跳转');
+
+//   next();
+// });
+
+// router.afterEach(() => {
+//   console.log('路由跳转完成');
+
+//   // 等待页面渲染完成，延迟关闭加载动画
+//   setTimeout(() => {
+//     isLoading.value = false;
+//   }, 300); // 根据动画时间调整
+// });
+</script>
+<style>
+@import "./assets/css/mainPanel.css";
+</style>
 <style scoped>
 .shade {
   /*会导致登录窗口被裁减
@@ -179,16 +212,28 @@ axios.interceptors.response.use((response) => {
   z-index: 100;
 }
 
+.main {
+  position: relative;
+  height: calc(100vh - 40px);
+}
+
+/* 路由页面 */
+.view-component {
+  position: absolute;
+  /* 确保新旧组件占据相同位置 */
+  top: 0;
+  left: 0;
+}
+
 @media (max-width: 780px) {
   .shade {
-    padding: 0;
     position: fixed;
     width: 100%;
   }
 
   .main {
-    padding: 40px 0 0 0;
-    overflow: hidden;
+    margin-top: 40px;
+    /* overflow: hidden; */
   }
 
 

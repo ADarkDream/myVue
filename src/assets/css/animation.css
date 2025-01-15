@@ -1,0 +1,126 @@
+@keyframes slide-out {
+  0% {
+    opacity: 1;
+    scale: 1;
+  }
+
+  50% {
+    scale: 0.9;
+    opacity: 0.8;
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(50vh);
+  }
+
+}
+
+@keyframes slide-in {
+  0% {
+    opacity: 0.8;
+    scale: 0.9;
+    transform: translateX(-50vh);
+  }
+
+  75% {
+    opacity: 1;
+    scale: 0.9;
+    transform: translateX(0);
+  }
+
+  100% {
+    scale: 1;
+  }
+
+}
+
+/*#region 消失、入场动画 fade*/
+.fade-enter-active {
+  /* transition: all 0.8s ease-in-out; */
+  animation: slide-in 0.8s ease-in-out forwards;
+}
+
+
+
+.fade-leave-active {
+  animation: slide-out 0.4s ease-in-out forwards;
+}
+
+/* .fade-enter-from {
+  opacity: 0.8;
+  scale: 0.8;
+  transform: translateX(-50vh);
+} */
+
+/* .fade-enter-to {
+
+} */
+
+/* .fade-leave-to {
+  transform: translateY(-100vh);
+} */
+
+/* #endregion */
+
+/*#region水平移动动画 horizontal_slide */
+.horizontal_slide-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.horizontal_slide-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.horizontal_slide-enter-from,
+.horizontal_slide-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+/* #endregion */
+
+/*#region 列表动画 list 反向 relist */
+.list-move,
+/* 对移动中的元素应用的过渡 */
+.list-enter-active,
+.list-leave-active,
+.relist-move,
+.relist-enter-active,
+.relist-leave-active {
+  transition: all 1s ease;
+}
+
+.list-enter-from,
+.relist-leave-to {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+.list-leave-to,
+.relist-enter-from {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+/* 确保将离开的元素从布局流中删除
+  以便能够正确地计算移动的动画。 */
+.list-leave-active,
+.relist-leave-active {
+  position: absolute;
+}
+
+/*#endregion */
+
+
+/*专辑图旋转动画*/
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

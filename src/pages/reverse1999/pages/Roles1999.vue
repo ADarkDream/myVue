@@ -1,6 +1,5 @@
 <template>
-  <!-- <el-container :style="'height:' + (screenHeight - (isPC ? 80 : 40)) + 'px;overflow:hidden'"> -->
-  <div>
+  <div class="roles1999">
     <!--PC筛选框-->
     <el-row class="header2" v-if="isPC">
       <el-col :sm="4">
@@ -32,109 +31,107 @@
       </el-col>
     </el-row>
     <!--移动端筛选框-->
-    <div v-else>
+    <div class="header" v-else>
       <el-button @click="dialogVisible = true" type="primary">筛选/查找</el-button>
       <el-button type="primary" @click="toggleAddRoleDrawer()">新增角色</el-button>
       <el-button type="success" size="small" plain @click="refreshRole()" :icon="Refresh" title="刷新角色信息">刷新</el-button>
       <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
     </div>
-    <div>
-      <el-text tag="p" type="warning">如有错漏还请向我反馈。注册登录之后可编辑。</el-text>
-      <el-table ref="tableRef" class="myCustomElTable" :data="tableData"
-        :max-height="isPC ? (screenHeight - 240) : (screenHeight - 180)" stripe flexible border highlight-current-row
-        table-layout="auto" :default-sort="{ prop: 'id', order: 'custom' }" @sort-change="handleSortChange">
-        <!--              @filter-change="filterChange">-->
-        <el-table-column prop="id" label="ID" min-width="60" align="center" fixed sortable />
-        <el-table-column prop="name" label="角色名" min-width="120" align="center" :fixed="!isPC">
-          <template #default="scope">
-            <div v-if="isEditRow === scope.$index">
-              <el-input v-model="newInfo.name" />
-            </div>
+    <el-table ref="tableRef" class="myCustomElTable" :data="tableData"
+      :max-height="mainPanelConentHeight - (isPC ? 100 : 70)" stripe flexible border highlight-current-row
+      table-layout="auto" :default-sort="{ prop: 'id', order: 'custom' }" @sort-change="handleSortChange">
+      <!--              @filter-change="filterChange">-->
+      <el-table-column prop="id" label="ID" min-width="60" align="center" fixed sortable />
+      <el-table-column prop="name" label="角色名" min-width="120" align="center" :fixed="!isPC">
+        <template #default="scope">
+          <div v-if="isEditRow === scope.$index">
+            <el-input v-model="newInfo.name" />
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="camp" label="所属阵营" min-width="120" align="center">
+        <template #default="scope">
+          <template v-if="isEditRow === scope.$index">
+            <el-select placeholder="选择阵营" v-model="newInfo.camp" default-first-option>
+              <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'"
+                :value="name" />
+            </el-select>
           </template>
-        </el-table-column>
-        <el-table-column prop="camp" label="所属阵营" min-width="120" align="center">
-          <template #default="scope">
-            <template v-if="isEditRow === scope.$index">
-              <el-select placeholder="选择阵营" v-model="newInfo.camp" default-first-option>
-                <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'"
-                  :value="name" />
-              </el-select>
-            </template>
-            <template v-else>
-              {{ scope.row.camp }}
-            </template>
+          <template v-else>
+            {{ scope.row.camp }}
           </template>
-        </el-table-column>
-        <el-table-column prop="race" label="所属种族" min-width="130" align="center">
-          <template #default="scope">
-            <template v-if="isEditRow === scope.$index">
-              <el-select placeholder="选择种族" v-model="newInfo.race" default-first-option>
-                <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'"
-                  :value="name" />
-              </el-select>
-            </template>
-            <template v-else>
-              {{ scope.row.race }}
-            </template>
+        </template>
+      </el-table-column>
+      <el-table-column prop="race" label="所属种族" min-width="130" align="center">
+        <template #default="scope">
+          <template v-if="isEditRow === scope.$index">
+            <el-select placeholder="选择种族" v-model="newInfo.race" default-first-option>
+              <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'"
+                :value="name" />
+            </el-select>
           </template>
-        </el-table-column>
-        <el-table-column prop="otherTags" label="其它标签" min-width="200" align="center">
-          <template #default="scope">
-            <div v-if="isEditRow === scope.$index">
-              <el-input v-model="newInfo.otherTags" />
-            </div>
+          <template v-else>
+            {{ scope.row.race }}
           </template>
-        </el-table-column>
-        <el-table-column prop="created_time" label="创建时间" min-width="100" align="center" v-if="isAdmin">
-          <template #default="scope">{{ getDiffTime(scope.row.created_time) }}</template>
-        </el-table-column>
-        <el-table-column prop="updated_time" label="更新时间" min-width="100" align="center">
-          <template #default="scope">{{ getDiffTime(scope.row.updated_time) }}</template>
-        </el-table-column>
-        <el-table-column prop="status" label="状态" min-width="100" align="center" v-if="isAdmin">
-          <template #default="scope">
-            <div v-if="isEditRow === scope.$index">
-              <el-select placeholder="选择状态" v-model="newInfo.status" default-first-option>
-                <el-option v-for="{ label, value } in statusOptions" :key="value" :label :value />
-              </el-select>
-            </div>
-            <div v-else>
-              {{ statusOptions[scope.row.status!].label }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" min-width="100" align="center" :fixed="isPC ? 'right' : false">
-          <!-- <template #header v-if="isPC">
+        </template>
+      </el-table-column>
+      <el-table-column prop="otherTags" label="其它标签" min-width="200" align="center">
+        <template #default="scope">
+          <div v-if="isEditRow === scope.$index">
+            <el-input v-model="newInfo.otherTags" />
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="created_time" label="创建时间" min-width="100" align="center" v-if="isAdmin">
+        <template #default="scope">{{ getDiffTime(scope.row.created_time) }}</template>
+      </el-table-column>
+      <el-table-column prop="updated_time" label="更新时间" min-width="100" align="center">
+        <template #default="scope">{{ getDiffTime(scope.row.updated_time) }}</template>
+      </el-table-column>
+      <el-table-column prop="status" label="状态" min-width="100" align="center" v-if="isAdmin">
+        <template #default="scope">
+          <div v-if="isEditRow === scope.$index">
+            <el-select placeholder="选择状态" v-model="newInfo.status" default-first-option>
+              <el-option v-for="{ label, value } in statusOptions" :key="value" :label :value />
+            </el-select>
+          </div>
+          <div v-else>
+            {{ statusOptions[scope.row.status!].label }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" min-width="100" align="center" :fixed="isPC ? 'right' : false">
+        <!-- <template #header v-if="isPC">
             <div style="display: flex;justify-content: space-around;">
               <span>操作</span><el-button type="success" size="small" plain @click="refreshRole()" :icon="Refresh"
                 title="刷新角色信息"></el-button>
             </div>
           </template> -->
-          <template #default="scope">
-            <div v-if="isEditRow !== scope.$index">
-              <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)"
-                :disabled="!canEdit(scope.row.status)">编辑</el-button>
-              <el-button link type="danger" size="small" :disabled="!canDel(scope.row.status)"
-                @click="deleteRow(scope.$index, scope.row.id)">
-                删除
-              </el-button>
-            </div>
-            <div v-else>
-              <el-button link type="info" size="small" @click="exit_edit()">取消
-              </el-button>
-              <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newInfo, scope.row)">
-                更新
-              </el-button>
-            </div>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pageMenu">
-        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" small
-          :page-sizes="[10, 25, 50, 100]" :layout="layout" :total="total" @size-change="render"
-          @current-change="render" />
-      </div>
+        <template #default="scope">
+          <div v-if="isEditRow !== scope.$index">
+            <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)"
+              :disabled="!canEdit(scope.row.status)">编辑</el-button>
+            <el-button link type="danger" size="small" :disabled="!canDel(scope.row.status)"
+              @click="deleteRow(scope.$index, scope.row.id)">
+              删除
+            </el-button>
+          </div>
+          <div v-else>
+            <el-button link type="info" size="small" @click="exit_edit()">取消
+            </el-button>
+            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newInfo, scope.row)">
+              更新
+            </el-button>
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="pageMenu">
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" size="small"
+        :page-sizes="[10, 25, 50, 100]" :layout="layout" :total="total" @size-change="render"
+        @current-change="render" />
     </div>
+
     <!--移动端筛选框2-->
     <el-drawer v-model="dialogVisible" title="筛选角色" :show-close="false" direction="btt" :append-to-body="true"
       size="40%">
@@ -168,13 +165,11 @@
       </el-row>
     </el-drawer>
   </div>
-  <!-- </el-container> -->
 </template>
 
 
 <script setup lang="ts">
 import { reactive, ref, toRefs } from 'vue'
-import { useRouter } from 'vue-router'
 import type { TableInstance } from "element-plus";
 import { Search, Refresh } from "@element-plus/icons-vue";
 //stores
@@ -195,7 +190,7 @@ import fileProcess from "@/utils/fileProcess";
 //files
 
 
-const router = useRouter()
+
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
 const reverse1999Store = useReverse1999Store()
@@ -208,7 +203,7 @@ const { getVersion, updateRole } = useReverse1999()
 //登录判断
 
 //屏幕高度
-const { screenHeight, isPC } = toRefs(responsiveStore)
+const { screenHeight, isPC, mainPanelConentHeight } = toRefs(responsiveStore)
 const { isAdmin, isLogin } = toRefs(userInfoStore)
 
 const tableRef = ref<TableInstance>()
@@ -405,7 +400,7 @@ const export_excel = () => {
 
   // 数据
   const data = allRoleInfo.value.map((row) => {
-    return propsIndex.map((prop, index) => {
+    return propsIndex.map(prop => {
       // 修改具体值
       if (prop === 'updated_time') return getTime(row[prop])
       return row[prop as keyof Role] || ""
@@ -421,7 +416,7 @@ const export_excel = () => {
 
 
 onMounted(async () => {
-  await getVersion({ version: false, role: 'all' })
+  await getVersion({ role: 'all' })
   total.value = allRoleInfo.value.length//底部分页数字
   render()
   watch(allRoleInfo, (newVal, oldVal) => {
@@ -433,63 +428,4 @@ onMounted(async () => {
 </script>
 
 
-<style scoped>
-@media (max-width: 780px) {
-  .header2 {
-    width: 80%;
-    margin: 0 auto;
-    padding-top: 10px;
-  }
-
-  .el-col {
-    margin: 5px 0;
-  }
-
-  /*#region el-table */
-  .myCustomElTable {
-
-    .el-table__header-wrapper {
-      height: 40px;
-      line-height: 40px;
-    }
-
-    .tableItem {
-      white-space: nowrap;
-      overflow: hidden;
-    }
-
-    /* .el-table__cell {
-                  overflow: hidden;
-              } */
-  }
-
-  .myCustomElTable>>>.el-table__body-header .el-table__cell {
-    padding: 0;
-  }
-
-  .myCustomElTable>>>.el-table__body-header .el-table__cell .cell {
-    padding: 0 5px;
-    text-align: center;
-  }
-
-  .myCustomElTable>>>.el-table__header tr th {
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-
-  .myCustomElTable>>>.el-table__row .cell {
-    padding: 0;
-  }
-
-  .myCustomElTable>>>.success-row {
-    background: #f0f9eb;
-  }
-
-  /*#endregion */
-
-  .pageMenu {
-    padding-bottom: 5px;
-  }
-}
-</style>
+<style scoped></style>

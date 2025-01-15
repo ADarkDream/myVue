@@ -2,9 +2,11 @@
 // (密码验证没有强度验证)
 // (双重密码确认的规则validatePassword单独在RegisterForm,不知道咋传参ruleForm.password)
 // 验证单个 8 位数字是否是有效的年月日格式
-function isValidDate(num: number) {
-	if (typeof num !== "number" || num.toString().length !== 8) return false; // 确保是8位数字
-	const str = num.toString();
+function isValidDate(num: number | string) {
+	let isNum = true
+	if (typeof num === "string" && num.length === 8) isNum = false
+	else if (typeof num !== "number" || num.toString().length !== 8) return false; // 确保是8位数字
+	const str = (isNum ? num.toString() : num) as string
 	const year = parseInt(str.slice(0, 4), 10);
 	const month = parseInt(str.slice(4, 6), 10);
 	const day = parseInt(str.slice(6, 8), 10);

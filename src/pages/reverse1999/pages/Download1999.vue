@@ -15,7 +15,7 @@
             </div>
           </el-collapse-item>
           <el-collapse-item title="筛选条件【所有条件不选则默认全选】" name="2">
-            <el-form :label-position="isPC ? 'left' : 'top'" :size="elSize">
+            <el-form :label-position="isPC ? 'left' : 'top'">
               <el-form-item label="选择版本[默认全选]：" style="flex-direction: column">
                 <el-checkbox v-model="checkAllVersions" :indeterminate="isIndeterminateVersion"
                   @change="handleCheckAllVersionChange">
@@ -23,25 +23,12 @@
                 </el-checkbox>
                 <el-checkbox-group v-model="condition.version" style="text-align: left"
                   @change="handleCheckedVersionsChange">
-                  <el-checkbox v-for="item in versionInfo" :key="item.version" :label="item.versionName"
-                    :value="item.version" />
+                  <el-checkbox v-for="{ version, versionName } in versionInfo" :key="version" :label="versionName"
+                    :value="version" />
                 </el-checkbox-group>
               </el-form-item>
               <el-form-item label="选择角色[默认全选]：" style="flex-direction: column">
-                <!-- <el-checkbox v-model="checkAllRoles" :indeterminate="isIndeterminateRole"
-                    @change="handleCheckAllRoleChange"><el-text type="primary">全选角色</el-text>
-                  </el-checkbox> -->
 
-
-                <!-- <div class="roleSort">
-                    <el-text type="primary">是否包含角色：</el-text>
-                    <el-checkbox v-model="checkAllRoles" :indeterminate="isIndeterminateRole"
-                      @change="handleCheckAllRoleChange">全选
-                    </el-checkbox>
-                    <el-checkbox v-model="checkNoRole" :indeterminate="isIndeterminateNoRole"
-                      @change="handleCheckNoRoleChange">全选无角色(或未命名角色)
-                    </el-checkbox>
-                  </div> -->
                 <div class="roleSort">
                   <!--遍历阵营-->
                   <el-text>角色所属阵营：</el-text>
@@ -92,20 +79,20 @@
               </el-form-item>
               <div style="text-align: center;">
                 <el-button @click="reset">重置</el-button>
-                <el-button type="primary" :size="elSize" :icon="Search" @click="getImages">筛选</el-button>
-                <el-button type="warning" :size="elSize" :icon="Warning" @click="showDownloadNotice()" v-show="isShow">
+                <el-button type="primary" :icon="Search" @click="getImages">筛选</el-button>
+                <el-button type="warning" :icon="Warning" @click="showDownloadNotice()" v-show="isShow">
                   下载须知
                 </el-button>
                 <br v-if="!isPC">
-                <el-button :type="isChoose !== 0 ? 'danger' : 'success'" :size="elSize"
-                  :icon="isChoose !== 0 ? CloseBold : Select" @click="selectBtn()" v-show="isShow">
+                <el-button :type="isChoose !== 0 ? 'danger' : 'success'" :icon="isChoose !== 0 ? CloseBold : Select"
+                  @click="selectBtn()" v-show="isShow">
                   <span v-if="isChoose === 0">多选
                   </span>
                   <span v-else-if="isChoose === 1">清空选择</span>
                   <span v-else>退出勾选</span>
                 </el-button>
                 <el-button v-if="imgList.length && isPC" type="success" @click="checkPort()">检查本地代理</el-button>
-                <el-button type="success" :size="elSize" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
+                <el-button type="success" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
                 </el-button>
                 <br>
                 <div class="statement">
@@ -215,7 +202,6 @@
 
 <script lang="ts" setup>
 import { onMounted, reactive, ref, watch, toRefs } from 'vue'
-import { useRouter } from "vue-router";
 import {
   Check,
   CloseBold,
@@ -246,24 +232,25 @@ import titleDiv from '@/utils/titleDiv';
 import myFunction from "@/utils/myFunction";
 import userInfo from '@/utils/userInfo';
 //types
-import { NoticeActiveNum, ResultData } from "@/types/global";
+import { NoticeActiveNum } from "@/types/global";
 //files
 import logo from '@/assets/logo-small.png'
 import SVG_auto from '@/assets/reverse1999/auto.svg?component'
 import SVG_grid_four from '@/assets/reverse1999/grid_four.svg?component'
 import SVG_grid_nine from '@/assets/reverse1999/grid_nine.svg?component'
 import { api_getImage } from '@/apis/reverse1999';
+import { UserInfo } from '@/types/user';
 
 
-const router = useRouter()
+
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
 const noticeStore = useNoticeStore()
 const reverse1999Store = useReverse1999Store()
 const { isLogin, useUserBGUrl, localBgUrl } = toRefs(userInfoStore)
-const { isPC, elSize, screenWidth, containerHeight } = toRefs(responsiveStore)
+const { isPC, screenWidth, screenHeight } = toRefs(responsiveStore)
 const { completed, unCompleted, others } = toRefs(noticeStore)
-const { versionInfo, diffRoleInfo: roleInfo, campInfo, raceInfo } = toRefs(reverse1999Store)
+const { diffVersionInfo: versionInfo, diffRoleInfo: roleInfo, campInfo, raceInfo } = toRefs(reverse1999Store)
 const { updateLocalUserInfo } = userInfoStore
 const { toggleBG } = useTitleDiv()
 const { getNotices } = useNotice()
@@ -298,13 +285,12 @@ const isIndeterminateVersion = ref(false)  //全选版本按钮状态
 const checkAllRoles = ref(false)   //全选角色
 const checkNoRole = ref(false)   //全选无角色
 const isIndeterminateRole = ref(false)  //全选角色按钮状态
-const isIndeterminateNoRole = ref(false)  //全选无角色按钮状态
 const campName = ref<string>('')      //阵营名称
 const raceName = ref<string>('')      //种族名称
 
 
 
-const showUrl = ref(false)     //控制开源地址的显示
+
 const isShowDownloadNotice = ref(false)     //控制下载须知界面的显示
 const isShowNotice = ref(false)//控制模糊和精准搜索的说明是否显示
 const imgList = ref<ReverseImg[]>([])  //展示列表，存的图片信息对象
@@ -354,7 +340,7 @@ onMounted(async () => {
 
 //全选版本：单选按钮的状态改变
 const handleCheckAllVersionChange = (val: boolean) => {
-  if (val) versionInfo.value.forEach(item => condition.version.push(item.version.toString()))
+  if (val) versionInfo.value.forEach(item => condition.version.push(item.version))
   else condition.version = []
   isIndeterminateVersion.value = false  //取消全选按钮符号 -
 }
@@ -420,13 +406,7 @@ const handleCheckCampChange = (val: boolean) => {
   console.log(condition.roles)
 }
 
-//全选无角色时：全选按钮的状态改变
-const handleCheckNoRoleChange = (val: boolean) => {
-  const newList = new Set(condition.roles)  //Set()不会保存重复值
-  // if (val) newList.add(0) //没有角色的图存的角色id为0
-  // else newList.delete(0)
-  condition.roles = [...newList]
-}
+
 
 //重置筛选条件
 function reset() {
@@ -578,7 +558,7 @@ const setBackground = async (url: string, name: string) => {
     })
     if (!imageInfo) throw Error
 
-    updateLocalUserInfo({ bgId: imageInfo.id })
+    updateLocalUserInfo({ bgId: imageInfo.id } as UserInfo)
     toggleBG({ newBgUrl: url })
     useUserBGUrl.value = true
     ElMessage.success('设置背景图成功,已保存到云端')
@@ -756,8 +736,8 @@ const showPayCodePanel = () => {
 </script>
 <style scoped>
 .download1999 {
-  background-color: transparent;
   overflow: scroll;
+  height: 100%;
 }
 
 .el-header {
@@ -871,7 +851,7 @@ const showPayCodePanel = () => {
 }
 
 /*筛选条件的标题*/
-.download1999 .el-form>>>.el-form-item__label {
+.download1999 :deep(.el-form-item__label) {
   font-size: 17px;
   color: currentColor;
 }

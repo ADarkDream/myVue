@@ -11,8 +11,7 @@
                     <Refresh />
                 </el-icon>刷新</el-button>
         </div>
-        <el-form v-model="newMusic" label-width="auto" label-position="top" style="width: 100%;margin-top:20px"
-            :size="elSize">
+        <el-form v-model="newMusic" label-width="auto" label-position="top" style="width: 100%;margin-top:20px">
             <el-form-item>
                 <template #label>输入歌单id&ensp;<el-icon @click="">
                         <InfoFilled />
@@ -64,14 +63,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, toRefs } from "vue";
+import { onMounted, ref } from "vue";
 import { ElMessage } from 'element-plus';
 import { InfoFilled, Refresh, Search, Upload } from "@element-plus/icons-vue";
 //stores
 import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
 import { useMusicSearchStore } from '@/store/music/useMusicSearchStore';
 //hooks
-import { useResponsiveStore } from "@/store/useResponsiveStore";
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import useMusicList from "@/hooks/music/useMusicList";
 //components
@@ -83,8 +81,6 @@ import type { CloudSongInfo, SongInfo } from "@/types/music";
 
 const musicConfigStore = useMusicConfigStore()
 const musicSearchStore = useMusicSearchStore()
-const responsiveStore = useResponsiveStore()
-const { elSize } = toRefs(responsiveStore)
 
 const { addMusicToPlay, addMusic } = useMusicPlay()
 

@@ -10,8 +10,8 @@
       <div>
         <el-space v-if="isShow && !dialogVisible">
           <el-switch v-model="useUserBGUrl" inline-prompt active-text="应用" inactive-text="去除" size="large" />
-          <el-button :size="elSize" type="primary" @click="dialogVisible = true" :icon="UploadFilled">上传</el-button>
-          <el-button :size="elSize" type="danger" :icon="Delete" @click="deleteRow()">删除</el-button>
+          <el-button type="primary" @click="dialogVisible = true" :icon="UploadFilled">上传</el-button>
+          <el-button type="danger" :icon="Delete" @click="deleteRow()">删除</el-button>
         </el-space>
       </div>
 
@@ -19,7 +19,7 @@
       <el-image :src="bgUrl" v-if="isShow && !dialogVisible" style="width: 50%;" />
       <!--图片上传框-->
       <UploadImage v-if="!isShow || dialogVisible" />
-      <el-button v-if="dialogVisible" :size="elSize" type="primary" @click="dialogVisible = false"
+      <el-button v-if="dialogVisible" type="primary" @click="dialogVisible = false"
         style="margin-top: 10px;">取消上传</el-button>
 
 
@@ -53,7 +53,7 @@ const uploadFileStore = useUploadFileStore()
 //获取本地存储的用户信息
 const { bgUrl, useUserBGUrl } = toRefs(userInfoStore)
 const { updateLocalUserInfo } = userInfoStore
-const { isPC, elSize } = toRefs(responsiveStore)
+const { isPC } = toRefs(responsiveStore)
 const { options, isLoading, fileInfo } = toRefs(uploadFileStore)
 const { resetUpload } = uploadFileStore
 const { toggleBG } = useTitleDiv()
