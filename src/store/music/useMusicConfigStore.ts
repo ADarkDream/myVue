@@ -1,36 +1,19 @@
 // 引入defineStore用于创建store
 import { defineStore } from 'pinia'
-import { reactive, ref } from "vue";
+import { ref } from "vue";
 
 
 // 定义并暴露一个store
 export const useMusicConfigStore = defineStore('music_config', () => {
-    //页面背景配置
-    const bgSettings = reactive({
-        '--music-bg-color': '#DDE6E8',
-        '--music-bg-opacity': 0.7, /*背景透明度*/
-        '--music-bg-filter': 3, /*背景模糊度*/
-        '--music-bg-saturate': 1, /*背景饱和度*/
-    })
+
     //播放设置
     const is_show_player_before_play = ref(true)
 
-    //当前面板序号
-    const activePanelIndex = ref(1)
 
-    //切换面板
-    const changePanelIndex = (index: number) => {
-        activePanelIndex.value = index
-    }
-
-    return { bgSettings, activePanelIndex, is_show_player_before_play, changePanelIndex }
+    return { is_show_player_before_play }
 }, {
     persist: [{
-        pick: ['bgSettings', 'is_show_player_before_play'],
+        pick: ['is_show_player_before_play'],
         storage: localStorage
-    },
-    {
-        pick: ['activePanelIndex'],
-        storage: sessionStorage
     }]
 })

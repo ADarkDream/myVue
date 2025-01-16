@@ -50,7 +50,7 @@
                         </el-icon>&ensp;设置
                     </el-text>
                 </template>
-                <MusicSettings />
+                <MainPanelSettings />
             </el-tab-pane>
             <el-tab-pane :name="5">
                 <template #label>
@@ -102,14 +102,14 @@ import { Download, Picture, Document, Setting, Tickets } from "@element-plus/ico
 import { useRoute } from "vue-router";
 //stores
 import { useResponsiveStore } from "@/store/useResponsiveStore";
-import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
+import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore";
 import { useRolesStore } from '@/store/reverse1999/useRolesStore';
 import { useReverse1999Store } from '@/store/reverse1999/useReverse1999Store';
 //hooks
 
 //components
 const AddRole = defineAsyncComponent(() => import('./components/AddRole.vue'))
-import MusicSettings from '../music/components/MusicSettings.vue';
+import MainPanelSettings from "@/components/MainPanelSettings.vue";
 //files
 
 
@@ -117,23 +117,17 @@ import MusicSettings from '../music/components/MusicSettings.vue';
 
 const route = useRoute()
 
-
-
-const responsiveStore = useResponsiveStore()
-const musicConfigStore = useMusicConfigStore()
-const rolesStore = useRolesStore()
-const reverse1999Store = useReverse1999Store()
 //页面背景配置
 
 
-const { bgSettings } = musicConfigStore
-const { containerHeight } = toRefs(responsiveStore)
-const { touchstart, positionComputed } = responsiveStore
+const { bgSettings } = useMainPanelConfigStore()
+const { containerHeight } = toRefs(useResponsiveStore())
+const { touchstart, positionComputed } = useResponsiveStore()
 
-const { isShowAddRoleDrawer, isEdit } = toRefs(rolesStore)
-const { reSetFormData } = rolesStore
-const { activePanelIndex, toRight } = toRefs(reverse1999Store)
-const { changePanelIndex } = reverse1999Store
+const { isShowAddRoleDrawer, isEdit } = toRefs(useRolesStore())
+const { reSetFormData } = useRolesStore()
+const { activePanelIndex, toRight } = toRefs(useReverse1999Store())
+const { changePanelIndex } = useReverse1999Store()
 
 const reverse1999 = ref<HTMLDivElement>()
 
@@ -146,7 +140,7 @@ const isKeepAlive = computed(() => {
 });
 
 //前四个页面显示子页面，之后的隐藏
-const isShowOtherPage = computed(() => [0, 1, 2, 3].includes(activePanelIndex.value))
+const isShowOtherPage = computed(() => [0, 1, 2, 3, 4].includes(activePanelIndex.value))
 //子页面高度
 const containerStyle = computed(() => ({}));
 

@@ -1,5 +1,5 @@
 <template>
-  <div ref="containerRef" :style="{ height: (height || (drawerSize - 80)) + 'px', overflow: 'scroll' }"
+  <div ref="containerRef" class="songs-list-container" :style="{ height: height + 'px', overflow: 'scroll' }"
     v-show="songsList.length !== 0">
     <!-- <div class="scroll-container">
       <div class="actual-height-container">
@@ -43,7 +43,7 @@
         </div>
       </div>
     </div> -->
-    <template v-for="(item, index) in songsList" :key="index">
+    <div v-for="(item, index) in songsList" :key="index">
       <div class="musicDiv">
         <div>
           <div class="songInfo">
@@ -80,9 +80,9 @@
           <SVG_music_playing_indicator v-show="item.id === thisMusic.id" />
         </div>
       </div>
-    </template>
+    </div>
     <!-- 占位盒子 -->
-    <div style="height: 150px;" v-if="!isPC && !isSearchList && songsList.length > 5"></div>
+    <!-- <div style="height: 150px;" v-if="!isPC && !isSearchList && songsList.length > 5"></div> -->
   </div>
 </template>
 
@@ -111,7 +111,7 @@ const responsiveStore = useResponsiveStore()
 const musicListDrawerStore = useMusicListDrawerStore()
 
 
-const { drawerSize, isPC } = toRefs(responsiveStore)
+const { drawerSize, isPC, mainPanelConentHeight } = toRefs(responsiveStore)
 const { music_id_list } = toRefs(musicListDrawerStore)
 const { musicListInfo, thisMusic, isPlaying } = toRefs(musicListStore)
 const { addMusicList } = musicListStore
@@ -173,6 +173,11 @@ const deleteMusic = async (id: number, index: number) => {
 // })
 </script>
 <style scoped>
+.songs-list-container {
+  box-sizing: border-box;
+  padding-bottom: 150px;
+}
+
 .playListBar {
   height: 30px;
   padding-bottom: 10px;

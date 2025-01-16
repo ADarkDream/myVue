@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <div class="mainPanel">
     <el-main>
       <h1>本页面为功能测试页</h1>
       <div style="margin-top: 10px;padding: 20px">
@@ -23,8 +23,7 @@
       <el-divider direction="horizontal">WIKI测试题</el-divider>
       <Example />
     </el-main>
-
-  </el-container>
+  </div>
 </template>
 
 <script lang="ts" setup>

@@ -1,4 +1,4 @@
-import { computed, nextTick, toRefs } from 'vue'
+import { nextTick, toRefs } from 'vue'
 import { ElMessage } from 'element-plus'
 //stores
 import { useMusicListStore } from "@/store/music/useMusicListStore"
@@ -19,28 +19,15 @@ import type { CloudSongInfo } from "@/types/music"
 
 
 export default function () {
-
-    const useMusicConfig = useMusicConfigStore()
-    const musicListStore = useMusicListStore()
-    const musicPlayStore = useMusicPlayStore()
-    const { togglePlayingIndex } = usePlayConfig()
-
-    //是否正在播放的标志
-    const playList = computed({
-        get: () => musicListStore.playList,
-        set: (val: CloudSongInfo[]) => musicListStore.playList = val
-    })
-
-
-    const { isPlaying, isLoading, playingIndex, thisMusic } = toRefs(musicListStore)
-    const { is_show_player_before_play } = toRefs(useMusicConfig)
-
+    const { addMusicList } = useMusicListStore()
+    const { isPlaying, isLoading, playingIndex, thisMusic, playList } = toRefs(useMusicListStore())
+    const { is_show_player_before_play } = toRefs(useMusicConfigStore())
     const { audioContext, audioElement, musicName, isScrollName, transformX, infoBarActive, controlPanelActive, volume,
         currentTime, duration, gainNode, timer1,
-    } = toRefs(musicPlayStore)
+    } = toRefs(useMusicPlayStore())
+    const { togglePlayerVisible } = useMusicPlayStore()
 
-    const { togglePlayerVisible } = musicPlayStore
-
+    const { togglePlayingIndex } = usePlayConfig()
 
     /**
      * 修改播放进度为newCurrentTime
@@ -59,7 +46,7 @@ export default function () {
         //获取播放链接
         const newSong = await useMusicPlay.getMusicUrl(song)
         if (newSong?.src) {
-            const index = musicListStore.addMusicList([newSong], { isReplace: true })
+            const index = addMusicList([newSong], { isReplace: true })
             console.log(`播放第${index + 1}首歌：${playList.value[index].name}`)
             ElMessage.info(`播放：${playList.value[index].name}`)
             //切换到添加的这首歌
@@ -355,7 +342,7 @@ export default function () {
             src: url
         }
 
-        const index = musicListStore.addMusicList([songInfo], {})
+        const index = addMusicList([songInfo], {})
         //切换到最后一首
         await toggleMusic({ index })
     }
@@ -371,7 +358,7 @@ export default function () {
             if (!songs?.length) return // ElMessage.warning('添加的音乐需要VIP，暂不支持')
 
             //添加到播放列表
-            const index = musicListStore.addMusicList(songs, { isReplace: true })
+            const index = addMusicList(songs, { isReplace: true })
             //如果添加一首歌且选择播放，切换到添加的这首歌
             if (songs.length === 1 && isPlay) {
                 await toggleMusic({ index })

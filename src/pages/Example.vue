@@ -1,5 +1,5 @@
 <template>
-    <div class="example">
+    <div class="example" v-if="false">
         <div class="control">
             <el-form :model="resortRule" :inline="true">
                 <el-form-item prop="star" label="星级筛选" :class="{ 'checked': !!resortRule.star }">
@@ -122,6 +122,23 @@
             <div class="box-shadow"></div>
         </div>
     </div>
+
+    <div>
+        <ul id="list">
+            <li v-for="(item, index) in items" :key="index" @mouseover="showHoverBox($event, item)"
+                @mouseleave="hideHoverBox">
+                {{ item.text }}
+            </li>
+        </ul>
+        <!-- 悬浮显示的盒子 -->
+        <div v-if="isHoverBoxVisible" id="hover-box" :style="{
+            left: `${hoverBoxPosition.left}px`,
+            top: `${hoverBoxPosition.top}px`
+        }">
+            {{ hoverContent }}
+        </div>
+    </div>
+
 </template>
 
 <script lang="ts" setup>
@@ -246,6 +263,38 @@ onMounted(() => {
     filterAndSortRoles()
 })
 
+
+
+
+
+// 列表数据
+const items = ref([
+    { text: '列表项 1', content: '内容 1' },
+    { text: '列表项 2', content: '内容 2' },
+    { text: '列表项 3', content: '内容 3' },
+]);
+
+// 状态和位置
+const isHoverBoxVisible = ref(false);
+const hoverBoxPosition = ref({ left: 0, top: 0 });
+const hoverContent = ref('');
+
+// 显示悬浮框
+const showHoverBox = (event, item) => {
+    const rect = event.target.getBoundingClientRect();
+    hoverContent.value = item.content;
+    hoverBoxPosition.value = {
+        left: rect.left,
+        top: rect.bottom - 80,
+    };
+    isHoverBoxVisible.value = true;
+};
+
+// 隐藏悬浮框
+const hideHoverBox = () => {
+    isHoverBoxVisible.value = false;
+};
+
 </script>
 <style scoped>
 .control {
@@ -365,5 +414,21 @@ onMounted(() => {
     position: absolute;
     bottom: 10px;
     left: 0;
+}
+
+#list li {
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+#hover-box {
+    position: absolute;
+    display: inline-block;
+    background: white;
+    top: 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
 }
 </style>

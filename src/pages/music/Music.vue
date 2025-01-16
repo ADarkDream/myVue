@@ -1,5 +1,5 @@
 <template>
-  <div ref="music" class="music" :style="{ height: containerHeight + 'px', ...bgSettings }">
+  <div ref="music" class="mainPanel" :style="{ height: containerHeight + 'px', ...bgSettings }">
     <el-tabs class="tabs" v-model="activePanelIndex">
       <el-tab-pane :name="0">
         <template #label>
@@ -101,7 +101,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useUserInfoStore } from '@/store/user/useUserInfoStore';
 import { useResponsiveStore } from "@/store/useResponsiveStore";
 import { useUploadFileStore } from "@/store/upload/uploadFileStore";
-import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
+import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore";
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { useMusicSearchStore } from '@/store/music/useMusicSearchStore';
 import { useMusicListDrawerStore } from '@/store/music/useMusicListDrawerStore'
@@ -110,11 +110,11 @@ import { useMusicListDrawerStore } from '@/store/music/useMusicListDrawerStore'
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import useMusicList from "@/hooks/music/useMusicList";
 //components
-import MusicAdd from '@/pages/music/components/MusicAdd.vue';
-import PlayList from "@/pages/music/components/PlayList.vue";
-import MusicListSquare from "@/pages/music/components/MusicListSquare.vue";
-import MusicSettings from "@/pages/music/components/MusicSettings.vue";
-import MusicList from "@/pages/music/components/MusicList.vue";
+import MusicAdd from '@/pages/music/pages/MusicAdd.vue';
+import PlayList from "@/pages/music/pages/PlayList.vue";
+import MusicListSquare from "@/pages/music/pages/MusicListSquare.vue";
+import MusicSettings from "@/components/MainPanelSettings.vue";
+import MusicList from "@/pages/music/pages/MusicList.vue";
 import UpdateMusic from '@/pages/music/components/UpdateMusic.vue'
 const SearchMusicDrawer = defineAsyncComponent(() => import('@/pages/music/drawer/SearchMusicDrawer.vue'))
 const MusicListDrawer = defineAsyncComponent(() => import('@/pages/music/drawer/MusicListDrawer.vue'))
@@ -129,22 +129,19 @@ import SVG_music_list from '@/assets/music/music_list.svg?component'
 const route = useRoute()
 const router = useRouter()
 
-const musicConfigStore = useMusicConfigStore()
+
 const musicListStore = useMusicListStore()
-const userInfoStore = useUserInfoStore()
-const responsiveStore = useResponsiveStore()
 const searchStore = useMusicSearchStore()
 const musicListDrawerStore = useMusicListDrawerStore()
-const uploadFileStore = useUploadFileStore()
 //页面背景配置
-const { activePanelIndex } = toRefs(musicConfigStore)
-const { bgSettings, changePanelIndex } = musicConfigStore
-const { isLogin } = toRefs(userInfoStore)
+const { activePanelIndex } = toRefs(useMainPanelConfigStore())
+const { bgSettings, changePanelIndex } = useMainPanelConfigStore()
+const { isLogin } = toRefs(useUserInfoStore())
 const { isShowSearchPanel } = toRefs(searchStore)
 const { isShowMusicListDrawer, isShowEditMusicListInfoDrawer } = toRefs(musicListDrawerStore)
-const { isPC, drawerSize, containerHeight } = toRefs(responsiveStore)
-const { touchstart, positionComputed } = responsiveStore
-const { resetUpload } = uploadFileStore
+const { isPC, drawerSize, containerHeight } = toRefs(useResponsiveStore())
+const { touchstart, positionComputed } = useResponsiveStore()
+const { resetUpload } = useUploadFileStore()
 const { addMusicToPlay } = useMusicPlay()
 const { getCloudMusicList, getMusicList } = useMusicList()
 
@@ -220,86 +217,4 @@ const touchend = (e: TouchEvent) => {
 }
 </script>
 
-<style scoped>
-.music {
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-  box-sizing: border-box;
-  padding: 0 10px;
-  width: 100%;
-  --music-bg-color: #fff;
-  --music-bg-opacity: 0.5;
-  /*背景透明度*/
-  --music-bg-filter: 0;
-  /*背景模糊度*/
-  --music-bg-saturate: 1;
-  /*背景饱和度*/
-  backdrop-filter: blur(calc(var(--music-bg-filter) * 1px)) saturate(var(--music-bg-saturate));
-}
-
-.music:before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-  border-radius: 10px;
-  background-color: var(--music-bg-color);
-  opacity: var(--music-bg-opacity);
-}
-
-.music .tabs {
-  width: 100%;
-
-  .tab-label {
-    font-size: 16px;
-  }
-}
-
-
-/*移动端布局*/
-@media (max-width: 780px) {
-  .music {
-    padding: 0;
-    backdrop-filter: none;
-  }
-
-  .music:before {
-    border-radius: 0;
-  }
-
-  .music .tabs {
-
-    .tab-label {
-      font-size: 13px;
-    }
-
-  }
-
-}
-
-/*夜间模式*/
-.dark .music {
-  --music-bg-opacity: 0 !important;
-}
-</style>
-<style>
-/*.music .el-tabs__content{
-  overflow-y: scroll;
-}*/
-
-/*移动端布局*/
-@media (max-width: 780px) {
-  .el-drawer__body {
-    padding: 5px;
-  }
-
-  .music .tabs {
-    .el-tabs__item {
-      padding-right: 0;
-    }
-  }
-}
-</style>
+<style scoped></style>

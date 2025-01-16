@@ -5,7 +5,7 @@
     <div class="play-panel" :class="{ active: infoBarActive }">
       <span ref="musicName" class="name" :class="{ scroll: isScrollName }" :style="transformX">{{
         isLoading ? '加载中' : thisMusic.name || '未命名'
-        }}——<span class="artist">
+      }}——<span class="artist">
           {{
             isLoading ? '加载中' : thisMusic.artists.map(artist => artist.name).join('&') || '未知艺术家'
           }}
@@ -83,8 +83,6 @@ import { useResponsiveStore } from "@/store/useResponsiveStore";
 import useTimestamp from "@/hooks/useTimestamp";
 import usePlayConfig from '@/hooks/music/usePlayConfig'
 import useMusicPlay from "@/hooks/music/useMusicPlay";
-//components
-import PlayList from "@/pages/music/components/PlayList.vue";
 //files
 import defaultAlbumArt from '@/assets/music/music.svg'
 import SVG_music_list from '@/assets/music/music_list.svg?component'

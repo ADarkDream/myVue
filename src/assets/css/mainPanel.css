@@ -1,20 +1,12 @@
 .mainPanel {
     display: flex;
     justify-content: space-between;
-    position: relative;
     box-sizing: border-box;
     padding: 0 10px;
     margin: 10px;
     width: calc(100% - 20px);
     height: calc(100% - 20px);
-    --music-bg-color: #ffffff;
-    --music-bg-opacity: 0.5;
-    /*背景透明度*/
-    --music-bg-filter: 0;
-    /*背景模糊度*/
-    --music-bg-saturate: 1;
-    /*背景饱和度*/
-    backdrop-filter: blur(calc(var(--music-bg-filter) * 1px)) saturate(var(--music-bg-saturate));
+    backdrop-filter: blur(calc(var(--main-panel-bg-filter) * 1px)) saturate(var(--main-panel-bg-saturate));
 }
 
 .el-text {
@@ -29,8 +21,8 @@
     left: 0;
     top: 0;
     border-radius: 10px;
-    background-color: var(--music-bg-color);
-    opacity: var(--music-bg-opacity);
+    background-color: var(--main-panel-bg-color);
+    opacity: var(--main-panel-bg-opacity);
 }
 
 .mainPanel .tabs {
@@ -130,7 +122,7 @@
 
     .mainPanel .tabs {
         .el-tabs__nav-scroll {
-            padding: 0 10px;
+            padding: 0;
         }
 
         .el-tabs__item {
@@ -186,7 +178,7 @@
 
 /*#region夜间模式*/
 .dark .mainPanel {
-    --music-bg-opacity: 0 !important;
+    --main-panel-bg-opacity: 0 !important;
 }
 
 /*#endregion */

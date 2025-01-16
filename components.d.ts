@@ -77,6 +77,7 @@ declare module 'vue' {
     LoadingMark: typeof import('./src/components/LoadingMark.vue')['default']
     LoadingMask: typeof import('./src/components/LoadingMask.vue')['default']
     LoginFormComp: typeof import('./src/components/form/LoginFormComp.vue')['default']
+    MainPanelSettings: typeof import('./src/components/MainPanelSettings.vue')['default']
     Notice: typeof import('./src/components/Notice.vue')['default']
     RegisterFormComp: typeof import('./src/components/form/RegisterFormComp.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -22,7 +22,7 @@
             <p>歌单状态：
               <el-text :type="musicListInfo?.status === 1 ? 'primary' : 'success'">{{
                 musicListInfo?.status === 1 ? '私有' : '公开'
-              }}
+                }}
               </el-text>
             </p>
             <p>歌曲数：{{ musicListInfo?.songsCount }}<el-button link size="small" plain type="primary"
@@ -60,8 +60,8 @@
           @click="musicListUtils.goToCloudMusicList(musicListInfo.cloud_music_list_id)">前往网易云</el-button>
       </el-button-group>
     </div>
-    <music-list-songs-list :songsList="musicList" :height="drawerSize - 80 - height" v-show="musicList.length !== 0"
-      :isOwner />
+    <music-list-songs-list :songsList="musicList" :height="mainPanelConentHeight - (isPC ? 100 : 70)"
+      v-show="musicList.length !== 0" :isOwner />
   </div>
 
 </template>
@@ -71,7 +71,7 @@ import { computed, ref, toRefs } from "vue";
 import { ArrowDownBold, ArrowUpBold } from "@element-plus/icons-vue";
 //stores
 import { useMusicListStore } from "@/store/music/useMusicListStore";
-import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
+import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 //hooks
 import useTimestamp from "@/hooks/useTimestamp";
@@ -89,7 +89,6 @@ import defaultAlbumArt from "@/assets/music/music.svg";
 
 
 const musicListStore = useMusicListStore()
-const musicConfigStore = useMusicConfigStore()
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
 const { getTime } = useTimestamp()
@@ -98,9 +97,9 @@ const { copyText } = myFunction
 const musicList = computed(() => musicListStore.musicList)
 const musicListInfo = computed(() => musicListStore.musicListInfo!)
 const { addMusicList } = musicListStore
-const { changePanelIndex } = musicConfigStore
+const { changePanelIndex } = useMainPanelConfigStore()
 const { uid, isLogin } = toRefs(userInfoStore)
-const { drawerSize, isPC } = toRefs(responsiveStore)
+const { drawerSize, mainPanelConentHeight, isPC } = toRefs(responsiveStore)
 const { toggleMusic } = useMusicPlay()
 const { getCloudMusicList, getMusicList } = useMusicList()
 const { showEditMusicListInfoDrawer } = useMusic()

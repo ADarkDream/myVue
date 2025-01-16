@@ -4,7 +4,7 @@
     <el-aside direction="vertical">
       <Aside :showContent="showContent" />
     </el-aside>
-    <el-main>
+    <el-main style="position: relative">
       <!--首页时钟-->
       <Time :class="timeClass" @click="showContent(true)" />
       <!--搜索框区域-->
@@ -53,6 +53,7 @@ const isShow = ref(false)
 const timeClass = ref('time')
 
 //显示下方内容区,isShow.value=false不显示,isHide=true代表点击时间时关闭
+//!函数需修改 isSticky 部分，现在在移动端不会自动下滑
 function showContent(isHide = false) {
   console.log('是否显示内容区,isShow：', isShow.value)
   if (isHide || isShow.value === false) {
@@ -156,6 +157,7 @@ Aside {
 
   .el-footer {
     padding: 0;
+    --el-footer-height: 40px;
   }
 
   /*

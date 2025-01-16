@@ -36,10 +36,16 @@
 :root {
     --svg-custom-width: 30px;
     --svg-custom-fill: currentColor;
+    --main-panel-bg-color: #ffffff;
+    --main-panel-bg-opacity: 0.5;
+    /*背景透明度*/
+    --main-panel-bg-filter: 0;
+    /*背景模糊度*/
+    --main-panel-bg-saturate: 1;
+    /*背景饱和度*/
 }
 
 body {
-    max-width: 1440px;
     margin: 0 auto;
     text-align: center;
     background-size: cover;
@@ -47,45 +53,45 @@ body {
     background-repeat: no-repeat;
     background-attachment: fixed;
     overflow-x: hidden;
-}
 
-h1 {
-    margin: 0;
-    font-size: 30px;
-    font-family: 华文楷体, serif;
-}
+    h1 {
+        margin: 0;
+        font-size: 30px;
+        font-family: 华文楷体, serif;
+    }
 
-p {
-    margin: 0
-}
+    p {
+        margin: 0
+    }
 
-a {
-    text-decoration: none;
-}
+    a {
+        text-decoration: none;
+    }
 
-/*去除未被访问的a标签的下划线*/
-a:link {
-    text-decoration: none;
-}
+    /*去除未被访问的a标签的下划线*/
+    a:link {
+        text-decoration: none;
+    }
 
-/*去除已经被访问过的a标签的下划线*/
-a:visited {
-    text-decoration: none;
-}
+    /*去除已经被访问过的a标签的下划线*/
+    a:visited {
+        text-decoration: none;
+    }
 
-/*去除鼠标悬停时的a标签的下划线*/
-a:hover {
-    text-decoration: none;
-}
+    /*去除鼠标悬停时的a标签的下划线*/
+    a:hover {
+        text-decoration: none;
+    }
 
-/*去除正在点击的a标签的下划线（鼠标按下，尚未松开）*/
-a:active {
-    text-decoration: none;
-}
+    /*去除正在点击的a标签的下划线（鼠标按下，尚未松开）*/
+    a:active {
+        text-decoration: none;
+    }
 
-/*去除获得焦点的a标签的下划线（被鼠标点击过）*/
-a:focus {
-    text-decoration: none;
+    /*去除获得焦点的a标签的下划线（被鼠标点击过）*/
+    a:focus {
+        text-decoration: none;
+    }
 }
 
 #app {
@@ -95,7 +101,6 @@ a:focus {
     margin: 0 auto;
     /*padding: 2rem;*/
     font-weight: normal;
-    text-align: center;
 }
 
 /* 移动端 */

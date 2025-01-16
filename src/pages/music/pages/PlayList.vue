@@ -57,7 +57,7 @@ import { Operation, Delete } from "@element-plus/icons-vue";
 //stores
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { useResponsiveStore } from "@/store/useResponsiveStore";
-import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
+import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore";
 //hooks
 import useMusicPlay from "@/hooks/music/useMusicPlay";
 import useMusic from "@/hooks/music/useMusic";
@@ -70,15 +70,10 @@ import type { CloudSongInfo } from "@/types/music";
 import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.svg?component'
 
 
-
-
-const musicListStore = useMusicListStore()
-const responsiveStore = useResponsiveStore()
-const musicConfigStore = useMusicConfigStore()
-const { drawerSize } = toRefs(responsiveStore)
-const { thisMusic } = toRefs(musicListStore)
-const { deleteMusicFromPlayList, clearPlayList } = musicListStore
-const { changePanelIndex } = musicConfigStore
+const { drawerSize } = toRefs(useResponsiveStore())
+const { thisMusic } = toRefs(useMusicListStore())
+const { deleteMusicFromPlayList, clearPlayList } = useMusicListStore()
+const { changePanelIndex } = useMainPanelConfigStore()
 
 const { showMusicListDrawer } = useMusic()
 const { toggleMusic, play } = useMusicPlay()

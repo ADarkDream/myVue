@@ -67,7 +67,7 @@ import { onMounted, ref } from "vue";
 import { ElMessage } from 'element-plus';
 import { InfoFilled, Refresh, Search, Upload } from "@element-plus/icons-vue";
 //stores
-import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
+import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore";
 import { useMusicSearchStore } from '@/store/music/useMusicSearchStore';
 //hooks
 import useMusicPlay from "@/hooks/music/useMusicPlay";
@@ -79,14 +79,14 @@ import musicList from '@/utils/music/musicList';
 //types
 import type { CloudSongInfo, SongInfo } from "@/types/music";
 
-const musicConfigStore = useMusicConfigStore()
+
 const musicSearchStore = useMusicSearchStore()
 
 const { addMusicToPlay, addMusic } = useMusicPlay()
 
 
 const { getCloudMusicList } = useMusicList()
-const { changePanelIndex } = musicConfigStore
+const { changePanelIndex } = useMainPanelConfigStore()
 /**
  * 用户上传的公开音乐列表
  */
