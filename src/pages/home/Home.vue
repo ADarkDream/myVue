@@ -1,5 +1,5 @@
 <template>
-  <el-container class="homePanel">
+  <el-container class="homePanel" style="overflow: hidden">
     <!--  侧边栏-->
     <el-aside direction="vertical">
       <Aside :showContent="showContent" />
@@ -99,7 +99,7 @@ Aside {
 }
 
 .timeUp {
-  margin: 0 25% 2%;
+  margin: 0 25%;
   background-color: transparent;
   border: transparent;
   font-size: 120px;

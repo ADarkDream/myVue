@@ -194,7 +194,7 @@ onBeforeUnmount(() => {
 .title {
   display: flex;
   justify-content: space-between;
-  margin: 0 auto
+  margin: 0 10px
 }
 
 
@@ -246,6 +246,10 @@ onBeforeUnmount(() => {
     font-size: 12px;
     width: 90%;
     transition: initial 0.5s;
+  }
+
+  .title {
+    margin: 0 20px
   }
 }
 </style>

@@ -20,6 +20,7 @@ export const useVersionsStore = defineStore('1999_versions', () => {
 
     /**true编辑状态，false是增加版本*/
     const isEdit = ref(false)
+    const isDisabled = ref(false)
 
     /**要是否显示面板*/
     const isShowAddVersionDrawer = ref(false)
@@ -50,22 +51,27 @@ export const useVersionsStore = defineStore('1999_versions', () => {
     /**修改版本数值时触发，修改版本信息formData*/
     const handleChange = (currentVersion = formData.value.version) => {
         const info = versionInfo.value.find(item => item.version === currentVersion)
-        formData.value.halfText = currentVersion ? ("V" + (currentVersion / 10).toFixed(1) + "_") : ''
-        //还未添加的版本信息
-        if (!info) {
-            isEdit.value = false
-            formData.value.versionName = ''
-            return
+
+        //存在版本信息时，不允许添加
+        isDisabled.value = !!info && !isEdit.value
+
+        if (info && isEdit.value) {
+            //编辑已存在的版本信息
+            const { id, versionName, time, status } = info
+            formData.value.id = id || 0
+            formData.value.versionName = versionName || ''
+            formData.value.halfName = versionName.split('_')[1] || ''
+            formData.value.time = time || [],
+                formData.value.status = status || 1
+            oldFormData.value = { ...formData.value }
+            // isEdit.value = true
         }
-        //已存在的版本信息
-        const { id, versionName, time, status } = info
-        formData.value.id = id || 0
-        formData.value.versionName = versionName || ''
-        formData.value.halfName = versionName.split('_')[1] || ''
-        formData.value.time = time || [],
-            formData.value.status = status || 1
-        oldFormData.value = { ...formData.value }
-        isEdit.value = true
+        // else {
+        //     currentVersion = oldFormData.value.version
+        //     formData.value.version = currentVersion
+        // }
+
+        formData.value.halfText = currentVersion ? ("V" + (currentVersion / 10).toFixed(1) + "_") : ''
     }
 
     /** 重置formData和编辑标记*/
@@ -80,7 +86,7 @@ export const useVersionsStore = defineStore('1999_versions', () => {
             status: 1
         }
         formData.value = { ...oldFormData.value }
-        isEdit.value = false
+        // isEdit.value = false
     }
 
     /**显示和隐藏添加版本的抽屉*/
@@ -93,10 +99,10 @@ export const useVersionsStore = defineStore('1999_versions', () => {
             oldFormData.value = { id, versionName, halfText: '', halfName: '', version, time }
             formData.value = { ...oldFormData.value }
             isEdit.value = true
-        }
+        } else isEdit.value = false
         if (isShow) handleChange(formData.value.version)
     }
 
 
-    return { isLoading, isEdit, isShowAddVersionDrawer, oldFormData, formData, reSetFormData, toggleAddVersionDrawer, handleChange }
+    return { isLoading, isEdit, isDisabled, isShowAddVersionDrawer, oldFormData, formData, reSetFormData, toggleAddVersionDrawer, handleChange }
 })

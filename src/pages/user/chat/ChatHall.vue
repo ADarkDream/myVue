@@ -1,5 +1,5 @@
 <template>
-  <el-container :style="isPC ? { width: '50%', margin: '5% 25%' } : { height: screenHeight - 40 + 'px' }">
+  <el-container :style="isPC ? { width: '50%', margin: '5% 25%' } : { width: '100%', height: screenHeight - 40 + 'px' }">
     <el-header>
       <h1>大厅</h1>
     </el-header>

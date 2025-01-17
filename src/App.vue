@@ -135,22 +135,22 @@ axios.interceptors.response.use((response) => {
 
   // 下面是自己的接口
   const result = response.data.data
-
-  if (result.status === 200) return response.data
+  const { status, msg } = result
+  if (status >= 200 && status < 300) return response.data
   // 超出 2xx 范围的状态码都会触发该函数。
   // 对响应错误做点什么，例如：统一对 401 身份验证失败情况做出处理
-  else if (result.status > 299 && result.status < 400) {
-    ElMessage.info(result.msg)
+  else if (status > 299 && status < 400) {
+    ElMessage.info(msg)
     return response.data
-  } else if (result.status === 400) {
+  } else if (status === 400) {
     if (!isErrorPrinted.value) {
-      ElMessage.error(result.msg)
+      ElMessage.error(msg)
       //更改标志，使下一个相同的报错不显示提醒
       isErrorPrinted.value = true
       setTimeout(() => isErrorPrinted.value = false, 1000)
       return Promise.reject(result)
     }
-  } else if (result.status === 401 || result.status === 402) {//token过期或者未登录
+  } else if (status === 401 || status === 402) {//token过期或者未登录
     //更改标志，使下一个相同的报错不显示提醒
     // isErrorPrinted.value = true
     // setTimeout(() => isErrorPrinted.value = false, 1000)
@@ -219,6 +219,7 @@ onMounted(() => {
 
 /* 路由页面 */
 .view-component {
+  margin-top: 40px;
   position: absolute;
   /* 确保新旧组件占据相同位置 */
   top: 0;
@@ -230,12 +231,5 @@ onMounted(() => {
     position: fixed;
     width: 100%;
   }
-
-  .main {
-    margin-top: 40px;
-    /* overflow: hidden; */
-  }
-
-
 }
 </style>

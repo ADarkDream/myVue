@@ -185,6 +185,7 @@ import useReverse1999 from '@/hooks/reverse1999/useReverse1999';
 //utils
 import myFunction from "@/utils/myFunction";
 import fileProcess from "@/utils/fileProcess";
+import { ca } from 'element-plus/es/locale';
 //types
 
 //files
@@ -360,10 +361,15 @@ const canDel = (status: number) => {
 
 //刷新角色信息
 const refreshRole = async () => {
-  const flag = await getVersion({ role: 'all' }, true)
-  if (!!flag) {
+  try {
+    await Promise.all([
+      getVersion({ role: 'all' }, true),
+      getVersion({ role: 'diff' }, true)
+    ])
     ElMessage.success('刷新成功')
-  } else {
+  } catch (error) {
+    console.error('刷新失败');
+    console.error(error);
     ElMessage.error('刷新失败')
   }
 }

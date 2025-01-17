@@ -34,7 +34,7 @@
             <div v-for="(item, index) in roomMsg" :key="index">
               <el-text type="success">第{{
                 index
-              }}条{{ item.roomID === playerInfo.roomID ? '真的' : [item.roomID, playerInfo.roomID] }}
+                }}条{{ item.roomID === playerInfo.roomID ? '真的' : [item.roomID, playerInfo.roomID] }}
               </el-text>
               ：{{ item.message }}
             </div>

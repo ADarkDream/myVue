@@ -7,7 +7,7 @@
       </el-input>
     </el-form-item>
     <el-form-item label="版本数值" prop="version" autocomplete="off">
-      <el-input-number v-model.number.lazy.trim="formData.version" @change="handleChange" placeholder="版本数值" :min="10"
+      <el-input-number v-model.number.lazy.trim="formData.version" @change="handleChange()" placeholder="版本数值" :min="10"
         :max="1999" clearable style="min-width: 175px;" />
     </el-form-item>
     <el-form-item label="上传时间" prop="time" autocomplete="off">
@@ -21,7 +21,8 @@
 
     <div>
       <el-button @click="resetForm">重置</el-button>
-      <el-button type="primary" @click="submitForm()" :loading="isLoading">{{ isEdit ? '修改' : '添加'
+      <el-button type="primary" @click="submitForm()" :loading="isLoading" :disabled="isDisabled">{{ isEdit ? '修改' :
+        '添加'
         }}版本信息</el-button>
     </div>
   </el-form>
@@ -47,7 +48,7 @@ const versionsStore = useVersionsStore();
 const reverse1999Store = useReverse1999Store();
 
 const { isAdmin } = toRefs(userInfoStore)
-const { isLoading, isEdit, formData, oldFormData } = toRefs(versionsStore)
+const { isLoading, isEdit, isDisabled, formData, oldFormData } = toRefs(versionsStore)
 const { toggleAddVersionDrawer, handleChange } = versionsStore
 const { allRoleInfo, campInfo, raceInfo, statusOptions } = toRefs(reverse1999Store)
 const { addVersion, updateVersion } = useReverse1999()

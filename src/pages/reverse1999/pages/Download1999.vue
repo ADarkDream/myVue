@@ -84,12 +84,9 @@
                   下载须知
                 </el-button>
                 <br v-if="!isPC">
-                <el-button :type="isChoose !== 0 ? 'danger' : 'success'" :icon="isChoose !== 0 ? CloseBold : Select"
-                  @click="selectBtn()" v-show="isShow">
-                  <span v-if="isChoose === 0">多选
-                  </span>
-                  <span v-else-if="isChoose === 1">清空选择</span>
-                  <span v-else>退出勾选</span>
+                <el-button :type="chooseType[isChoose].type" :icon="chooseType[isChoose].icon" @click="selectBtn()"
+                  v-show="isShow">
+                  <span>{{ chooseType[isChoose].text }}</span>
                 </el-button>
                 <el-button v-if="imgList.length && isPC" type="success" @click="checkPort()">检查本地代理</el-button>
                 <el-button type="success" :icon="Download" @click="downloadImages" v-show="isShow">开始下载
@@ -175,10 +172,10 @@
 
     <!--    第三方库，瀑布流标签 不能包裹在el-container中,懒加载会失效-->
     <wc-flow-layout :gap="10" :cols="colNum">
-      <div v-for="item in imgList" :key="item.imgIndex" @click="checkImage(item.imgUrl, item.imgName, $event)"
-        class="preImg" :id="'imgDiv-' + item.imgIndex">
-        <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-' + item.imgIndex" :max-scale="7" :min-scale="0.2"
-          :preview-src-list="isChoose !== 0 ? [] : previewImgList" :initial-index="item.imgIndex" fit="scale-down" lazy>
+      <div v-for="(item, index) in imgList" :key="item.id" @click="checkImage(item, index, $event)" class="preImg"
+        :id="'imgDiv-' + item.id" ref="imgDivRefs">
+        <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-' + item.id" :max-scale="7" :min-scale="0.2"
+          :preview-src-list="isChoose !== 'none' ? [] : previewImgList" :initial-index="item.id" fit="scale-down" lazy>
           <template #error>
             <div class="image-slot">
               <el-icon style="width: 50px">
@@ -301,7 +298,26 @@ const isShow = ref(false)//显示布局按钮组
 const colNum = ref<number>(isPC.value ? 5 : 1)    //修改显示列数
 
 const autoFlag = ref(true)    //是否开启自动布局
-const isChoose = ref(0)   //是否是批量选择状态
+const isChoose = ref("none")   //是否是批量选择状态
+const chooseType = <Record<string, { text: string, type: string, icon: any }>>{
+  "all": {
+    text: "取消全选",
+    type: "warning",
+    icon: CloseBold
+  },
+  "part": {
+    text: "退出选择",
+    type: "danger",
+    icon: CloseBold
+  },
+  "none": {
+    text: "批量选择",
+    type: "success",
+    icon: Check
+  }
+}
+//批量选择图片的ref列表
+const imgDivRefs = ref<HTMLDivElement[]>([])
 const showPayCode = ref(false)//是否显示收款码
 const fee = ref(Number(others.value[0]?.content) || 0)
 //单次最大下载数量
@@ -439,7 +455,7 @@ function reset() {
 
 //筛选图片
 const getImages = async () => {
-  if (!!isChoose.value) selectBtn(2) //如果是选择状态，则退出
+  if (isChoose.value !== "none") selectBtn("part") //如果是选择状态，则退出
   //如果全选版本，则直接全部清除
   if (condition.version.length === versionInfo.value.length) condition.version.splice(0, condition.version.length)
   //如果全选角色和无角色，则直接清除全部角色选择
@@ -468,13 +484,9 @@ const getImages = async () => {
     isShow.value = true //显示布局按钮
 
     imgList.value = data.imgList as ReverseImg[]
-    previewImgList.value = []
-    imgList.value.forEach((item, index) => {
-      item.imgIndex = index  //imgIndex用于排序，但不连续,所以要重排
-      item.imgName = item.newName
-      previewImgList.value.push(item.imgUrl)
-    })
-    console.log(imgList.value)
+    previewImgList.value = imgList.value.map(item => item.imgUrl)
+    console.log("筛选结果:", previewImgList.value);
+    console.log("筛选结果:", imgList.value)
     // 将 a 的值同步到 b，包括空值
     // Object.keys(oldCondition.value).forEach(key => {
 
@@ -491,12 +503,15 @@ const getImages = async () => {
     console.log(error)
   }
 }
-
+const downloadListIndexs = new Set<number>([])
 
 //region 点击图片事件
-function checkImage(url: string, name: string, e: Event) {//这个事件要绑定el-image父级盒子上
+function checkImage(imgInfo: ReverseImg, index: number, e: Event) {//这个事件要绑定el-image父级盒子上
+  const { imgUrl, newName } = imgInfo
   const target = e.target as HTMLInputElement
-  if (!isChoose.value) {//没有进入多选状态，此时点击是全屏浏览图片，添加底部菜单
+  console.log("点击图片", imgUrl, newName, target);
+
+  if (isChoose.value === "none") {//没有进入多选状态，此时点击是全屏浏览图片，添加底部菜单
     if (target.tagName !== 'IMG' || target.classList.contains('el-image-viewer__img')) return  //如果点击的不是图片元素则终止函数,以防重复添加
     const menu = document.querySelector('.el-image-viewer__actions__inner') //菜单组
     // const downloadClass = document.querySelector('.el-icon-download')  //下载按钮
@@ -509,37 +524,31 @@ function checkImage(url: string, name: string, e: Event) {//这个事件要绑�
     downloadBtn.addEventListener('click', () => {
       //  if (isLogin.value) downloadImg(url, name)
       // else window.open(url)
-      copyText(url, '图片链接', url)
+      copyText(imgUrl, '图片链接', imgUrl)
       // window.open(url)
     })
     //设置壁纸监听
     setBG.addEventListener('click', () => {
-      setBackground(url, name)
+      setBackground(imgUrl, newName)
     })
     menu!.appendChild(downloadBtn)
     menu!.appendChild(setBG)
   } else {//进入多选状态,根据id里面的数字获取是第几张图
     console.log('当前是多选状态');
-    const imgNum = target.id.match(/\d+/g)![0]
-    const imgDiv = document.querySelector(`#imgDiv-${imgNum}`)
-    const isChecked = imgDiv!.classList.contains('checked')
-    if (isChecked) {
-      //取消选中样式
-      imgDiv!.classList.remove('checked')
-      //遍历下载列表，删除取消选中的图片链接
-      for (let i = downloadList.value.length - 1; i >= 0; i--) {
-        if (downloadList.value[i].imgName === name) downloadList.value.splice(i, 1)
-      }
+    if (downloadListIndexs.has(index)) {
+      downloadListIndexs.delete(index)
+      imgDivRefs.value[index].classList.remove('checked')
     } else {
-      //添加选中样式及下载链接
-      imgDiv!.classList.add('checked')
-      downloadList.value.push(imgList.value[Number(imgNum)])
+      downloadListIndexs.add(index)
+      imgDivRefs.value[index].classList.add('checked')
     }
+
     //判断下载列表是否为空,修改多选状态
-    if (downloadList.value.length === 0) isChoose.value = 2
-    else isChoose.value = 1
+    if (downloadListIndexs.size === 0) isChoose.value = "part"
+    else isChoose.value = "all"
     // console.log("下载列表：", downloadList.value)
-    // console.log("图片列表：", imgList.value);
+    console.log("图片列表：", imgList.value);
+    console.log("下载列表序号Indexs：", downloadListIndexs);
   }
 }
 
@@ -570,38 +579,52 @@ const setBackground = async (url: string, name: string) => {
   }
 }
 
-
+//全选
+const selectAll = (checkAll = true) => {
+  if (checkAll) {
+    //添加下载序号
+    imgList.value.forEach((item, index) => downloadListIndexs.add(index))
+    //将所有呈现的图片添加选中状态(因为懒加载，可能部分未渲染)
+    imgDivRefs.value.forEach(item => { item.classList.add('checked') })
+  } else {
+    //清空下载序号
+    downloadListIndexs.clear()
+    //给所有呈现的图片移除选中状态
+    imgDivRefs.value.forEach(item => item.classList.remove('checked'))
+  }
+}
 /**
  * 进入和退出多选状态
- * @param num -控制图片选择状态
- * - `0` 退出多选
- * - `1` 取消全选
- * - `2` 进入多选
+ * @param type -控制图片选择状态,默认进入多选
+ * - `"none"` 进入多选状态
+ * - `"all"` 清空选择
+ * - `"part"` 退出多选状态
  * */
-function selectBtn(num?: number) {
-  const preList = document.querySelectorAll('.preImg')
-  console.log('selectBtn的num', num)
-  if (typeof num === 'number' && [0, 1, 2].includes(num)) isChoose.value = num
-  if (isChoose.value === 0) { //进入多选状态
-    isChoose.value = 1
-    //将所有呈现的图片添加选中状态
-    preList.forEach(item => {
-      item.classList.add('checked')
-    })
-    //将所有呈现的图片加入下载列表(深拷贝)
-    downloadList.value = [...imgList.value]
-    return
-  } else if (isChoose.value === 1) {//清空选择
-    isChoose.value = 2
-  } else if (isChoose.value === 2) {//退出多选状态
-    isChoose.value = 0
+function selectBtn(type: "none" | "all" | "part") {
+  console.log('selectBtn选择前的type值：', isChoose.value)
+  //手动修改选择类型
+  if (type) isChoose.value = type
+
+  switch (isChoose.value) {
+    case "none"://进入多选状态
+      selectAll()
+      isChoose.value = "all"
+      break
+    case "all"://清空选择
+      selectAll(false)
+      isChoose.value = "part"
+      break
+    case "part"://退出多选状态
+      selectAll(false)
+      isChoose.value = "none"
+      break
+    default:
+      ElMessage.error('未知的选择状态')
+      return
   }
-  //给所有呈现的图片移除选中状态
-  preList.forEach(item => {
-    item.classList.remove('checked')
-  })
   //清空下载列表
-  downloadList.value = []
+  if (!downloadList.value.length)
+    downloadList.value = []
 }
 
 //本地代理服务器是否开启的标志
@@ -632,6 +655,9 @@ const checkPort = async () => {
 
 //批量下载壁纸
 const downloadImages = async () => {
+  const indexs = Array.from(downloadListIndexs) //.sort((a, b) => a - b)//不需要排序
+
+  downloadList.value = indexs.map(index => imgList.value[index])
   const length = downloadList.value.length
   if (length === 0) return ElMessage.warning('请先勾选需要下载的图片！')
   ElMessage.info('如有任何问题，请先查看下载须知')
@@ -645,15 +671,15 @@ const downloadImages = async () => {
       .catch(() => flag = false)
     if (!flag) return
     console.log("下载列表：", downloadList)
-    downloadList.value.forEach(item => downloadImg(item.imgUrl, item.imgName, item.imgPath!))
-    selectBtn(2)
+    downloadList.value.forEach(item => downloadImg(item.imgUrl, item.newName, item.imgPath!))
+    selectBtn("part")
   } else {//下载数量大于5
     await checkPort()
     if (!!isOpenProxy.value) {
       ElMessage.success('正在通过代理端口进行下载，感谢您的耐心合作ღ( ´･ᴗ･` )')
       console.log(downloadList)
-      downloadList.value.forEach(item => downloadImg(item.imgUrl, item.imgName, item.imgPath!))
-      selectBtn(2) //取消多选
+      downloadList.value.forEach(item => downloadImg(item.imgUrl, item.newName, item.imgPath!))
+      selectBtn("part") //退出多选
     } else return ElMessage.error('当前下载数量大于10且未开启代理，请先查看下载须知→下载大量')
   }
 }
@@ -667,7 +693,10 @@ const downloadImg = async (url: string, imgName: string, imgPath: string) => {
   if (isOpenProxy.value)   //如果有端口代理
     imageUrl = url.replace('https://gamecms-res.sl916.com', 'http://localhost:3000/download1999')
   else if (!!imgPath) { //没有端口代理
-    imageUrl = import.meta.env.VITE_QINIU_URL + imgPath.replace(/^\./, '')//七牛云备份,去掉路径中第一个点
+    // if (imgPath.startsWith('.'))
+    //   imageUrl = import.meta.env.VITE_QINIU_URL + imgPath.replace(/^\./, '')//七牛云备份,去掉路径中第一个点
+    // else
+    imageUrl = import.meta.env.VITE_QINIU_URL + '/' + imgPath //七牛云备份,路径添加/
   } else {//没有端口代理且服务器没有备份
     imageUrl = url.replace(axios.defaults.baseURL + '/download1999', 'http://localhost:3000/download1999')
   }
@@ -701,7 +730,7 @@ function autoCol() {
   if (Number((screenWidth.value / 250).toFixed(0)) === colNum.value) return
 
   if (previewImgList.value.length <= 15 && isPC.value) {
-    colNum.value = Number((previewImgList.value.length / 3).toFixed(0)) //PC端如果图片不大于15张，则有x张就分x/3列(去除小数)
+    colNum.value = Number((previewImgList.value.length / 2).toFixed(0)) //PC端如果图片不大于15张，则有x张就分x/3列(去除小数)
     console.log(previewImgList.value.length + '张,少于15张,计算的图片列数:' + colNum.value)
   } else {
     const currentNum = Math.floor(screenWidth.value / 250)

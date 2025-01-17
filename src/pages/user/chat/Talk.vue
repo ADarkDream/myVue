@@ -1,5 +1,5 @@
 <template>
-  <el-container :style="'height:' + containerHeight + 'px'">
+  <el-container class="mainPanel" :style="'height:' + containerHeight + 'px'">
     <el-header class="header" v-if="isPC">
       <div class="logo">
         <svg viewBox="0 0 513 513" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -190,7 +190,6 @@ const isShowDetail = () => {
   max-width: 1600px;
   /* height: 100vh;*/
   height: 500px;
-  margin: 0 auto;
   overflow: hidden;
 }
 

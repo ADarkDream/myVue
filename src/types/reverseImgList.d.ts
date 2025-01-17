@@ -1,11 +1,12 @@
 //数据库返回的图片数据类型
 type ReverseImg = {
-    imgIndex: number,
-    imgName: string,
+    id: number,
+    newName: string,
     imgUrl: string,
     imgPath?: string,
-    time: number,
-    version: number
+    version: number,
+    sort: number,
+    roleIds: number[]
 }
 
 type ReverseImgInfo = {

@@ -3,7 +3,7 @@
     <el-main class="content">
       <div class="searchDiv">
         <!--   文章筛选区-->
-        <el-collapse style="background-color: var(--el-color-primary-light-9)">
+        <el-collapse style="background-color: var(--el-color-primary-light-9);margin: 10px 20px;">
           <el-collapse-item title="&ensp;&ensp;&ensp;文章筛选条件">
             <el-form class="search" size="small" :inline="true" :model="data" label-position="left">
               <el-form-item label="文章标题">

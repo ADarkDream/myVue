@@ -97,3 +97,18 @@ export const api_updateImage = async (data: ReverseImgInfo, isAdmin = false) => 
     } //没有查询结果则不进行以下操作
     else return false
 }
+
+/**检查以影像之是否有更新(未收录图片)*/
+export const api_checkReverseUpdate = async () => {
+    const result = await axios('/checkReverseUpdate')
+    console.log('/api_checkReverseUpdate返回的数据为：', result.data)
+    const { status, msg } = result.data
+    if (status === 200) {
+        ElMessage.success(msg)
+    } else if (status === 201) {
+        ElMessage.warning(msg)
+        return true
+    }
+    //没有查询结果则不进行以下操作
+    return false
+}

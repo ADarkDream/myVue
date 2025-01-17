@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container class="mainPanel">
     <el-header>
       <h1>News</h1>
       <!--      <el-button @click="getNewsChannel">获取频道</el-button>-->

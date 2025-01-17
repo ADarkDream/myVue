@@ -241,7 +241,7 @@ import fileProcess from "@/utils/fileProcess";
 //types
 import type { TableInstance } from "element-plus";
 import { Sort } from '@/types/global';
-import { api_getImage, api_updateImage } from '@/apis/reverse1999';
+import { api_checkReverseUpdate, api_getImage, api_updateImage } from '@/apis/reverse1999';
 
 const responsiveStore = useResponsiveStore()
 const reverse1999Store = useReverse1999Store()
@@ -532,10 +532,13 @@ const deleteImage = (index: number, data: ReverseImgInfo) => {
 
 //! 检查1999官方以影像之是否有更新 
 /**检查1999官方以影像之是否有更新 */
-const checkReverseUpdate = () => {
-  ElMessage.info('开发中')
-
-
+const checkReverseUpdate = async () => {
+  const flag = await api_checkReverseUpdate()
+  //有更新则刷新
+  if (flag) {
+    await getVersion({ version: "all" }, true)
+    await render(true)
+  }
 }
 
 

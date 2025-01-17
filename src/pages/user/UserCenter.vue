@@ -1,5 +1,5 @@
 <template>
-  <el-container class="container" :style="'height:' + containerHeight + 'px'">
+  <el-container class="container mainPanel" :style="'height:' + containerHeight + 'px'">
     <el-aside width="200px" v-if="isPC">
       <el-scrollbar>
         <el-menu :default-active="index.toString()">
