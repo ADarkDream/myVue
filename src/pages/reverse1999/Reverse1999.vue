@@ -1,6 +1,6 @@
 <template>
     <div ref="reverse1999" class="mainPanel" :style="bgSettings">
-        <el-tabs class="tabs" v-model="activePanelIndex" @click="changePanelIndex(activePanelIndex)">
+        <el-tabs class="tabs" v-model="activePanelIndex" @tab-click="changePanelIndex(activePanelIndex)">
             <el-tab-pane :name="0">
                 <template #label>
                     <el-text class="tab-label">

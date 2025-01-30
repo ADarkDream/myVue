@@ -175,7 +175,7 @@
       <div v-for="(item, index) in imgList" :key="item.id" @click="checkImage(item, index, $event)" class="preImg"
         :id="'imgDiv-' + item.id" ref="imgDivRefs">
         <el-image :src="item.imgUrl" :zoom-rate="1.2" :id="'img-' + item.id" :max-scale="7" :min-scale="0.2"
-          :preview-src-list="isChoose !== 'none' ? [] : previewImgList" :initial-index="item.id" fit="scale-down" lazy>
+          :preview-src-list="previewImgList" :initial-index="index" fit="scale-down" lazy>
           <template #error>
             <div class="image-slot">
               <el-icon style="width: 50px">
@@ -318,7 +318,9 @@ const chooseType = <Record<string, { text: string, type: string, icon: any }>>{
 }
 //批量选择图片的ref列表
 const imgDivRefs = ref<HTMLDivElement[]>([])
-const showPayCode = ref(false)//是否显示收款码
+//是否显示收款码
+const showPayCode = ref(false)
+//已赞助费用
 const fee = ref(Number(others.value[0]?.content) || 0)
 //单次最大下载数量
 const downloadLimitNum = ref(25)
@@ -381,7 +383,7 @@ const handleCheckAllRoleChange = (checkAll: boolean) => {
 }
 //单选角色：全选按钮的状态改变
 const handleCheckedRolesChange = () => {
-  console.log(condition.roles.length, roleInfo.value.length);
+  // console.log(condition.roles.length, roleInfo.value.length);
 
   const checkedCount = condition.roles.length
   checkAllRoles.value = checkedCount === roleInfo.value.length //全选时变更按钮为√
@@ -485,8 +487,8 @@ const getImages = async () => {
 
     imgList.value = data.imgList as ReverseImg[]
     previewImgList.value = imgList.value.map(item => item.imgUrl)
-    console.log("筛选结果:", previewImgList.value);
-    console.log("筛选结果:", imgList.value)
+    // console.log("筛选结果:", previewImgList.value);
+    // console.log("筛选结果:", imgList.value)
     // 将 a 的值同步到 b，包括空值
     // Object.keys(oldCondition.value).forEach(key => {
 
@@ -503,7 +505,7 @@ const getImages = async () => {
     console.log(error)
   }
 }
-const downloadListIndexs = new Set<number>([])
+const downloadListIndexArr = new Set<number>([])
 
 //region 点击图片事件
 function checkImage(imgInfo: ReverseImg, index: number, e: Event) {//这个事件要绑定el-image父级盒子上
@@ -535,20 +537,20 @@ function checkImage(imgInfo: ReverseImg, index: number, e: Event) {//这个事�
     menu!.appendChild(setBG)
   } else {//进入多选状态,根据id里面的数字获取是第几张图
     console.log('当前是多选状态');
-    if (downloadListIndexs.has(index)) {
-      downloadListIndexs.delete(index)
+    if (downloadListIndexArr.has(index)) {
+      downloadListIndexArr.delete(index)
       imgDivRefs.value[index].classList.remove('checked')
     } else {
-      downloadListIndexs.add(index)
+      downloadListIndexArr.add(index)
       imgDivRefs.value[index].classList.add('checked')
     }
 
     //判断下载列表是否为空,修改多选状态
-    if (downloadListIndexs.size === 0) isChoose.value = "part"
+    if (downloadListIndexArr.size === 0) isChoose.value = "part"
     else isChoose.value = "all"
     // console.log("下载列表：", downloadList.value)
     console.log("图片列表：", imgList.value);
-    console.log("下载列表序号Indexs：", downloadListIndexs);
+    console.log("下载列表序号IndexArr：", downloadListIndexArr);
   }
 }
 
@@ -583,12 +585,12 @@ const setBackground = async (url: string, name: string) => {
 const selectAll = (checkAll = true) => {
   if (checkAll) {
     //添加下载序号
-    imgList.value.forEach((item, index) => downloadListIndexs.add(index))
+    imgList.value.forEach((item, index) => downloadListIndexArr.add(index))
     //将所有呈现的图片添加选中状态(因为懒加载，可能部分未渲染)
     imgDivRefs.value.forEach(item => { item.classList.add('checked') })
   } else {
     //清空下载序号
-    downloadListIndexs.clear()
+    downloadListIndexArr.clear()
     //给所有呈现的图片移除选中状态
     imgDivRefs.value.forEach(item => item.classList.remove('checked'))
   }
@@ -600,7 +602,7 @@ const selectAll = (checkAll = true) => {
  * - `"all"` 清空选择
  * - `"part"` 退出多选状态
  * */
-function selectBtn(type: "none" | "all" | "part") {
+function selectBtn(type?: "none" | "all" | "part") {
   console.log('selectBtn选择前的type值：', isChoose.value)
   //手动修改选择类型
   if (type) isChoose.value = type
@@ -655,9 +657,9 @@ const checkPort = async () => {
 
 //批量下载壁纸
 const downloadImages = async () => {
-  const indexs = Array.from(downloadListIndexs) //.sort((a, b) => a - b)//不需要排序
+  const indexArr = Array.from(downloadListIndexArr) //.sort((a, b) => a - b)//不需要排序
 
-  downloadList.value = indexs.map(index => imgList.value[index])
+  downloadList.value = indexArr.map(index => imgList.value[index])
   const length = downloadList.value.length
   if (length === 0) return ElMessage.warning('请先勾选需要下载的图片！')
   ElMessage.info('如有任何问题，请先查看下载须知')
@@ -686,7 +688,7 @@ const downloadImages = async () => {
 
 //下载图片测试
 // downloadImg('https://gamecms-res.sl916.com/official_website_resource/50001/4/PICTURE/20240612/253%201440x2560_4f4a8ecb95334367ab4a83842926e1c6.jpg','123.jpg')
-//下载单张图片
+/**下载单张图片*/
 const downloadImg = async (url: string, imgName: string, imgPath: string) => {
   let imageUrl = url
   //将下载链接替换为可使用地址
@@ -718,13 +720,13 @@ const downloadImg = async (url: string, imgName: string, imgPath: string) => {
 }
 
 
-//检测屏幕变化，计算自动布局
+/**检测屏幕变化，计算自动布局*/
 watch(screenWidth, (newVal, oldVal) => {
   if (newVal === oldVal) return
   if (autoFlag.value) autoCol()
 })
 
-//自动布局，计算图片列数
+/**自动布局，计算图片列数*/
 function autoCol() {
   autoFlag.value = true
   if (Number((screenWidth.value / 250).toFixed(0)) === colNum.value) return
