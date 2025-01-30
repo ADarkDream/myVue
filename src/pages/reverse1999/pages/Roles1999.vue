@@ -38,7 +38,7 @@
       <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
     </div>
     <el-table ref="tableRef" class="myCustomElTable" :data="tableData"
-      :max-height="mainPanelConentHeight - (isPC ? 100 : 70)" stripe flexible border highlight-current-row
+      :max-height="mainPanelContentHeight - (isPC ? 100 : 70)" stripe flexible border highlight-current-row
       table-layout="auto" :default-sort="{ prop: 'id', order: 'custom' }" @sort-change="handleSortChange">
       <!--              @filter-change="filterChange">-->
       <el-table-column prop="id" label="ID" min-width="60" align="center" fixed sortable />
@@ -185,7 +185,6 @@ import useReverse1999 from '@/hooks/reverse1999/useReverse1999';
 //utils
 import myFunction from "@/utils/myFunction";
 import fileProcess from "@/utils/fileProcess";
-import { ca } from 'element-plus/es/locale';
 //types
 
 //files
@@ -204,7 +203,7 @@ const { getVersion, updateRole } = useReverse1999()
 //登录判断
 
 //屏幕高度
-const { screenHeight, isPC, mainPanelConentHeight } = toRefs(responsiveStore)
+const { screenHeight, isPC, mainPanelContentHeight } = toRefs(responsiveStore)
 const { isAdmin, isLogin } = toRefs(userInfoStore)
 
 const tableRef = ref<TableInstance>()

@@ -30,10 +30,12 @@ import TitleDiv from "@/components/TitleDiv.vue";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import { useResponsiveStore } from '@/store/useResponsiveStore';
 
+const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
 
-const { token } = toRefs(useUserInfoStore())
-const { setTokenByType, checkLocalToken } = useUserInfoStore()
-const { screenHeight } = toRefs(useResponsiveStore())
+const { token } = toRefs(userInfoStore)
+const { setTokenByType, checkLocalToken } = userInfoStore
+const { screenHeight } = toRefs(responsiveStore)
 
 const router = useRouter();
 
@@ -219,17 +221,9 @@ onMounted(() => {
 
 /* 路由页面 */
 .view-component {
-  margin-top: 40px;
   position: absolute;
   /* 确保新旧组件占据相同位置 */
   top: 0;
   left: 0;
-}
-
-@media (max-width: 780px) {
-  .shade {
-    position: fixed;
-    width: 100%;
-  }
 }
 </style>

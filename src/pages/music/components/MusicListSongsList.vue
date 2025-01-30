@@ -111,7 +111,7 @@ const responsiveStore = useResponsiveStore()
 const musicListDrawerStore = useMusicListDrawerStore()
 
 
-const { drawerSize, isPC, mainPanelConentHeight } = toRefs(responsiveStore)
+const { drawerSize, isPC, mainPanelContentHeight } = toRefs(responsiveStore)
 const { music_id_list } = toRefs(musicListDrawerStore)
 const { musicListInfo, thisMusic, isPlaying } = toRefs(musicListStore)
 const { addMusicList } = musicListStore

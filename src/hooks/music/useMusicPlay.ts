@@ -12,20 +12,18 @@ import musicList from "@/utils/music/musicList"
 //types
 import type { CloudSongInfo } from "@/types/music"
 
-
-
-
-
-
-
 export default function () {
-    const { addMusicList } = useMusicListStore()
-    const { isPlaying, isLoading, playingIndex, thisMusic, playList } = toRefs(useMusicListStore())
-    const { is_show_player_before_play } = toRefs(useMusicConfigStore())
+    const musicListStore = useMusicListStore()
+    const musicConfigStore = useMusicConfigStore()
+    const musicPlayStore = useMusicPlayStore()
+
+    const { addMusicList } = musicListStore
+    const { isPlaying, isLoading, playingIndex, thisMusic, playList } = toRefs(musicListStore)
+    const { is_show_player_before_play } = toRefs(musicConfigStore)
     const { audioContext, audioElement, musicName, isScrollName, transformX, infoBarActive, controlPanelActive, volume,
         currentTime, duration, gainNode, timer1,
-    } = toRefs(useMusicPlayStore())
-    const { togglePlayerVisible } = useMusicPlayStore()
+    } = toRefs(musicPlayStore)
+    const { togglePlayerVisible } = musicPlayStore
 
     const { togglePlayingIndex } = usePlayConfig()
 

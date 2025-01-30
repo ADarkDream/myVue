@@ -3,6 +3,9 @@ import axios from "axios";
 import { ElMessage } from "element-plus";
 //utils
 import myFunction from "@/utils/myFunction";
+import regex from "@/utils/regexRules";
+//apis
+import { api_getRedirectUrl } from "@/apis/tool";
 //types
 import type { ResultData } from "@/types/global";
 import type { CloudSongInfo } from "@/types/music";
@@ -85,6 +88,40 @@ const musicPlay = {
         } else if (songInfo.id) {
             copyText('https://muxidream.cn/music?id=' + songInfo.id, '播放链接')
         } else ElMessage.info('歌曲信息错误')
+    },
+    /**校验分享链接或歌单、歌曲id并返回*/
+    getMusicIdByLink: async (str: string, isSong: boolean) => {
+        //将输入的文字中的链接匹配出来
+        str = str.toString().match(regex.url) ? str.match(regex.url)![0] : ''
+
+        let id = 0
+
+        if (regex.url.test(str)) {//是网址
+            const reg = isSong ? regex.song : regex.palylist
+
+            //如果是歌曲链接，判断是否是短连接(重定向获取真实链接)
+            console.log("aaa", isSong, regex.song_short.test(str));
+
+            if (isSong && regex.song_short.test(str)) {
+                const result = await api_getRedirectUrl(str)
+                const { status, msg, data } = result
+                if (status === 200 && data) str = data.redirectUrl
+                else {
+                    console.error(msg)
+                    return id
+                }
+            }
+            console.log('str', str);
+
+            const match = str.match(reg)
+            if (match) {//如果匹配
+                id = Number(match[1])
+            }
+        } else {
+            id = Number(str)
+        }
+
+        return id
     }
 }
 export default musicPlay

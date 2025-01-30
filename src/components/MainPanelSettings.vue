@@ -64,9 +64,11 @@ import { InfoFilled } from "@element-plus/icons-vue";
 import { useMusicConfigStore } from "@/store/music/useMusicConfigStore";
 import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore";
 
+const musicConfigStore = useMusicConfigStore()
+const mainPanelConfigStore = useMainPanelConfigStore()
 
-const { is_show_player_before_play } = toRefs(useMusicConfigStore())
-const { bgSettings } = useMainPanelConfigStore()
+const { is_show_player_before_play } = toRefs(musicConfigStore)
+const { bgSettings } = mainPanelConfigStore
 
 const noticeNum = ref(0)
 </script>

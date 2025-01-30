@@ -9,7 +9,9 @@ export const useResponsiveStore = defineStore('responsive', () => {
     const isPC = ref<boolean>(screenWidth.value > 980)
     //容器高度
     const containerHeight = computed(() => (isPC.value ? (screenHeight.value - 80) : (screenHeight.value - 40)))
-    const mainPanelConentHeight = computed(() => screenHeight.value - 100)
+    const mainPanelContentHeight = computed(() => screenHeight.value - 100)
+    //抽屉高度
+    const drawerSize = computed(() => containerHeight.value - 40)
     //首次加载，根据是否是深色偏好设置夜间模式
     const isDark = ref<boolean>(sessionStorage.getItem('isDark') === '1' || window.matchMedia('(prefers-color-scheme: dark)').matches || false)
     const isHome = ref<boolean>(true)
@@ -19,8 +21,7 @@ export const useResponsiveStore = defineStore('responsive', () => {
     //控制PC和手机的dialog宽度
     const dialogWidth = ref<string>(isPC.value ? '50%' : '90%')
     const dialogWidth2 = ref<string>(isPC.value ? '40%' : '80%')
-    //抽屉高度
-    const drawerSize = ref<number>(isPC.value ? screenHeight.value - 70 : screenHeight.value - 30)
+
     // if (!isPC.value) {
     //     dialogWidth.value = '90%'
     //     dialogWidth2.value = '80%'
@@ -41,13 +42,11 @@ export const useResponsiveStore = defineStore('responsive', () => {
             isPC.value = false
             dialogWidth.value = '90%'
             dialogWidth2.value = '80%'
-            containerHeight.value = screenHeight.value - 40
         } else {
             console.log('当前是PC')
             isPC.value = true
             dialogWidth.value = '50%'
             dialogWidth2.value = '40%'
-            containerHeight.value = screenHeight.value - 80
         }
     }
 
@@ -175,7 +174,7 @@ export const useResponsiveStore = defineStore('responsive', () => {
         screenWidth,
         screenHeight,
         containerHeight,
-        mainPanelConentHeight,
+        mainPanelContentHeight,
         isPC,
         isDark,
         isHome,

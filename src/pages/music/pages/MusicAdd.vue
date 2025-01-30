@@ -76,17 +76,19 @@ import useMusicList from "@/hooks/music/useMusicList";
 import MusicListSongsList from '@/pages/music/components/MusicListSongsList.vue';
 //utils
 import musicList from '@/utils/music/musicList';
+import regex from '@/utils/regexRules';
+import musicPlay from '@/utils/music/musicPlay'
 //types
 import type { CloudSongInfo, SongInfo } from "@/types/music";
 
 
 const musicSearchStore = useMusicSearchStore()
+const mainPanelConfigStore = useMainPanelConfigStore()
+
+const { changePanelIndex } = mainPanelConfigStore
 
 const { addMusicToPlay, addMusic } = useMusicPlay()
-
-
 const { getCloudMusicList } = useMusicList()
-const { changePanelIndex } = useMainPanelConfigStore()
 /**
  * 用户上传的公开音乐列表
  */
@@ -108,28 +110,11 @@ const musicUrl = ref('')
 
 //校验分享链接或歌单、歌曲id，进行搜索
 const search_song_or_list = async (str: string, isSong: boolean) => {
-    str = str.toString()
-    //网址规则
-    const reg_url = /https?:\/\/([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[0-9a-zA-Z-._~:/?#[\]@!$&'()*+,;=]*)?/
-    //歌单链接规则
-    const reg_palylist = /https?:\/\/(?:[a-zA-Z0-9-]+\.)?music\.163\.com\/(?:m\/|#\/)?(?:[a-zA-Z0-9\/]+\/)?playlist\?id=([0-9]+)/
-    //歌曲链接规则
-    const reg_song = /https?:\/\/(?:[a-zA-Z0-9-]+\.)?music\.163\.com\/(?:m\/|#\/)?(?:[a-zA-Z0-9\/]+\/)?song\?id=([0-9]+)/
+    const id = await musicPlay.getMusicIdByLink(str, isSong)
 
-    let id = 0
-
-    if (reg_url.test(str)) {//是网址
-        const reg = isSong ? reg_song : reg_palylist
-        const match = str.match(reg)
-        if (match) {//如果匹配
-            id = Number(match[1])
-        }
-    } else {
-        id = Number(str)
-    }
-    console.log(isSong ? '是歌曲' : '是歌单', ',ID为：', id)
     //判断id是不是一个正常的正整数
     if (Number.isInteger(id) && id > 0) {
+        console.log(isSong ? '检查歌曲' : '检查歌单', ',ID为：', id)
         if (isSong) await addMusicToPlay(id, true)
         else {
             const { status } = await getCloudMusicList({ cloud_music_list_id: id })

@@ -60,7 +60,7 @@
           @click="musicListUtils.goToCloudMusicList(musicListInfo.cloud_music_list_id)">前往网易云</el-button>
       </el-button-group>
     </div>
-    <music-list-songs-list :songsList="musicList" :height="mainPanelConentHeight - (isPC ? 100 : 70)"
+    <music-list-songs-list :songsList="musicList" :height="mainPanelContentHeight - (isPC ? 100 : 70)"
       v-show="musicList.length !== 0" :isOwner />
   </div>
 
@@ -91,18 +91,23 @@ import defaultAlbumArt from "@/assets/music/music.svg";
 const musicListStore = useMusicListStore()
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
+const mainPanelConfigStore = useMainPanelConfigStore()
+
+
 const { getTime } = useTimestamp()
-const { copyText } = myFunction
+
 
 const musicList = computed(() => musicListStore.musicList)
 const musicListInfo = computed(() => musicListStore.musicListInfo!)
 const { addMusicList } = musicListStore
-const { changePanelIndex } = useMainPanelConfigStore()
+const { changePanelIndex } = mainPanelConfigStore
 const { uid, isLogin } = toRefs(userInfoStore)
-const { drawerSize, mainPanelConentHeight, isPC } = toRefs(responsiveStore)
+const { drawerSize, mainPanelContentHeight, isPC } = toRefs(responsiveStore)
 const { toggleMusic } = useMusicPlay()
 const { getCloudMusicList, getMusicList } = useMusicList()
 const { showEditMusicListInfoDrawer } = useMusic()
+
+const { copyText } = myFunction
 
 const isHidden = ref(false)
 

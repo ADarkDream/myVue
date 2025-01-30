@@ -5,7 +5,7 @@
     <div class="play-panel" :class="{ active: infoBarActive }">
       <span ref="musicName" class="name" :class="{ scroll: isScrollName }" :style="transformX">{{
         isLoading ? '加载中' : thisMusic.name || '未命名'
-      }}——<span class="artist">
+        }}——<span class="artist">
           {{
             isLoading ? '加载中' : thisMusic.artists.map(artist => artist.name).join('&') || '未知艺术家'
           }}
@@ -63,17 +63,16 @@
         </div>
       </div>
     </div>
+
   </div>
   <!--播放列表-->
-  <el-drawer v-model="isShowPlayList" :with-header="false" :size="drawerSize + 'px'" direction="btt" show-close>
+  <el-drawer v-model="isShowPlayList" :with-header="false" :size="containerHeight + 'px'" direction="btt" show-close>
     <h3 style="margin: 0;">播放列表</h3>
-    <play-list :songsList="playList" />
+    <play-list :songsList="currentPlayList" />
   </el-drawer>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, computed, watch, toRefs } from 'vue';
-
-
+import { onMounted, ref, computed, toRefs } from 'vue';
 //stores
 import { useMusicListStore } from "@/store/music/useMusicListStore";
 import { usePlayConfigStore } from '@/store/music/usePlayConfigStore'
@@ -83,6 +82,8 @@ import { useResponsiveStore } from "@/store/useResponsiveStore";
 import useTimestamp from "@/hooks/useTimestamp";
 import usePlayConfig from '@/hooks/music/usePlayConfig'
 import useMusicPlay from "@/hooks/music/useMusicPlay";
+//components
+const PlayList = defineAsyncComponent(() => import('@/pages/music/pages/PlayList.vue'))
 //files
 import defaultAlbumArt from '@/assets/music/music.svg'
 import SVG_music_list from '@/assets/music/music_list.svg?component'
@@ -99,7 +100,7 @@ import SVG_random_play from '@/assets/music/random_play.svg?component'
 import SVG_single_loop from '@/assets/music/single_loop.svg?component'
 
 const responsiveStore = useResponsiveStore()
-const { drawerSize } = toRefs(responsiveStore)
+const { drawerSize, containerHeight } = toRefs(responsiveStore)
 const musicListStore = useMusicListStore()
 const playConfigStore = usePlayConfigStore()
 const musicPlayStore = useMusicPlayStore()
@@ -112,7 +113,7 @@ const isShowPlayList = ref(false)
 
 //播放列表、状态
 const { isPlaying, isLoading, playingIndex, thisMusic } = toRefs(musicListStore)
-const playList = computed(() => musicListStore.playList)
+const currentPlayList = computed(() => musicListStore.playList)
 
 
 //播放设置
@@ -139,7 +140,7 @@ const {
 
 const { play, toggleMusic, setMediaInfo, changeCurrentTime } = useMusicPlay()
 
-togglePlayerVisible()
+
 
 
 //音频DOM元素
@@ -177,6 +178,7 @@ onMounted(async () => {
   } else {
     console.warn("audioElement 未初始化");
   }
+  togglePlayerVisible()
 })
 
 

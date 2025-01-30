@@ -73,14 +73,13 @@
       </el-tab-pane>
     </el-tabs>
     <!-- 搜索抽屉 -->
-    <el-drawer v-model="isShowSearchPanel" :with-header="false" :size="drawerSize - (isPC ? 45 : 45) + 'px'"
-      direction="btt" show-close>
+    <el-drawer v-model="isShowSearchPanel" :with-header="false" :size="drawerSize + 'px'" direction="btt" show-close>
       <SearchMusicDrawer />
     </el-drawer>
     <!-- 上传音乐抽屉 -->
     <!-- <UpdateMusic /> -->
     <!-- 歌单列表抽屉 -->
-    <el-drawer v-model="isShowMusicListDrawer" :size="drawerSize - (isPC ? 39 : 39) + 'px'" direction="btt" show-close>
+    <el-drawer v-model="isShowMusicListDrawer" :size="drawerSize + 'px'" direction="btt" show-close>
       <template #header>
         <div class="title">收藏到歌单</div>
       </template>
@@ -131,17 +130,21 @@ const router = useRouter()
 
 
 const musicListStore = useMusicListStore()
+const userInfoStore = useUserInfoStore()
 const searchStore = useMusicSearchStore()
 const musicListDrawerStore = useMusicListDrawerStore()
+const mainPanelConfigStore = useMainPanelConfigStore()
+const responsiveStore = useResponsiveStore()
+const uploadFileStore = useUploadFileStore()
 //页面背景配置
-const { activePanelIndex } = toRefs(useMainPanelConfigStore())
-const { bgSettings, changePanelIndex } = useMainPanelConfigStore()
-const { isLogin } = toRefs(useUserInfoStore())
+const { activePanelIndex } = toRefs(mainPanelConfigStore)
+const { bgSettings, changePanelIndex } = mainPanelConfigStore
+const { isLogin } = toRefs(userInfoStore)
 const { isShowSearchPanel } = toRefs(searchStore)
 const { isShowMusicListDrawer, isShowEditMusicListInfoDrawer } = toRefs(musicListDrawerStore)
-const { isPC, drawerSize, containerHeight } = toRefs(useResponsiveStore())
-const { touchstart, positionComputed } = useResponsiveStore()
-const { resetUpload } = useUploadFileStore()
+const { isPC, drawerSize, containerHeight } = toRefs(responsiveStore)
+const { touchstart, positionComputed } = responsiveStore
+const { resetUpload } = uploadFileStore
 const { addMusicToPlay } = useMusicPlay()
 const { getCloudMusicList, getMusicList } = useMusicList()
 

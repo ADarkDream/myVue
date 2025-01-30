@@ -10,7 +10,9 @@
 <script setup lang="ts">
 import { toRefs } from "vue";
 import { useResponsiveStore } from "@/store/useResponsiveStore";
-const { isDark } = toRefs(useResponsiveStore())
+
+const responsiveStore = useResponsiveStore()
+const { isDark } = toRefs(responsiveStore)
 
 defineProps({
     show: {

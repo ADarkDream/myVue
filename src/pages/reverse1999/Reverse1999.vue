@@ -116,18 +116,21 @@ import MainPanelSettings from "@/components/MainPanelSettings.vue";
 
 
 const route = useRoute()
-
+const mainPanelConfigStore = useMainPanelConfigStore()
+const responsiveStore = useResponsiveStore()
+const rolesStore = useRolesStore()
+const reverse1999Store = useReverse1999Store()
 //页面背景配置
 
 
-const { bgSettings } = useMainPanelConfigStore()
-const { containerHeight } = toRefs(useResponsiveStore())
-const { touchstart, positionComputed } = useResponsiveStore()
+const { bgSettings } = mainPanelConfigStore
+const { containerHeight } = toRefs(responsiveStore)
+const { touchstart, positionComputed } = responsiveStore
 
-const { isShowAddRoleDrawer, isEdit } = toRefs(useRolesStore())
-const { reSetFormData } = useRolesStore()
-const { activePanelIndex, toRight } = toRefs(useReverse1999Store())
-const { changePanelIndex } = useReverse1999Store()
+const { isShowAddRoleDrawer, isEdit } = toRefs(rolesStore)
+const { reSetFormData } = rolesStore
+const { activePanelIndex, toRight } = toRefs(reverse1999Store)
+const { changePanelIndex } = reverse1999Store
 
 const reverse1999 = ref<HTMLDivElement>()
 
@@ -163,7 +166,7 @@ const beforeCloseDrawer = () => {
 }
 
 onMounted(async () => {
-    console.log("route", route);
+    // console.log("route", route);
     const { name } = route
     if (name) {
         changePanelIndex(name as string | number || 0)

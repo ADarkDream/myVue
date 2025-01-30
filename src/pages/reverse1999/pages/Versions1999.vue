@@ -5,7 +5,7 @@
             <el-button type="success" plain :icon="Refresh" @click="refreshVersion()">刷新</el-button>
         </div>
         <el-table ref="tableRef" class="myCustomElTable" :data="tableData"
-            :max-height="mainPanelConentHeight - (isPC ? 75 : 35)" stripe flexible border highlight-current-row
+            :max-height="mainPanelContentHeight - (isPC ? 75 : 35)" stripe flexible border highlight-current-row
             table-layout="auto">
             <el-table-column prop="id" label="ID" min-width="50" align="center" />
             <el-table-column prop="versionName" label="版本名称" min-width="140" align="center" />
@@ -85,7 +85,7 @@ const { getVersion, updateVersion } = useReverse1999()
 
 
 //屏幕高度
-const { mainPanelConentHeight, screenHeight, isPC } = toRefs(responsiveStore)
+const { mainPanelContentHeight, screenHeight, isPC } = toRefs(responsiveStore)
 const { isAdmin, isLogin } = toRefs(userInfoStore)
 
 const tableRef = ref<TableInstance>()

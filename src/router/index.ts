@@ -246,29 +246,40 @@ const router = createRouter({
     routes
 })
 
+
+const checkPath = ['/admin', '/user']
+
+
 router.beforeEach((to, from, next) => {
+
     console.log("to", to);
 
     console.log("from", from);
 
-    const { isLogin, isAdmin } = toRefs(useUserInfoStore())
+
     if (to.path.includes('/admin')) {
-        if (isAdmin.value) {
-            next()
-        } else if (from.fullPath === '/') {
-            next({ name: 'home' })
+        const userInfoStore = useUserInfoStore()
+        const { isAdmin } = toRefs(userInfoStore)
+        if (!isAdmin.value && to.fullPath === '/admin/login') {
+            return next()
+        } else if (isAdmin.value) {
+            return next()
+            // } else if (from.fullPath === '/') {
+            //     return next({ name: 'home' })
         } else {
-            router.back()
+            return router.back()
         }
     } else if (to.path.includes('/user')) {
+        const userInfoStore = useUserInfoStore()
+        const { isLogin } = toRefs(userInfoStore)
         if (isLogin.value) {
-            next()
-        } else if (from.fullPath === '/') {
-            next({ name: 'home' })
+            return next()
+            // } else if (from.fullPath === '/') {
+            //     return next({ name: 'home' })
         } else {
-            router.back()
+            return router.back()
         }
-    } else next()
+    } else return next()
 })
 
 export default router

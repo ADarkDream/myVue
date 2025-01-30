@@ -39,13 +39,16 @@ import useMusic from "@/hooks/music/useMusic";
 import MusicListCoverComp from "@/pages/music/components/MusicListCoverComp.vue";
 
 const responsiveStore = useResponsiveStore()
-const { isPC } = toRefs(responsiveStore)
 const userInfoStore = useUserInfoStore()
 const musicListStore = useMusicListStore()
+
+const { isPC } = toRefs(responsiveStore)
 const { isLogin, uid } = toRefs(userInfoStore)
 const { publicMusicListInfo, myMusicListInfo } = toRefs(musicListStore)
+
 const { getMusicListsInfo } = useMusicList()
 const { showEditMusicListInfoDrawer } = useMusic()
+
 const { toggleToMusicList } = defineProps(['toggleToMusicList'])
 
 onMounted(async () => {

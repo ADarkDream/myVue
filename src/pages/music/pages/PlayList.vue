@@ -69,11 +69,15 @@ import type { CloudSongInfo } from "@/types/music";
 //files
 import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.svg?component'
 
+const responsiveStore = useResponsiveStore()
+const musicListStore = useMusicListStore()
+const mainPanelConfigStore = useMainPanelConfigStore()
 
-const { drawerSize } = toRefs(useResponsiveStore())
-const { thisMusic } = toRefs(useMusicListStore())
-const { deleteMusicFromPlayList, clearPlayList } = useMusicListStore()
-const { changePanelIndex } = useMainPanelConfigStore()
+
+const { drawerSize } = toRefs(responsiveStore)
+const { thisMusic } = toRefs(musicListStore)
+const { deleteMusicFromPlayList, clearPlayList } = musicListStore
+const { changePanelIndex } = mainPanelConfigStore
 
 const { showMusicListDrawer } = useMusic()
 const { toggleMusic, play } = useMusicPlay()
@@ -84,6 +88,8 @@ const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   //如果是当前播放的歌曲，则暂停
   if (musicInfo.id === thisMusic.value.id) {
     play({})
+    console.log('当前播放的歌曲');
+
   } else toggleMusic({ index })
 }
 

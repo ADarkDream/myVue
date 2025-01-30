@@ -58,7 +58,7 @@
       </div>
     </div>
     <el-table ref="tableRef" :data="tableData" class="myCustomElTable"
-      :max-height="mainPanelConentHeight - (isPC ? 100 : 70)" stripe border highlight-current-row table-layout="auto"
+      :max-height="mainPanelContentHeight - (isPC ? 100 : 70)" stripe border highlight-current-row table-layout="auto"
       :default-sort="{ prop: 'imgIndex', order: 'custom' }" @sort-change="handleSortChange" fit>
       <el-table-column prop="imgIndex" label="页序" width="80" align="center" sortable>
         <template #default="scope">
@@ -247,7 +247,7 @@ const responsiveStore = useResponsiveStore()
 const reverse1999Store = useReverse1999Store()
 const userInfoStore = useUserInfoStore()
 
-const { mainPanelConentHeight, screenHeight, isPC } = toRefs(responsiveStore)
+const { mainPanelContentHeight, screenHeight, isPC } = toRefs(responsiveStore)
 const { allRoleInfo, diffVersionInfo } = toRefs(reverse1999Store)
 const versionNameDictionary = computed(() => reverse1999Store.versionNameDictionary)
 const roleNameDictionary = computed(() => reverse1999Store.roleNameDictionary)
