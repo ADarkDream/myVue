@@ -9,11 +9,14 @@ export const useReverse1999Store = defineStore('reverse1999', () => {
     const versionInfo = ref<VersionInfo[]>([])
     //部分(有壁纸的)版本信息
     const diffVersionInfo = computed(() => {
-        const Arr = versionInfo.value
-            .map(info => {
-                const { version, versionName, time, status } = info
-                return time?.length && status !== 0 ? { version, versionName } : null
-            })
+        //判断是否为完整的版本信息
+        const isFull = Array.isArray(versionInfo.value) &&
+            versionInfo.value.every(item => 'version' in item && 'versionName' in item && !('time' in item) && !('status' in item))
+
+        const Arr = isFull ? versionInfo.value : versionInfo.value
+            .map(({ version, versionName, time, status }) =>
+                time?.length && status !== 0 ? { version, versionName } : null
+            )
             .filter(Boolean) as VersionInfo[] // 明确类型
         return Arr.length ? Arr : [{ version: 1999, versionName: '未知版本' }]
     })

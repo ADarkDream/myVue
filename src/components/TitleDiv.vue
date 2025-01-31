@@ -188,7 +188,7 @@
           <el-image class="headIcon" :src="headImgUrl" alt="" :onerror="errorImage" />
         </el-button>
         <!--论坛-->
-        <el-button @click="goTo('center')" plain :icon="Comment" />
+        <el-button @click="goTo('center')" plain :icon="Comment" v-if="!isForum" />
         <!--选项下拉菜单-->
         <el-dropdown trigger="click">
           <span>

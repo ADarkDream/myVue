@@ -1,6 +1,6 @@
 <template>
-  <div :style="'min-height:' + containerHeight + 'px; background-color: var(--el-color-primary-light-9);'">
-    <div class="articleBar" v-if="false">
+  <div>
+    <div class="articleBar" v-if="isAdmin">
       <el-button @click="router.back()">
         <el-icon>
           <ArrowLeftBold />
@@ -21,7 +21,7 @@
             <el-text v-if="article.status === 0" type="primary">[待审核]</el-text>
             <el-text v-if="article.status === 2" type="danger">[未过审]</el-text>
           </h1>
-          <el-link type="primary" @click="go(article.author, '', '')">{{ article.author }}</el-link>
+          <el-link type="primary" @click="toForumCenter(article.author, '', '')">{{ article.author }}</el-link>
         </el-header>
         <el-divider />
         <el-main style="padding:0 20px">
@@ -30,9 +30,9 @@
         <el-divider />
         <el-footer>
           <el-space class="articleFooter" style="text-align: initial;font-size: 14px">
-            <span>板块：<el-button link @click="go('', article.area, '')" type="primary">
+            <span>板块：<el-button link @click="toForumCenter('', article.area, '')" type="primary">
                 {{ article.area }}</el-button><br>
-              标签：<el-button link @click="go('', '', article.tags)" type="primary">
+              标签：<el-button link @click="toForumCenter('', '', article.tags)" type="primary">
                 {{ article.tags }}</el-button></span>
             <span>发布于：{{ getDiffTime(article.created_time) }}<br><template
                 v-if="article.created_time !== article.updated_time">修改于：{{
@@ -111,6 +111,8 @@ import { ArrowLeftBold, Refresh, Delete, MoreFilled, WarnTriangleFilled } from "
 import hljs from 'highlight.js/lib/common';
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore";
+import { useForumStore } from "@/store/forum/useForumStore";
 //hooks
 import useTimeStamp from '@/hooks/useTimestamp'
 import { useResponsiveStore } from "@/store/useResponsiveStore";
@@ -120,23 +122,26 @@ import { emitter } from "@/utils/emitter";
 import { Article, CommentInfo } from '@/types/articles'
 
 
-
+const router = useRouter()
+const route = useRoute()
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
+const mainPanelConfigStore = useMainPanelConfigStore()
+const forumStore = useForumStore()
 
 const { isLogin, isAdmin, uid, headImgUrl, errorImage } = toRefs(userInfoStore)
 const { screenHeight, containerHeight, isPC } = toRefs(responsiveStore)
-const router = useRouter()
-const route = useRoute() // 注意：接收参数的时候不带 ‘r’
+const { bgSettings } = mainPanelConfigStore
+const { initBreadcrumb, setRouterBreadcrumb } = forumStore
+
 const isShow = ref(true)
 
 const isSubmit = route.query.isSubmit
 if (isSubmit === '0') isShow.value = false
 
 
-function go(author: string, area: string, tags: string) {
-  router.push({ name: 'center', query: { author, area, tags } })
-}
+const toForumCenter = (author: string, area: string, tags: string) => setRouterBreadcrumb(0, { name: 'center', label: '论坛', query: { author, area, tags } })
+
 
 
 //时间戳转换
@@ -354,6 +359,11 @@ emitter.on('comments-move', (scrollTop) =>
 // 组件挂载时
 onMounted(async () => {
   await getArticle()//获取文章和评论
+  initBreadcrumb(1, {
+    name: 'article',
+    label: article.value.title,
+    query: { id: article.value.id }
+  })
   await nextTick(() => {//页面渲染完毕才计算高度
     fixImageWidth()//修改图片宽度
     if (comments.value.length === 0) console.log('没有评论')

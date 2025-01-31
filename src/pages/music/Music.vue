@@ -1,5 +1,5 @@
 <template>
-  <div ref="music" class="mainPanel" :style="{ height: containerHeight + 'px', ...bgSettings }">
+  <div ref="music" class="mainPanel" :style="{ ...bgSettings }">
     <el-tabs class="tabs" v-model="activePanelIndex">
       <el-tab-pane :name="0">
         <template #label>

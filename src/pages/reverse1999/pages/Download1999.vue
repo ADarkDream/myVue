@@ -1,5 +1,4 @@
 <template>
-  <!-- <el-scrollbar :height="containerHeight - 60 + 'px'" ref="scrollbar"> -->
   <div class="download1999">
     <div>
       <div style="position: relative;">
@@ -194,7 +193,6 @@
       <DownloadNotice :showFlag="showFlag" :showPayCodePanel="showPayCodePanel" :downloadLimitNum="downloadLimitNum" />
     </el-dialog>
   </div>
-  <!-- </el-scrollbar> -->
 </template>
 
 <script lang="ts" setup>
@@ -207,7 +205,6 @@ import {
   InfoFilled,
   Picture as IconPicture,
   Search,
-  Select,
   Warning,
   Top,
 } from "@element-plus/icons-vue";

@@ -62,12 +62,14 @@ const routes = [
         {
             name: 'center',//大厅
             path: 'center',
-            component: Center
+            component: Center,
+            meta: { keepAlive: true }
         },
         {
             name: 'article',//文章阅读界面
             path: 'article',
             component: Article,
+            meta: { keepAlive: false }
         }]
     },
     {//聊天大厅

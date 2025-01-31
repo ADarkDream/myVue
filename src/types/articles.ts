@@ -1,4 +1,12 @@
-//管理界面的文章类型
+/**请求论坛文章列表的参数 */
+interface ArticleParams {
+    title: string,
+    author: string,
+    area: string,
+    tags: string,
+}
+
+/**管理界面的文章类型*/
 interface Article {
     id: number,
     title: string,
@@ -34,4 +42,4 @@ interface CommentInfo {
     headImgUrl: string
 }
 
-export type { Article, Comment, CommentInfo }
+export type { ArticleParams, Article, Comment, CommentInfo }

@@ -202,7 +202,7 @@ onMounted(() => {
 // });
 </script>
 <style>
-@import "./assets/css/mainPanel.css";
+@import "@/assets/css/mainPanel.css";
 </style>
 <style scoped>
 .shade {
