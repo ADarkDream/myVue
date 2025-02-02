@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from "axios";
+import momo from "@/apis"
 import { ElMessage, ElMessageBox } from "element-plus";
 import type { TableColumnCtx, TableInstance } from "element-plus";
 //hooks
@@ -135,9 +135,9 @@ onMounted(async () => {
 
 const getComment = async () => {
   try {
-    const result = await axios({ url: '/getComments', })
+    const result = await momo.get('/getComments')
     console.log(result)
-    const { msg, data } = result.data
+    const { msg, data } = result
     ElMessage.success(msg)
     tableData.splice(0, tableData.length)
     data.forEach((item: Comment) => {
@@ -176,16 +176,13 @@ function checkUpdateRow(newData: Comment, oldData: Comment) {
 
 //上传更新的评论信息
 function updateRow(data: Comment, oldData: Comment) {
-  axios({
-    url: '/updateComment',
-    method: 'post',
-    data: {
-      data,
-      id: oldData.id    //id被洗掉了，手动添加
-    }
-  }).then(result => {
+  momo.post('/updateComment', {
+    data,
+    id: oldData.id    //id被洗掉了，手动添加
+  }
+  ).then(result => {
     // console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     //更新修订时间为当前时间
     data.created_time = new Date().toISOString()
     //将修改后的信息显示出来
@@ -222,18 +219,15 @@ const deleteRow = (index: number, id: number) => {
 
 //删除评论
 const deleteComment = (index: number, id: number) => {
-  axios({
-    url: '/deleteComment',
-    method: 'delete',
-    params: { id }
-  }).then((result) => {
-    // console.log(result)
-    ElMessage.success(result.data.msg)
-    tableData.splice(index, 1)
-    console.log(tableData)
-  }).catch(error => {
-    console.dir('发生错误：' + error)
-  })
+  momo.delete('/deleteComment', { id })
+    .then((result) => {
+      // console.log(result)
+      ElMessage.success(result.msg)
+      tableData.splice(index, 1)
+      console.log(tableData)
+    }).catch(error => {
+      console.dir('发生错误：' + error)
+    })
 }
 </script>
 

@@ -53,10 +53,11 @@ export default function () {
             if (temp_types.size === 0) return
 
             const rest_types = [...temp_types]
-            const { data } = await api_getNotice(rest_types)
-            const { noticeList } = data!
+            const result = await api_getNotice(rest_types)
 
-            noticeList.forEach((item: Notice) => {
+            const { data } = result
+            if (!data?.noticeList?.length) return
+            data!.noticeList.forEach((item: Notice) => {
                 if (item.created_time === item.updated_time) item.time = '发布时间：' + getDiffTime(item.created_time)
                 else item.time = '发布时间：' + getDiffTime(item.created_time) + '  上次修订于：' + getDiffTime(item.updated_time)
 
@@ -86,8 +87,8 @@ export default function () {
         if (feedback.value.contact.length > 30) return ElMessage.error('联系方式超出长度限制')
         if (feedback.value.content.length < 5 || feedback.value.content.length > 200) return ElMessage.error('反馈内容应为5-200个字符')
         try {
-            const { status, msg } = await api_submitFeedBack(feedback.value)
-            if (status == 200) {
+            const { code, msg } = await api_submitFeedBack(feedback.value)
+            if (code == 200) {
                 clearFeedback()
                 ElMessage.success(msg)
             }

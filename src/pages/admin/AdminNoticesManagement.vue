@@ -103,7 +103,7 @@
 
 
 <script setup lang="ts">
-import axios from "axios";
+import momo from "@/apis"
 import { reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from "element-plus";
 import type { TableColumnCtx, TableInstance } from "element-plus";
@@ -178,11 +178,9 @@ interface Notice {
 getNotices()
 
 function getNotices() {
-  axios({
-    url: '/getAllNotices',
-  }).then(result => {
+  momo.get('/getAllNotices').then(result => {
     // console.log(result)
-    const { msg, noticeList } = result.data
+    const { msg, noticeList } = result
     ElMessage.success(msg)
     tableData.splice(0, tableData.length)
     noticeList.forEach((item: Notice) => {
@@ -226,16 +224,12 @@ function checkUpdateRow(newData: Notice, oldData: Notice) {
 
 //上传更新的公告信息
 function updateRow(data: Notice, oldData: Notice) {
-  axios({
-    url: '/updateNotice',
-    method: 'post',
-    data: {
-      data,
-      id: oldData.id   //id被洗掉了，手动添加
-    }
+  momo.post('/updateNotice', {
+    data,
+    id: oldData.id   //id被洗掉了，手动添加
   }).then(result => {
     // console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     //更新修订时间为当前时间
     data.updated_time = new Date().toISOString()
     //将修改后的信息显示出来
@@ -260,13 +254,9 @@ const form = reactive({
 //发布新的公告信息
 function submitNotice(data: Notice) {
   if (data.title === '' || data.sort === '' || data.content === '') return ElMessage.error('公告标题、分类、内容均不能为空！')
-  axios({
-    url: '/submitNotice',
-    method: 'post',
-    data
-  }).then(result => {
+  momo.post('/submitNotice', data).then(result => {
     // console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     ElMessage.success(msg)
     location.reload()
   }).catch(error => {
@@ -298,18 +288,14 @@ const deleteRow = (index: number, id: number) => {
 
 //删除公告
 const deleteNotice = (index: number, id: number) => {
-  axios({
-    url: '/deleteNotice',
-    method: 'delete',
-    params: { id }
-  }).then((result) => {
-    // console.log(result)
-    ElMessage.success(result.data.msg)
-    tableData.splice(index, 1)
-    console.log(tableData)
-  }).catch(error => {
-    console.dir('发生错误：' + error)
-  })
+  momo.delete('/deleteNotice',{ id }).then((result) => {
+  // console.log(result)
+  ElMessage.success(result.msg)
+  tableData.splice(index, 1)
+  console.log(tableData)
+}).catch(error => {
+  console.dir('发生错误：' + error)
+})
 }
 </script>
 

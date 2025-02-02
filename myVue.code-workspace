@@ -15,6 +15,7 @@
 			"avinfo",
 			"myvue",
 			"QINIUTHUMBNAIL"
-		]
+		],
+		"terminal.explorerKind": "both"
 	}
 }

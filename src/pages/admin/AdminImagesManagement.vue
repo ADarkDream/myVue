@@ -104,7 +104,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import axios from "axios";
+import momo from "@/apis"
 import { ElMessage, ElMessageBox } from "element-plus";
 import type { TableColumnCtx, TableInstance } from "element-plus";
 //hooks
@@ -172,11 +172,9 @@ let urlInfo: Image = reactive({
 getImages()
 
 function getImages() {
-  axios({
-    url: '/getImages',
-  }).then(result => {
+  momo.get('/getImages').then(result => {
     console.log(result)
-    const { msg, data } = result.data
+    const { msg, data } = result
     ElMessage.success(msg)
     tableData.splice(0, tableData.length)
     data.forEach((item: Image) => {
@@ -222,30 +220,27 @@ function checkUpdateRow(newData: Image, oldData: Image) {
 
 //上传更新的图片信息
 function updateRow(data: Image, id: number, oldData: Image) {
-  axios({
-    url: '/updateImage',
-    method: 'post',
-    data: {
+  momo.post('/updateImage',
+    {
       data,
       id
-    }
-  }).then(result => {
-    // console.log(result)
-    const { msg, newPath } = result.data
-    //判断是否修改文件路径
-    if (newPath !== undefined) data.imgPath = newPath
-    //更新修订时间为当前时间
-    data.updated_time = new Date().toISOString()
-    //将修改后的信息显示出来
-    Object.assign(oldData, data)
-    //去除编辑标记
-    isEditRow.value = -1
-    ElMessage.success(msg)
-  }).catch(error => {
-    console.log('发生错误：')
-    console.log(error)
-    //ElMessage.error('发生错误：' + error.message)
-  })
+    }).then(result => {
+      // console.log(result)
+      const { msg, newPath } = result
+      //判断是否修改文件路径
+      if (newPath !== undefined) data.imgPath = newPath
+      //更新修订时间为当前时间
+      data.updated_time = new Date().toISOString()
+      //将修改后的信息显示出来
+      Object.assign(oldData, data)
+      //去除编辑标记
+      isEditRow.value = -1
+      ElMessage.success(msg)
+    }).catch(error => {
+      console.log('发生错误：')
+      console.log(error)
+      //ElMessage.error('发生错误：' + error.message)
+    })
 }
 
 
@@ -269,13 +264,9 @@ const deleteRow = (index: number, info: Image) => {
 
 //删除图片
 const deleteImage = (index: number, data: Image) => {
-  axios({
-    url: '/deleteImage',
-    method: 'delete',
-    data
-  }).then((result) => {
+  momo.delete('/deleteImage', data).then((result) => {
     // console.log(result)
-    ElMessage.success(result.data.msg)
+    ElMessage.success(result.msg)
     tableData.splice(index, 1)
     ElMessage.info('因为浏览器和CDN缓存，图片链接可能一段时间后才失效')
   }).catch(error => {

@@ -22,7 +22,7 @@
             <p>歌单状态：
               <el-text :type="musicListInfo?.status === 1 ? 'primary' : 'success'">{{
                 musicListInfo?.status === 1 ? '私有' : '公开'
-                }}
+              }}
               </el-text>
             </p>
             <p>歌曲数：{{ musicListInfo?.songsCount }}<el-button link size="small" plain type="primary"
@@ -132,7 +132,7 @@ const refresh = async () => {
   let result
   if (isOwner.value) result = await getMusicList({ music_list_id, is_login: isLogin.value }, true)
   else result = await getCloudMusicList({ cloud_music_list_id: cloud_music_list_id!, latest: 1 })
-  const { status, msg } = result
+  const { code, msg } = result
 
   if (status === 1) ElMessage.success('刷新成功')
   else ElMessage.info(msg)

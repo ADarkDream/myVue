@@ -1,5 +1,5 @@
-import { Notice, ResultData } from "@/types/global";
-import axios from "axios";
+import { Notice } from "@/types/global";
+import momo from "@/apis"
 
 /**
  * 请求公告
@@ -7,12 +7,9 @@ import axios from "axios";
  * @returns 
  */
 export async function api_getNotice(sort: string[]) {
-    const result = await axios<ResultData<{ noticeList: Notice[] }>>({
-        url: '/getNotices',
-        params: { sort }
-    })
-    console.log('/返回的数据为：', result.data)
-    return result.data
+    const result = await momo.get<{ noticeList: Notice[] }>('/getNotices', { sort })
+    console.log('/返回的数据为：', result)
+    return result
 }
 
 /**
@@ -22,11 +19,7 @@ export async function api_getNotice(sort: string[]) {
  * @returns 
  */
 export async function api_submitFeedBack(data: { contact: string, content: string }) {
-    const result = await axios<ResultData<undefined>>({
-        url: '/submitFeedback',
-        method: 'post',
-        data
-    })
-    console.log('/返回的数据为：', result.data)
-    return result.data
+    const result = await momo.post<undefined>('/submitFeedback', data)
+    console.log('/返回的数据为：', result)
+    return result
 } 

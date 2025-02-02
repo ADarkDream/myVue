@@ -76,21 +76,21 @@ export default function () {
 
         if (localInfo && localList) return { status: 1, msg: '已获取本地缓存数据' }
         console.log(`本地缓存没有歌单${music_list_id}的信息,查询服务器`)
-        const { status, msg, data } = await musicListUtils.getMusicList({ music_list_id, limit, offset, is_login })
+        const { code, msg, data } = await musicListUtils.getMusicList({ music_list_id, limit, offset, is_login })
         //处理请求后的信息
         if (status === 1 && data) save_music_info(data, music_list_id)
-        return { status, msg }
+        return { code, msg }
     }
 
     //搜索网易云的歌单及音乐信息
     const getCloudMusicList = async ({ cloud_music_list_id, limit, offset, latest }: QueryCloudMusicList) => {
-        const { status, data, msg } = await musicListUtils.getCloudMusicList({ cloud_music_list_id, limit, offset, latest }) as { status: number, data?: MusicList, msg: string }
+        const { code, data, msg } = await musicListUtils.getCloudMusicList({ cloud_music_list_id, limit, offset, latest }) as { status: number, data?: MusicList, msg: string }
         //处理请求后的信息
         if (status === 1 && data) {
             const music_list_id = data.musicListInfo.music_list_id
             save_music_info(data, music_list_id)
         }
-        return { status, msg }
+        return { code, msg }
     }
 
     //处理请求后的歌单信息或歌曲列表，存入对象，更新当前
@@ -119,7 +119,7 @@ export default function () {
      */
     const connectMusicToList = async (music_list_id: number) => {
         const { status } = await musicListUtils.connectMusicToList(music_id_list.value, music_list_id)
-        if (status === 200) {
+        if (code === 200) {
             ElMessage.success('添加成功')
             isShowMusicListDrawer.value = false//关闭歌单列表
             //更新歌单信息
@@ -127,7 +127,7 @@ export default function () {
             getMusicListsInfo({ is_login: true, user_id: uid.value, music_list_id }, true)
             // musicListInfoObj.value[music_list_id.toString()] = MusicListInfo
 
-        } else if (status === 300) return// ElMessage.info(msg)
+        } else if (code === 300) return// ElMessage.info(msg)
         else ElMessage.error('添加失败')
     }
 
@@ -165,7 +165,7 @@ export default function () {
      */
     const createMusicList = async (formData: MusicListInfo) => {
         try {
-            const { status, msg, music_list_info } = await musicListUtils.createMusicList(formData)
+            const { code, msg, music_list_info } = await musicListUtils.createMusicList(formData)
             if (status === 1 && music_list_info) {
                 const { music_list_id } = music_list_info
                 ElMessage.success(msg)

@@ -26,7 +26,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
-import axios from "axios";
+import momo from "@/apis"
 import type { FormInstance, FormRules } from 'element-plus'
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
@@ -38,7 +38,6 @@ import verifyRules from "@/utils/verifyRules";
 import titleDiv from '@/utils/titleDiv';
 //types
 import type { loginForm } from "@/types/form";
-import { ResultData } from '@/types/global';
 import { UserInfo } from '@/types/user';
 
 
@@ -92,7 +91,7 @@ const submitForm = async () => {
   if (!ruleFormRef.value) return
   await ruleFormRef.value.validate(async (res) => {
     if (res) {
-      //此处调用axios上传
+      //此处调用momo上传
       await login()
     }
     // else {
@@ -120,18 +119,14 @@ const login = async () => {
     //解决点击登录后马上切换导致误通过的BUG
     if (!ruleForm.policy) return
     const { email, password } = ruleForm
-    const result = await axios<ResultData<{ userInfo: UserInfo }>>({
-      url: '/login',
-      method: 'post',
-      data: {
-        email: email.toLowerCase(),
-        password
-      }
+    const result = await momo.post<{ userInfo: UserInfo }>('/login', {
+      email: email.toLowerCase(),
+      password
     })
 
-    // console.log(result.data)
-    if (!result.data.data) return ElMessage.error('登录失败')
-    const { userInfo } = result.data.data
+    // console.log(result)
+    if (!result.data) return ElMessage.error('登录失败')
+    const { userInfo } = result.data
     updateLocalUserInfo(userInfo)
     //成功提示信息
     ElMessage.success(`用户 ${userInfo.username} 登录成功`)

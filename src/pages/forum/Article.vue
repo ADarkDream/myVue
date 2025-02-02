@@ -106,7 +106,7 @@
 <script setup lang="ts">
 import { nextTick, onMounted, reactive, ref, toRefs } from "vue";
 import { useRoute, useRouter } from 'vue-router'
-import axios from "axios";
+import momo from "@/apis"
 import { ArrowLeftBold, Refresh, Delete, MoreFilled, WarnTriangleFilled } from "@element-plus/icons-vue";
 import hljs from 'highlight.js/lib/common';
 //stores
@@ -171,19 +171,17 @@ const comments = ref<CommentInfo[]>([])
 async function getArticle() {
   let url = '/getArticle'
   if (isLogin.value) url = '/getTheArticle'
-  await axios({
-    url,
-    params: {
-      //用路由跳转传来的文章id再次向服务器请求文章数据
-      id: route.query.id,
-      isAdmin: isAdmin.value
-    }
-  }).then(async (result) => {
+  await momo.get(url, {
+    //用路由跳转传来的文章id再次向服务器请求文章数据
+    id: route.query.id,
+    isAdmin: isAdmin.value
+  }
+  ).then(async (result) => {
     console.log(result)
-    const { comments: commentsData } = result.data
+    const { comments: commentsData } = result
     console.log(!!comments)
     // ElMessage.success(msg)
-    article.value = result.data.article
+    article.value = result.article
     //判断返回的数据中是否有评论
     if (!!commentsData && commentsData.length !== 0) {
       comments.value.splice(0, comments.value.length)
@@ -241,7 +239,7 @@ function addCodeHighLight() {
 
 //修正图片宽度问题
 function fixImageWidth() {
-  const images = document.querySelectorAll('.articleContent p img');
+  const images = document.querySelectorAll('.articleContent p img')
   images.forEach((img: HTMLElement) => {
     // 移除内联样式中的宽度
     img.style.width = '100%'// 200 + 'px';
@@ -262,18 +260,15 @@ function addComment() {
       text: `正在审核中，请稍后...`,
       background: 'rgba(0, 0, 0, 0.7)',
     })
-    axios({
-      url: '/addComment',
-      method: 'post',
-      data: {
+    momo.post('/addComment', {
         articleId: route.query.id,
         comment: comment.value.trim()
       }
-    }).then(result => {
+    ).then(result => {
       // console.log(result)
       loading.close()
-      const { status, msg } = result.data
-      if (status === 200) {
+      const { code, msg } = result
+      if (code === 200) {
         ElMessage.success(msg)
         // 成功之后刷新
         comment.value = ''
@@ -289,8 +284,7 @@ function addComment() {
 
 //管理员审核文章
 function checkArticle(status: number) {
-  axios({
-    url: '/checkArticle',
+  momo.post( '/checkArticle',
     method: 'post',
     data: {
       id: route.query.id,
@@ -298,7 +292,7 @@ function checkArticle(status: number) {
     }
   }).then(result => {
     console.log(result)
-    ElMessage.success(result.data.msg)
+    ElMessage.success(result.msg)
     // 成功之后返回管理界面
     setTimeout(() => {
       router.back()
@@ -331,13 +325,9 @@ const deleteRow = (id: number) => {
 
 //删除评论
 const deleteComment = (id: number) => {
-  axios({
-    url: '/deleteTheComment',
-    method: 'delete',
-    params: { id }
-  }).then((result) => {
+  momo.delete( '/deleteTheComment',{ id }).then((result) => {
     // console.log(result)
-    ElMessage.success(result.data.msg)
+    ElMessage.success(result.msg)
     setTimeout(() => {
       location.reload()
     }, 1500)
@@ -348,7 +338,7 @@ const deleteComment = (id: number) => {
 
 
 //region评论框动态变化
-const commentBox = ref(null)
+const commentBox = ref<HTMLDivElement | null>(null)
 const isFixed = ref(false)
 //输入评论框距离页面顶部的距离,默认设置1000
 const commentsBoxOffsetTop = ref(1000)
@@ -368,7 +358,8 @@ onMounted(async () => {
     fixImageWidth()//修改图片宽度
     if (comments.value.length === 0) console.log('没有评论')
     else {//有评论时获取输入评论框距离页面顶部的距离
-      commentsBoxOffsetTop.value = commentBox.value.offsetTop
+      if (commentBox.value)
+        commentsBoxOffsetTop.value = commentBox.value.offsetTop
     }
   })
 })

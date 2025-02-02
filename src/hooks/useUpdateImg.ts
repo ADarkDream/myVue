@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { ElMessage, type UploadFile } from "element-plus";
 import * as SparkMD5 from "spark-md5";//ts中这么导入
-import axios from "axios";
+import momo from "@/apis"
 
 export default function () {
     //计算图片的MD5值
@@ -51,14 +51,9 @@ export default function () {
         // console.log('md5:', md5.value)
         param.append('md5', md5.value)
         param.append('sort', 'headImg')
-        axios({
-            url: '/upload',
-            method: 'post',
-            // headers: {'Content-Type': 'multipart/form-data'},
-            data: param
-        }).then(result => {
+        momo.post('/upload', param).then(result => {
             // console.log(result)
-            const { msg, imgUrl } = result.data as { status: number, msg: string, imgUrl: string }
+            const { msg, imgUrl } = result as { status: number, msg: string, imgUrl: string }
             ElMessage.success(msg)
             console.log('获取成功：', imgUrl)
             setTimeout(() => {

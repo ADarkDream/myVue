@@ -41,7 +41,7 @@ import { useRoute, useRouter } from "vue-router";
 import { IToolbarConfig, IEditorConfig } from '@wangeditor/editor'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
-import axios from "axios";
+import momo from "@/apis"
 //stores
 import { useResponsiveStore } from "@/store/useResponsiveStore";
 //utils
@@ -166,14 +166,10 @@ function submit() {
       text: '正在审核中，请稍后...',
       background: 'rgba(0, 0, 0, 0.7)',
     })
-    axios({
-      url: '/submitArticle',
-      method: 'post',
-      data
-    }).then(result => {
-      const { status, msg } = result.data
+    momo.post('/submitArticle', data).then(result => {
+      const { code, msg } = result
       loading.close()
-      if (status === 200) {
+      if (code === 200) {
         ElMessage.success(msg)
         setTimeout(() => {
           emitter.emit('pageRender', 2)
@@ -199,13 +195,9 @@ function addDraft() {
     if (id !== null && isDraft === '1') data.id = id.toString()
     data.text = text.value
     console.log(data)
-    axios({
-      url: '/addDraft',
-      method: 'post',
-      data
-    }).then(result => {
-      const { status, msg } = result.data
-      if (status === 200) {
+    momo.post('/addDraft', data).then(result => {
+      const { code, msg } = result
+      if (code === 200) {
         ElMessage.success(msg)
         setTimeout(() => {
           sessionStorage.setItem('activeNumber', '2')

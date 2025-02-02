@@ -40,9 +40,9 @@ onBeforeMount(async () => {
 //监听服务器的首次连接，获取信息
 socket.value.on('connection', (result: ResultData<{ playerID: string }>) => {
   console.log('connection收到消息：', result)
-  const { status, msg, data } = result
+  const { code, msg, data } = result
   //这里要先判断本地数据，确认是不是断线重连
-  if (status === 200 && data) {
+  if (code === 200 && data) {
     ElMessage.success(msg)
     setPID(data.playerID)
     console.log('playerInfo', playerInfo.value)
@@ -52,8 +52,8 @@ socket.value.on('connection', (result: ResultData<{ playerID: string }>) => {
 //监听自己创建房间的消息
 socket.value.on('room-add', result => {
   console.log('room-add收到消息：', result)
-  const { status, msg, data } = result
-  if (status === 200) {
+  const { code, msg, data } = result
+  if (code === 200) {
     ElMessage.success(msg)
     playerInfo.value = data.playerInfo
     console.log('playerInfo', playerInfo.value)
@@ -67,8 +67,8 @@ socket.value.on('room-add', result => {
 //监听自己加入房间的消息
 socket.value.on('room-join', result => {
   console.log('room-join收到消息：', result)
-  const { status, msg, data } = result
-  if (status === 200) {
+  const { code, msg, data } = result
+  if (code === 200) {
     ElMessage.success(msg)
     playerInfo.value = data.playerInfo
     getMsgHistory(data.msgHistory)
@@ -109,8 +109,8 @@ const mergeAndSortArrays = (array1: ChatMsg[], array2: ChatMsg[]): ChatMsg[] => 
 //房间内的消息
 socket.value.on('room-message', result => {
   console.log('room-message收到消息：', result)
-  const { status, msg, data } = result
-  if (status === 200) {
+  const { code, msg, data } = result
+  if (code === 200) {
     // data.roomID=
     roomMsg.value.push(data)
     //接收到消息之后，执行向下滚动
@@ -122,8 +122,8 @@ socket.value.on('room-message', result => {
 //监听其他人加入房间的信息
 socket.value.on('player-join', result => {
   console.log('player-join收到消息：', result)
-  const { status, msg, data } = result
-  if (status === 200 && data.playerInfo.playerID !== playerInfo.value.playerID) //排除本人
+  const { code, msg, data } = result
+  if (code === 200 && data.playerInfo.playerID !== playerInfo.value.playerID) //排除本人
     ElMessage.info(msg)
   //roomMsg.push({type: data.type, message:msg, time: data.time})
   // ElMessage.info(msg)
@@ -133,8 +133,8 @@ socket.value.on('player-join', result => {
 //监听其他人离开房间的信息
 socket.value.on('player-leave', result => {
   console.log('player-leave收到消息：', result)
-  const { status, msg, data } = result
-  if (status === 200) ElMessage.info(msg)//roomMsg.push({type: data.type, msg, time: data.time})
+  const { code, msg, data } = result
+  if (code === 200) ElMessage.info(msg)//roomMsg.push({type: data.type, msg, time: data.time})
   // list2.push(result)
 })
 
@@ -154,8 +154,8 @@ socket.value.on('connect_error', (err) => {
 //监听自己重连房间的消息
 // socket.value.on('re-link', result => {
 //   console.log('re-link收到消息：', result)
-//   const {status, msg, data} = result
-//   if (status === 200) {
+//   const {code, msg, data} = result
+//   if (code === 200) {
 //     ElMessage.success(msg)
 //     Object.assign(playerInfo, data.playerInfo)
 //     setTimeout(() => {

@@ -32,7 +32,6 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
 import { onBeforeUnmount, onMounted, reactive, ref, toRefs } from "vue";
 import { CloseBold, UploadFilled } from "@element-plus/icons-vue";
 //stores
@@ -45,7 +44,8 @@ import AddUrl from "@/components/AddUrl.vue";
 import { emitter } from "@/utils/emitter";
 //types
 import { NavigationObj, Navigation, WebsiteInfoItem } from "@/types/url"
-import { ResultData } from "@/types/global";
+//apis
+import { api_get_url_list, api_get_url_list_info } from "@/apis/home/content";
 
 
 defineProps(['showContent'])
@@ -72,9 +72,11 @@ const dialogVisible = ref(false)
 //获取导航分类信息
 const getUrlListInfo = async () => {
   try {
-    const result = await axios<ResultData<WebsiteInfoItem[]>>('/getUrlListInfo')
-    console.log(result.data)
-    const { data } = result.data
+    const result = await api_get_url_list_info()
+    const { code, msg, data } = result
+    if (code !== 200 || !data) return ElMessage.error(msg)
+    console.log("getUrlListInfo", result);
+
     cloudList.splice(0, cloudList.length, ...data!)
     sessionStorage.setItem('cloudList', JSON.stringify(cloudList))
     let isChangeFlag = localList.length === 0//如果不存在本地列表，则直接修改
@@ -112,10 +114,13 @@ const getNewList = async (sort: string) => {
       console.log('正在使用本地缓存的导航数据', sort)
       return resultList.splice(0, resultList.length, ...localListObj[sort])
     }
-    const result = await axios<ResultData<Navigation[]>>({ url: '/getUrlList', params: { className: sort } })
-    const { data } = result.data
-    console.log('查询到的云端数据如下：')
-    console.log('result', data)
+    const result = await api_get_url_list(sort)
+    console.log("getNewList", result);
+
+    const { code, msg, data } = result
+    if (code !== 200 || !data) return ElMessage.error(msg)
+
+
     resultList.splice(0, resultList.length, ...data!)//显示在页面上
     localListObj[sort] = data//将本分类导航加入到localListObj
     localList[activeIndex.value] = cloudList[activeIndex.value]//将本分类导航的信息加入到localList
@@ -171,13 +176,9 @@ onBeforeUnmount(() => {
 //上传一条网址数据到数据库
 // const addUrl = async (urlInfo, table) => {
 //   try {
-//     const result = await axios({
-//       url: '/addUrl',
-//       method: 'post',
-//       data: {urlInfo, table}
-//     })
+//     const result = await momo.post('/addUrl',{urlInfo, table})
 //     console.log(result)
-//     ElMessage.success(result.data.msg)
+//     ElMessage.success(result.msg)
 //   } catch (error) {
 //     console.log('发生错误：')
 //     console.dir(error)

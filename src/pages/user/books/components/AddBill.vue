@@ -54,7 +54,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, toRefs, watch } from 'vue'
 import { ElMessage, type FormInstance } from "element-plus";
-import axios from "axios";
+import momo from "@/apis"
 //stores
 import { useBookStore } from "@/store/useBookStore";
 import { useResponsiveStore } from "@/store/useResponsiveStore";
@@ -63,7 +63,6 @@ import { useResponsiveStore } from "@/store/useResponsiveStore";
 import useTimestamp from '@/hooks/useTimestamp'
 //types
 import { Bill, NewBill } from "@/types/books";
-import { ResultData } from "@/types/global";
 
 
 const bookData = useBookStore()
@@ -136,13 +135,9 @@ const submit = async (url: string) => {
     //对比原数据检查是否有修改，如果没有修改则返回
     // addBillForm.bill_date=addBillForm.bill_date.getDate()
     //     return console.log('addBillForm', addBillForm)
-    const result = await axios<ResultData<{ newBill: Bill[] }>>({
-      url,
-      method: 'post',
-      data: Data
-    })
+    const result = await momo.post<{ newBill: Bill[] }>(url, Data)
     console.log(result)
-    const { msg, data } = result.data
+    const { msg, data } = result
     ElMessage.success(msg)
     //返回新增或修改的数据
 

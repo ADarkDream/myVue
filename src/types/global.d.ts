@@ -2,7 +2,7 @@ import { Bill } from "@/types/books";
 import { TableColumnCtx } from "element-plus";
 
 interface ResultData<T> {
-    status: number,
+    code: number,
     msg: string,
     data?: T
 }

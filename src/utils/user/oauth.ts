@@ -1,8 +1,6 @@
-import axios from "axios"
+import momo from "@/apis"
 import { ElMessage } from "element-plus"
 import titleDiv from "../titleDiv"
-import type { ResultData } from "@/types/global"
-import { userInfo } from "os"
 import { UserInfo } from "@/types/user"
 declare const QC: any
 
@@ -33,17 +31,15 @@ export default {
         //     console.log('accessToken', accessToken);
         // QC.api()
         try {
-            const result = await axios<ResultData<{ userInfo: UserInfo }>>({
-                url,
-                method: "POST",
-                data: { access_token, expired_time }
-            })
-            console.log('qq_oauth返回的数据为：', result.data)
-            const { status, msg, data } = result.data
+            const result = await momo.post<{ userInfo: UserInfo }>(url,
+                { access_token, expired_time }
+            )
+            console.log('qq_oauth返回的数据为：', result)
+            const { code, msg, data } = result
             //登录成功
-            if (status === 200 && data) return { flag: true, userInfo: data.userInfo, msg }
+            if (code === 200 && data) return { flag: true, userInfo: data.userInfo, msg }
             //绑定成功
-            else if (status === 200) return { flag: true, msg }
+            else if (code === 200) return { flag: true, msg }
             //失败
             else return { flag: false, msg }
         } catch (err) {

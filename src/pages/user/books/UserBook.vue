@@ -54,7 +54,7 @@ import { computed, onBeforeMount, onBeforeUnmount, reactive, ref, toRefs } from 
 import { useRoute } from "vue-router";
 import { ElMessage, ElMessageBox, type TabsInstance } from "element-plus";
 import { ArrowRight } from "@element-plus/icons-vue";
-import axios from "axios";
+import momo from "@/apis"
 //stores
 import { useBookStore } from '@/store/useBookStore'
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
@@ -74,7 +74,7 @@ import { emitter } from "@/utils/emitter";
 import myFunction from "@/utils/myFunction";
 //types
 import { Book, Bill, TotalCost, BillDesc, NewBill } from '@/types/books'
-import { ResultData, SpanMethodProps, TableFilterItem } from "@/types/global";
+import { SpanMethodProps, TableFilterItem } from "@/types/global";
 
 
 
@@ -146,13 +146,10 @@ const thisBill = ref<NewBill>()
 //获取账本信息
 const getTheBookDesc = async () => {
   try {
-    const result = await axios<ResultData<{ book: Book, members: Member[] }>>({
-      url: '/theBookDesc',
-      params: {
-        bid: bookInfo.value.bid,
-      }
+    const result = await momo.get<{ book: Book, members: Member[] }>('/theBookDesc', {
+      bid: bookInfo.value.bid,
     })
-    const { data } = result.data
+    const { data } = result
     console.log(data)
     bookInfo.value = data!.book
     console.log('bookInfo', bookInfo.value)
@@ -173,15 +170,12 @@ const getTheBookDesc = async () => {
 //获取账单简略信息(日历)
 const getTheBillDesc = async (start_date: string, end_date: string) => {
   try {
-    const result = await axios<ResultData<{ billsDesc: Record<string, BillDesc> }>>({
-      url: '/theBillDesc',
-      params: {
-        bid: bookInfo.value.bid,
-        start_date,
-        end_date
-      }
+    const result = await momo.get<{ billsDesc: Record<string, BillDesc> }>('/theBillDesc', {
+      bid: bookInfo.value.bid,
+      start_date,
+      end_date
     })
-    const { data } = result.data
+    const { data } = result
     console.log(data)
     bookDesc.value = data!.billsDesc
     console.log('bookDesc.value', bookDesc.value)
@@ -196,15 +190,12 @@ const getTheBillDesc = async (start_date: string, end_date: string) => {
 //获取账单列表
 const getTheBook = async (start_date: string, end_date: string) => {
   try {
-    const result = await axios<ResultData<{ bills: Bill[] }>>({
-      url: '/theBook',
-      params: {
-        bid: Number(route.query.bid),
-        start_date,
-        end_date
-      }
+    const result = await momo.get<{ bills: Bill[] }>('/theBook', {
+      bid: Number(route.query.bid),
+      start_date,
+      end_date
     })
-    const { data } = result.data
+    const { data } = result
     console.log(result)
     bookData.updateBillList(data!.bills)
 
@@ -408,13 +399,9 @@ const deleteRow = (index: number, { id, gid }: { id?: number, gid?: number }, st
 const deleteBill = async (index: number, { id, gid }: { id?: number, gid?: number }, status: number) => {
   try {
     //修改结算状态传递的是组序号gid,删除传递的id
-    const result = await axios({
-      url: '/deleteBill',
-      method: 'post',
-      data: { id, gid, status }
-    })
-    console.log(result.data)
-    const { msg } = result.data
+    const result = await momo.post('/deleteBill', { id, gid, status })
+    console.log(result)
+    const { msg } = result
     ElMessage.success(msg)
     if (status === 1 || status == 0) bookData.deleteBill({ gid, status })
     else bookData.deleteBill({ index, status })

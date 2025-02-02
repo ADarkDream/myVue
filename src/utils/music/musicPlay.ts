@@ -1,5 +1,5 @@
 //音乐播放相关的方法
-import axios from "axios";
+import momo from "@/apis"
 import { ElMessage } from "element-plus";
 //utils
 import myFunction from "@/utils/myFunction";
@@ -7,7 +7,6 @@ import regex from "@/utils/regexRules";
 //apis
 import { api_getRedirectUrl } from "@/apis/tool";
 //types
-import type { ResultData } from "@/types/global";
 import type { CloudSongInfo } from "@/types/music";
 
 const { copyText } = myFunction
@@ -18,12 +17,11 @@ const musicPlay = {
         try {
             const { id, cloud_music_id, fee, status } = song
             //获取播放链接
-            const result = await axios<ResultData<{ playInfo: { id: number, cloud_music_id: number, src: string } }>>({
-                url: '/getPlayInfo',
-                params: { id, cloud_music_id, fee, status },
-            })
+            const result = await momo.get<{ playInfo: { id: number, cloud_music_id: number, src: string } }>('/getPlayInfo',
+                { id, cloud_music_id, fee, status },
+            )
             console.log('获取播放链接信息：', result)
-            const { data } = result.data
+            const { data } = result
             if (data) {
                 //合并歌曲信息和播放地址信息
                 const newSong = Object.assign(song, data.playInfo)
@@ -39,14 +37,11 @@ const musicPlay = {
     //根据网易云音乐id数组，批量获取音乐信息(不含播放链接和歌词)
     getCloudMusic: async (idList: number[]) => {
         try {
-            const result = await axios<ResultData<{ songsInfo: CloudSongInfo[], errorIdList: string[] }>>({
-                url: '/getCloudMusic',
-                params: { idList },
-            })
+            const result = await momo.get<{ songsInfo: CloudSongInfo[], errorIdList: string[] }>('/getCloudMusic', { idList },)
             // console.log(result)
-            const { status, data, msg } = result.data
+            const { code, data, msg } = result
             console.log('获取的音乐信息：', data)
-            if (status === 200 || status === 300) {
+            if (code === 200 || code === 300) {
                 if (data?.songsInfo) return { status: 1, data: data as { songsInfo: CloudSongInfo[], errorIdList: string[] }, msg }
                 return { status: 0, msg }
             }
@@ -62,14 +57,11 @@ const musicPlay = {
     //根据数据库音乐id数组，批量获取音乐信息(不含播放链接和歌词)
     getPlayList: async (musicIdList: number[]) => {
         try {
-            const result = await axios<ResultData<{ songsInfo: CloudSongInfo[] }>>({
-                url: '/getPlayList',
-                params: { musicIdList },
-            })
+            const result = await momo.get<{ songsInfo: CloudSongInfo[] }>('/getPlayList', { musicIdList })
             // console.log(result)
-            const { status, data, msg } = result.data
+            const { code, data, msg } = result
             console.log('获取的音乐信息：', data)
-            if (status === 200 || status === 300) {
+            if (code === 200 || code === 300) {
                 if (data?.songsInfo) return { status: 1, data: data as { songsInfo: CloudSongInfo[], errorIdList: string[] }, msg }
                 return { status: 0, msg }
             }
@@ -104,8 +96,8 @@ const musicPlay = {
 
             if (isSong && regex.song_short.test(str)) {
                 const result = await api_getRedirectUrl(str)
-                const { status, msg, data } = result
-                if (status === 200 && data) str = data.redirectUrl
+                const { code, msg, data } = result
+                if (code === 200 && data) str = data.redirectUrl
                 else {
                     console.error(msg)
                     return id

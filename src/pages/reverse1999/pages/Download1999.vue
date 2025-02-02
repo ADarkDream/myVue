@@ -20,7 +20,7 @@
                   @change="handleCheckAllVersionChange">
                   全选
                 </el-checkbox>
-                <el-checkbox-group v-model="condition.version" style="text-align: left"
+                <el-checkbox-group v-model="condition.version" draggable="false" style="text-align: left"
                   @change="handleCheckedVersionsChange">
                   <el-checkbox v-for="{ version, versionName } in versionInfo" :key="version" :label="versionName"
                     :value="version" />
@@ -44,7 +44,7 @@
                     {{ name }}[{{ count }}]
                   </el-checkbox>
                 </div>
-                <el-checkbox-group v-model="condition.roles" style="text-align: left;draggable:false"
+                <el-checkbox-group v-model="condition.roles" draggable="false" style="text-align: left"
                   @change="handleCheckedRolesChange">
                   <el-text>角色常用名称：</el-text>
                   <el-checkbox v-for="item in roleInfo" :key="item.id" :label="item.name" :value="item.id" />
@@ -209,7 +209,7 @@ import {
   Top,
 } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import axios from "axios";
+import axios from 'axios';
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import { useResponsiveStore } from "@/store/useResponsiveStore";
@@ -234,6 +234,7 @@ import SVG_grid_four from '@/assets/reverse1999/grid_four.svg?component'
 import SVG_grid_nine from '@/assets/reverse1999/grid_nine.svg?component'
 import { api_getImage } from '@/apis/reverse1999';
 import { UserInfo } from '@/types/user';
+
 
 
 
@@ -635,7 +636,7 @@ const checkPort = async () => {
     const result = await axios('http://127.0.0.1:3000')
     console.log("result", result);
 
-    if (result?.data?.status === 200) {
+    if (result?.data?.code === 200) {
       ElMessage.success(result?.data?.msg)
       isOpenProxy.value = true
       // return true

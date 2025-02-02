@@ -1,7 +1,6 @@
 import { ElMessage } from "element-plus";
-import axios from "axios";
+import momo from "@/apis"
 //types
-import type { ResultData } from "@/types/global";
 
 const myFunction = {
 
@@ -139,13 +138,10 @@ const myFunction = {
     //获取随机N张重返未来1999背景图片
     getBG: async (sort?: number, limitNum?: number) => {
         try {
-            const result = await axios<ResultData<{ imgList: ReverseImg[] }>>({
-                url: '/getRandomWallpaper',
-                params: { sort, limitNum },
-            })
-            console.log(result)
-            const { status, msg, data } = result.data
-            if (status === 300) ElMessage.warning(msg)
+            const result = await momo.get<{ imgList: ReverseImg[] }>('/getRandomWallpaper', { sort, limitNum })
+
+            const { code, msg, data } = result
+            if (code === 300) ElMessage.warning(msg)
             console.log('/getRandomWallpaper', data)
             if (data) return data.imgList
             else return []
@@ -228,13 +224,9 @@ const myFunction = {
        */
     getTypes: async ({ jsonData, targetLanguage, typeName, justTypes = true }: { jsonData: JSON, targetLanguage?: string, typeName?: string, justTypes?: boolean }) => {
         try {
-            const result = await axios<ResultData<{ resultArr: string[] }>>({
-                url: '/getTypes',
-                method: "POST",
-                data: { jsonData, justTypes }
-            })
-            console.log('/返回的数据为：', result.data.data)
-            // const { status, msg, data } = result.data
+            const result = await momo.post<{ resultArr: string[] }>('/getTypes', { jsonData, justTypes })
+            console.log('/返回的数据为：', result)
+            // const { code, msg, data } = result
         } catch (err) {
             console.error('getTypes出错了:')
             console.error(err)

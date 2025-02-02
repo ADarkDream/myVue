@@ -220,7 +220,7 @@
 import { reactive, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox, type TableColumnCtx, type TableInstance } from "element-plus";
-import axios from "axios";
+import momo from "@/apis"
 
 //stores
 import { useResponsiveStore } from "@/store/useResponsiveStore";
@@ -277,20 +277,15 @@ getArticleList()
 
 //获取草稿
 function getDraftList() {
-  axios({
-    url: '/getDraftList',
-    params: {},
-    //method: 'post',
-    data: {}
-  }).then(result => {
+  momo.get('/getDraftList').then(result => {
     // console.log(result)
 
     //清除旧数据
     draftList.splice(0, draftList.length)
     //添加新数据
-    // console.log(result.data.status)
-    if (result.data.status === 200)
-      result.data.list.forEach((item: Article) => {
+    // console.log(result.status)
+    if (result.code === 200)
+      result.list.forEach((item: Article) => {
         // console.log(item.status === 0)
         //除了草稿要判断，文章的请求也要判断！！！
         if (Number(item.status) === 0) draftList.push(item)//草稿
@@ -304,22 +299,19 @@ function getDraftList() {
 
 //region获取已发布文章
 function getArticleList() {
-  axios({
-    url: '/getUserArticleList',
-    params: {
-      isSubmit: true
-    }
+  momo.get('/getUserArticleList', {
+    isSubmit: true
   }).then(result => {
     // console.log(result)
-    const list = result.data.list
+    const list = result.list
     //清除旧数据
     allArticleList.splice(0, allArticleList.length)
     noSubmitArticleList.splice(0, noSubmitArticleList.length)
     failedArticleList.splice(0, failedArticleList.length)
     articleList.splice(0, articleList.length)
     //添加新数据
-    // console.log(result.data.status)
-    if (result.data.status === 200)
+    // console.log(result.status)
+    if (result.code === 200)
       list.forEach((item: Article) => {
         allArticleList.push(item)
         if (Number(item.status) === 0) noSubmitArticleList.push(item)//待审核的
@@ -334,13 +326,9 @@ function getArticleList() {
 
 //删除草稿
 function deleteMyDraft(id: number) {
-  axios({
-    url: '/deleteMyDraft',
-    method: 'delete',
-    params: { id }
-  }).then(result => {
+  momo.delete('/deleteMyDraft', { id }).then(result => {
     // console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     ElMessage.success(msg)
     //删除之后刷新列表
     getDraftList()
@@ -351,13 +339,9 @@ function deleteMyDraft(id: number) {
 
 //删除文章
 function deleteMyArticle(id: number) {
-  axios({
-    url: '/deleteMyArticle',
-    method: 'delete',
-    params: { id }
-  }).then(result => {
+  momo.delete('/deleteMyArticle', { id }).then(result => {
     // console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     ElMessage.success(msg)
     //删除之后刷新列表
     getArticleList()

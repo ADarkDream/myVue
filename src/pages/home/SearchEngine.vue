@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, toRefs } from "vue";
 import { More, Search, Sort } from "@element-plus/icons-vue";
-import axios from "axios";
+import momo from "@/apis"
 //stores
 import { useLocalEnginesStore } from "@/store/useLocalEnginesStore";
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
@@ -93,9 +93,9 @@ const engineOption = ref(false)
 
 // const getHitokoto = async () => {
 //   try {
-//     const result = await axios.get('https://v2.jinrishici.com/token')
-//     console.log(result.data.hitokoto)
-//     placeholder.value = result.data.hitokoto as string
+//     const result = await momo.get('https://v2.jinrishici.com/token')
+//     console.log(result.hitokoto)
+//     placeholder.value = result.hitokoto as string
 //
 //   } catch (error) {
 //     console.log('发生错误：')
@@ -181,11 +181,9 @@ const closeEngineOption = () => {
 async function getEngineList() {
   //如果登录了，就获取数据库中的搜索引擎
   if (isLogin.value) {
-    await axios({
-      url: '/getEngines',
-    }).then(result => {
-      // console.log(result)
-      let { engineList } = result.data
+    await momo.get('/getEngines').then(result => {
+      console.log("获取自定义搜索引擎列表", result)
+      let { engineList } = result
       userEngines.splice(0, userEngines.length)
       engineList = engineList.map((item: EngineData) => {
         item.isShow = true

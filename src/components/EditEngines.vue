@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import { ref, toRefs } from "vue";
-import axios from "axios";
+import momo from "@/apis"
 import { Delete } from "@element-plus/icons-vue";
 //stores
 import { useLocalEnginesStore } from "@/store/useLocalEnginesStore";
@@ -71,13 +71,9 @@ const addEngineFlag = ref(false)
 //删除搜索引擎
 function deleteEngine(id: number) {
   if (isLogin.value) {
-    axios({
-      url: '/deleteEngine',
-      method: 'delete',
-      params: { id }
-    }).then(result => {
+    momo.delete('/deleteEngine', { id }).then(result => {
       // console.log(result)
-      const { msg } = result.data
+      const { msg } = result
       const newEngines = userEngines.filter((item: EngineData) => item.id !== id)
       userEngines.splice(0, userEngines.length)
       newEngines.forEach((item: EngineData) => {

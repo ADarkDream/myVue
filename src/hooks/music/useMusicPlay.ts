@@ -385,7 +385,7 @@ export default function () {
             result = await useMusicPlay.getCloudMusic(idList)
         }
 
-        const { status, data, msg } = result
+        const { code, data, msg } = result
         //清洗掉返回数据中没有播放地址的歌曲信息（过滤掉src不存在的song）
 
         if (status === 1 && data) {

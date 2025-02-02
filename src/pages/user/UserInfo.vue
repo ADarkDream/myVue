@@ -142,7 +142,7 @@ import { ref, reactive, onMounted, toRefs, watch } from 'vue';
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox, FormInstance, FormRules } from "element-plus";
 import { Edit } from "@element-plus/icons-vue";
-import axios from "axios";
+import momo from "@/apis"
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 import { useUploadFileStore } from '@/store/upload/uploadFileStore';
@@ -223,9 +223,9 @@ const draftNum = ref(0)
 //获取用户评论信息
 const getUserComments = async () => {
   try {
-    const result = await axios({ url: '/getTheComments' })
+    const result = await momo.get('/getTheComments')
     console.log(result)
-    const { status, data, msg } = result.data
+    const { code, data, msg } = result
     commentNum.value = data.length
   } catch (error) {
     console.log('发生错误：')
@@ -236,14 +236,12 @@ const getUserComments = async () => {
 //获取用户文章列表
 const getArticleList = async () => {
   try {
-    const result = await axios({
-      url: '/getUserArticleList',
-      params: {
+    const result = await momo.get('/getUserArticleList',
+      {
         isSubmit: true
-      }
-    })
+      })
     console.log(result)
-    const list = result.data.list
+    const list = result.list
     const articleList = reactive([])
     const noSubmitArticleList = reactive([])
     //添加新数据
@@ -263,9 +261,9 @@ const getArticleList = async () => {
 //获取用户草稿列表
 const getDraftList = async () => {
   try {
-    const result = await axios({ url: '/getDraftList' })
+    const result = await momo.get('/getDraftList')
     console.log(result)
-    if (result.data.list !== undefined) draftNum.value = result.data.list.length
+    if (result.list !== undefined) draftNum.value = result.list.length
     else draftNum.value = 0
   } catch (error) {
     console.log('发生错误：')
@@ -285,13 +283,11 @@ const newSignature = ref(signature.value)
 //修改个性签名
 const editSignature = async () => {
   try {
-    const result = await axios({
-      url: '/updateSignature',
-      method: 'post',
-      data: { signature: newSignature.value?.trim() }
-    })
+    const result = await momo.post('/updateSignature',
+      { signature: newSignature.value?.trim() }
+    )
     console.log(result)
-    const { data } = result.data
+    const { data } = result
     signature.value = data
     newSignature.value = data
   } catch (error) {
@@ -460,7 +456,7 @@ const submitForm = (data: FormInstance | undefined, flag: number) => {
   if (!data) return
   data.validate((res) => {
     if (res) {
-      //此处调用axios上传
+      //此处调用momo上传
       console.log(ruleForm)
       if (flag === 0) {
         ruleForm.edit = 'email'
@@ -480,13 +476,9 @@ const submitForm = (data: FormInstance | undefined, flag: number) => {
 //修改账号信息
 const updateUser = async (changeData: AccountChange, url: string) => {
   try {
-    const result = await axios({
-      url,
-      method: 'post',
-      data: changeData
-    })
+    const result = await momo.post(url, changeData)
     console.log(result)
-    const { msg, flag, data } = result.data
+    const { msg, flag, data } = result
     ElMessage.success(msg)
     //修改昵称，刷新页面
     if (flag === 0) {
@@ -512,16 +504,12 @@ const updateUser = async (changeData: AccountChange, url: string) => {
 const deleteUser = async () => {
   const { email, password } = ruleForm
   try {
-    const result = await axios({
-      url: '/deleteUser',
-      method: 'delete',
-      data: {
-        email: email.toLowerCase(),
-        password
-      }
+    const result = await momo.delete('/deleteUser', {
+      email: email.toLowerCase(),
+      password
     })
     console.log(result)
-    ElMessage.success(result.data.msg)
+    ElMessage.success(result.msg)
     localStorage.clear()
     sessionStorage.clear()
     setTimeout(() => {

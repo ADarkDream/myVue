@@ -2,8 +2,7 @@
 import { defineStore } from 'pinia'
 import { reactive, ref } from "vue";
 import type { CloudSongInfo, Album, MusicList, SearchResult } from "@/types/music";
-import axios from "axios";
-import type { ResultData } from "@/types/global";
+import momo from "@/apis"
 
 
 // 定义并暴露一个store
@@ -32,11 +31,9 @@ export const useMusicSearchStore = defineStore('music_search', () => {
     const getHotWords = async () => {
         if (hotWords.value.length !== 0) return //已获取热词
         try {
-            const result = await axios<ResultData<{ hots: string[] }>>({
-                url: '/music_api/search/hot',
-            })
+            const result = await momo.get<{ hots: string[] }>('/music_api/search/hot')
             console.log(result)
-            const { status, msg, data } = result.data
+            const { code, msg, data } = result
             hotWords.value = data!.hots
         } catch (error) {
             console.log('发生错误：')
@@ -48,11 +45,8 @@ export const useMusicSearchStore = defineStore('music_search', () => {
     //搜索函数
     const search = async () => {
         try {
-            const result = await axios<ResultData<SearchResult<CloudSongInfo | Album>>>({
-                url: '/searchCloudMusic',
-                params: searchConfig
-            })
-            const { data } = result.data
+            const result = await momo.get<SearchResult<CloudSongInfo | Album>>('/searchCloudMusic', searchConfig)
+            const { data } = result
             if (!data) return
             const { type } = searchConfig
             if (type === 1) {//单曲列表

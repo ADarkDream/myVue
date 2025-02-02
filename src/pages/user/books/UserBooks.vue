@@ -56,7 +56,7 @@
 import { onMounted, reactive, ref, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { Delete, Edit, MoreFilled, Share } from "@element-plus/icons-vue";
-import axios from "axios";
+import momo from "@/apis"
 //stores
 import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
@@ -101,9 +101,9 @@ const dialogVisible = ref(false)
 //获取账本列表
 const getBooks = async () => {
   try {
-    const result = await axios({ url: '/myBooks' })
+    const result = await momo.get('/myBooks')
     console.log(result)
-    const { data } = result.data
+    const { data } = result
     books.splice(0, books.length, ...data)
 
   } catch (error) {
@@ -120,18 +120,15 @@ const updateBook = async (isDelete = false, index: number) => {
       return ElMessage.info('未检测到修改,已取消更新')
     }
     const { name, intro } = newBookInfo.value//解构出要上传的数据
-    const result = await axios({
-      url: '/updateBook',
-      method: 'post',
-      data: {
-        bid: books[index].bid,
-        name: isDelete ? undefined : name,
-        intro: isDelete ? undefined : intro,
-        status: isDelete ? 1 : undefined
-      }
+    const result = await momo.post(
+      '/updateBook', {
+      bid: books[index].bid,
+      name: isDelete ? undefined : name,
+      intro: isDelete ? undefined : intro,
+      status: isDelete ? 1 : undefined
     })
     console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     ElMessage.success(msg)
     //删除账本
     if (isDelete) books.splice(index, 1)

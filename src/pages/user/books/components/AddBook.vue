@@ -37,7 +37,7 @@
 import { reactive, ref } from 'vue'
 import { ElMessage, type FormInstance } from "element-plus";
 import type { TabsInstance } from 'element-plus'
-import axios from "axios";
+import momo from "@/apis"
 
 
 
@@ -61,13 +61,9 @@ const { cancelAddBook } = defineProps(['cancelAddBook'])
 //新建账本或加入账本协作
 const submit = async (formData, url: string) => {
   try {
-    const result = await axios({
-      url: url,
-      method: 'post',
-      data: formData
-    })
+    const result = await momo.post(url, formData)
     console.log(result)
-    const { msg, data } = result.data
+    const { msg, data } = result
     ElMessage.success(msg)
     cancelAddBook(data)
   } catch (error) {

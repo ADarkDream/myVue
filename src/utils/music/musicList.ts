@@ -1,7 +1,6 @@
 //搜索数据库的歌单及音乐信息
-import axios from "axios";
+import momo from "@/apis"
 import { ElMessage } from "element-plus";
-import type { ResultData } from "@/types/global";
 import type { MusicListInfo, QueryCloudMusicList, MusicList, QueryMusicList, QueryMusicLists, CloudSongInfo, CreateMusicListInfo } from "@/types/music";
 
 const musicList = {
@@ -33,12 +32,10 @@ const musicList = {
      */
     getCustomMusicList: async () => {
         try {
-            const result = await axios<ResultData<{ songsInfo: CloudSongInfo[] }>>({
-                url: '/getCustomMusicList',
-            })
-            console.log('/getCustomMusicList返回的数据为：', result.data)
-            const { status, msg, data } = result.data
-            if (status === 200 && data)
+            const result = await momo.get<{ songsInfo: CloudSongInfo[] }>('/getCustomMusicList')
+            console.log('/getCustomMusicList返回的数据为：', result)
+            const { code, msg, data } = result
+            if (code === 200 && data)
                 return data.songsInfo as CloudSongInfo[]
         } catch (err) {
             console.error('出错了:')
@@ -55,13 +52,12 @@ const musicList = {
      */
     getMusicList: async ({ music_list_id, limit, offset, is_login }: QueryMusicList) => {
         try {
-            const result = await axios<ResultData<MusicList>>({
-                url: is_login ? '/getMyMusicList' : '/getMusicList',
-                params: { music_list_id, limit, offset },
-            })
-            console.log('搜索数据库歌单的歌', result.data)
-            const { status, msg, data } = result.data
-            if ((status === 200 || status === 300) && data)
+            const result = await momo.get<MusicList>(is_login ? '/getMyMusicList' : '/getMusicList',
+                { music_list_id, limit, offset }
+            )
+            console.log('搜索数据库歌单的歌', result)
+            const { code, msg, data } = result
+            if ((code === 200 || code === 300) && data)
                 return { status: 1, msg, data: data }
             else return { status: 0, msg }
         } catch (error) {
@@ -81,15 +77,14 @@ const musicList = {
      */
     getCloudMusicList: async ({ cloud_music_list_id, limit, offset, latest }: QueryCloudMusicList) => {
         try {
-            const result = await axios<ResultData<MusicList>>({
-                url: '/getCloudMusicList',
-                params: { cloud_music_list_id, limit, offset, latest },
-            })
-            console.log('搜索网易云的歌单及音乐信息', result.data)
-            const { status, msg, data } = result.data
-            if (status === 200 && data) {
+            const result = await momo.get<MusicList>('/getCloudMusicList',
+                { cloud_music_list_id, limit, offset, latest },
+            )
+            console.log('搜索网易云的歌单及音乐信息', result)
+            const { code, msg, data } = result
+            if (code === 200 && data) {
                 return { status: 1, data: data }
-            }// else if (status === 300)
+            }// else if (code === 300)
             //    return { status: 0, msg }
             else return { status: 0, msg }
         } catch (error) {
@@ -101,16 +96,13 @@ const musicList = {
     // 用户获取歌单列表的信息,有user_id查询该用户的所有歌单，有music_list_id查询单个歌单，如果不是自己则只能查公开歌单
     getMusicListsInfo: async ({ is_login, user_id, music_list_id }: QueryMusicLists) => {
         try {
-            const result = await axios<ResultData<{ music_lists: MusicListInfo[] }>>({
-                url: is_login ? '/getUserMusicListsInfo' : '/getMusicListsInfo',
-                params: {
-                    user_id, music_list_id
-                }
-            })
-            console.log(result.data)
-            const { status, msg, data } = result.data
+            const result = await momo.get<{ music_lists: MusicListInfo[] }>(is_login ? '/getUserMusicListsInfo' : '/getMusicListsInfo',
+                { user_id, music_list_id }
+            )
+            console.log(result)
+            const { code, msg, data } = result
             //查询无结果
-            if (status === 300) return { status: 2, msg }
+            if (code === 300) return { status: 2, msg }
             //查询成功
             return { status: 1, list: data!.music_lists, msg }
         } catch (error) {
@@ -127,14 +119,10 @@ const musicList = {
      */
     createMusicList: async (formData: MusicListInfo) => {
         try {
-            const result = await axios<ResultData<{ music_list_info: MusicListInfo }>>({
-                url: '/addMusicList',
-                method: 'post',
-                data: formData
-            })
-            console.log(result.data)
-            const { status, msg, data } = result.data
-            if (status === 200 && data) return { status: 1, msg, music_list_info: data.music_list_info }
+            const result = await momo.post<{ music_list_info: MusicListInfo }>('/addMusicList', formData)
+            console.log(result)
+            const { code, msg, data } = result
+            if (code === 200 && data) return { status: 1, msg, music_list_info: data.music_list_info }
             return { status: 0, msg }
         } catch (error) {
             console.log('发生错误：')
@@ -149,14 +137,10 @@ const musicList = {
      */
     updateMyMusicListInfo: async (newData: MusicListInfo | { status: number }) => {
         try {
-            const result = await axios({
-                url: '/updateMyMusicListInfo',
-                method: "POST",
-                data: newData
-            })
-            console.log('/updateMyMusicListInfo返回的数据为：', result.data)
-            const { status, msg } = result.data
-            if (status === 200) {
+            const result = await momo.post('/updateMyMusicListInfo', newData)
+            console.log('/updateMyMusicListInfo返回的数据为：', result)
+            const { code, msg } = result
+            if (code === 200) {
                 ElMessage.success(msg)
                 return { status: 1 }
             }
@@ -176,13 +160,9 @@ const musicList = {
      */
     connectMusicToList: async (music_id_list: number[], music_list_id: number) => {
         try {
-            const result = await axios({
-                url: '/addCloudMusicToList',
-                method: "POST",
-                data: { music_id_list, music_list_id }
-            })
-            console.log('/connectMusicToList', result.data)
-            return result.data
+            const result = await momo.post('/addCloudMusicToList', { music_id_list, music_list_id })
+            console.log('/connectMusicToList', result)
+            return result
         } catch (err) {
             console.error('connectMusicList出错了:')
             console.error(err)
@@ -197,13 +177,9 @@ const musicList = {
      */
     deleteMusicFromList: async (music_id_list: number[], music_list_id: number) => {
         try {
-            const result = await axios({
-                url: '/deleteMusicFromList',
-                method: "DELETE",
-                data: { music_list_id, music_id_list }
-            })
-            console.log('/deleteMusicFromList返回的数据为：', result.data)
-            // const { status, msg, data } = result.data
+            const result = await momo.delete('/deleteMusicFromList', { music_list_id, music_id_list })
+            console.log('/deleteMusicFromList返回的数据为：', result)
+            // const { code, msg, data } = result
             return { status: 1 }
         } catch (err) {
             console.error('deleteMusicFromList出错了:')

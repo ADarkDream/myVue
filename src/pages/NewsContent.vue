@@ -107,7 +107,7 @@ import { nextTick, onMounted, onUnmounted, reactive, ref, toRefs } from "vue";
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeftBold, Refresh, Comment, Delete, MoreFilled, WarnTriangleFilled } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import axios from "axios";
+import momo from "@/apis"
 import hljs from 'highlight.js/lib/common';
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
@@ -170,19 +170,16 @@ let comments: Comment[] = reactive([])
 function getArticle() {
   let url = '/getArticle'
   if (isLogin.value) url = '/getTheArticle'
-  axios({
-    url,
-    params: {
-      //用路由跳转传来的文章id再次向服务器请求文章数据
-      id: route.query.id,
-      isAdmin: isAdmin.value
-    }
+  momo.get(url, {
+    //用路由跳转传来的文章id再次向服务器请求文章数据
+    id: route.query.id,
+    isAdmin: isAdmin.value
   }).then(async (result) => {
     console.log(result)
-    const { msg, comments: commentsData } = result.data
+    const { msg, comments: commentsData } = result
     console.log(msg)
     // ElMessage.success(msg)
-    Object.assign(article, result.data.article)
+    Object.assign(article, result.article)
     //判断返回的数据中是否有评论
     if (commentsData !== undefined) {
       comments.splice(0, comments.length)
@@ -258,18 +255,14 @@ function addComment() {
       text: `正在审核中，请稍后...`,
       background: 'rgba(0, 0, 0, 0.7)',
     })
-    axios({
-      url: '/addComment',
-      method: 'post',
-      data: {
-        articleId: route.query.id,
-        comment: comment.value.trim()
-      }
+    momo.post('/addComment', {
+      articleId: route.query.id,
+      comment: comment.value.trim()
     }).then(result => {
       // console.log(result)
       loading.close()
-      const { status, msg } = result.data
-      if (status === 200) {
+      const { code, msg } = result
+      if (code === 200) {
         ElMessage.success(msg)
         // 成功之后刷新
         comment.value = ''
@@ -285,24 +278,21 @@ function addComment() {
 
 //管理员审核文章
 function checkArticle(status: number) {
-  axios({
-    url: '/checkArticle',
-    method: 'post',
-    data: {
-      id: route.query.id,
-      status
-    }
-  }).then(result => {
-    console.log(result)
-    ElMessage.success(result.data.msg)
-    // 成功之后返回管理界面
-    setTimeout(() => {
-      router.back()
-    }, 1500)
-  }).catch(error => {
-    console.log('发生错误：')
-    console.log(error)
+  momo.post('/checkArticle', {
+    id: route.query.id,
+    status
   })
+    .then(result => {
+      console.log(result)
+      ElMessage.success(result.msg)
+      // 成功之后返回管理界面
+      setTimeout(() => {
+        router.back()
+      }, 1500)
+    }).catch(error => {
+      console.log('发生错误：')
+      console.log(error)
+    })
 }
 
 
@@ -324,19 +314,16 @@ const deleteRow = (id: number) => {
 
 //删除评论
 const deleteComment = (id: number) => {
-  axios({
-    url: '/deleteTheComment',
-    method: 'delete',
-    params: { id }
-  }).then((result) => {
-    // console.log(result)
-    ElMessage.success(result.data.msg)
-    setTimeout(() => {
-      location.reload()
-    }, 1500)
-  }).catch(error => {
-    console.dir('发生错误：' + error)
-  })
+  momo.delete('/deleteTheComment', { id })
+    .then((result) => {
+      // console.log(result)
+      ElMessage.success(result.msg)
+      setTimeout(() => {
+        location.reload()
+      }, 1500)
+    }).catch(error => {
+      console.dir('发生错误：' + error)
+    })
 }
 
 

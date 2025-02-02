@@ -1,5 +1,4 @@
-import { ResultData } from "@/types/global";
-import axios from "axios";
+import momo from "@/apis"
 
 /**
  * 请求重定向链接
@@ -7,10 +6,7 @@ import axios from "axios";
  * @returns 
  */
 export async function api_getRedirectUrl(url: string) {
-    const result = await axios<ResultData<{ redirectUrl: string }>>({
-        url: '/getRedirectUrl',
-        params: { url }
-    })
-    console.log('/getRedirectUrl返回的数据为：', result.data)
-    return result.data
+    const result = await momo.get<{ redirectUrl: string }>('/getRedirectUrl', { url })
+    console.log('/getRedirectUrl返回的数据为：', result)
+    return result
 }

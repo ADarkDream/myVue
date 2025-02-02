@@ -28,7 +28,7 @@ export default function () {
             if (!temp_v && !temp_r) return
 
 
-            const { status, msg, data } = await api_getVersion({ version: temp_v, role: temp_r }, isAdmin.value)
+            const { code, msg, data } = await api_getVersion({ version: temp_v, role: temp_r }, isAdmin.value)
             if (!data) return
             const { versionList, roleList } = data
 

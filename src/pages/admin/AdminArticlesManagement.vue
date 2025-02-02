@@ -159,7 +159,7 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router"
-import axios from "axios";
+import momo from "@/apis"
 import { ElMessage, ElMessageBox, type TableColumnCtx, type TableInstance } from "element-plus";
 import { onMounted, reactive, ref } from "vue";
 //hooks
@@ -191,11 +191,9 @@ onMounted(async () => {
 //region获取所有文章
 const getAllArticleList = async () => {
   try {
-    const result = await axios({
-      url: '/getAllUserArticleList',
-    })
+    const result = await momo.get('/getAllUserArticleList',)
     console.log(result)
-    const { msg, list } = result.data
+    const { msg, list } = result
     ElMessage.success(msg)
     //清除旧数据
     allArticleList.splice(0, allArticleList.length)
@@ -236,13 +234,9 @@ const deleteRow = (id: number) => {
 //删除文章
 const deleteArticle = async (id: number) => {
   try {
-    const result = await axios({
-      url: '/deleteArticle',
-      method: 'delete',
-      params: { id }
-    })
+    const result = await momo.delete('/deleteArticle', { id })
     // console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     ElMessage.success(msg)
     //删除之后刷新列表
 

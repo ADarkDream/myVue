@@ -155,7 +155,7 @@
 
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue'
-import axios from "axios";
+import momo from "@/apis"
 import { Search } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import type { TableInstance } from "element-plus";
@@ -318,11 +318,9 @@ let sort = reactive<Sort[]>([
 getAllUrlList()
 
 function getAllUrlList() {
-  axios({
-    url: '/getAllUrlList',
-  }).then(result => {
+  momo.get('/getAllUrlList').then(result => {
     console.log(result)
-    const { msg, urlList } = result.data
+    const { msg, urlList } = result
     ElMessage.success(msg)
     total.value = urlList.length
 
@@ -373,28 +371,25 @@ function checkUpdateRow(newData: Url, oldData: Url) {
 
 //上传更新的网址信息
 function updateRow(data: Url, id: number, oldData: Url) {
-  axios({
-    url: '/updateUrl',
-    method: 'post',
-    data: {
+  momo.post('/updateUrl',
+    {
       data,
       id
-    }
-  }).then(result => {
-    // console.log(result)
-    const { msg } = result.data
-    //更新修订时间为当前时间
-    data.updated_time = new Date().toISOString()
-    //将修改后的信息显示出来
-    Object.assign(oldData, data)
-    //去除编辑标记
-    isEditRow.value = -1
-    ElMessage.success(msg)
-  }).catch(error => {
-    console.log('发生错误：')
-    console.log(error)
-    ElMessage.error(error.msg)
-  })
+    }).then(result => {
+      // console.log(result)
+      const { msg } = result
+      //更新修订时间为当前时间
+      data.updated_time = new Date().toISOString()
+      //将修改后的信息显示出来
+      Object.assign(oldData, data)
+      //去除编辑标记
+      isEditRow.value = -1
+      ElMessage.success(msg)
+    }).catch(error => {
+      console.log('发生错误：')
+      console.log(error)
+      ElMessage.error(error.msg)
+    })
 }
 
 
@@ -417,13 +412,9 @@ const deleteRow = (index: number, id: number) => {
 
 //删除网址
 const deleteUrl = (index: number, id: number) => {
-  axios({
-    url: '/deleteUrl',
-    method: 'delete',
-    params: { id }
-  }).then((result) => {
+  momo.delete('/deleteUrl', { id }).then((result) => {
     // console.log(result)
-    ElMessage.success(result.data.msg)
+    ElMessage.success(result.msg)
 
     const newArr = totalData.filter(item => item.id !== id)
     totalData.splice(0, totalData.length, ...newArr)

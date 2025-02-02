@@ -212,7 +212,7 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
+import momo from "@/apis"
 import { reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox, TableColumnCtx, type TableInstance } from "element-plus";
 //stores
@@ -267,12 +267,10 @@ getAllUsers()
 
 
 function getAllUsers() {
-  axios({
-    url: '/getAllUsers',
-  }).then(result => {
+  momo.get('/getAllUsers',).then(result => {
     console.log(result)
 
-    const { msg, userList } = result.data
+    const { msg, userList } = result
     ElMessage.success(msg)
     tableData.splice(0, tableData.length)
     userList.forEach((item: UserInfo) => {
@@ -286,11 +284,9 @@ function getAllUsers() {
 
 function getAllAdmins() {
   if (!tableVisible.value) return
-  axios({
-    url: '/getAllAdmins',
-  }).then(result => {
+  momo.get('/getAllAdmins').then(result => {
     console.log(result)
-    const { msg, userList } = result.data
+    const { msg, userList } = result
     ElMessage.success(msg)
     tableData2.splice(0, tableData2.length)
     userList.forEach((item: UserInfo) => {
@@ -371,16 +367,13 @@ function checkUpdateRow(newData: UserInfo, oldData: UserInfo, isAdmin: boolean) 
 function updateRow(data: UserInfo, uid: number, oldData: UserInfo, isAdmin: boolean) {
   let url = '/updateUserInfo'
   if (isAdmin) url = '/updateAdminInfo'
-  axios({
-    url,
-    method: 'post',
-    data: {
-      data,
-      uid
-    }
-  }).then(result => {
+  momo.post(url, {
+    data,
+    uid
+  }
+  ).then(result => {
     console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     //修改更新时间
     oldData.updated_time = (new Date()).toISOString()
     if (isSuperAdmin) data.password = ''
@@ -401,13 +394,9 @@ function updateRow(data: UserInfo, uid: number, oldData: UserInfo, isAdmin: bool
 function addAdmin(uid: number) {
   console.log(uid)
   if (!isSuperAdmin.value) return
-  axios({
-    url: '/addAdmin',
-    method: 'post',
-    data: { uid }
-  }).then(result => {
+  momo.post('/addAdmin', { uid }).then(result => {
     console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     ElMessage.success(msg)
 
   }).catch(error => {
@@ -442,13 +431,9 @@ const deleteRow = (index: number, row: UserInfo, isAdmin: boolean) => {
 const deleteUser = (index: number, uid: number, isAdmin: boolean) => {
   let url = '/deleteUser'
   if (isAdmin) url = '/deleteAdmin'
-  axios({
-    url,
-    method: 'delete',
-    data: { uid }
-  }).then((result) => {
+  momo.delete( url,{ uid }).then((result) => {
     console.log(result)
-    ElMessage.success(result.data.msg)
+    ElMessage.success(result.msg)
     if (isAdmin) tableData2.splice(index, 1)
     else tableData.splice(index, 1)
   }).catch(error => {

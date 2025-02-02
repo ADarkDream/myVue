@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { reactive, ref, toRefs } from 'vue'
 import type { FormInstance } from "element-plus";
-import axios from "axios";
+import momo from "@/apis"
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 //types
@@ -104,13 +104,9 @@ function addEngine() {
     src: src.value
   }
   if (isLogin.value) {
-    axios({
-      url: '/addEngine',
-      method: 'post',
-      data
-    }).then(result => {
+    momo.post('/addEngine', data).then(result => {
       // console.log(result)
-      const { msg } = result.data
+      const { msg } = result
       ElMessage.success(msg)
       getEngineList()
       closeDialog()

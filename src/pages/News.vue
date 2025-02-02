@@ -10,7 +10,7 @@
         <div v-if="isPC">
           <el-button v-for="(item, index) in channelList" type="text" :key="index" @click="getNews(item)">{{
             item
-          }}</el-button>
+            }}</el-button>
         </div>
         <el-select v-else v-model="channel" placeholder="新闻类别" filterable @change="getNews(channel)"
           style="width: 75px;">
@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, toRefs } from "vue";
 import { Picture as IconPicture } from '@element-plus/icons-vue'
-import axios from "axios";
+import momo from "@/apis"
 //stores
 import { useResponsiveStore } from "@/store/useResponsiveStore";
 
@@ -100,11 +100,9 @@ onMounted(() => {
 
 //获取频道
 function getNewsChannel() {
-  axios({
-    url: '/newsChannel',
-  }).then(result => {
+  momo.get('/newsChannel').then(result => {
     console.log(result)
-    const { data } = result.data
+    const { data } = result
     channelList.splice(0, channelList.length, ...data)
 
   }).catch(error => {
@@ -115,20 +113,18 @@ function getNewsChannel() {
 }
 
 function getNews(type: string) {
-  axios({
-    url: '/news',
-    params: {
-      type,
-      num: newsNum.value
-    },
-  }).then(result => {
-    console.log(result)
-    const { data } = result.data
-    newsList.splice(0, newsList.length, ...data)
-  }).catch(error => {
-    console.log('发生错误：')
-    console.log(error)
+  momo.get('/news', {
+    type, num: newsNum.value
   })
+    .then(result => {
+      console.log(result)
+      const { data } = result
+      newsList.splice(0, newsList.length, ...data)
+    })
+    .catch(error => {
+      console.log('发生错误：')
+      console.log(error)
+    })
 }
 
 

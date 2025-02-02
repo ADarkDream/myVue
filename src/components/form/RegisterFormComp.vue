@@ -35,7 +35,7 @@
 <script lang="ts" setup>
 import { onUnmounted, reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import axios from "axios"
+import momo from "@/apis"
 //utils
 import verifyRules from "@/utils/verifyRules";
 import titleDiv from '@/utils/titleDiv';
@@ -104,12 +104,8 @@ const getEmailCode = async () => {
       console.log('定时器', t.value)
     }, 1000)
 
-    const result = await axios({
-      url: '/getEmailCode',
-      method: 'POST',
-      data: { email: ruleForm.email }
-    })
-    ElMessage.success(result.data.msg)
+    const result = await momo.post('/getEmailCode', { email: ruleForm.email })
+    ElMessage.success(result.msg)
   } catch (error) {
     console.log('发生错误：')
     console.error(error)
@@ -149,18 +145,14 @@ const register = async () => {
     //解决点击注册后马上切换导致误通过的BUG
     if (!ruleForm.policy) return
     const { username, email, password } = ruleForm
-    const result = await axios({
-      url: '/register',
-      method: 'POST',
-      data: {
-        username,
-        email: email.toLowerCase(),
-        password,
-        code: ruleForm.emailCode
-      }
+    const result = await momo.post('/register', {
+      username,
+      email: email.toLowerCase(),
+      password,
+      code: ruleForm.emailCode
     })
     console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     //成功提示信息
     ElMessage.success(msg)
     sessionStorage.setItem('email', email)

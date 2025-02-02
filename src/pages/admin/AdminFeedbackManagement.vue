@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import axios from "axios";
+import momo from "@/apis"
 import { ElMessage, ElMessageBox } from "element-plus";
 import type { TableColumnCtx, TableInstance } from "element-plus";
 //hooks
@@ -97,11 +97,9 @@ interface Feedback {
 getFeedback()
 
 function getFeedback() {
-  axios({
-    url: '/getFeedback',
-  }).then(result => {
+  momo.get('/getFeedback').then(result => {
     // console.log(result)
-    const { msg, data } = result.data
+    const { msg, data } = result
     ElMessage.success(msg)
     tableData.splice(0, tableData.length)
     data.forEach((item: Feedback) => {
@@ -118,16 +116,12 @@ function updateFeedback(index: number, oldData: Feedback) {
   let status = oldData.status
   if (status === 1) status = 0
   else status = 1
-  axios({
-    url: '/updateFeedback',
-    method: 'post',
-    data: {
-      status,
-      id: oldData.id
-    }
+  momo.post('/updateFeedback', {
+    status,
+    id: oldData.id
   }).then(result => {
     // console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     //更新修订时间为当前时间
     const updated_time = new Date().toISOString()
     //将修改后的信息显示出来
@@ -162,18 +156,15 @@ const deleteRow = (index: number, id: number) => {
 
 //删除公告
 const deleteFeedback = (index: number, id: number) => {
-  axios({
-    url: '/deleteFeedback',
-    method: 'delete',
-    params: { id }
-  }).then((result) => {
-    // console.log(result)
-    ElMessage.success(result.data.msg)
-    tableData.splice(index, 1)
-    console.log(tableData)
-  }).catch(error => {
-    console.dir('发生错误：' + error)
-  })
+  momo.delete('/deleteFeedback', { id })
+    .then((result) => {
+      // console.log(result)
+      ElMessage.success(result.msg)
+      tableData.splice(index, 1)
+      console.log(tableData)
+    }).catch(error => {
+      console.dir('发生错误：' + error)
+    })
 }
 </script>
 

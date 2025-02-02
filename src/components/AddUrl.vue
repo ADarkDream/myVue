@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import axios from "axios";
+import momo from "@/apis"
 //types
 import type { Navigation } from '@/types/url'
 import type { TableFilterItem } from '@/types/global';
@@ -78,13 +78,9 @@ const addUrl = async (data: Navigation) => {
   if (!data.name || !data.sort || !data.url) return ElMessage.error('导航站点名、分类、网址均不能为空！')
   if (!data.img.trim()) data.img = 'https://quaint-tomato-hare.faviconkit.com/' + form.url
   try {
-    const result = await axios({
-      url: '/addUrl',
-      method: 'post',
-      data
-    })
+    const result = await momo.post('/addUrl', data)
     console.log(result)
-    const { msg } = result.data
+    const { msg } = result
     ElMessage.success(msg)
     setTimeout(() => {
       location.reload()
