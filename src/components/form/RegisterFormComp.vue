@@ -21,12 +21,12 @@
       <el-input v-model.lazy.trim="ruleForm.checkPassword" type="password" autocomplete="off" placeholder="确认密码" />
     </el-form-item>
     <el-form-item prop="emailCode">
-      <template style="display: flex; justify-content: space-between; width: 100%">
+      <div style="display: flex; justify-content: space-between; width: 100%">
         <el-input v-model.lazy.trim="ruleForm.emailCode" autocomplete="off" placeholder="输入邮箱获取验证码" />
         <el-button type="primary" :disabled="isDisabled" @click="getEmailCode()">
           {{ isDisabled ? t + "秒后获取" : "获取" }}
         </el-button>
-      </template>
+      </div>
     </el-form-item>
     <el-form-item prop="policy" autocomplete="off">
       <input type="checkbox" v-model="ruleForm.policy" />&ensp;我已阅读并同意
@@ -129,7 +129,7 @@ const submitForm = async () => {
   isLoading.value = true
 
   if (!ruleFormRef.value) return
-  await ruleFormRef.value.validate(async res => {
+  await ruleFormRef.value.validate(async (res) => {
     if (res) {
       //此处调用register()上传
       await register()

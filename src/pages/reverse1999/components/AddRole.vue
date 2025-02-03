@@ -72,11 +72,12 @@ const submitForm = async () => {
 
     if (isEdit.value) {
       //修改或删除角色
-      const newData = <Role>diffObj(formData.value, oldFormData.value)
+      const newData = diffObj(formData.value, oldFormData.value) as Role
       //判断角色信息是否修改
-      if (!Object.keys(newData).length) {
-        ElMessage.info("角色信息未修改，已取消上传。")
-      } else await updateRole({ ...newData, id: formData.value.id })
+      if (!Object.keys(newData).length) return ElMessage.info("角色信息未修改，已取消上传。")
+
+      newData.id = oldFormData.value.id
+      await updateRole(newData)
     } else {
       //新增角色
       await addRole(formData.value)

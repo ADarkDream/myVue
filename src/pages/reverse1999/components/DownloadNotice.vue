@@ -147,20 +147,7 @@
             </p>
             <p>
               4.如果你想使用默默的壁纸列表接口或角色信息列表
-              <el-button
-                link
-                type="primary"
-                target="_blank"
-                @click="
-                  titleDiv.showNotice({ show_num: 3, active_num: 3 })
-                  copyText(
-                    '1224021291',
-                    '默默的联系方式(QQ)',
-                    'https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719'
-                  )
-                "
-                title="点击前往API文档(无偿但不公开)"
-              >
+              <el-button link type="primary" target="_blank" @click="contact_momo()" title="点击前往API文档(无偿但不公开)">
                 API文档，无偿提供，但为了防止被滥用，请联系默默
               </el-button>
               。
@@ -207,6 +194,15 @@ const tabClick = (pane: TabsPaneContext, ev: Event) => {
 const changePage = (show_num: number, active_num = 1) => {
   showNum.value = show_num
   setTimeout(() => (activeNum.value = active_num), 500)
+}
+
+const contact_momo = () => {
+  copyText(
+    "1224021291",
+    "默默的联系方式(QQ)",
+    "https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719"
+  )
+  titleDiv.showNotice({ show_num: 3, active_num: 3 })
 }
 </script>
 

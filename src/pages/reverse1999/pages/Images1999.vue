@@ -432,7 +432,7 @@ onMounted(async () => {
 /**将角色id数组替换为角色名称*/
 const reNameRoleByIds = (roleIds: number[] = []) => {
   if (!roleIds) return ""
-  const nameList = roleIds.map(x => roleNameDictionary.value[x]) //roles[x] 通过  对象["键名"]  的格式取值
+  const nameList = roleIds.map((x) => roleNameDictionary.value[x]) //roles[x] 通过  对象["键名"]  的格式取值
   return nameList.join(",") // 输出: 角色A,角色B,角色C
 }
 
@@ -454,7 +454,7 @@ const render = async (isRefresh = false) => {
   await getImages(isRefresh)
 
   //将角色id替换成角色名称
-  tableData.value.forEach(item => {
+  tableData.value.forEach((item) => {
     if (item.roleIds?.length) {
       item.roleNames = reNameRoleByIds(item.roleIds)
       // console.log(idList, outputArray)
@@ -468,7 +468,7 @@ const changeCondition = (isRefresh = false) => {
     //如果是根据新的条件筛选，则将旧条件替换为当前条件
     // 将 a 的值同步到 b，包括空值
     const keys = Object.keys(oldCondition) as Array<keyof ImgParams> //类型断言keys中是ImgParams的键名
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (key in condition) {
         oldCondition[key] = condition[key] //类型断言condition[key]与oldCondition[key]类型相同
       } else {
@@ -479,7 +479,7 @@ const changeCondition = (isRefresh = false) => {
     //如果是在旧条件下翻页，则将新条件替换为当前条件【旧条件(修改页码后)】
     // 将 b 的值同步到 a，包括空值
     const keys = Object.keys(condition) as Array<keyof ImgParams> //类型断言keys中是ImgParams的键名
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (key in oldCondition) {
         condition[key] = oldCondition[key] //类型断言condition[key]与oldCondition[key]类型相同
       } else {
@@ -541,7 +541,7 @@ const handleEdit = (index: number, row: ReverseImgInfo) => {
 
 //对上传的数据进行格式检查
 function checkReverseUpdateRow(newData: ReverseImgInfo, oldData: ReverseImgInfo) {
-  const data = <ReverseImgInfo>diffObj(newData, oldData)
+  const data = diffObj(newData, oldData) as ReverseImgInfo
   //判断图片信息是否修改
   if (!Object.keys(data).length) {
     handleCancel() //取消编辑
@@ -634,7 +634,7 @@ const export_excel = async () => {
   // 数据
   const data = imgList.map((row: ReverseImgInfo) => {
     return propsIndex
-      .map(prop => {
+      .map((prop) => {
         // 修改具体值
         if (prop === "version") return versionNameDictionary.value[row[prop]] || ""
         else if (prop === "roleIds") return reNameRoleByIds(row[prop])
@@ -642,7 +642,7 @@ const export_excel = async () => {
         else if (prop === "time") return convertToDate(row[prop])
         return row[prop as keyof ReverseImgInfo] || ""
       })
-      .filter(item => item !== undefined)
+      .filter((item) => item !== undefined)
   })
   // 组合数据，第一行是表头
   const sheetData = [headers, ...data]

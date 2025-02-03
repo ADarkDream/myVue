@@ -48,7 +48,7 @@ export const useVersionsStore = defineStore("1999_versions", () => {
 
   /**修改版本数值时触发，修改版本信息formData*/
   const handleChange = (currentVersion = formData.value.version) => {
-    const info = versionInfo.value.find(item => item.version === currentVersion)
+    const info = versionInfo.value.find((item) => item.version === currentVersion)
 
     //存在版本信息时，不允许添加
     isDisabled.value = !!info && !isEdit.value

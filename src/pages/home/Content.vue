@@ -16,7 +16,7 @@
       <el-divider />
       <div class="mainContent">
         <!--网址显示区域-->
-        <el-card class="cards" shadow="hover" v-for="item in resultList">
+        <el-card class="cards" shadow="hover" v-for="(item, index) in resultList" :key="index">
           <el-button plain link
             ><img class="urlImg" :src="item.img" alt="" />
             <el-link :href="item.url" type="primary" :underline="false" target="_blank"> {{ item.name }}</el-link>
@@ -84,9 +84,11 @@ const getUrlListInfo = async () => {
     if (!isChangeFlag)
       //本地列表存在，则检查是否是最新数据
       //遍历本地导航信息是否为最新，不为最新则删除localListObj中对应的键
-      localList.forEach(item => {
+      localList.forEach((item) => {
         // 在cloudList中查找匹配的infoItem,返回的是数组
-        const thisItem = cloudList.filter(infoItem => item.sort === infoItem.sort && item.updated_time === infoItem.updated_time) //类型一致但时间相等，不修改
+        const thisItem = cloudList.filter(
+          (infoItem) => item.sort === infoItem.sort && item.updated_time === infoItem.updated_time
+        ) //类型一致但时间相等，不修改
         if (item.sort === "tool") console.log(item, thisItem)
         if (thisItem.length === 0) {
           // thisItem中无结果，则表示未找到或找不到一致的,删除localListObj中对应的键(导航分类)
@@ -111,7 +113,7 @@ const getUrlListInfo = async () => {
 const getNewList = async (sort: string) => {
   try {
     //如果本地localListObj有对应的导航信息，则直接加载
-    if (!!localListObj[sort]) {
+    if (localListObj[sort]) {
       sortName.value = localList[activeIndex.value].name //修改分类的标题名
       console.log("正在使用本地缓存的导航数据", sort)
       return resultList.splice(0, resultList.length, ...localListObj[sort])

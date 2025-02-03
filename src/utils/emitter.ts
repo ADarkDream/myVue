@@ -15,14 +15,14 @@ function on<T>(event: string, handler: Handler<T>): void {
 // 触发事件
 function emit<T>(event: string, payload: T): void {
   if (events[event]) {
-    events[event].forEach(handler => handler(payload))
+    events[event].forEach((handler) => handler(payload))
   }
 }
 
 // 移除事件监听
 function off<T>(event: string, handler: Handler<T>): void {
   if (events[event]) {
-    events[event] = events[event].filter(h => h !== handler)
+    events[event] = events[event].filter((h) => h !== handler)
   }
 }
 

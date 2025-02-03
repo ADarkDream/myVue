@@ -9,11 +9,11 @@
             <el-button
               link
               target="_blank"
-              v-for="{ id, name, title, value, url } in links"
+              v-for="{ id, name, title, label, value, url } in links"
               :key="id"
               @click="copyText(value, name, url)"
               :title="title"
-              >{{ name }}
+              >{{ label }}
             </el-button>
           </div>
         </el-collapse-item>
@@ -174,23 +174,11 @@
           <el-button @click="autoCol" :type="autoFlag ? 'primary' : 'default'">
             <SVG_auto class="el-icon" /> <span>自动</span>
           </el-button>
-          <el-button
-            @click="
-              colNum = 3
-              autoFlag = false
-            "
-            :type="autoFlag === false && colNum === 3 ? 'primary' : 'default'"
-          >
+          <el-button @click="autoCol(3)" :type="autoFlag === false && colNum === 3 ? 'primary' : 'default'">
             <SVG_grid_four class="el-icon" />
             <span>3列</span>
           </el-button>
-          <el-button
-            @click="
-              colNum = 5
-              autoFlag = false
-            "
-            :type="autoFlag === false && colNum === 5 ? 'primary' : 'default'"
-          >
+          <el-button @click="autoCol(5)" :type="autoFlag === false && colNum === 5 ? 'primary' : 'default'">
             <SVG_grid_nine class="el-icon" />
             <span>5列</span>
           </el-button>
@@ -340,7 +328,7 @@ const colNum = ref<number>(isPC.value ? 5 : 1) //修改显示列数
 
 const autoFlag = ref(true) //是否开启自动布局
 const isChoose = ref("none") //是否是批量选择状态
-const chooseType = <Record<string, { text: string; type: string; icon: any }>>{
+const chooseType = {
   all: {
     text: "取消全选",
     type: "warning",
@@ -356,7 +344,7 @@ const chooseType = <Record<string, { text: string; type: string; icon: any }>>{
     type: "success",
     icon: Check,
   },
-}
+} as Record<string, { text: string; type: string; icon: any }>
 //批量选择图片的ref列表
 const imgDivRefs = ref<HTMLDivElement[]>([])
 //是否显示收款码
@@ -373,6 +361,7 @@ const links = [
   {
     id: 1,
     title: "点击前往Gitee",
+    label: "Gitee",
     name: "Gitee",
     value: "https://gitee.com/MuXi-Dream/download-reverse1999",
     url: "https://gitee.com/MuXi-Dream/download-reverse1999",
@@ -381,6 +370,7 @@ const links = [
   {
     id: 2,
     title: "点击前往GitHub",
+    label: "GitHub",
     name: "GitHub",
     value: "https://github.com/ADarkDream/Download-Reverse1999",
     url: "https://github.com/ADarkDream/Download-Reverse1999",
@@ -389,6 +379,7 @@ const links = [
   {
     id: 3,
     title: "点击前往重返未来1999官网",
+    label: "重返未来1999官网",
     name: "重返未来1999官网",
     value: "https://re.bluepoch.com/home/detail.html#wallpaper",
     url: "https://re.bluepoch.com/home/detail.html#wallpaper",
@@ -397,6 +388,7 @@ const links = [
   {
     id: 4,
     title: "点击前往百度网盘",
+    label: "百度网盘下载地址",
     name: "百度网盘下载地址",
     value: "https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999",
     url: "https://pan.baidu.com/s/1A4o9VM4kPa_vzWZEtHiZSA?pwd=1999",
@@ -404,9 +396,10 @@ const links = [
   },
   {
     id: 5,
-    title: "默默的联系方式(QQ)",
-    name: "点击前往API文档(无偿但不公开)",
-    value: "1224021291",
+    title: "请联系默默",
+    label: "API文档(无偿但不公开)",
+    name: "默默的QQ号码",
+    value: "QQ:1224021291",
     url: "https://apifox.com/apidoc/shared-70082832-e502-49ac-a386-35af15bfd747/api-186774719",
     imgUrl: "",
   },
@@ -426,7 +419,7 @@ onMounted(async () => {
 
 //全选版本：单选按钮的状态改变
 const handleCheckAllVersionChange = (val: boolean) => {
-  if (val) versionInfo.value.forEach(item => condition.version.push(item.version))
+  if (val) versionInfo.value.forEach((item) => condition.version.push(item.version))
   else condition.version = []
   isIndeterminateVersion.value = false //取消全选按钮符号 -
 }
@@ -441,7 +434,7 @@ const handleCheckedVersionsChange = () => {
 const handleCheckAllRoleChange = (checkAll: boolean) => {
   console.log("checkAll", checkAll)
   if (checkAll)
-    roleInfo.value.forEach(item => {
+    roleInfo.value.forEach((item) => {
       if (!item.id) console.log(item.id, item)
 
       condition.roles.push(item.id)
@@ -464,10 +457,10 @@ const typeFlag = ref(1)
 
 //修改当前角色多选的条件(阵营或种族)
 function roleTypeChange(camp: string, race: string) {
-  if (!!camp) {
+  if (camp) {
     campName.value = camp
     typeFlag.value = 1
-  } else if (!!race) {
+  } else if (race) {
     raceName.value = race
     typeFlag.value = 2
   }
@@ -478,15 +471,15 @@ const handleCheckCampChange = (val: boolean) => {
   const newList: Set<number> = new Set(condition.roles) //Set()不会保存重复值
   console.log(newList)
   //遍历角色列表
-  roleInfo.value.forEach(item => {
+  roleInfo.value.forEach((item) => {
     //val=true代表全选按钮被勾选，再添加和删除Set()函数newList中的值
     //Set()的has()判断是否存在该元素，add()添加不重复的元素，delete()直接删除该元素而不是数组下标
     if (typeFlag.value === 1) {
       //筛选阵营
-      if (item.camp === campName.value) !!val ? newList.add(item.id) : newList.delete(item.id)
+      if (item.camp === campName.value) val ? newList.add(item.id) : newList.delete(item.id)
     } else if (typeFlag.value === 2) {
       //筛选种族
-      if (item.race === raceName.value) !!val ? newList.add(item.id) : newList.delete(item.id)
+      if (item.race === raceName.value) val ? newList.add(item.id) : newList.delete(item.id)
     }
   })
   //将新的角色id添加到勾选列表condition.roles
@@ -508,7 +501,7 @@ function reset() {
 
   //因为没绑定阵营多选框的值，通过DOM修改多选框的选中状态
   const btns = document.querySelectorAll(".roleSort .is-checked")
-  btns.forEach(item => {
+  btns.forEach((item) => {
     item.classList.remove("is-checked")
     campName.value = item.textContent!
     handleCheckCampChange(false)
@@ -551,7 +544,7 @@ const getImages = async () => {
     isShow.value = true //显示布局按钮
 
     imgList.value = data.imgList as ReverseImg[]
-    previewImgList.value = imgList.value.map(item => item.imgUrl)
+    previewImgList.value = imgList.value.map((item) => item.imgUrl)
     // console.log("筛选结果:", previewImgList.value);
     // console.log("筛选结果:", imgList.value)
     // 将 a 的值同步到 b，包括空值
@@ -657,14 +650,14 @@ const selectAll = (checkAll = true) => {
     //添加下载序号
     imgList.value.forEach((item, index) => downloadListIndexArr.add(index))
     //将所有呈现的图片添加选中状态(因为懒加载，可能部分未渲染)
-    imgDivRefs.value.forEach(item => {
+    imgDivRefs.value.forEach((item) => {
       item.classList.add("checked")
     })
   } else {
     //清空下载序号
     downloadListIndexArr.clear()
     //给所有呈现的图片移除选中状态
-    imgDivRefs.value.forEach(item => item.classList.remove("checked"))
+    imgDivRefs.value.forEach((item) => item.classList.remove("checked"))
   }
 }
 /**
@@ -729,7 +722,7 @@ const checkPort = async () => {
 const downloadImages = async () => {
   const indexArr = Array.from(downloadListIndexArr) //.sort((a, b) => a - b)//不需要排序
 
-  downloadList.value = indexArr.map(index => imgList.value[index])
+  downloadList.value = indexArr.map((index) => imgList.value[index])
   const length = downloadList.value.length
   if (length === 0) return ElMessage.warning("请先勾选需要下载的图片！")
   ElMessage.info("如有任何问题，请先查看下载须知")
@@ -746,15 +739,15 @@ const downloadImages = async () => {
         .catch(() => (flag = false))
     if (!flag) return
     console.log("下载列表：", downloadList)
-    downloadList.value.forEach(item => downloadImg(item.imgUrl, item.newName, item.imgPath!))
+    downloadList.value.forEach((item) => downloadImg(item.imgUrl, item.newName, item.imgPath!))
     selectBtn("part")
   } else {
     //下载数量大于5
     await checkPort()
-    if (!!isOpenProxy.value) {
+    if (isOpenProxy.value) {
       ElMessage.success("正在通过代理端口进行下载，感谢您的耐心合作ღ( ´･ᴗ･` )")
       console.log(downloadList)
-      downloadList.value.forEach(item => downloadImg(item.imgUrl, item.newName, item.imgPath!))
+      downloadList.value.forEach((item) => downloadImg(item.imgUrl, item.newName, item.imgPath!))
       selectBtn("part") //退出多选
     } else return ElMessage.error("当前下载数量大于10且未开启代理，请先查看下载须知→下载大量")
   }
@@ -769,7 +762,7 @@ const downloadImg = async (url: string, imgName: string, imgPath: string) => {
   if (isOpenProxy.value)
     //如果有端口代理
     imageUrl = url.replace("https://gamecms-res.sl916.com", "http://localhost:3000/download1999")
-  else if (!!imgPath) {
+  else if (imgPath) {
     //没有端口代理
     // if (imgPath.startsWith('.'))
     //   imageUrl = import.meta.env.VITE_QINIU_URL + imgPath.replace(/^\./, '')//七牛云备份,去掉路径中第一个点
@@ -803,7 +796,12 @@ watch(screenWidth, (newVal, oldVal) => {
 })
 
 /**自动布局，计算图片列数*/
-function autoCol() {
+function autoCol(num?: number) {
+  if (num) {
+    autoFlag.value = false
+    colNum.value = 3
+    return
+  }
   autoFlag.value = true
   if (Number((screenWidth.value / 250).toFixed(0)) === colNum.value) return
 

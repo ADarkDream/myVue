@@ -13,7 +13,7 @@
     </el-form-item>
     <el-form-item label="站点分类">
       <el-select v-model="form.sort" placeholder="必选，选择站点类型">
-        <el-option v-for="item in sort" :label="item.text" :value="item.value" />
+        <el-option v-for="(item, index) in sort" :key="index" :label="item.text" :value="item.value" />
       </el-select>
     </el-form-item>
     <el-form-item label="站点标签">

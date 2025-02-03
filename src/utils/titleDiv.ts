@@ -10,12 +10,12 @@ export default {
 
   /**
    * 从地址中获取哈希参数(#key=value&key=value)
-   * @param fullpath -route.fullpath
+   * @param fullPath -route.fullPath
    * @returns Object 所有哈希参数组成的对象
    */
-  get_hash_param: (fullpath: string) => {
+  get_hash_param: (fullPath: string) => {
     //提取出没有#的参数
-    const hash = fullpath.split("#")[1] || ""
+    const hash = fullPath.split("#")[1] || ""
     //格式化哈希参数
     const params = new URLSearchParams(hash)
     // 获取所有参数并构造一个对象
@@ -54,14 +54,14 @@ export default {
   delAllCookie: () => {
     const cookies = document.cookie.split(";")
 
-    cookies.forEach(cookie => {
+    cookies.forEach((cookie) => {
       const [name] = cookie.split("=")
       document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`
     })
 
     if (cookies.length > 0) {
       const domain = `.${location.host.split(".").slice(-2).join(".")}` // 顶级域名
-      cookies.forEach(cookie => {
+      cookies.forEach((cookie) => {
         const [name] = cookie.split("=")
         document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${domain}`
       })

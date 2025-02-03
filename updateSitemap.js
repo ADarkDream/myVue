@@ -32,7 +32,7 @@ async function generateSitemap() {
     let sitemapContent = data.toString()
 
     // 移除多余命名空间
-    sitemapContent = sitemapContent.replace(/<urlset[^>]+>/, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    sitemapContent = sitemapContent.replace(/<urlset[^>]+>/, "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>")
 
     // 检查并移除无效的 <script/> 元素
     sitemapContent = sitemapContent.replace(/<script\/>/g, "")

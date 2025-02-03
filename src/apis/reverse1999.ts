@@ -73,8 +73,7 @@ export const api_updateImage = async (data: ReverseImgInfo, isAdmin = false) => 
   if (code === 200) {
     ElMessage.success(msg)
     return true
-  } //没有查询结果则不进行以下操作
-  else return false
+  } else return false //没有查询结果则不进行以下操作
 }
 
 /**检查以影像之是否有更新(未收录图片)*/

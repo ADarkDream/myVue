@@ -24,13 +24,11 @@ module.exports = {
   // 将 > 多行元素放在最后一行的末尾，而不是单独放在下一行 (true：放末尾，false：单独一行)
   bracketSameLine: false,
   // (x) => {} 箭头函数参数只有一个时是否要有小括号 (avoid：省略括号，always：不省略括号)
-  arrowParens: "avoid",
+  // arrowParens: "avoid",
   // 指定要使用的解析器，不需要写文件开头的 @prettier
   requirePragma: false,
   // 可以在文件顶部插入一个特殊标记，指定该文件已使用 Prettier 格式化
   insertPragma: false,
-  // 用于控制文本是否应该被换行以及如何进行换行
-  proseWrap: "preserve",
   // 在html中空格是否是敏感的 "css" - 遵守 CSS 显示属性的默认值， "strict" - 空格被认为是敏感的 ，"ignore" - 空格被认为是不敏感的
   htmlWhitespaceSensitivity: "css",
   // 控制在 Vue 单文件组件中 <script> 和 <style> 标签内的代码缩进方式 [false：代码不会额外缩进，与外部代码对齐。true：会相对于组件的其他部分进行缩进。]

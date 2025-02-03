@@ -296,19 +296,19 @@ const flag = ref(true)
 //筛选方法
 function filterChange() {
   //预设筛选条件
-  const filterName = (item: Role) => (!!searchInfo.name ? item.name.toLowerCase().includes(searchInfo.name.toLowerCase()) : true)
-  const filterCamp = (item: Role) => (!!searchInfo.camp ? item.camp === searchInfo.camp : true)
-  const filterRace = (item: Role) => (!!searchInfo.race ? item.race === searchInfo.race : true)
+  const filterName = (item: Role) => (searchInfo.name ? item.name.toLowerCase().includes(searchInfo.name.toLowerCase()) : true)
+  const filterCamp = (item: Role) => (searchInfo.camp ? item.camp === searchInfo.camp : true)
+  const filterRace = (item: Role) => (searchInfo.race ? item.race === searchInfo.race : true)
   const filterOtherTags = (item: Role) => {
-    if (!!item.otherTags || !!searchInfo.otherTags) {
-      if (!!item.otherTags) {
+    if (item.otherTags || searchInfo.otherTags) {
+      if (item.otherTags) {
         //角色标签不为空
-        return !!searchInfo.otherTags ? item.otherTags.toLowerCase().includes(searchInfo.otherTags.toLowerCase()) : true
+        return searchInfo.otherTags ? item.otherTags.toLowerCase().includes(searchInfo.otherTags.toLowerCase()) : true
       } else return false //角色标签为空
     } else return true //搜索框和角色标签都为空，表示没有搜索，返回true
   } //开始筛选
   tableData.value = allRoleInfo.value.filter(
-    item => filterName(item) && filterCamp(item) && filterRace(item) && filterOtherTags(item)
+    (item) => filterName(item) && filterCamp(item) && filterRace(item) && filterOtherTags(item)
   )
   //修改筛选标记(false表示筛选过了)
   flag.value = false
@@ -360,14 +360,14 @@ const exit_edit = () => {
 
 //对上传的数据进行格式检查
 const checkUpdateRow = async (newData: Role, oldData: Role) => {
-  const data = <Role>diffObj(newData, oldData)
+  const data = diffObj(newData, oldData) as Role
   //判断角色信息是否修改
   if (Object.keys(data).length === 0) return ElMessage.info("角色信息未修改，已取消上传。")
   else {
     //uid被洗掉了，手动添加
-    await updateRole({ ...data, id: newData.id })
-    //去除编辑标记
-    exit_edit()
+    data.id = newData.id
+    await updateRole(data)
+    exit_edit() //去除编辑标记
   }
 }
 
@@ -427,14 +427,14 @@ const export_excel = () => {
   // })
 
   // 数据
-  const data = allRoleInfo.value.map(row => {
+  const data = allRoleInfo.value.map((row) => {
     return propsIndex
-      .map(prop => {
+      .map((prop) => {
         // 修改具体值
         if (prop === "updated_time") return getTime(row[prop])
         return row[prop as keyof Role] || ""
       })
-      .filter(item => item !== undefined)
+      .filter((item) => item !== undefined)
   })
   // 组合数据，第一行是表头
   const sheetData = [headers, ...data]

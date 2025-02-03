@@ -39,7 +39,7 @@ export default function () {
     //处理请求后的信息
     if (status === 1) {
       const newIdList: number[] = []
-      list?.forEach(MusicListInfo => {
+      list?.forEach((MusicListInfo) => {
         const { music_list_id, cloud_music_list_id } = MusicListInfo
         //添加两个歌单的id键值对信息
         connectionObj.value[music_list_id] = cloud_music_list_id!
@@ -160,7 +160,7 @@ export default function () {
 
         musicListInfoObj.value[music_list_id.toString()] = musicListInfo.value
         //更新歌单数据
-        const newMusicList = musicList.value.filter(songInfo => {
+        const newMusicList = musicList.value.filter((songInfo) => {
           return !music_id_list.value.includes(songInfo.id)
         })
         musicList.value = newMusicList

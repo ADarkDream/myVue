@@ -53,7 +53,7 @@ export default function () {
     param.append("sort", "headImg")
     momo
       .post("/upload", param)
-      .then(result => {
+      .then((result) => {
         // console.log(result)
         const { msg, imgUrl } = result as { status: number; msg: string; imgUrl: string }
         ElMessage.success(msg)
@@ -62,7 +62,7 @@ export default function () {
           location.reload()
         }, 1000)
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error)
       })
   }

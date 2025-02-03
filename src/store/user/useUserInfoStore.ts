@@ -82,11 +82,11 @@ export const useUserInfoStore = defineStore(
      */
     function updateLocalUserInfo(newUserInfo: UserInfo, is_admin = false) {
       if (is_admin) {
-        ;(Object.keys(newUserInfo) as (keyof AdminInfo)[]).forEach(key => {
+        ;(Object.keys(newUserInfo) as (keyof AdminInfo)[]).forEach((key) => {
           adminInfo.value[key] = newUserInfo[key]
         })
       } else {
-        ;(Object.keys(newUserInfo) as (keyof UserInfo)[]).forEach(key => {
+        ;(Object.keys(newUserInfo) as (keyof UserInfo)[]).forEach((key) => {
           // 如果 userInfo 没有这个 key，则新建该 key
           if (!(key in userInfo.value)) {
             userInfo.value[key] = undefined // 初始化新键

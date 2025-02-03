@@ -14,7 +14,7 @@
     <el-form v-model="newMusic" label-width="auto" label-position="top" style="width: 100%; margin-top: 20px">
       <el-form-item>
         <template #label
-          >输入歌单id&ensp;<el-icon @click="">
+          >输入歌单id&ensp;<el-icon>
             <InfoFilled />
           </el-icon>
           <Transition name="horizontal_slide">

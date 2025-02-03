@@ -31,7 +31,7 @@
           <InfoFilled />
         </el-icon>
         <Transition name="horizontal_slide">
-          <el-text v-show="noticeNum === 2"> 面板模糊度，范围[0<=x]，0为不模糊 </el-text>
+          <el-text v-show="noticeNum === 2"> 面板模糊度，范围[0&lt;=x]，0为不模糊 </el-text>
         </Transition>
       </el-form-item>
       <el-form-item label="饱和度">
@@ -40,7 +40,7 @@
           <InfoFilled />
         </el-icon>
         <Transition name="horizontal_slide">
-          <el-text v-show="noticeNum === 3"> 面板饱和度，范围[0<=x]，1为正常值 </el-text>
+          <el-text v-show="noticeNum === 3"> 面板饱和度，范围[0&lt;=x]，1为正常值 </el-text>
         </Transition>
       </el-form-item>
     </el-form>

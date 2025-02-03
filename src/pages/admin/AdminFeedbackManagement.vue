@@ -103,7 +103,7 @@ getFeedback()
 function getFeedback() {
   momo
     .get("/getFeedback")
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       const { msg, data } = result
       ElMessage.success(msg)
@@ -112,7 +112,7 @@ function getFeedback() {
         tableData.push(item)
       })
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.dir(error)
     })
@@ -128,7 +128,7 @@ function updateFeedback(index: number, oldData: Feedback) {
       status,
       id: oldData.id,
     })
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       const { msg } = result
       //更新修订时间为当前时间
@@ -137,7 +137,7 @@ function updateFeedback(index: number, oldData: Feedback) {
       Object.assign(oldData, { status, updated_time })
       ElMessage.success(msg)
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
       ElMessage.error(error.message)
@@ -163,13 +163,13 @@ const deleteRow = (index: number, id: number) => {
 const deleteFeedback = (index: number, id: number) => {
   momo
     .delete("/deleteFeedback", { id })
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       ElMessage.success(result.msg)
       tableData.splice(index, 1)
       console.log(tableData)
     })
-    .catch(error => {
+    .catch((error) => {
       console.dir("发生错误：" + error)
     })
 }

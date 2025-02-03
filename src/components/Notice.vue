@@ -135,6 +135,7 @@
               </el-icon>
               其他：<el-text
                 v-for="(item, index) in otherNoUpdated"
+                :key="index"
                 type="info"
                 size="small"
                 tag="p"
@@ -170,7 +171,7 @@
         <el-collapse v-model="showFlag.active_num" v-show="showFlag.show_num === 3" accordion style="border: none">
           <!--联系方式-->
           <el-collapse-item title="联系方式" :name="1">
-            <template style="display: flex; justify-content: space-around">
+            <div style="display: flex; justify-content: space-around">
               <el-button
                 v-for="item in contact"
                 :key="item.id"
@@ -180,7 +181,7 @@
                 @click="copyText(item.value, item.title, item.url)"
                 >{{ item.name }}
               </el-button>
-            </template>
+            </div>
           </el-collapse-item>
           <!--    留言反馈-->
           <el-collapse-item title="留言反馈" :name="2">

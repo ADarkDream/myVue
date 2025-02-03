@@ -35,13 +35,7 @@
     </el-form-item>
 
     <div class="btn">
-      <el-button
-        @click="
-          closeDialog()
-          reset(addEngineFormRef)
-        "
-        >取消</el-button
-      >
+      <el-button @click="close()">取消</el-button>
       <el-button type="primary" @click="submit(addEngineFormRef)">添加</el-button>
     </div>
   </el-form>
@@ -54,7 +48,7 @@ import momo from "@/apis"
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore"
 //types
-import { EngineData } from "@/types/url"
+import { EngineData, ThisEngine } from "@/types/url"
 //files
 import ico_custom from "@/assets/home/custom.png"
 
@@ -87,7 +81,7 @@ function checkIco() {
 //验证添加导航网站的表单
 const submit = (val: FormInstance | undefined) => {
   if (!val) return //数据为空返回
-  val.validate(valid => {
+  val.validate((valid) => {
     //数据验证通过
     if (valid) {
       addEngine()
@@ -101,7 +95,7 @@ const submit = (val: FormInstance | undefined) => {
 
 //添加搜索引擎
 function addEngine() {
-  const data = <EngineData>{
+  const data: ThisEngine = {
     index: userEngines.length,
     name: addEngineForm.name,
     baseUrl: addEngineForm.protocol + addEngineForm.baseUrl,
@@ -111,7 +105,7 @@ function addEngine() {
   if (isLogin.value) {
     momo
       .post("/addEngine", data)
-      .then(result => {
+      .then((result) => {
         // console.log(result)
         const { msg } = result
         ElMessage.success(msg)
@@ -119,7 +113,7 @@ function addEngine() {
         closeDialog()
         // location.reload()
       })
-      .catch(error => {
+      .catch((error) => {
         console.dir("发生错误：")
         console.dir(error)
         //ElMessage.error('发生错误：' + error.message)
@@ -142,6 +136,11 @@ function addEngine() {
 const reset = (val: FormInstance | undefined) => {
   if (!val) return
   val.resetFields()
+}
+
+const close = () => {
+  closeDialog()
+  reset(addEngineFormRef.value)
 }
 </script>
 

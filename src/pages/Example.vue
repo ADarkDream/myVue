@@ -157,15 +157,15 @@ type TestRole = {
   life: number
 }
 
-type resortRule = {
+type ResortRule = {
   star: number[]
-  damageType: "现实" | "精神"
-  valueType: "attack" | "defense" | "life"
+  damageType: "现实" | "精神" | ""
+  valueType: "attack" | "defense" | "life" | ""
   isAsc: boolean
 }
 
 //筛选和排序条件
-const resortRule = reactive({
+const resortRule = reactive<ResortRule>({
   star: [],
   damageType: "",
   valueType: "",
@@ -207,7 +207,7 @@ function updateStarSelection() {
   } else {
     checkedStars.push(selectValue)
   }
-  resortRule.star = checkedStars.filter(item => item !== undefined).sort((a, b) => a - b)
+  resortRule.star = checkedStars.filter((item) => item !== undefined).sort((a, b) => a - b)
   console.log(selectValue)
 
   filterAndSortRoles() // 触发筛选和排序逻辑
@@ -218,7 +218,7 @@ function updateStarSelection() {
  */
 function filterAndSortRoles() {
   showList.value = roles
-    .filter(role => {
+    .filter((role) => {
       const starMatches = resortRule.star.length === 0 || resortRule.star.includes(role.star) // 如果 star 条件为空，不筛选
       const damageTypeMatches = !resortRule.damageType || role.damageType === resortRule.damageType // 如果 damageType 为空，不筛选
       return starMatches && damageTypeMatches

@@ -75,7 +75,7 @@ function deleteEngine(id: number) {
   if (isLogin.value) {
     momo
       .delete("/deleteEngine", { id })
-      .then(result => {
+      .then((result) => {
         // console.log(result)
         const { msg } = result
         const newEngines = userEngines.filter((item: EngineData) => item.id !== id)
@@ -87,7 +87,7 @@ function deleteEngine(id: number) {
         // getEngineList()
         ElMessage.success(msg)
       })
-      .catch(error => {
+      .catch((error) => {
         console.dir("发生错误：")
         console.dir(error)
         //ElMessage.error('发生错误：' + error.message)

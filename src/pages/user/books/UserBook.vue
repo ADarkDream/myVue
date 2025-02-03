@@ -33,7 +33,7 @@
           </el-empty>
           <div v-else>
             <div style="display: flex; justify-content: space-evenly">
-              <el-text type="primary" v-for="item in members">{{ item.username }}</el-text>
+              <el-text type="primary" v-for="item in members" :key="item.uid">{{ item.username }}</el-text>
             </div>
             <el-button
               v-if="uid === bookInfo.uid"
@@ -114,7 +114,7 @@ const tabPosition = ref<TabsInstance["tabPosition"]>("top")
 //el-tabs的默认激活标签
 const activeName = ref(0)
 //el-tabs的内容区高度
-const tabContentHeight = ref(isPC ? "" : "height:" + (screenHeight.value - 145) + "px;overflow:scroll")
+const tabContentHeight = ref(isPC.value ? "" : "height:" + (screenHeight.value - 145) + "px;overflow:scroll")
 
 //切换el-tabs
 const changeTab = async (index: number, dateString?: string) => {
@@ -172,7 +172,7 @@ const getTheBookDesc = async () => {
     bookInfo.value = data!.book
     console.log("bookInfo", bookInfo.value)
     Object.assign(members, data!.members)
-    members.forEach(userInfo => {
+    members.forEach((userInfo) => {
       const { uid, username } = userInfo
       //数组形式，添加成员信息
       memberList.push({ value: uid, text: username })
@@ -236,7 +236,7 @@ const computation = () => {
   console.log("遍历前 memberInfo", memberInfo)
   console.log("遍历前 members", members)
   console.log("遍历members.forEach有BUG，刷新可能不会遍历")
-  members.forEach(userInfo => {
+  members.forEach((userInfo) => {
     const { uid, username } = userInfo
     // 对象形式，使用uid作为键,计算每个用户的花费，total是加上了已销账单的数据
     memberInfo[uid] = {
@@ -252,7 +252,7 @@ const computation = () => {
 
   console.log("遍历后 memberInfo", memberInfo)
   console.log("遍历后 memberList", memberList)
-  bookData.billList.forEach(bill => {
+  bookData.billList.forEach((bill) => {
     const { uid, username, price, status } = bill
     //如果用户不在协作列表中(已退出协作的成员)
     if (!memberInfo[uid]) {
@@ -289,7 +289,7 @@ const computation = () => {
   const presentAveragePay = Number((presentPrice.value / userNum).toFixed(2))
   const totalAveragePay = Number((totalPrice.value / userNum).toFixed(2))
   //最终的花费表
-  totalCostList.value = memberList.map(item => {
+  totalCostList.value = memberList.map((item) => {
     const data = memberInfo[item.value]
     data.income = numMinus(data.expense, presentAveragePay) //计算需要收取的金额
     return data

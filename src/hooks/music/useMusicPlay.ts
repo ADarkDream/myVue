@@ -205,7 +205,7 @@ export default function () {
     try {
       console.log("thisMusic", thisMusic.value)
       const title = thisMusic.value.name || "未命名"
-      const artist = thisMusic.value.artists.map(artist => artist.name).join("&") || "未知艺术家"
+      const artist = thisMusic.value.artists.map((artist) => artist.name).join("&") || "未知艺术家"
       const album = thisMusic.value.album.name || "未命名"
       const pic_url = thisMusic.value.album.pic_url || ""
       navigator.mediaSession.metadata = new MediaMetadata({
@@ -275,9 +275,8 @@ export default function () {
     if (Number.isInteger(index) && index >= 0) {
       //判断非负整数
       musicListStore.setThisMusic(index)
-    }
-    //按模式切歌
-    else {
+    } else {
+      //按模式切歌
       const newIndex = togglePlayingIndex(isNext, isAuto)
       if (newIndex === playingIndex.value) return await play({ isReplay: true })
       //获取要播放的这一首歌的信息
@@ -306,13 +305,13 @@ export default function () {
       song.src = ""
       await resetUrl(song)
     }
-    await audioElement.value.play().catch(async err => {
+    await audioElement.value.play().catch(async (err) => {
       if (retryCount < 5) {
         // 限制重试次数
         console.error("播放失败，一秒后重试")
         console.log(err)
         // 等待 1 秒
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 1000))
         // 递归再次尝试播放
         await reTry(retryCount + 1)
       } else {
@@ -401,7 +400,7 @@ export default function () {
     const { code, data, msg } = result
     //清洗掉返回数据中没有播放地址的歌曲信息（过滤掉src不存在的song）
 
-    if (status === 1 && data) {
+    if (code === 1 && data) {
       if (!data.songsInfo) return { isError: true }
       const songs = data.songsInfo
       //过滤地址不存在的歌

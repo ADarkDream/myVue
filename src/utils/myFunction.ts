@@ -156,7 +156,7 @@ const myFunction = {
   diffObj: <T>(newData: T, oldData: T): Partial<T> => {
     const result: Partial<T> = {}
     const keys = new Set([...Object.keys(newData), ...Object.keys(oldData)])
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (newData[key as keyof T] !== oldData[key as keyof T]) {
         result[key as keyof T] = newData[key as keyof T]
       }

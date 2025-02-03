@@ -132,8 +132,7 @@ export default function () {
         "TencentLogin",
         `width=${newWinWidth},height=${newWinHeight},top=${top},left=${left},menubar=0,scrollbars=1, resizable = 1, status = 1, titlebar = 0, toolbar = 0, location = 1`
       )
-    } //移动端
-    else return (location.href = url)
+    } else return (location.href = url) //移动端
 
     if (oauth_window.value) {
       //定时器发送验证信息

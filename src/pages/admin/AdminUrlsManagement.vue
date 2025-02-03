@@ -23,7 +23,7 @@
     <el-col :span="3">
       <el-select v-model.trim="searchUrl.sort" placeholder="All">
         <el-option label="网站分类(全选)" value="" />
-        <el-option v-for="item in sort" :label="item.text" :value="item.value" />
+        <el-option v-for="(item, index) in sort" :key="index" :label="item.text" :value="item.value" />
       </el-select>
     </el-col>
     <el-col :span="3" v-if="false">
@@ -109,11 +109,11 @@
         <template #default="scope">
           <template v-if="isEditRow === scope.$index">
             <el-select placeholder="选择分类(默认为更新说明)" v-model="newUrl.sort" default-first-option>
-              <el-option v-for="item in sort" :label="item.text" :value="item.value" />
+              <el-option v-for="(item, index) in sort" :key="index" :label="item.text" :value="item.value" />
             </el-select>
           </template>
-          <template v-for="item in sort" v-else>
-            <div v-if="item.value === scope.row.sort">{{ item.text }}</div>
+          <template v-else>
+            <div>{{ getText(scope.row.sort) }}</div>
           </template>
         </template>
       </el-table-column>
@@ -208,15 +208,15 @@ const flag = ref(true)
 //筛选方法
 function filterChange() {
   //预设筛选条件
-  const filterName = item => (searchUrl.name === "" ? true : item.name.toLowerCase().includes(searchUrl.name.toLowerCase()))
-  const filterDetail = item =>
+  const filterName = (item) => (searchUrl.name === "" ? true : item.name.toLowerCase().includes(searchUrl.name.toLowerCase()))
+  const filterDetail = (item) =>
     searchUrl.detail === "" ? true : item.detail.toLowerCase().includes(searchUrl.detail.toLowerCase())
   // const filterUid = item => item.uid.toString().includes(searchUrl.uid.toString())
-  const filterStatus = item => (searchUrl.status === 2 ? true : item.status === searchUrl.status)
-  const filterSort = item => (searchUrl.sort === "" ? true : item.sort.includes(searchUrl.sort))
-  const filterTags = item => (searchUrl.tags === "" ? true : item.tags.includes(searchUrl.tags))
+  const filterStatus = (item) => (searchUrl.status === 2 ? true : item.status === searchUrl.status)
+  const filterSort = (item) => (searchUrl.sort === "" ? true : item.sort.includes(searchUrl.sort))
+  const filterTags = (item) => (searchUrl.tags === "" ? true : item.tags.includes(searchUrl.tags))
   //开始筛选
-  const newArr = totalData.filter(item => filterName(item) && filterDetail(item) && filterStatus(item) && filterSort(item))
+  const newArr = totalData.filter((item) => filterName(item) && filterDetail(item) && filterStatus(item) && filterSort(item))
   //将表格显示的数据清空再填充筛选后的数据
   tableData.splice(0, tableData.length, ...newArr)
   //修改筛选标记(false表示筛选过了)
@@ -310,13 +310,15 @@ let sort = reactive<Sort[]>([
   { text: "娱乐", value: "webGame" },
 ])
 
+const getText = (value: string) => sort.find((item) => item.value === value)
+
 //获取全部网址
 getAllUrlList()
 
 function getAllUrlList() {
   momo
     .get("/getAllUrlList")
-    .then(result => {
+    .then((result) => {
       console.log(result)
       const { msg, urlList } = result
       ElMessage.success(msg)
@@ -332,7 +334,7 @@ function getAllUrlList() {
       })
       render()
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.dir(error)
     })
@@ -354,15 +356,11 @@ function handleCancel() {
 
 //对上传的数据进行格式检查
 function checkUpdateRow(newData: Url, oldData: Url) {
-  const data = <Url>diffObj(newData, oldData)
+  const data = diffObj(newData, oldData) as Url
   //判断网址信息是否修改
   if (Object.keys(data).length === 0) return ElMessage.info("网址信息未修改，已取消上传。")
-  else {
-    //校验格式
-
-    //uid被洗掉了，手动添加
-    updateRow(data, oldData.id, oldData)
-  }
+  //校验格式
+  updateRow(data, oldData.id, oldData)
 }
 
 //上传更新的网址信息
@@ -372,7 +370,7 @@ function updateRow(data: Url, id: number, oldData: Url) {
       data,
       id,
     })
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       const { msg } = result
       //更新修订时间为当前时间
@@ -383,7 +381,7 @@ function updateRow(data: Url, id: number, oldData: Url) {
       isEditRow.value = -1
       ElMessage.success(msg)
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
       ElMessage.error(error.msg)
@@ -407,16 +405,16 @@ const deleteRow = (index: number, id: number) => {
 const deleteUrl = (index: number, id: number) => {
   momo
     .delete("/deleteUrl", { id })
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       ElMessage.success(result.msg)
 
-      const newArr = totalData.filter(item => item.id !== id)
+      const newArr = totalData.filter((item) => item.id !== id)
       totalData.splice(0, totalData.length, ...newArr)
       filterChange()
       // location.reload()
     })
-    .catch(error => {
+    .catch((error) => {
       console.dir("发生错误：" + error)
     })
 }

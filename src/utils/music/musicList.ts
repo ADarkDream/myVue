@@ -22,7 +22,7 @@ const musicList = {
       ElMessage.error("请求的idList不能为空")
       return false
     }
-    idList.forEach(id => {
+    idList.forEach((id) => {
       // 尝试将id转换为数字
       const num = Number(id)
       // 检查是否成功转换为数字，并且是一个正整数
@@ -84,9 +84,8 @@ const musicList = {
       const result = await momo.get<MusicList>("/getCloudMusicList", { cloud_music_list_id, limit, offset, latest })
       console.log("搜索网易云的歌单及音乐信息", result)
       const { code, msg, data } = result
-      if (code === 200 && data) {
-        return { status: 1, data: data }
-      } // else if (code === 300)
+      if (code === 200 && data) return { status: 1, data: data }
+      // else if (code === 300)
       //    return { status: 0, msg }
       else return { status: 0, msg }
     } catch (error) {
