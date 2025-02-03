@@ -4,8 +4,11 @@
       偏好设置<el-text type="warning" v-if="isLoading">&ensp;审核中...</el-text>
     </el-header>
     <el-main>
-      <div style="margin-bottom: 20px;">自定义网站背景图。图片上传之后会自动审核。若图片没有成功加载,可能是<el-text
-          type="warning">图片违规</el-text>或<el-text type="danger">服务器错误</el-text>
+      <div style="margin-bottom: 20px">
+        自定义网站背景图。图片上传之后会自动审核。若图片没有成功加载,可能是<el-text type="warning">图片违规</el-text>或<el-text
+          type="danger"
+          >服务器错误</el-text
+        >
       </div>
       <div>
         <el-space v-if="isShow && !dialogVisible">
@@ -15,36 +18,28 @@
         </el-space>
       </div>
 
-
-      <el-image :src="bgUrl" v-if="isShow && !dialogVisible" style="width: 50%;" />
+      <el-image :src="bgUrl" v-if="isShow && !dialogVisible" style="width: 50%" />
       <!--图片上传框-->
       <UploadImage v-if="!isShow || dialogVisible" />
-      <el-button v-if="dialogVisible" type="primary" @click="dialogVisible = false"
-        style="margin-top: 10px;">取消上传</el-button>
-
-
-
+      <el-button v-if="dialogVisible" type="primary" @click="dialogVisible = false" style="margin-top: 10px">取消上传</el-button>
     </el-main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs, computed, watch, onMounted } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
-import { Delete, UploadFilled } from "@element-plus/icons-vue";
+import { ref, toRefs, computed, watch, onMounted } from "vue"
+import { ElMessage, ElMessageBox } from "element-plus"
+import { Delete, UploadFilled } from "@element-plus/icons-vue"
 //stores
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import { useResponsiveStore } from "@/store/useResponsiveStore";
-import { useUploadFileStore } from "@/store/upload/uploadFileStore";
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
+import { useUploadFileStore } from "@/store/upload/uploadFileStore"
 //hooks
-import useTitleDiv from "@/hooks/useTitleDiv";
+import useTitleDiv from "@/hooks/useTitleDiv"
 //components
-import UploadImage from "@/components/UploadImage.vue";
+import UploadImage from "@/components/UploadImage.vue"
 //utils
-import userInfo from '@/utils/userInfo';
-
-
-
+import userInfo from "@/utils/userInfo"
 
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
@@ -61,16 +56,15 @@ const { updateImgUrl } = userInfo
 
 const changeBgUrl = () => {
   options.value = {
-    sort: 'bg',
-    url: '',
+    sort: "bg",
+    url: "",
     status: 0,
-    maxSize: 2
+    maxSize: 2,
   }
 
   watch(isLoading, async (newVal, oldVal) => {
     if (newVal === oldVal) return
     if (newVal === false && fileInfo.value) {
-
       const image_info = await updateImgUrl(fileInfo.value)
       if (!image_info) throw Error
 
@@ -91,27 +85,21 @@ onMounted(() => {
   changeBgUrl()
 })
 
-
-
-
 //删除背景图确认
 const deleteRow = () => {
-  ElMessageBox.confirm(
-    `注意：该图片不会从服务器删除，只是不会在你的背景图列表显示。`,
-    '确认删除该背景图吗?',
-    {
-      confirmButtonText: '确认删除',
-      cancelButtonText: '取消删除',
-      type: 'warning',
-      showClose: false
-    }
-  ).then(() => {
-    updateImgUrl({ sort: 'bg' })
-    useUserBGUrl.value = false
-    bgUrl.value = ''
-    toggleBG({})
+  ElMessageBox.confirm(`注意：该图片不会从服务器删除，只是不会在你的背景图列表显示。`, "确认删除该背景图吗?", {
+    confirmButtonText: "确认删除",
+    cancelButtonText: "取消删除",
+    type: "warning",
+    showClose: false,
   })
-    .catch(() => ElMessage.info('删除操作已取消'))
+    .then(() => {
+      updateImgUrl({ sort: "bg" })
+      useUserBGUrl.value = false
+      bgUrl.value = ""
+      toggleBG({})
+    })
+    .catch(() => ElMessage.info("删除操作已取消"))
 }
 </script>
 

@@ -1,33 +1,52 @@
 <template>
   <el-container>
     <el-header>
-      <div style="display: flex;justify-content: space-between;padding-bottom:5px">
+      <div style="display: flex; justify-content: space-between; padding-bottom: 5px">
         <el-button-group type="primary">
           <el-button @click="changeDateType('day')">日</el-button>
           <el-button @click="changeDateType('week')">周</el-button>
           <el-button @click="changeDateType('month')">月</el-button>
         </el-button-group>
-        <el-date-picker v-if="isPC" style="max-width: 250px" v-model="dateRange" type="daterange" range-separator="To"
-          start-placeholder="选择账单开始日期" end-placeholder="选择账单结束日期" unlink-panels @change="getBillList"
-          :disabled-date="disabledDate" value-format="YYYY-MM-DD" />
+        <el-date-picker
+          v-if="isPC"
+          style="max-width: 250px"
+          v-model="dateRange"
+          type="daterange"
+          range-separator="To"
+          start-placeholder="选择账单开始日期"
+          end-placeholder="选择账单结束日期"
+          unlink-panels
+          @change="getBillList"
+          :disabled-date="disabledDate"
+          value-format="YYYY-MM-DD"
+        />
         <el-button-group>
-          <el-button @click="getNewDateRange('minus')"><span v-if="dateStr === '日'">前一{{ dateStr }}</span><span
-              v-else>上一{{
-                dateStr
-              }}</span>
+          <el-button @click="getNewDateRange('minus')"
+            ><span v-if="dateStr === '日'">前一{{ dateStr }}</span
+            ><span v-else>上一{{ dateStr }}</span>
           </el-button>
-          <el-button @click="getNewDateRange('now')"><span v-if="dateStr === '日'">今日</span><span v-else>本{{ dateStr
-              }}</span></el-button>
-          <el-button @click="getNewDateRange('plus')"><span v-if="dateStr === '日'">后一{{ dateStr }}</span><span
-              v-else>下一{{
-                dateStr
-              }}</span>
+          <el-button @click="getNewDateRange('now')"
+            ><span v-if="dateStr === '日'">今日</span><span v-else>本{{ dateStr }}</span></el-button
+          >
+          <el-button @click="getNewDateRange('plus')"
+            ><span v-if="dateStr === '日'">后一{{ dateStr }}</span
+            ><span v-else>下一{{ dateStr }}</span>
           </el-button>
         </el-button-group>
       </div>
-      <el-date-picker style="max-width: 250px" v-if="!isPC" v-model="dateRange" type="daterange" range-separator="To"
-        start-placeholder="选择账单开始日期" end-placeholder="选择账单结束日期" unlink-panels @change="getBillList"
-        :disabled-date="disabledDate" value-format="YYYY-MM-DD" />
+      <el-date-picker
+        style="max-width: 250px"
+        v-if="!isPC"
+        v-model="dateRange"
+        type="daterange"
+        range-separator="To"
+        start-placeholder="选择账单开始日期"
+        end-placeholder="选择账单结束日期"
+        unlink-panels
+        @change="getBillList"
+        :disabled-date="disabledDate"
+        value-format="YYYY-MM-DD"
+      />
     </el-header>
     <el-empty v-if="isNull" description="暂无账单">
       <el-button @click="showBillPanel" type="primary">添加账单</el-button>
@@ -36,9 +55,21 @@
       <!--        </el-button>-->
     </el-empty>
     <el-main v-else style="padding-top: 0">
-      <el-table ref="tableRef" :data="billList" :height="screenHeight - 290" stripe border show-overflow-tooltip
-        highlight-current-row row-key="id" table-layout="auto" :span-method="objectSpanMethod"
-        :row-class-name="showDelLine" :row-style="hide" @row-click="showBillPanel">
+      <el-table
+        ref="tableRef"
+        :data="billList"
+        :height="screenHeight - 290"
+        stripe
+        border
+        show-overflow-tooltip
+        highlight-current-row
+        row-key="id"
+        table-layout="auto"
+        :span-method="objectSpanMethod"
+        :row-class-name="showDelLine"
+        :row-style="hide"
+        @row-click="showBillPanel"
+      >
         <!--                        show-summary-->
         <!--                  :summary-method="getSummaries">-->
         <template #empty>
@@ -67,12 +98,22 @@
           <template #default="scope">
             <!--              <el-button link type="primary" size="small" @click.stop="handleEdit(scope.$index, scope.row)">编辑-->
             <!--              </el-button>-->
-            <el-button v-if="scope.row.status === 0" link type="primary" size="small"
-              @click.stop="deleteRow(scope.$index, { gid: scope.row.gid }, 1)">
+            <el-button
+              v-if="scope.row.status === 0"
+              link
+              type="primary"
+              size="small"
+              @click.stop="deleteRow(scope.$index, { gid: scope.row.gid }, 1)"
+            >
               销账
             </el-button>
-            <el-button v-if="scope.row.status === 1" link type="info" size="small"
-              @click.stop="deleteRow(scope.$index, { gid: scope.row.gid }, 0)">
+            <el-button
+              v-if="scope.row.status === 1"
+              link
+              type="info"
+              size="small"
+              @click.stop="deleteRow(scope.$index, { gid: scope.row.gid }, 0)"
+            >
               还原
             </el-button>
             <el-button link type="danger" size="small" @click.stop="deleteRow(scope.$index, { id: scope.row.id }, 2)">
@@ -84,46 +125,37 @@
     </el-main>
     <el-footer>
       <div v-if="!isNull" class="footer">
-        <el-text> 已销账单：
+        <el-text>
+          已销账单：
           <el-switch v-model="isShowDelLine" active-text="显示" inactive-text="隐藏" inline-prompt />
         </el-text>
-        <el-button @click="showBillPanel" type="primary" :style="isPC ? '' : 'margin: 4px 5px'">添加账单
-        </el-button>
+        <el-button @click="showBillPanel" type="primary" :style="isPC ? '' : 'margin: 4px 5px'">添加账单 </el-button>
       </div>
-
     </el-footer>
   </el-container>
-
-
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, toRefs } from "vue";
-import { TableInstance } from "element-plus";
+import { computed, onMounted, ref, toRefs } from "vue"
+import { TableInstance } from "element-plus"
 //stores
-import { useBookStore } from "@/store/useBookStore";
-import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useBookStore } from "@/store/useBookStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 //hooks
-import useTimestamp from "@/hooks/useTimestamp";
+import useTimestamp from "@/hooks/useTimestamp"
 
-import { getWeekDateRange, getMonthDateRange, getDayDateRange } from "@/hooks/useComputed";
+import { getWeekDateRange, getMonthDateRange, getDayDateRange } from "@/hooks/useComputed"
 //utils
-import { emitter } from "@/utils/emitter";
+import { emitter } from "@/utils/emitter"
 //types
-import { Bill } from '@/types/books'
-import { SpanMethodProps } from "@/types/global";
+import { Bill } from "@/types/books"
+import { SpanMethodProps } from "@/types/global"
 
-
-const {
-  showBillPanel,
-  isNull,
-  deleteRow,
-} = defineProps(['showBillPanel', 'isNull', 'deleteRow'])
+const { showBillPanel, isNull, deleteRow } = defineProps(["showBillPanel", "isNull", "deleteRow"])
 
 const responsiveStore = useResponsiveStore()
 const { getTime, getDiffTime, formatDate } = useTimestamp()
 const { isPC, screenHeight } = toRefs(responsiveStore)
-
 
 const bookData = useBookStore()
 const billList = computed(() => bookData.billList)
@@ -134,57 +166,56 @@ const isShowDelLine = ref(false)
 
 //region日期选择器
 //'day', 'week','month'分别代表日，周，月账单列表
-const dateFlag = ref('week')
-const dateStr = ref('周')
-
+const dateFlag = ref("week")
+const dateStr = ref("周")
 
 //用于计算的时间原点，默认为今天
 const dateString = ref(formatDate())
 //日期选择器的默认日期周期
-const dateRange = ref<[string, string]>(['', ''])
+const dateRange = ref<[string, string]>(["", ""])
 
 //flag为'now', 'minus','plus',代表现在,加,减
 const getNewDateRange = (flag: string) => {
-  if (dateFlag.value === 'day') {
+  if (dateFlag.value === "day") {
     //修改右上角字符
-    dateStr.value = '日'
+    dateStr.value = "日"
     const { isFuture, DateRange, DateString } = getDayDateRange({ dateString: dateString.value }, flag)
     if (isFuture) return
     //修改日期区间
     dateRange.value = DateRange as [string, string]
     //修改日期计算原点
     dateString.value = DateString
-  } else if (dateFlag.value === 'week') {
-    dateStr.value = '周'
+  } else if (dateFlag.value === "week") {
+    dateStr.value = "周"
     const { isFuture, DateRange, DateString } = getWeekDateRange({ dateString: dateString.value }, flag)
     if (isFuture) return
     dateRange.value = DateRange
     dateString.value = DateString
-  } else if (dateFlag.value === 'month') {
-    dateStr.value = '月'
+  } else if (dateFlag.value === "month") {
+    dateStr.value = "月"
     const { isFuture, DateRange, DateString } = getMonthDateRange({ dateString: dateString.value }, flag)
     if (isFuture) return
     dateRange.value = DateRange
     dateString.value = DateString
   }
   getBillList()
-  console.log('时间计算原点dateString：', dateString.value)
-  console.log('时间周期dateRange：', dateRange.value)
+  console.log("时间计算原点dateString：", dateString.value)
+  console.log("时间周期dateRange：", dateRange.value)
 }
 
 //获取新的账单
 const getBillList = () => {
   console.log(dateRange.value)
-  emitter.emit('get-bill-list', { start_date: dateRange.value[0], end_date: dateRange.value[1] })
+  emitter.emit("get-bill-list", { start_date: dateRange.value[0], end_date: dateRange.value[1] })
 }
 
 //修改日/周/月
 const changeDateType = (dateType: string) => {
   dateFlag.value = dateType
-  if (dateType === 'day') dateStr.value = '日'
-  else if (dateType === 'week') dateStr.value = '周'
-  else if (dateType === 'month') dateStr.value = '月'
-  getNewDateRange('now')
+  if (dateType === "day") dateStr.value = "日"
+  else if (dateType === "week") dateStr.value = "周"
+  else if (dateType === "month") dateStr.value = "月"
+  getNewDateRange("now")
 }
 
 //禁用未来时间
@@ -196,57 +227,54 @@ const disabledDate = (time: Date) => {
 
 //销账的账单的删除线
 function showDelLine({ row, column, rowIndex, columnIndex }: SpanMethodProps<Bill>) {
-  if (row.status === 1) return 'delLine'
+  if (row.status === 1) return "delLine"
 }
 
 //显示和隐藏销账的账单
 function hide({ row, column, rowIndex, columnIndex }: SpanMethodProps<Bill>) {
-  if (row.status === 1) return isShowDelLine.value ? '' : 'display:none'
+  if (row.status === 1) return isShowDelLine.value ? "" : "display:none"
 }
-
 
 //合并列
 const objectSpanMethod = ({ row, rowIndex, columnIndex }: SpanMethodProps<Bill>) => {
   if (columnIndex === 0) {
     // if (row.status===1&&!isShowDelLine.value) return
-    const currentGroupID = row.gid;
+    const currentGroupID = row.gid
     // 如果当前行是新组的第一行，计算跨行数
     if (rowIndex === 0 || billList.value[rowIndex - 1].gid !== currentGroupID) {
-      let rowspan = 1;
+      let rowspan = 1
 
       // 从当前行向下检查相同 groupID 的行，计算 rowspan
       for (let i = rowIndex + 1; i < billList.value.length; i++) {
         if (billList.value[i].gid === currentGroupID) {
-          rowspan++;
+          rowspan++
         } else {
-          break;
+          break
         }
       }
       return {
         rowspan,
         colspan: 1,
-      };
+      }
     } else {
       // 非组内首行，隐藏 groupID 列
       return {
         rowspan: 0,
         colspan: 0,
-      };
+      }
     }
   } else {
     // 非第一列不做合并
     return {
       rowspan: 1,
       colspan: 1,
-    };
+    }
   }
 }
 
-
 onMounted(() => {
-  getNewDateRange('now')
+  getNewDateRange("now")
 })
-
 </script>
 <style scoped>
 .el-container {
@@ -269,7 +297,6 @@ onMounted(() => {
 }
 
 @media (max-width: 780px) {
-
   .el-header,
   .el-main,
   .el-footer {
@@ -284,7 +311,6 @@ onMounted(() => {
 }
 </style>
 
-
 <style>
 /*销账的账单的删除线*/
 .delLine {
@@ -293,7 +319,6 @@ onMounted(() => {
 }
 
 @media (max-width: 780px) {
-
   /* 隐藏右边日期面板 */
   .el-picker-panel__content.el-date-range-picker__content.is-right {
     display: none;

@@ -1,6 +1,6 @@
 <template>
   <label class="slider">
-    <input type="range" class="level" v-model="volumeNum" :min="min" :max="max" @change="changeVolume(volumeNum / 100)">
+    <input type="range" class="level" v-model="volumeNum" :min="min" :max="max" @change="changeVolume(volumeNum / 100)" />
     <span class="volume">
       <SVG_volume_mute v-if="volumeNum === '0'" class="icon small_icon" />
       <SVG_volume_fill v-else class="icon small_icon" />
@@ -10,20 +10,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
+import { ref } from "vue"
+import { useMusicPlayStore } from "@/store/music/useMusicPlayStore"
 //files
-import SVG_volume_mute from '@/assets/music/volume_mute.svg?component'
-import SVG_volume_fill from '@/assets/music/volume_fill.svg?component'
-
+import SVG_volume_mute from "@/assets/music/volume_mute.svg?component"
+import SVG_volume_fill from "@/assets/music/volume_fill.svg?component"
 
 const musicPlayStore = useMusicPlayStore()
 
-const { min, max, value } = defineProps(['min', 'max', 'value'])
+const { min, max, value } = defineProps(["min", "max", "value"])
 const { changeVolume } = musicPlayStore
 
 const volumeNum = ref(value)
-
 </script>
 
 <style scoped>
@@ -80,7 +78,6 @@ const volumeNum = ref(value)
   width: var(--icon-size);
   height: auto;
 }
-
 
 .slider .level {
   -webkit-appearance: none;

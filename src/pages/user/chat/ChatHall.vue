@@ -22,14 +22,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, toRefs } from 'vue'
-import { useRouter, useRoute } from "vue-router";
+import { onMounted, toRefs } from "vue"
+import { useRouter, useRoute } from "vue-router"
 //stores
-import { useChatInfoStore } from '@/store/user/chat/useChatInfoStore'
-import { useResponsiveStore } from "@/store/useResponsiveStore";
-import ChatConnect from './components/ChatConnect.vue';
-
-
+import { useChatInfoStore } from "@/store/user/chat/useChatInfoStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
+import ChatConnect from "./components/ChatConnect.vue"
 
 const router = useRouter()
 const route = useRoute()
@@ -38,24 +36,20 @@ const chatInfoStore = useChatInfoStore()
 const { screenHeight, isPC } = toRefs(responsiveStore)
 const { playerInfo } = toRefs(chatInfoStore)
 
-
 onMounted(() => {
-
   const { roomID, playerName } = route.query
   let has_roomID = false
   let has_playerName = false
-  if (roomID && typeof roomID === 'string') {
+  if (roomID && typeof roomID === "string") {
     playerInfo.value.roomID = roomID
     has_roomID = true
   }
-  if (playerName && typeof playerName === 'string') {
+  if (playerName && typeof playerName === "string") {
     playerInfo.value.playerName = playerName
     has_playerName = true
   }
-  if (has_roomID && has_playerName) router.push({ name: 'hall' })
+  if (has_roomID && has_playerName) router.push({ name: "hall" })
 })
-
-
 </script>
 <style scoped>
 .el-container {

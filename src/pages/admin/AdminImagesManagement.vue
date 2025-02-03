@@ -1,19 +1,36 @@
 <template>
-  <el-header class="header1">
-    图片管理
-  </el-header>
+  <el-header class="header1"> 图片管理 </el-header>
   <div class="header2">
     <el-button type="primary" @click="dialogVisible = true">上传图片</el-button>
     <el-button @click="clearFilter">清空全部筛选</el-button>
   </div>
-  <el-main style="padding-bottom:0;padding-top: 0 ">
-    <el-table ref="tableRef" :data="tableData" style="width: 100%" max-height="500" stripe border highlight-current-row
-      table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }">
+  <el-main style="padding-bottom: 0; padding-top: 0">
+    <el-table
+      ref="tableRef"
+      :data="tableData"
+      style="width: 100%"
+      max-height="500"
+      stripe
+      border
+      highlight-current-row
+      table-layout="auto"
+      type="type"
+      :default-sort="{ prop: 'id', order: 'custom' }"
+    >
       <el-table-column fixed prop="id" label="ID" width="70" sortable />
 
-      <el-table-column fixed prop="sort" label="分类" width="120" :filters="[{ text: '头像', value: 'headImg' },
-      { text: '背景', value: 'bg' },
-      { text: '黑名单', value: 'blacklist' },]" :filter-method="filterHandler">
+      <el-table-column
+        fixed
+        prop="sort"
+        label="分类"
+        width="120"
+        :filters="[
+          { text: '头像', value: 'headImg' },
+          { text: '背景', value: 'bg' },
+          { text: '黑名单', value: 'blacklist' },
+        ]"
+        :filter-method="filterHandler"
+      >
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
             <el-select placeholder="选择状态" v-model="urlInfo.sort">
@@ -22,16 +39,23 @@
               <el-option label="黑名单" value="blacklist" />
             </el-select>
           </div>
-          <el-button text type="danger" v-else-if="scope.row.sort === 'blacklist' || scope.row.status === 2">黑名单
-          </el-button>
+          <el-button text type="danger" v-else-if="scope.row.sort === 'blacklist' || scope.row.status === 2">黑名单 </el-button>
           <el-button text v-else-if="scope.row.sort === 'headImg'">头像</el-button>
           <el-button text v-else-if="scope.row.sort === 'bg'">背景</el-button>
         </template>
       </el-table-column>
-      <el-table-column fixed prop="status" label="状态" width="120" :filters="[
-        { text: '待审核', value: 0 }, { text: '审核通过', value: 1 },
-        { text: '黑名单', value: 2 },
-      ]" :filter-method="filterHandler">
+      <el-table-column
+        fixed
+        prop="status"
+        label="状态"
+        width="120"
+        :filters="[
+          { text: '待审核', value: 0 },
+          { text: '审核通过', value: 1 },
+          { text: '黑名单', value: 2 },
+        ]"
+        :filter-method="filterHandler"
+      >
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
             <el-select placeholder="选择状态(默认为待审核)" v-model="urlInfo.status" default-first-option>
@@ -79,16 +103,11 @@
         <template #default="scope">
           <div v-if="isEditRow !== scope.$index">
             <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row)">
-              删除
-            </el-button>
+            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row)"> 删除 </el-button>
           </div>
           <div v-else>
-            <el-button link type="primary" size="small" @click="handleCancel">取消
-            </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(urlInfo, scope.row)">
-              更新
-            </el-button>
+            <el-button link type="primary" size="small" @click="handleCancel">取消 </el-button>
+            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(urlInfo, scope.row)"> 更新 </el-button>
           </div>
         </template>
       </el-table-column>
@@ -101,24 +120,22 @@
   </el-dialog>
 </template>
 
-
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref } from "vue"
 import momo from "@/apis"
-import { ElMessage, ElMessageBox } from "element-plus";
-import type { TableColumnCtx, TableInstance } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus"
+import type { TableColumnCtx, TableInstance } from "element-plus"
 //hooks
-import UploadImage from "@/components/UploadImage.vue";
+import UploadImage from "@/components/UploadImage.vue"
 //components
-import useTimeStamp from "@/hooks/useTimestamp";
+import useTimeStamp from "@/hooks/useTimestamp"
 //utils
-import myFunction from "@/utils/myFunction";
+import myFunction from "@/utils/myFunction"
 //types
-import { Image } from '@/types/upload';
+import { Image } from "@/types/upload"
 
 const { getTime } = useTimeStamp()
 const { diffObj } = myFunction
-
 
 //上传图片面板的显示与隐藏
 let dialogVisible = ref(false)
@@ -131,12 +148,8 @@ const clearFilter = () => {
 }
 
 //筛选器
-const filterHandler = (
-  value: string,
-  row: Image,
-  column: TableColumnCtx<Image>
-) => {
-  const property = column['property'] as keyof Image
+const filterHandler = (value: string, row: Image, column: TableColumnCtx<Image>) => {
+  const property = column["property"] as keyof Image
   return row[property] === value
 }
 
@@ -156,36 +169,36 @@ const filterHandler = (
 let urlInfo: Image = reactive({
   id: 0,
   uid: 0,
-  sort: '',
+  sort: "",
   status: 0,
-  imgUrl: '',
-  imgPath: '',
-  imgMD5: '',
-  imgName: '',
-  created_time: '',
-  updated_time: '',
+  imgUrl: "",
+  imgPath: "",
+  imgMD5: "",
+  imgName: "",
+  created_time: "",
+  updated_time: "",
 })
-
-
 
 //获取全部图片
 getImages()
 
 function getImages() {
-  momo.get('/getImages').then(result => {
-    console.log(result)
-    const { msg, data } = result
-    ElMessage.success(msg)
-    tableData.splice(0, tableData.length)
-    data.forEach((item: Image) => {
-      tableData.push(item)
+  momo
+    .get("/getImages")
+    .then(result => {
+      console.log(result)
+      const { msg, data } = result
+      ElMessage.success(msg)
+      tableData.splice(0, tableData.length)
+      data.forEach((item: Image) => {
+        tableData.push(item)
+      })
     })
-  }).catch(error => {
-    console.log('发生错误：')
-    console.dir(error)
-  })
+    .catch(error => {
+      console.log("发生错误：")
+      console.dir(error)
+    })
 }
-
 
 const tableData: Image[] = reactive([])
 //编辑标记
@@ -205,13 +218,12 @@ function handleCancel() {
 //对上传的数据进行格式检查
 function checkUpdateRow(newData: Image, oldData: Image) {
   //判断是否修改为黑名单
-  if (newData.status === 2) newData.sort = 'blacklist'
+  if (newData.status === 2) newData.sort = "blacklist"
   const data = <Image>diffObj(newData, oldData)
   //判断公告信息是否修改
-  if (Object.keys(data).length === 0) return ElMessage.info('图片信息未修改，已取消上传。')
+  if (Object.keys(data).length === 0) return ElMessage.info("图片信息未修改，已取消上传。")
   else {
     //校验格式
-
 
     //id被洗掉了，手动添加
     updateRow(data, oldData.id, oldData)
@@ -220,11 +232,12 @@ function checkUpdateRow(newData: Image, oldData: Image) {
 
 //上传更新的图片信息
 function updateRow(data: Image, id: number, oldData: Image) {
-  momo.post('/updateImage',
-    {
+  momo
+    .post("/updateImage", {
       data,
-      id
-    }).then(result => {
+      id,
+    })
+    .then(result => {
       // console.log(result)
       const { msg, newPath } = result
       //判断是否修改文件路径
@@ -236,44 +249,42 @@ function updateRow(data: Image, id: number, oldData: Image) {
       //去除编辑标记
       isEditRow.value = -1
       ElMessage.success(msg)
-    }).catch(error => {
-      console.log('发生错误：')
+    })
+    .catch(error => {
+      console.log("发生错误：")
       console.log(error)
       //ElMessage.error('发生错误：' + error.message)
     })
 }
 
-
 //图片删除确认
 const deleteRow = (index: number, info: Image) => {
-  ElMessageBox.confirm(
-    '确认删除该图片吗?',
-    'Warning',
-    {
-      confirmButtonText: '确认删除',
-      cancelButtonText: '取消删除',
-      type: 'warning',
-      showClose: false
-    }
-  )
+  ElMessageBox.confirm("确认删除该图片吗?", "Warning", {
+    confirmButtonText: "确认删除",
+    cancelButtonText: "取消删除",
+    type: "warning",
+    showClose: false,
+  })
     .then(() => {
       deleteImage(index, info)
     })
-    .catch(() => ElMessage.info('删除操作已取消'))
+    .catch(() => ElMessage.info("删除操作已取消"))
 }
 
 //删除图片
 const deleteImage = (index: number, data: Image) => {
-  momo.delete('/deleteImage', data).then((result) => {
-    // console.log(result)
-    ElMessage.success(result.msg)
-    tableData.splice(index, 1)
-    ElMessage.info('因为浏览器和CDN缓存，图片链接可能一段时间后才失效')
-  }).catch(error => {
-    console.dir('发生错误：' + error)
-  })
+  momo
+    .delete("/deleteImage", data)
+    .then(result => {
+      // console.log(result)
+      ElMessage.success(result.msg)
+      tableData.splice(index, 1)
+      ElMessage.info("因为浏览器和CDN缓存，图片链接可能一段时间后才失效")
+    })
+    .catch(error => {
+      console.dir("发生错误：" + error)
+    })
 }
 </script>
-
 
 <style scoped></style>

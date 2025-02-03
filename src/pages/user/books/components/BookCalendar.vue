@@ -4,27 +4,25 @@
       <span v-if="isPC">账本月历(此处支出总计包含已销账单)</span>
       <span>{{ date }}</span>
       <el-button-group size="small">
-        <el-button @click="selectDate('prev-month')">
-          上月
-        </el-button>
+        <el-button @click="selectDate('prev-month')"> 上月 </el-button>
         <el-button @click="selectDate('today')">今天</el-button>
-        <el-button @click="selectDate('next-month')">
-          下月
-        </el-button>
+        <el-button @click="selectDate('next-month')"> 下月 </el-button>
       </el-button-group>
     </template>
     <template #date-cell="{ data }">
-      <p :class="data.isSelected ? 'is-selected' : ''" style="text-align: center;height: 100%"
-        @click="changeTab(1, data.day)">
+      <p :class="data.isSelected ? 'is-selected' : ''" style="text-align: center; height: 100%" @click="changeTab(1, data.day)">
         <span style="display: block">
-          {{ data.day.split('-')[2] }}
+          {{ data.day.split("-")[2] }}
           <template v-if="data.day in bookDesc">
-            <el-badge v-if="bookDesc[data.day].hasPaidNum !== 0" :value="bookDesc[data.day].hasPaidNum"
-              color="lightgray"></el-badge>
-            <el-badge v-if="bookDesc[data.day].noPayNum !== 0" :value="bookDesc[data.day].noPayNum"
-              color="lightgreen"></el-badge>
-            <span style="display: block;font-size: 12px" v-if="isPC">总计<el-text type="primary">{{
-              bookDesc[data.day].noPay + bookDesc[data.day].hasPaid }}</el-text> 元</span>
+            <el-badge
+              v-if="bookDesc[data.day].hasPaidNum !== 0"
+              :value="bookDesc[data.day].hasPaidNum"
+              color="lightgray"
+            ></el-badge>
+            <el-badge v-if="bookDesc[data.day].noPayNum !== 0" :value="bookDesc[data.day].noPayNum" color="lightgreen"></el-badge>
+            <span style="display: block; font-size: 12px" v-if="isPC"
+              >总计<el-text type="primary">{{ bookDesc[data.day].noPay + bookDesc[data.day].hasPaid }}</el-text> 元</span
+            >
           </template>
         </span>
         <!-- {{ data.isSelected ? '✔️' : '' }}-->
@@ -39,24 +37,24 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, toRefs } from 'vue';
-import type { CalendarDateType, CalendarInstance } from 'element-plus'
-import dayjs from 'dayjs';
-import 'dayjs/locale/zh-cn';
+import { onMounted, ref, toRefs } from "vue"
+import type { CalendarDateType, CalendarInstance } from "element-plus"
+import dayjs from "dayjs"
+import "dayjs/locale/zh-cn"
 //stores
-import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 //hooks
-import { getAllMonthDateRange } from "@/hooks/useComputed";
-import useTimestamp from '@/hooks/useTimestamp'
+import { getAllMonthDateRange } from "@/hooks/useComputed"
+import useTimestamp from "@/hooks/useTimestamp"
 
-dayjs.locale('zh-cn');//每周从周一开始
+dayjs.locale("zh-cn") //每周从周一开始
 
 const responsiveStore = useResponsiveStore()
 const { isPC } = toRefs(responsiveStore)
 const { formatDate } = useTimestamp()
 
 // const {isPC} =  toRefs(responsiveStore)
-const { getTheBillDesc, bookDesc, changeTab } = defineProps(['getTheBillDesc', 'bookDesc', 'changeTab'])
+const { getTheBillDesc, bookDesc, changeTab } = defineProps(["getTheBillDesc", "bookDesc", "changeTab"])
 
 //日历
 const calendar = ref<CalendarInstance>()
@@ -67,20 +65,19 @@ const selectDate = async (val: CalendarDateType) => {
   if (!calendar.value) return
 
   //获取日期周期
-  let flag = 'now'
-  if (val === 'prev-month') flag = 'minus'
-  else if (val === 'next-month') flag = 'plus'
+  let flag = "now"
+  if (val === "prev-month") flag = "minus"
+  else if (val === "next-month") flag = "plus"
   const { isFuture, DateRange, DateString } = getAllMonthDateRange({ dateString: dateString.value }, flag)
   if (isFuture) return //是未来的时间，不管
   dateString.value = DateString
   //获取新一页日历的简略信息
-  console.log('日历信息日期范围', DateRange)
+  console.log("日历信息日期范围", DateRange)
   await getTheBillDesc(DateRange[0], DateRange[1])
 
   //日历翻页
   calendar.value.selectDate(val)
 }
-
 
 onMounted(async () => {
   // await selectDate('today')

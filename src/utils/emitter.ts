@@ -15,7 +15,7 @@ function on<T>(event: string, handler: Handler<T>): void {
 // 触发事件
 function emit<T>(event: string, payload: T): void {
   if (events[event]) {
-    events[event].forEach((handler) => handler(payload))
+    events[event].forEach(handler => handler(payload))
   }
 }
 
@@ -32,4 +32,3 @@ export const emitter = {
   emit,
   off,
 }
-

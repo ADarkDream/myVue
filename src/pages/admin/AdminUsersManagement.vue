@@ -1,18 +1,32 @@
 <template>
   <el-container>
-    <el-header class="header1">
-      <span v-if="!tableVisible">用户</span><span v-else>管理员</span>管理
-    </el-header>
+    <el-header class="header1"> <span v-if="!tableVisible">用户</span><span v-else>管理员</span>管理 </el-header>
     <div class="header2">
-      <el-switch v-if="isSuperAdmin" v-model="tableVisible" size="large" active-text="管理员" inactive-text="用户"
-        @click="getAllAdmins" />
+      <el-switch
+        v-if="isSuperAdmin"
+        v-model="tableVisible"
+        size="large"
+        active-text="管理员"
+        inactive-text="用户"
+        @click="getAllAdmins"
+      />
       <el-button @click="clearFilter">清空全部筛选</el-button>
     </div>
-    <el-main style="padding-bottom:0;padding-top: 0 ">
+    <el-main style="padding-bottom: 0; padding-top: 0">
       <!--      用户-->
-      <el-table v-show="!tableVisible" ref="tableRef" :data="tableData" style="width: 100%" max-height="500" stripe
-        border highlight-current-row table-layout="auto" :default-sort="{ prop: 'uid', order: 'custom' }"
-        @sort-change="handleSortChange">
+      <el-table
+        v-show="!tableVisible"
+        ref="tableRef"
+        :data="tableData"
+        style="width: 100%"
+        max-height="500"
+        stripe
+        border
+        highlight-current-row
+        table-layout="auto"
+        :default-sort="{ prop: 'uid', order: 'custom' }"
+        @sort-change="handleSortChange"
+      >
         <el-table-column fixed prop="uid" label="UID" width="80" sortable />
         <el-table-column prop="username" label="用户昵称" width="200">
           <template #default="scope">
@@ -45,10 +59,17 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="headImgStatus" label="头像状态" width="120" :filters="[
-          { text: '待审核', value: 0 }, { text: '审核通过', value: 1 },
-          { text: '黑名单', value: 2 },
-        ]" :filter-method="filterHandler">
+        <el-table-column
+          prop="headImgStatus"
+          label="头像状态"
+          width="120"
+          :filters="[
+            { text: '待审核', value: 0 },
+            { text: '审核通过', value: 1 },
+            { text: '黑名单', value: 2 },
+          ]"
+          :filter-method="filterHandler"
+        >
           <template #default="scope">
             <!--          <div v-if="isEditRow===scope.$index">-->
             <!--            <el-select placeholder="选择状态(默认为待审核)" v-model="newUserInfo.headImgStatus" default-first-option>-->
@@ -72,10 +93,17 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="bgStatus" label="背景图状态" width="120" :filters="[
-          { text: '待审核', value: 0 }, { text: '审核通过', value: 1 },
-          { text: '黑名单', value: 2 },
-        ]" :filter-method="filterHandler">
+        <el-table-column
+          prop="bgStatus"
+          label="背景图状态"
+          width="120"
+          :filters="[
+            { text: '待审核', value: 0 },
+            { text: '审核通过', value: 1 },
+            { text: '黑名单', value: 2 },
+          ]"
+          :filter-method="filterHandler"
+        >
           <template #default="scope">
             <!--          <div v-if="isEditRow===scope.$index">-->
             <!--            <el-select placeholder="选择状态(默认为待审核)" v-model="newUserInfo.bgStatus" default-first-option>-->
@@ -104,13 +132,10 @@
           <template #default="scope">
             <div v-if="isEditRow !== scope.$index">
               <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row, false)">
-                删除
-              </el-button>
+              <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row, false)"> 删除 </el-button>
             </div>
             <div v-else>
-              <el-button link type="primary" size="small" @click="handleCancel">取消
-              </el-button>
+              <el-button link type="primary" size="small" @click="handleCancel">取消 </el-button>
               <el-button link type="primary" size="small" @click="checkUpdateRow(newUserInfo, scope.row, false)">
                 更新
               </el-button>
@@ -119,9 +144,19 @@
         </el-table-column>
       </el-table>
       <!--    管理员-->
-      <el-table v-show="tableVisible" ref="tableRef2" :data="tableData2" style="width: 100%" max-height="500" stripe
-        border highlight-current-row table-layout="auto" :default-sort="{ prop: 'uid', order: 'custom' }"
-        @sort-change="handleSortChange">
+      <el-table
+        v-show="tableVisible"
+        ref="tableRef2"
+        :data="tableData2"
+        style="width: 100%"
+        max-height="500"
+        stripe
+        border
+        highlight-current-row
+        table-layout="auto"
+        :default-sort="{ prop: 'uid', order: 'custom' }"
+        @sort-change="handleSortChange"
+      >
         <el-table-column fixed prop="uid" label="UID" width="80" sortable />
         <el-table-column prop="username" label="管理员昵称" width="200">
           <template #default="scope">
@@ -140,8 +175,13 @@
         <el-table-column prop="password" label="管理员密码" width="250">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
-              <el-input v-model="newUserInfo.password" placeholder="输入可修改密码" minlength="6" maxlength="18"
-                show-word-limit />
+              <el-input
+                v-model="newUserInfo.password"
+                placeholder="输入可修改密码"
+                minlength="6"
+                maxlength="18"
+                show-word-limit
+              />
             </div>
             <el-button text type="info" v-else-if="scope.row.password === ''">不做展示</el-button>
           </template>
@@ -156,20 +196,34 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="headImgStatus" label="头像状态" width="120" :filters="[
-          { text: '待审核', value: 0 }, { text: '审核通过', value: 1 },
-          { text: '黑名单', value: 2 },
-        ]" :filter-method="filterHandler">
+        <el-table-column
+          prop="headImgStatus"
+          label="头像状态"
+          width="120"
+          :filters="[
+            { text: '待审核', value: 0 },
+            { text: '审核通过', value: 1 },
+            { text: '黑名单', value: 2 },
+          ]"
+          :filter-method="filterHandler"
+        >
           <template #default="scope">
             <el-button text type="primary" v-if="scope.row.headImgStatus === 0">待审核</el-button>
             <el-button text type="info" v-else-if="scope.row.headImgStatus === 1">审核通过</el-button>
             <el-button text type="danger" v-else-if="scope.row.headImgStatus === 2">黑名单</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="isSuperAdmin" label="管理员状态" width="130" :filters="[
-          { text: '普通管理员', value: 0 }, { text: '超级管理员', value: 1 },
-          { text: '权限冻结', value: 2 },
-        ]" :filter-method="filterHandler">
+        <el-table-column
+          prop="isSuperAdmin"
+          label="管理员状态"
+          width="130"
+          :filters="[
+            { text: '普通管理员', value: 0 },
+            { text: '超级管理员', value: 1 },
+            { text: '权限冻结', value: 2 },
+          ]"
+          :filter-method="filterHandler"
+        >
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
               <el-select placeholder="选择状态(默认为普通管理员)" v-model="newUserInfo.isSuperAdmin" default-first-option>
@@ -193,16 +247,11 @@
           <template #default="scope">
             <div v-if="isEditRow !== scope.$index">
               <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row, true)">
-                删除
-              </el-button>
+              <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row, true)"> 删除 </el-button>
             </div>
             <div v-else>
-              <el-button link type="primary" size="small" @click="handleCancel">取消
-              </el-button>
-              <el-button link type="primary" size="small" @click="checkUpdateRow(newUserInfo, scope.row, true)">
-                更新
-              </el-button>
+              <el-button link type="primary" size="small" @click="handleCancel">取消 </el-button>
+              <el-button link type="primary" size="small" @click="checkUpdateRow(newUserInfo, scope.row, true)"> 更新 </el-button>
             </div>
           </template>
         </el-table-column>
@@ -213,18 +262,18 @@
 
 <script setup lang="ts">
 import momo from "@/apis"
-import { reactive, ref } from 'vue'
-import { ElMessage, ElMessageBox, TableColumnCtx, type TableInstance } from "element-plus";
+import { reactive, ref } from "vue"
+import { ElMessage, ElMessageBox, TableColumnCtx, type TableInstance } from "element-plus"
 //stores
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
 const userInfoStore = useUserInfoStore()
 
 //hooks
-import useTimeStamp from "@/hooks/useTimestamp";
+import useTimeStamp from "@/hooks/useTimestamp"
 //types
 import { UserInfo } from "@/types/user"
 //utils
-import myFunction from "@/utils/myFunction";
+import myFunction from "@/utils/myFunction"
 
 const { getTime } = useTimeStamp()
 const { diffObj } = myFunction
@@ -232,8 +281,7 @@ const { diffObj } = myFunction
 const tableVisible = ref(false)
 //判断是否是超级管理员
 const adminInfo = userInfoStore.userInfo
-const isSuperAdmin = ref((adminInfo?.isSuperAdmin === 1))
-
+const isSuperAdmin = ref(adminInfo?.isSuperAdmin === 1)
 
 const tableRef = ref<TableInstance>()
 const tableRef2 = ref<TableInstance>()
@@ -244,12 +292,8 @@ const clearFilter = () => {
 }
 
 //筛选器
-const filterHandler = (
-  value: string,
-  row: UserInfo,
-  column: TableColumnCtx<UserInfo>
-) => {
-  const property = column['property'] as keyof UserInfo
+const filterHandler = (value: string, row: UserInfo, column: TableColumnCtx<UserInfo>) => {
+  const property = column["property"] as keyof UserInfo
   return row[property] === value
 }
 
@@ -265,55 +309,60 @@ function handleSortChange() {
 
 getAllUsers()
 
-
 function getAllUsers() {
-  momo.get('/getAllUsers',).then(result => {
-    console.log(result)
+  momo
+    .get("/getAllUsers")
+    .then(result => {
+      console.log(result)
 
-    const { msg, userList } = result
-    ElMessage.success(msg)
-    tableData.splice(0, tableData.length)
-    userList.forEach((item: UserInfo) => {
-      tableData.push(item)
+      const { msg, userList } = result
+      ElMessage.success(msg)
+      tableData.splice(0, tableData.length)
+      userList.forEach((item: UserInfo) => {
+        tableData.push(item)
+      })
     })
-  }).catch(error => {
-    console.log('发生错误：')
-    console.dir(error)
-  })
+    .catch(error => {
+      console.log("发生错误：")
+      console.dir(error)
+    })
 }
 
 function getAllAdmins() {
   if (!tableVisible.value) return
-  momo.get('/getAllAdmins').then(result => {
-    console.log(result)
-    const { msg, userList } = result
-    ElMessage.success(msg)
-    tableData2.splice(0, tableData2.length)
-    userList.forEach((item: UserInfo) => {
-      tableData2.push(item)
+  momo
+    .get("/getAllAdmins")
+    .then(result => {
+      console.log(result)
+      const { msg, userList } = result
+      ElMessage.success(msg)
+      tableData2.splice(0, tableData2.length)
+      userList.forEach((item: UserInfo) => {
+        tableData2.push(item)
+      })
     })
-  }).catch(error => {
-    console.log('发生错误：')
-    console.dir(error)
-  })
+    .catch(error => {
+      console.log("发生错误：")
+      console.dir(error)
+    })
 }
 
 // const now = new Date()
 const newUserInfo: UserInfo = reactive({
   uid: 0,
-  username: '',
-  email: '',
-  password: '',
+  username: "",
+  email: "",
+  password: "",
   headImgId: 0,
-  headImgUrl: '',
+  headImgUrl: "",
   headImgStatus: 0,
   bgId: null,
-  bgUrl: '',
+  bgUrl: "",
   bgStatus: null,
-  signature: '',
+  signature: "",
   isSuperAdmin: 0,
-  created_time: '',
-  updated_time: '',
+  created_time: "",
+  updated_time: "",
 })
 
 const tableData: UserInfo[] = reactive([])
@@ -321,13 +370,11 @@ const tableData2: UserInfo[] = reactive([])
 //编辑标记
 const isEditRow = ref<number>(-1)
 
-
 //编辑用户信息(修改编辑标记)
 const handleEdit = (index: number, row: UserInfo) => {
   isEditRow.value = index
   Object.assign(newUserInfo, row)
 }
-
 
 //还原编辑标记
 function handleCancel() {
@@ -338,71 +385,72 @@ function handleCancel() {
 function checkUpdateRow(newData: UserInfo, oldData: UserInfo, isAdmin: boolean) {
   const data = <UserInfo>diffObj(newData, oldData)
   //判断用户信息是否修改
-  if (Object.keys(data).length === 0) return ElMessage.info('用户信息未修改，已取消上传。')
+  if (Object.keys(data).length === 0) return ElMessage.info("用户信息未修改，已取消上传。")
   else {
     //校验格式
 
     //清洗多余数据
     Object.keys(data).forEach(key => {
-      if (key === 'headImgUrl' || key === 'headImgStatus' || key === 'bgUrl' || key === 'bgStatus')
-        delete data[key]
+      if (key === "headImgUrl" || key === "headImgStatus" || key === "bgUrl" || key === "bgStatus") delete data[key]
     })
     //如果是管理员信息
-    if (isAdmin) Object.keys(data).forEach(key => {
-      if (key === 'bgId' || key === 'signature')
-        delete data[key]
-    })
-    else Object.keys(data).forEach(key => {
-      if (key === 'isSuperAdmin' || key === 'password')
-        delete data[key]
-    })
+    if (isAdmin)
+      Object.keys(data).forEach(key => {
+        if (key === "bgId" || key === "signature") delete data[key]
+      })
+    else
+      Object.keys(data).forEach(key => {
+        if (key === "isSuperAdmin" || key === "password") delete data[key]
+      })
 
     //uid被洗掉了，手动添加
     updateRow(data, oldData.uid, oldData, isAdmin)
   }
 }
 
-
 //上传新的用户信息
 function updateRow(data: UserInfo, uid: number, oldData: UserInfo, isAdmin: boolean) {
-  let url = '/updateUserInfo'
-  if (isAdmin) url = '/updateAdminInfo'
-  momo.post(url, {
-    data,
-    uid
-  }
-  ).then(result => {
-    console.log(result)
-    const { msg } = result
-    //修改更新时间
-    oldData.updated_time = (new Date()).toISOString()
-    if (isSuperAdmin) data.password = ''
-    //将修改后的信息显示出来
-    Object.assign(oldData, data)
-    //去除编辑标记
-    isEditRow.value = -1
-    ElMessage.success(msg)
-  }).catch(error => {
-    console.log('发生错误：')
-    console.log(error)
-    //ElMessage.error('发生错误：' + error.message)
-  })
+  let url = "/updateUserInfo"
+  if (isAdmin) url = "/updateAdminInfo"
+  momo
+    .post(url, {
+      data,
+      uid,
+    })
+    .then(result => {
+      console.log(result)
+      const { msg } = result
+      //修改更新时间
+      oldData.updated_time = new Date().toISOString()
+      if (isSuperAdmin) data.password = ""
+      //将修改后的信息显示出来
+      Object.assign(oldData, data)
+      //去除编辑标记
+      isEditRow.value = -1
+      ElMessage.success(msg)
+    })
+    .catch(error => {
+      console.log("发生错误：")
+      console.log(error)
+      //ElMessage.error('发生错误：' + error.message)
+    })
 }
-
 
 //添加管理员
 function addAdmin(uid: number) {
   console.log(uid)
   if (!isSuperAdmin.value) return
-  momo.post('/addAdmin', { uid }).then(result => {
-    console.log(result)
-    const { msg } = result
-    ElMessage.success(msg)
-
-  }).catch(error => {
-    console.log('发生错误：')
-    console.log(error)
-  })
+  momo
+    .post("/addAdmin", { uid })
+    .then(result => {
+      console.log(result)
+      const { msg } = result
+      ElMessage.success(msg)
+    })
+    .catch(error => {
+      console.log("发生错误：")
+      console.log(error)
+    })
 }
 
 //删除确认框
@@ -411,37 +459,35 @@ const deleteRow = (index: number, row: UserInfo, isAdmin: boolean) => {
   console.log(tableData2.splice(1, 1))
   console.log(row)
   // handleSortChange()
-  ElMessageBox.confirm(
-    `确认删除${isAdmin ? '管理员' : '用户'}${username},${index}吗?`,
-    'Warning',
-    {
-      confirmButtonText: '确认删除',
-      cancelButtonText: '取消删除',
-      type: 'warning',
-      showClose: false
-    }
-  )
+  ElMessageBox.confirm(`确认删除${isAdmin ? "管理员" : "用户"}${username},${index}吗?`, "Warning", {
+    confirmButtonText: "确认删除",
+    cancelButtonText: "取消删除",
+    type: "warning",
+    showClose: false,
+  })
     .then(() => {
       deleteUser(index, uid, isAdmin)
     })
-    .catch(() => ElMessage.info('删除操作已取消'))
+    .catch(() => ElMessage.info("删除操作已取消"))
 }
 
 //删除用户账号
 const deleteUser = (index: number, uid: number, isAdmin: boolean) => {
-  let url = '/deleteUser'
-  if (isAdmin) url = '/deleteAdmin'
-  momo.delete( url,{ uid }).then((result) => {
-    console.log(result)
-    ElMessage.success(result.msg)
-    if (isAdmin) tableData2.splice(index, 1)
-    else tableData.splice(index, 1)
-  }).catch(error => {
-    console.dir('发生错误：')
-    console.log(error)
-  })
+  let url = "/deleteUser"
+  if (isAdmin) url = "/deleteAdmin"
+  momo
+    .delete(url, { uid })
+    .then(result => {
+      console.log(result)
+      ElMessage.success(result.msg)
+      if (isAdmin) tableData2.splice(index, 1)
+      else tableData.splice(index, 1)
+    })
+    .catch(error => {
+      console.dir("发生错误：")
+      console.log(error)
+    })
 }
-
 
 // const onAddItem = () => {
 //   now.setDate(now.getDate() + 1)
@@ -454,9 +500,6 @@ const deleteUser = (index: number, uid: number, isAdmin: boolean) => {
 //     zip: 'CA 90036',
 //   })
 // }
-
-
 </script>
-
 
 <style scoped></style>

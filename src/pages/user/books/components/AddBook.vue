@@ -9,7 +9,13 @@
           <el-input v-model="addBookForm.intro" placeholder="输入账本简介" maxlength="30" />
         </el-form-item>
         <div class="btn">
-          <el-button @click="reset(addBookFormRef); cancelAddBook()">取消</el-button>
+          <el-button
+            @click="
+              reset(addBookFormRef)
+              cancelAddBook()
+            "
+            >取消</el-button
+          >
           <el-button type="primary" @click="submit(addBookForm, '/addBook')">新建</el-button>
         </div>
       </el-form>
@@ -24,39 +30,39 @@
         </el-form-item>
 
         <div class="btn">
-          <el-button @click="reset(joinBookFormRef); cancelAddBook()">取消</el-button>
+          <el-button
+            @click="
+              reset(joinBookFormRef)
+              cancelAddBook()
+            "
+            >取消</el-button
+          >
           <el-button type="primary" @click="submit(joinBookForm, '/joinBook')">申请</el-button>
         </div>
       </el-form>
     </el-tab-pane>
   </el-tabs>
-
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { ElMessage, type FormInstance } from "element-plus";
-import type { TabsInstance } from 'element-plus'
+import { reactive, ref } from "vue"
+import { ElMessage, type FormInstance } from "element-plus"
+import type { TabsInstance } from "element-plus"
 import momo from "@/apis"
 
-
-
-
-
-const tabPosition = ref<TabsInstance['tabPosition']>('top')
+const tabPosition = ref<TabsInstance["tabPosition"]>("top")
 const addBookFormRef = ref<FormInstance>()
 const addBookForm = reactive({
-  name: '',
-  intro: '',
+  name: "",
+  intro: "",
 })
 const joinBookFormRef = ref<FormInstance>()
-const joinBookForm = reactive<{ bid: number | null, key: string }>({
+const joinBookForm = reactive<{ bid: number | null; key: string }>({
   bid: null,
-  key: '',
+  key: "",
 })
 
-const { cancelAddBook } = defineProps(['cancelAddBook'])
-
+const { cancelAddBook } = defineProps(["cancelAddBook"])
 
 //新建账本或加入账本协作
 const submit = async (formData, url: string) => {
@@ -67,11 +73,10 @@ const submit = async (formData, url: string) => {
     ElMessage.success(msg)
     cancelAddBook(data)
   } catch (error) {
-    console.log('发生错误：')
+    console.log("发生错误：")
     console.dir(error)
   }
 }
-
 
 //重置表单
 const reset = (val: FormInstance | undefined) => {

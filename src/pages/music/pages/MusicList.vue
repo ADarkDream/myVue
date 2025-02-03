@@ -11,26 +11,33 @@
       <div class="infoDiv">
         <div
           :style="'--coverImg:' + `url(${musicListInfo?.pic_url || musicListInfo?.default_cover_url || defaultAlbumArt})`"
-          class="cover"></div>
+          class="cover"
+        ></div>
         <div class="music_list_info">
-          <p class="title"><el-text>{{ musicListInfo?.name }}</el-text>
+          <p class="title">
+            <el-text>{{ musicListInfo?.name }}</el-text>
             <el-button link type="warning" :icon="ArrowUpBold" v-show="!isHidden" @click="toggleInfoVisible">
-              {{ '收起' }}
+              {{ "收起" }}
             </el-button>
           </p>
           <div class="info">
-            <p>歌单状态：
-              <el-text :type="musicListInfo?.status === 1 ? 'primary' : 'success'">{{
-                musicListInfo?.status === 1 ? '私有' : '公开'
-              }}
+            <p>
+              歌单状态：
+              <el-text :type="musicListInfo?.status === 1 ? 'primary' : 'success'"
+                >{{ musicListInfo?.status === 1 ? "私有" : "公开" }}
               </el-text>
             </p>
-            <p>歌曲数：{{ musicListInfo?.songsCount }}<el-button link size="small" plain type="primary"
-                @click="refresh()">刷新</el-button></p>
-            <p>介绍：<el-text type="info" class="description" truncated :line-clamp="isPC ? 3 : 1">{{
-              musicListInfo?.description || '暂无介绍' }}</el-text>
+            <p>
+              歌曲数：{{ musicListInfo?.songsCount
+              }}<el-button link size="small" plain type="primary" @click="refresh()">刷新</el-button>
             </p>
-            <p>上次更新时间：
+            <p>
+              介绍：<el-text type="info" class="description" truncated :line-clamp="isPC ? 3 : 1">{{
+                musicListInfo?.description || "暂无介绍"
+              }}</el-text>
+            </p>
+            <p>
+              上次更新时间：
               <el-text type="info">{{ getTime(musicListInfo!.updated_time) }}</el-text>
             </p>
           </div>
@@ -41,61 +48,66 @@
             <el-button @click="connectMusicList()" v-show="isOwner">收藏</el-button>
             <el-button @click="showEditMusicListInfoDrawer(false, musicListInfo)" v-if="isOwner">编辑</el-button>
             <el-button @click="shareMusicListLink()">分享</el-button>
-            <el-button v-if="musicListInfo.cloud_music_list_id"
-              @click="musicListUtils.goToCloudMusicList(musicListInfo.cloud_music_list_id)">前往网易云</el-button>
+            <el-button
+              v-if="musicListInfo.cloud_music_list_id"
+              @click="musicListUtils.goToCloudMusicList(musicListInfo.cloud_music_list_id)"
+              >前往网易云</el-button
+            >
           </el-button-group>
           <el-button link type="warning" :icon="ArrowDownBold" v-show="isHidden" @click="toggleInfoVisible()">
-            {{ '显示' }}
+            {{ "显示" }}
           </el-button>
         </div>
-
       </div>
-      <el-button-group class="btnGroup" style="margin:5px 0 ;" size="small" type="primary" v-if="!isPC && !isHidden">
+      <el-button-group class="btnGroup" style="margin: 5px 0" size="small" type="primary" v-if="!isPC && !isHidden">
         <el-button @click="addTheList(true)">播放</el-button>
         <el-button @click="addTheList()">添加</el-button>
         <el-button :disabled="!isOwner">收藏</el-button>
         <el-button @click="showEditMusicListInfoDrawer(false, musicListInfo)" v-if="isOwner">编辑</el-button>
         <el-button @click="shareMusicListLink()">分享</el-button>
-        <el-button v-if="musicListInfo.cloud_music_list_id"
-          @click="musicListUtils.goToCloudMusicList(musicListInfo.cloud_music_list_id)">前往网易云</el-button>
+        <el-button
+          v-if="musicListInfo.cloud_music_list_id"
+          @click="musicListUtils.goToCloudMusicList(musicListInfo.cloud_music_list_id)"
+          >前往网易云</el-button
+        >
       </el-button-group>
     </div>
-    <music-list-songs-list :songsList="musicList" :height="mainPanelContentHeight - (isPC ? 100 : 70)"
-      v-show="musicList.length !== 0" :isOwner />
+    <music-list-songs-list
+      :songsList="musicList"
+      :height="mainPanelContentHeight - (isPC ? 100 : 70)"
+      v-show="musicList.length !== 0"
+      :isOwner
+    />
   </div>
-
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs } from "vue";
-import { ArrowDownBold, ArrowUpBold } from "@element-plus/icons-vue";
+import { computed, ref, toRefs } from "vue"
+import { ArrowDownBold, ArrowUpBold } from "@element-plus/icons-vue"
 //stores
-import { useMusicListStore } from "@/store/music/useMusicListStore";
-import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore";
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useMusicListStore } from "@/store/music/useMusicListStore"
+import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore"
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
 //hooks
-import useTimestamp from "@/hooks/useTimestamp";
-import { useResponsiveStore } from "@/store/useResponsiveStore";
-import useMusicPlay from "@/hooks/music/useMusicPlay";
-import useMusicList from "@/hooks/music/useMusicList";
-import useMusic from '@/hooks/music/useMusic'
+import useTimestamp from "@/hooks/useTimestamp"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
+import useMusicPlay from "@/hooks/music/useMusicPlay"
+import useMusicList from "@/hooks/music/useMusicList"
+import useMusic from "@/hooks/music/useMusic"
 //components
-import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
+import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue"
 //utils
-import myFunction from "@/utils/myFunction";
-import musicListUtils from "@/utils/music/musicList";
+import myFunction from "@/utils/myFunction"
+import musicListUtils from "@/utils/music/musicList"
 //files
-import defaultAlbumArt from "@/assets/music/music.svg";
-
+import defaultAlbumArt from "@/assets/music/music.svg"
 
 const musicListStore = useMusicListStore()
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
 const mainPanelConfigStore = useMainPanelConfigStore()
 
-
 const { getTime } = useTimestamp()
-
 
 const musicList = computed(() => musicListStore.musicList)
 const musicListInfo = computed(() => musicListStore.musicListInfo!)
@@ -134,7 +146,7 @@ const refresh = async () => {
   else result = await getCloudMusicList({ cloud_music_list_id: cloud_music_list_id!, latest: 1 })
   const { code, msg } = result
 
-  if (status === 1) ElMessage.success('刷新成功')
+  if (status === 1) ElMessage.success("刷新成功")
   else ElMessage.info(msg)
 }
 
@@ -142,17 +154,16 @@ const refresh = async () => {
  * 分享歌单链接
  */
 const shareMusicListLink = () => {
-  if (musicListInfo.value?.status !== 2) return ElMessage.info('当前歌单为私有歌单，请先修改为公开歌单再分享')
-  else copyText('https://muxidream.cn/music?ml_id=' + musicListInfo.value?.music_list_id, '歌单链接')
+  if (musicListInfo.value?.status !== 2) return ElMessage.info("当前歌单为私有歌单，请先修改为公开歌单再分享")
+  else copyText("https://muxidream.cn/music?ml_id=" + musicListInfo.value?.music_list_id, "歌单链接")
 }
 
 /**
  * 收藏歌单
  */
 const connectMusicList = async () => {
-  if (isOwner.value) return ElMessage.info('无法收藏自己的歌单')
-
-  else return ElMessage.info('功能开发中')
+  if (isOwner.value) return ElMessage.info("无法收藏自己的歌单")
+  else return ElMessage.info("功能开发中")
 }
 // ! 收藏功能不完善
 //将歌曲添加到播放列表，剔除会员歌曲
@@ -166,15 +177,12 @@ const addTheList = async (isCover = false) => {
     await toggleMusic({ index: 0 })
   }
   //面板激活序号
-
 }
-
-
 </script>
 
 <style scoped>
 .musicList {
-  --coverImg: url('@/assets/music/music.svg');
+  --coverImg: url("@/assets/music/music.svg");
 
   .el-empty {
     margin-top: 50px;
@@ -194,7 +202,6 @@ const addTheList = async (isCover = false) => {
     padding: 5px;
     border-radius: 15px;
   }
-
 }
 
 .cover {
@@ -210,7 +217,6 @@ const addTheList = async (isCover = false) => {
   padding-left: 20px;
   position: relative;
   flex-grow: 1;
-
 
   .title {
     display: flex;
@@ -232,8 +238,6 @@ const addTheList = async (isCover = false) => {
       flex: 1;
       /*占据这一行的剩余空间 */
     }
-
-
   }
 
   .toggleBtn {
@@ -241,7 +245,7 @@ const addTheList = async (isCover = false) => {
     position: absolute;
     bottom: 0;
     right: 0;
-    margin-top: 10px
+    margin-top: 10px;
   }
 }
 
@@ -264,19 +268,15 @@ const addTheList = async (isCover = false) => {
       padding: 0;
     }
 
-
     .toggleBtn {
       position: relative;
       margin: 0;
     }
   }
-
 }
-
 
 /*移动端布局*/
 @media (max-width: 780px) {
-
   /*歌单信息*/
   .infoDiv {
     justify-content: space-around;

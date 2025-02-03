@@ -1,10 +1,12 @@
 <template>
   <div ref="ForumRef" class="mainPanel" :style="bgSettings">
     <el-breadcrumb :separator-icon="ArrowRight">
-      <el-breadcrumb-item v-for="({ name, label, query }, index) in routerBreadcrumb" :key="index"
-        @click="setRouterBreadcrumb(index, { name, label, query })">{{
-          label
-        }}</el-breadcrumb-item>
+      <el-breadcrumb-item
+        v-for="({ name, label, query }, index) in routerBreadcrumb"
+        :key="index"
+        @click="setRouterBreadcrumb(index, { name, label, query })"
+        >{{ label }}</el-breadcrumb-item
+      >
     </el-breadcrumb>
     <!-- 使用 keep-alive 缓存页面, slot props 动态渲染路由组件 -->
     <router-view v-slot="{ Component }">
@@ -19,17 +21,17 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from "vue";
-import { ArrowRight } from '@element-plus/icons-vue'
+import { toRefs } from "vue"
+import { ArrowRight } from "@element-plus/icons-vue"
 //stores
-import { useRoute } from "vue-router";
-import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore";
-import { useForumStore } from "@/store/forum/useForumStore";
+import { useRoute } from "vue-router"
+import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore"
+import { useForumStore } from "@/store/forum/useForumStore"
 // import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
 
 //utils
-import { emitter } from "@/utils/emitter";
+import { emitter } from "@/utils/emitter"
 
 const route = useRoute()
 // const responsiveStore = useResponsiveStore()
@@ -44,20 +46,18 @@ const { setRouterBreadcrumb } = forumStore
 // 判断是否需要缓存当前页面
 const isKeepAlive = computed(() => {
   const flag = route.meta?.keepAlive ?? false
-  console.log("缓存当前页面：", flag);
+  console.log("缓存当前页面：", flag)
   return flag
-
-});
+})
 interface Scroll {
-  scrollLeft: number,
+  scrollLeft: number
   scrollTop: number
 }
 
 function scroll({ scrollLeft, scrollTop }: Scroll) {
-  console.log('鼠标滚动了', scrollTop, 'px')
-  emitter.emit('comments-move', scrollTop)
+  console.log("鼠标滚动了", scrollTop, "px")
+  emitter.emit("comments-move", scrollTop)
 }
-
 </script>
 <style>
 @import "@/assets/css/mainPanel.css";

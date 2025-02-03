@@ -2,17 +2,21 @@
   <div class="chat-area">
     <div class="chat-area-header">
       <el-button @click="reLink" size="small" type="warning" plain>重连</el-button>
-      <el-text type="primary" style="font-size: 22px;">{{ isLogin ? '' : '临时' }}聊天室[Demo]</el-text>
-      <el-button type="primary"
+      <el-text type="primary" style="font-size: 22px">{{ isLogin ? "" : "临时" }}聊天室[Demo]</el-text>
+      <el-button
+        type="primary"
         @click="copyText('https:muxidream.cn/Chat/hall?roomID=' + playerInfo.roomID + '&playerName=这里填昵称', '房间号')"
-        title="点击复制当前房间号" size="small">复制房间地址
+        title="点击复制当前房间号"
+        size="small"
+        >复制房间地址
       </el-button>
     </div>
     <el-scrollbar ref="scrollbarRef">
       <div class="chat-area-main" ref="content">
-        <el-text type="info">支持多人聊天，如果房间内没人了会自动关闭，聊天记录暂时不支持长期保存,暂时未优化移动端界面。
+        <el-text type="info"
+          >支持多人聊天，如果房间内没人了会自动关闭，聊天记录暂时不支持长期保存,暂时未优化移动端界面。
         </el-text>
-        <br>
+        <br />
         <el-text type="warning">如果消息发不出去可以试试点左上角重连</el-text>
         <el-button link @click="showFeedback" type="success">测试期间如有bug请点击此处反馈！</el-button>
         <!--            <div class="chat-area-group">
@@ -25,8 +29,10 @@
              <span>+4</span>
            </div>-->
         <template v-for="item in roomMsg" :key="item.time">
-          <div v-if="item.roomID === playerInfo.roomID"
-            :class="['chat-msg', item.playerID === playerInfo.playerID ? 'owner' : 'guest']">
+          <div
+            v-if="item.roomID === playerInfo.roomID"
+            :class="['chat-msg', item.playerID === playerInfo.playerID ? 'owner' : 'guest']"
+          >
             <div class="chat-msg-profile">
               <img class="chat-msg-img" :src="headImgUrl || imageSrc" alt="" />
               <!--              <el-text class="chat-msg-title">{{ item.playerName }}</el-text>-->
@@ -37,7 +43,6 @@
             </div>
           </div>
         </template>
-
       </div>
     </el-scrollbar>
     <div class="chat-area-footer">
@@ -62,8 +67,7 @@
       <!--        <path-->
       <!--            d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>-->
       <!--      </svg>-->
-      <el-input type="textarea" ref="inputRef" v-model="msg" @keyup.enter="sendMsg"
-        placeholder="Type something here..." />
+      <el-input type="textarea" ref="inputRef" v-model="msg" @keyup.enter="sendMsg" placeholder="Type something here..." />
       <el-button type="primary" @click="sendMsg" :icon="Promotion">发送</el-button>
       <!--      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"-->
       <!--           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile">-->
@@ -80,65 +84,61 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, toRefs } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { Promotion } from "@element-plus/icons-vue";
+import { onMounted, onUnmounted, ref, toRefs } from "vue"
+import { useRouter, useRoute } from "vue-router"
+import { Promotion } from "@element-plus/icons-vue"
 //stores
-import { useChatInfoStore } from "@/store/user/chat/useChatInfoStore";
-import { useChatMsgStore } from '@/store/user/chat/useChatMsgStore'
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useChatInfoStore } from "@/store/user/chat/useChatInfoStore"
+import { useChatMsgStore } from "@/store/user/chat/useChatMsgStore"
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
 //hooks
-import useTimestamp from "@/hooks/useTimestamp";
+import useTimestamp from "@/hooks/useTimestamp"
 //utils
-import titleDiv from '@/utils/titleDiv';
-import myFunction from "@/utils/myFunction";
-import { emitter } from "@/utils/emitter";
+import titleDiv from "@/utils/titleDiv"
+import myFunction from "@/utils/myFunction"
+import { emitter } from "@/utils/emitter"
 // import {ChatMsg} from '@/types/chat'
-
 
 const chatInfoStore = useChatInfoStore()
 const chatMsgStore = useChatMsgStore()
 const userInfoStore = useUserInfoStore()
-const { socket, playerInfo } = toRefs(chatInfoStore)//本地用户信息
-const { roomMsg } = toRefs(chatMsgStore)//本地的聊天信息
-
-
+const { socket, playerInfo } = toRefs(chatInfoStore) //本地用户信息
+const { roomMsg } = toRefs(chatMsgStore) //本地的聊天信息
 
 const router = useRouter()
 const route = useRoute()
 const { copyText } = myFunction
 
-
 const { isLogin, headImgUrl, imageSrc } = toRefs(userInfoStore)
 const { getDiffTime } = useTimestamp()
 
-
 onMounted(async () => {
-
   const { roomID, playerName } = playerInfo.value
   let has_roomID = false
   let has_playerName = false
-  console.log(route.query);
-  if (roomID && typeof roomID === 'string') {
+  console.log(route.query)
+  if (roomID && typeof roomID === "string") {
     playerInfo.value.roomID = roomID
     has_roomID = true
-  } else {//房间号为空，返回主页
-    ElMessage.error('请先填写房间号')
-    return router.push({ name: 'hall' })
+  } else {
+    //房间号为空，返回主页
+    ElMessage.error("请先填写房间号")
+    return router.push({ name: "hall" })
   }
-  if (playerName && typeof playerName === 'string') {
+  if (playerName && typeof playerName === "string") {
     playerInfo.value.playerName = playerName
 
     has_playerName = true
-  } else {//昵称为空，返回主页
-    ElMessage.error('请先填写昵称')
-    return router.push({ name: 'hall' })
+  } else {
+    //昵称为空，返回主页
+    ElMessage.error("请先填写昵称")
+    return router.push({ name: "hall" })
   }
 
   //如果地址栏有参数则清除
-  if (has_roomID && has_playerName) await router.push({ name: 'talk' })
-  reLink()//重连
-  inputFocus()//输入框获取焦点
+  if (has_roomID && has_playerName) await router.push({ name: "talk" })
+  reLink() //重连
+  inputFocus() //输入框获取焦点
 
   // if (chatMsgInfo) {//pinia刷新之后不能获取复杂数据类型，bug? 手动获取
   //   console.log(chatMsgInfo)
@@ -151,22 +151,21 @@ onMounted(async () => {
 })
 const showFeedback = () => titleDiv.showNotice({ show_num: 3, active_num: 2 })
 
-
-const msg = ref<string>('')
+const msg = ref<string>("")
 //收到的信息
 
 //尝试重连
 const reLink = () => {
-  socket.value.emit('re-link', {
-    playerInfo: playerInfo.value
+  socket.value.emit("re-link", {
+    playerInfo: playerInfo.value,
   })
 }
 
 //发送信息
 const sendMsg = () => {
   if (msg.value) {
-    socket.value.emit('room-message', { message: msg.value, playerInfo: playerInfo.value })
-    msg.value = ''
+    socket.value.emit("room-message", { message: msg.value, playerInfo: playerInfo.value })
+    msg.value = ""
   }
 }
 
@@ -176,11 +175,10 @@ interface CustomElScrollbar {
 }
 
 //合并接口类型
-interface ElScrollbar extends CustomElScrollbar, HTMLDivElement {
-}
+interface ElScrollbar extends CustomElScrollbar, HTMLDivElement {}
 
 //el-scrollbar滑动区域元素
-const scrollbarRef = ref<(ElScrollbar) | null>(null)
+const scrollbarRef = ref<ElScrollbar | null>(null)
 //chat-area-main聊天区域元素
 const content = ref<HTMLDivElement | null>(null)
 //聊天输入框
@@ -188,12 +186,11 @@ const inputRef = ref<HTMLInputElement | null>(null)
 
 //聊天窗口滚动到底部
 const scrollToBottom = () => {
-  if (content.value && scrollbarRef.value)
-    scrollbarRef.value.setScrollTop(content.value.scrollHeight)
+  if (content.value && scrollbarRef.value) scrollbarRef.value.setScrollTop(content.value.scrollHeight)
 }
 
 //注册聊天窗口滚动到底部
-emitter.on('scrollToBottom', scrollToBottom)
+emitter.on("scrollToBottom", scrollToBottom)
 
 //输入框获取焦点
 const inputFocus = () => {
@@ -209,23 +206,20 @@ const inputFocus = () => {
 
 //阻止用户直接关闭当前标签页
 const listener = (event: Event) => {
-  event.preventDefault(); // 阻止默认的关闭行为
+  event.preventDefault() // 阻止默认的关闭行为
   // event.returnValue = ''; // 设置警告消息为空字符串，以触发浏览器显示默认的关闭提示
 }
-window.addEventListener('beforeunload', listener)
-
+window.addEventListener("beforeunload", listener)
 
 //退出,删除全部监听
 onUnmounted(() => {
-  socket.value.emit('room-leave', { playerInfo: playerInfo.value, reason: '离开聊天界面' })
-  removeEventListener('beforeunload', listener)
-  console.log('已退出chatRoom')
+  socket.value.emit("room-leave", { playerInfo: playerInfo.value, reason: "离开聊天界面" })
+  removeEventListener("beforeunload", listener)
+  console.log("已退出chatRoom")
   // socket.removeAllListeners()
 })
 
-
 //endregion
-
 </script>
 
 <style scoped lang="scss">
@@ -309,7 +303,7 @@ onUnmounted(() => {
     font-size: 14px;
     font-weight: 500;
 
-    &+& {
+    & + & {
       margin-top: 10px;
     }
   }
@@ -332,7 +326,7 @@ onUnmounted(() => {
 .chat-msg-content::after {
   position: absolute;
   top: 10px;
-  content: '';
+  content: "";
   border: 4px solid transparent;
 }
 
@@ -343,7 +337,6 @@ onUnmounted(() => {
   color: var(--chat-text-color);
   font-size: 17px;
 }
-
 
 /*用户的聊天样式*/
 .owner {
@@ -420,7 +413,7 @@ onUnmounted(() => {
     color: var(--settings-icon-hover);
   }
 
-  &+svg {
+  & + svg {
     margin-left: 12px;
   }
 }
@@ -440,9 +433,7 @@ onUnmounted(() => {
   }
 }
 
-
 .dark {
-
   .search-bar input,
   .detail-area input {
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56.966 56.966' fill='%236f7073'%3e%3cpath d='M55.146 51.887L41.588 37.786A22.926 22.926 0 0046.984 23c0-12.682-10.318-23-23-23s-23 10.318-23 23 10.318 23 23 23c4.761 0 9.298-1.436 13.177-4.162l13.661 14.208c.571.593 1.339.92 2.162.92.779 0 1.518-.297 2.079-.837a3.004 3.004 0 00.083-4.242zM23.984 6c9.374 0 17 7.626 17 17s-7.626 17-17 17-17-7.626-17-17 7.626-17 17-17z'/%3e%3c/svg%3e");
@@ -472,12 +463,11 @@ onUnmounted(() => {
   display: flex;
   max-width: 300px;
 
-
   * {
     border: 2px solid var(--theme-bg-color);
   }
 
-  *+* {
+  * + * {
     margin-left: -5px;
   }
 

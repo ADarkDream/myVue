@@ -10,33 +10,40 @@
         <el-link type="primary" @click="changePanelIndex(0)">前往搜索</el-link>
       </template>
     </el-empty>
-    <el-scrollbar v-else :height="(height || (drawerSize - 80)) - 40">
+    <el-scrollbar v-else :height="(height || drawerSize - 80) - 40">
       <template v-for="(item, index) in songsList" :key="index">
         <div class="musicDiv">
           <div>
             <div class="songInfo">
-              <el-text>{{ index + 1 }}、{{ item.name || '未命名' }} -
-                {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }}
-              </el-text>&ensp;
+              <el-text
+                >{{ index + 1 }}、{{ item.name || "未命名" }} -
+                {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join("&") : "未知艺术家" }} </el-text
+              >&ensp;
               <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text>
             </div>
             <div class="btns">
-              <el-button link @click="playTheMusic(item, index)" size="small" type="primary">
-                播放
-              </el-button>
-              <el-button link size="small" type="primary" @click="showMusicListDrawer([item.id])">
-                收藏
-              </el-button>
-              <el-button link v-if="item.cloud_music_id || item.id" @click="musicPlayUtils.shareMusicLink(item)"
-                size="small" type="primary">
+              <el-button link @click="playTheMusic(item, index)" size="small" type="primary"> 播放 </el-button>
+              <el-button link size="small" type="primary" @click="showMusicListDrawer([item.id])"> 收藏 </el-button>
+              <el-button
+                link
+                v-if="item.cloud_music_id || item.id"
+                @click="musicPlayUtils.shareMusicLink(item)"
+                size="small"
+                type="primary"
+              >
                 分享
               </el-button>
-              <el-button link v-if="item.cloud_music_id" @click="musicListUtils.goToCloudMusic(item.cloud_music_id)"
-                target="_blank" size="small" type="primary">
+              <el-button
+                link
+                v-if="item.cloud_music_id"
+                @click="musicListUtils.goToCloudMusic(item.cloud_music_id)"
+                target="_blank"
+                size="small"
+                type="primary"
+              >
                 前往网易云
               </el-button>
               <el-button link type="danger" @click="deleteMusicFromPlayList(item.id)">删除</el-button>
-
             </div>
           </div>
           <div class="playIcon">
@@ -46,33 +53,30 @@
       </template>
     </el-scrollbar>
   </div>
-
-
 </template>
 
 <script setup lang="ts">
-import { toRefs } from "vue";
-import { ElMessage } from "element-plus";
-import { Operation, Delete } from "@element-plus/icons-vue";
+import { toRefs } from "vue"
+import { ElMessage } from "element-plus"
+import { Operation, Delete } from "@element-plus/icons-vue"
 //stores
-import { useMusicListStore } from "@/store/music/useMusicListStore";
-import { useResponsiveStore } from "@/store/useResponsiveStore";
-import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore";
+import { useMusicListStore } from "@/store/music/useMusicListStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
+import { useMainPanelConfigStore } from "@/store/useMainPanelConfigStore"
 //hooks
-import useMusicPlay from "@/hooks/music/useMusicPlay";
-import useMusic from "@/hooks/music/useMusic";
+import useMusicPlay from "@/hooks/music/useMusicPlay"
+import useMusic from "@/hooks/music/useMusic"
 //utils
-import musicPlayUtils from "@/utils/music/musicPlay";
-import musicListUtils from "@/utils/music/musicList";
+import musicPlayUtils from "@/utils/music/musicPlay"
+import musicListUtils from "@/utils/music/musicList"
 //types
-import type { CloudSongInfo } from "@/types/music";
+import type { CloudSongInfo } from "@/types/music"
 //files
-import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.svg?component'
+import SVG_music_playing_indicator from "@/assets/music/music_playing_indicator.svg?component"
 
 const responsiveStore = useResponsiveStore()
 const musicListStore = useMusicListStore()
 const mainPanelConfigStore = useMainPanelConfigStore()
-
 
 const { drawerSize } = toRefs(responsiveStore)
 const { thisMusic } = toRefs(musicListStore)
@@ -81,18 +85,15 @@ const { changePanelIndex } = mainPanelConfigStore
 
 const { showMusicListDrawer } = useMusic()
 const { toggleMusic, play } = useMusicPlay()
-const { songsList, height } = defineProps(['songsList', 'height']) as { songsList: CloudSongInfo[], height: number }
-
+const { songsList, height } = defineProps(["songsList", "height"]) as { songsList: CloudSongInfo[]; height: number }
 
 const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   //如果是当前播放的歌曲，则暂停
   if (musicInfo.id === thisMusic.value.id) {
     play({})
-    console.log('当前播放的歌曲');
-
+    console.log("当前播放的歌曲")
   } else toggleMusic({ index })
 }
-
 </script>
 
 <style scoped>
@@ -114,7 +115,6 @@ const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   text-align: left;
   transition: all 0.2s linear;
   cursor: pointer;
-
 }
 
 .musicDiv:hover {
@@ -134,7 +134,6 @@ const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   transition: height 0.3s ease;
 }
 
-
 .musicDiv:hover {
   border-radius: 5px;
 }
@@ -142,7 +141,6 @@ const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
 .musicDiv:hover .btns {
   height: 22px;
 }
-
 
 /* 播放图标 */
 .musicDiv .playIcon {

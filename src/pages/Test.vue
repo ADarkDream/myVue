@@ -2,13 +2,11 @@
   <div class="mainPanel">
     <el-main>
       <h1>本页面为功能测试页</h1>
-      <div style="margin-top: 10px;padding: 20px">
+      <div style="margin-top: 10px; padding: 20px">
         <el-button-group>
           <el-button @click="router.push({ name: 'chat' })">点击前往聊天室demo</el-button>
           <el-button @click="router.push({ name: 'music' })">点击前往音乐播放器</el-button>
         </el-button-group>
-
-
       </div>
       <el-divider direction="horizontal">本地图片幻灯片</el-divider>
       <Slider />
@@ -27,15 +25,15 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter } from "vue-router";
+import { useRouter } from "vue-router"
 //components
-import UploadAudio from "@/components/UploadAudio.vue";
-import Example from "./Example.vue";
-import Slider from '@/pages/Slider.vue'
-import { useResponsiveStore } from "@/store/useResponsiveStore";
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import UploadAudio from "@/components/UploadAudio.vue"
+import Example from "./Example.vue"
+import Slider from "@/pages/Slider.vue"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
 
-import useOAuth from "@/hooks/user/useOAuth";
+import useOAuth from "@/hooks/user/useOAuth"
 // import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
@@ -47,8 +45,6 @@ const { isPC } = toRefs(responsiveStore)
 const { isLogin } = toRefs(userInfoStore)
 const { to_qq_oauth } = useOAuth()
 
-
-
 /**
  * 跳转到QQ登录
  */
@@ -56,12 +52,9 @@ const login_by_qq = (is_oauth = false) => {
   to_qq_oauth({ is_oauth, isPC: isPC.value })
 }
 const connect_by_qq = (is_oauth = false) => {
-
-  if (!isLogin.value) return ElMessage.info('请先登录')
-  to_qq_oauth({ is_oauth, isPC: isPC.value, type: 'connect' })
+  if (!isLogin.value) return ElMessage.info("请先登录")
+  to_qq_oauth({ is_oauth, isPC: isPC.value, type: "connect" })
 }
-
-
 </script>
 <style scoped>
 .el-container {
@@ -69,11 +62,6 @@ const connect_by_qq = (is_oauth = false) => {
   display: flex;
   justify-content: center;
 }
-
-
-
-
-
 
 .center {
   position: absolute;
@@ -102,16 +90,15 @@ const connect_by_qq = (is_oauth = false) => {
   position: absolute;
   width: 150px;
   height: 100%;
-  background: linear-gradient(#dE685E, #EE786E);
+  background: linear-gradient(#de685e, #ee786e);
   transition: width 0.4s;
   overflow: hidden;
   z-index: 2;
 }
 
 .card.green .additional {
-  background: linear-gradient(#92bCa6, #A2CCB6);
+  background: linear-gradient(#92bca6, #a2ccb6);
 }
-
 
 .card:hover .additional {
   width: 100%;
@@ -170,7 +157,7 @@ const connect_by_qq = (is_oauth = false) => {
 }
 
 .card.green .additional .more-info h1 {
-  color: #224C36;
+  color: #224c36;
 }
 
 .card .additional .coords {
@@ -180,10 +167,10 @@ const connect_by_qq = (is_oauth = false) => {
 }
 
 .card.green .additional .coords {
-  color: #325C46;
+  color: #325c46;
 }
 
-.card .additional .coords span+span {
+.card .additional .coords span + span {
   float: right;
 }
 
@@ -199,10 +186,10 @@ const connect_by_qq = (is_oauth = false) => {
 }
 
 .card.green .additional .stats {
-  color: #325C46;
+  color: #325c46;
 }
 
-.card .additional .stats>div {
+.card .additional .stats > div {
   flex: 1;
   text-align: center;
 }

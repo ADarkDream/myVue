@@ -1,82 +1,88 @@
 <template>
   <div>
-    <div>
-      <transition-group name="list">
-        <template v-for="item in noticeList" :key="item.id">
-          <el-button v-if="item.id === activeItemNum" link type="primary" @click="item.fun">{{ item.str }}</el-button>
-        </template>
-      </transition-group>
-      <br>
-      <el-button link tag="a" type="info"
-        @click="copyText('50011502001039', '备案号', 'https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')">
-        <el-image src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败" />
-        &ensp;渝公网安备50011502001039
-      </el-button>
-      <el-text type="info" v-if="noWrap || isPC" style="margin: 0 1px">|</el-text>
-      <el-button link tag="a" type="info" @click="copyText('渝ICP备2024030473号', '备案号', 'http://beian.miit.gov.cn/')">
-        渝ICP备2024030473号
-      </el-button>
-
-
-    </div>
+    <transition-group name="list">
+      <template v-for="item in noticeList" :key="item.id">
+        <el-button v-if="item.id === activeItemNum" link type="primary" @click="item.fun">{{ item.str }}</el-button>
+      </template>
+    </transition-group>
+    <br />
+    <el-button
+      link
+      tag="a"
+      type="info"
+      @click="copyText('50011502001039', '备案号', 'https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')"
+    >
+      <el-image src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败" />
+      &ensp;渝公网安备50011502001039
+    </el-button>
+    <el-text type="info" v-if="noWrap || isPC" style="margin: 0 1px">|</el-text>
+    <el-button link tag="a" type="info" @click="copyText('渝ICP备2024030473号', '备案号', 'http://beian.miit.gov.cn/')">
+      渝ICP备2024030473号
+    </el-button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, reactive, ref, toRefs } from "vue";
-import { useRouter } from "vue-router";
+import { onMounted, onUnmounted, reactive, toRefs } from "vue"
+import { useRouter } from "vue-router"
 //stores
-import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore"
+import { useNoticeStore } from "@/store/useNoticeStore"
 //utils
-import titleDiv from '@/utils/titleDiv';
-import myFunction from "@/utils/myFunction";
+import titleDiv from "@/utils/titleDiv"
+import myFunction from "@/utils/myFunction"
 
 const responsiveStore = useResponsiveStore()
+const noticeStore = useNoticeStore()
 const { isPC } = toRefs(responsiveStore)
+const { activeItemNum } = toRefs(noticeStore)
+const { startInterval, stopInterval } = noticeStore
 const { copyText } = myFunction
 const { showNotice } = titleDiv
 const router = useRouter()
 
 //noWrap=true  移动端换行且用 | 隔开，默认为没有竖线隔开
-const { noWrap } = defineProps(['noWrap'])
+const { noWrap } = defineProps(["noWrap"])
 const showContact = () => showNotice({ show_num: 3, active_num: 1 })
 const showFeedback = () => showNotice({ show_num: 3, active_num: 2 })
-const gotoDownload = () => router.push({ name: 'download' })
-const gotoChat = () => router.push({ name: 'hall' })
-const gotoMusic = () => router.push({ name: 'music' })
-const activeItemNum = ref(0)//当前展示的文本序号
-const noticeList = reactive([//底部轮播
+const gotoDownload = () => router.push({ name: "download" })
+const gotoChat = () => router.push({ name: "hall" })
+const gotoMusic = () => router.push({ name: "music" })
+
+const noticeList = reactive([
+  //底部轮播
   {
     id: 0,
-    str: '2024 © MoMo All Rights Reserved.',
-    fun: showContact
-  }, {
+    str: "2024 © MoMo All Rights Reserved.",
+    fun: showContact,
+  },
+  {
     id: 1,
-    str: '点击前往重返未来1999以影像之',
-    fun: gotoDownload
-  }, {
+    str: "点击前往重返未来1999以影像之",
+    fun: gotoDownload,
+  },
+  {
     id: 2,
-    str: '欢迎前往聊天室demo测试',
-    fun: gotoChat
-  }, {
+    str: "欢迎前往聊天室demo测试",
+    fun: gotoChat,
+  },
+  {
     id: 3,
-    str: '欢迎前往音乐播放器测试',
-    fun: gotoMusic
-  }, {
+    str: "欢迎前往音乐播放器测试",
+    fun: gotoMusic,
+  },
+  {
     id: 4,
-    str: '如有bug欢迎反馈',
-    fun: showFeedback
+    str: "如有bug欢迎反馈",
+    fun: showFeedback,
   },
 ])
-const length = noticeList.length
-const timer = setInterval(() => {
-  activeItemNum.value++
-  if (activeItemNum.value >= length) activeItemNum.value = 0
-  // console.log('Approve当前显示的消息序号：',activeItemNum.value)
-}, 4000)
+
+//开启定时器
+onMounted(() => startInterval(noticeList.length))
 
 //注销定时器
-onUnmounted(() => clearInterval(timer))
+onUnmounted(() => stopInterval())
 </script>
 
 <style scoped></style>

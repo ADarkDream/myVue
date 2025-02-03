@@ -6,7 +6,7 @@
         <el-input class="search" v-model.trim="keyWords" @keyup.enter="searchMusic()" placeholder="歌曲名或歌手名" clearable />
         <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
       </div>
-      <el-radio-group v-model="searchConfig.type" size="small" style="height: 30px;" v-if="false">
+      <el-radio-group v-model="searchConfig.type" size="small" style="height: 30px" v-if="false">
         <el-radio-button label="单曲" :value="1" />
         <el-radio-button label="专辑" :value="10" />
         <el-radio-button label="歌手" :value="100" />
@@ -14,23 +14,32 @@
         <el-radio-button label="用户" :value="1002" />
         <el-radio-button label="歌词" :value="1006" />
       </el-radio-group>
-      <HotSearchWords :changeKeyWords="changeKeyWords" style="height: 30px;overflow: hidden;" />
+      <HotSearchWords :changeKeyWords="changeKeyWords" style="height: 30px; overflow: hidden" />
     </div>
     <div v-if="showResult">
-      <music-list-songs-list v-if="searchResultType === 1 && showResult" :songsList="searchResult"
-        :height="searchDivHeight" :isSearchList="true" />
+      <music-list-songs-list
+        v-if="searchResultType === 1 && showResult"
+        :songsList="searchResult"
+        :height="searchDivHeight"
+        :isSearchList="true"
+      />
       <div v-else-if="searchResultType === 10 && showResult">
         <div class="songInfo" v-for="(album, index) in searchResult" :key="index">
-          <el-text>{{ index + 1 }}、{{ album.name || '未命名' }} -
-            <!-- {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }} -->
-          </el-text>&ensp;
+          <el-text
+            >{{ index + 1 }}、{{ album.name || "未命名" }} -
+            <!-- {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }} --> </el-text
+          >&ensp;
           <!-- <el-text>{{ album.publish_time }}</el-text> -->
         </div>
       </div>
       <div class="footer">
-        <el-pagination v-model:current-page="page" :page-size="10"
-          :layout="isPC ? 'prev, pager, next,total' : 'prev, pager, next'" :total="totalNum"
-          @current-change="searchMusic()" />
+        <el-pagination
+          v-model:current-page="page"
+          :page-size="10"
+          :layout="isPC ? 'prev, pager, next,total' : 'prev, pager, next'"
+          :total="totalNum"
+          @current-change="searchMusic()"
+        />
       </div>
     </div>
     <el-empty v-else description=" " style="padding: 0" image="/fool.png" :image-size="350" />
@@ -38,22 +47,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs } from "vue";
-import { Back } from "@element-plus/icons-vue";
+import { computed, ref, toRefs } from "vue"
+import { Back } from "@element-plus/icons-vue"
 //stores
-import { useMusicSearchStore } from "@/store/music/useMusicSearchStore";
-import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useMusicSearchStore } from "@/store/music/useMusicSearchStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 //components
-import HotSearchWords from "@/pages/music/components/HotSearchWords.vue";
-import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue";
+import HotSearchWords from "@/pages/music/components/HotSearchWords.vue"
+import MusicListSongsList from "@/pages/music/components/MusicListSongsList.vue"
 
 const searchStore = useMusicSearchStore()
 const responsiveStore = useResponsiveStore()
 
 const { isPC, drawerSize } = toRefs(responsiveStore)
 
-
-const searchDivHeight = ref(isPC.value ? (drawerSize.value - 210) : (drawerSize.value - 180))
+const searchDivHeight = ref(isPC.value ? drawerSize.value - 210 : drawerSize.value - 180)
 
 const { isShowSearchPanel, searchConfig, totalNum, searchResultType } = toRefs(searchStore)
 const searchResult = computed(() => searchStore.searchResult)
@@ -65,7 +73,7 @@ const showResult = ref(false)
 //限制单次查询的条数，作为常量
 const limitNum = searchConfig.value.limit
 //搜索关键词
-const keyWords = ref('')
+const keyWords = ref("")
 
 const changeKeyWords = (newWords: string) => {
   keyWords.value = newWords
@@ -75,11 +83,11 @@ const changeKeyWords = (newWords: string) => {
 //搜索前预检查
 const searchMusic = async () => {
   //没有搜索值，返回
-  if (!keyWords.value) return ElMessage.info('搜索不能为空')
+  if (!keyWords.value) return ElMessage.info("搜索不能为空")
   searchConfig.value.s = keyWords.value
 
   const offset = (page.value - 1) * limitNum
-  if (offset < 0 || offset > totalNum.value) return ElMessage.info('页码错误')
+  if (offset < 0 || offset > totalNum.value) return ElMessage.info("页码错误")
   //最后一页不满limit的数量，需要额外处理
   if (totalNum.value) {
     const restNum = totalNum.value - offset
@@ -92,7 +100,7 @@ const searchMusic = async () => {
 
   const result = await search()
   showResult.value = true
-  console.log('searchMusic', result)
+  console.log("searchMusic", result)
 }
 </script>
 
@@ -107,9 +115,7 @@ const searchMusic = async () => {
   --border-radius: 30px;
   --after-border-radius: 1px;
   height: var(--height-of-input);
-
 }
-
 
 /*region 输入框*/
 /* From Uiverse.io by satyamchaudharydev */
@@ -125,7 +131,6 @@ const searchMusic = async () => {
 .header {
   margin: 0 auto;
 }
-
 
 .searchDiv {
   position: relative;
@@ -146,7 +151,6 @@ const searchMusic = async () => {
   border: none;
 }
 
-
 /*夜间模式*/
 .dark .searchDiv {
   /*  --input-bg: #b3aeb4;*/
@@ -159,7 +163,6 @@ const searchMusic = async () => {
     --width-of-input: 100%;
     --height-of-input: 25px;
   }
-
 
   .searchDiv {
     width: 95%;
@@ -177,7 +180,6 @@ const searchMusic = async () => {
 .searchDiv .el-input {
   border: none;
 }
-
 
 .searchDiv .el-input__wrapper:focus {
   box-shadow: none;

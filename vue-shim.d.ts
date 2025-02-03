@@ -4,6 +4,6 @@
 // }
 //解决报错Vue: Cannot find module '@/assets/google.png' or its corresponding type declarations.
 declare module "*.png" {
-  const value: any;
-  export default value;
+  const value: any
+  export default value
 }

@@ -3,10 +3,10 @@
   <div class="editMusicListInfoDrawer">
     <div class="header">
       <el-button link @click="isShowEditMusicListInfoDrawer = false">取消</el-button>
-      <el-button link :disabled="isLoading" @click="editMusicListInfo">{{ isCreateFlag ? '创建' : '修改' }}</el-button>
+      <el-button link :disabled="isLoading" @click="editMusicListInfo">{{ isCreateFlag ? "创建" : "修改" }}</el-button>
     </div>
     <el-form :model="formData" label-position="top">
-      <el-row :gutter="20" style="display: flex;justify-content: center;">
+      <el-row :gutter="20" style="display: flex; justify-content: center">
         <el-col :xs="8" :sm="12" :md="12" :lg="6" :xl="6">
           <el-form-item>
             <UploadImage />
@@ -20,16 +20,22 @@
             <el-input type="textarea" placeholder="希望是个小小故事，献给小小的人儿。" v-model.trim="formData.description" />
           </el-form-item>
           <el-form-item label="封面地址：">
-            <el-input type="textarea" placeholder="封面地址(若不填则使用歌单最新一首歌的封面)" v-model.trim="formData.pic_url"
-              :disabled="isLoading" />
+            <el-input
+              type="textarea"
+              placeholder="封面地址(若不填则使用歌单最新一首歌的封面)"
+              v-model.trim="formData.pic_url"
+              :disabled="isLoading"
+            />
           </el-form-item>
           <el-form-item>
             <label class="container" :class="{ active: isOpen }">
-              <input type="checkbox" v-model="isOpen">
+              <input type="checkbox" v-model="isOpen" />
               <svg viewBox="0 0 64 64">
                 <path
                   d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                  pathLength="575.0541381835938" class="path"></path>
+                  pathLength="575.0541381835938"
+                  class="path"
+                ></path>
               </svg>
               <span>公开</span>
             </label>
@@ -41,20 +47,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs, watch } from "vue";
+import { computed, toRefs, watch } from "vue"
 //stores
-import { useMusicListDrawerStore } from "@/store/music/useMusicListDrawerStore";
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import { useUploadFileStore } from "@/store/upload/uploadFileStore";
+import { useMusicListDrawerStore } from "@/store/music/useMusicListDrawerStore"
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
+import { useUploadFileStore } from "@/store/upload/uploadFileStore"
 //hooks
 import useMusicList from "@/hooks/music/useMusicList"
 //components
-import UploadImage from "@/components/UploadImage.vue";
+import UploadImage from "@/components/UploadImage.vue"
 //utils
-import regexRules from "@/utils/regexRules";
+import regexRules from "@/utils/regexRules"
 
 //files
-
 
 const musicListDrawerStore = useMusicListDrawerStore()
 const userInfoStore = useUserInfoStore()
@@ -65,22 +70,20 @@ const { reSetFormData } = musicListDrawerStore
 const { options, isLoading, fileInfo } = toRefs(uploadFileStore)
 const { createMusicList, updateMusicList } = useMusicList()
 
-
 //歌单是否公开
 const isOpen = computed({
   get: () => formData.value.status === 2,
-  set: (is_open: boolean) => formData.value.status = is_open ? 2 : 1
+  set: (is_open: boolean) => (formData.value.status = is_open ? 2 : 1),
 })
 
-
 onMounted(() => {
-  options.value.sort = 'album/cover'
-  options.value.type = 'image'
+  options.value.sort = "album/cover"
+  options.value.type = "image"
   options.value.url = computed(() => {
     const { pic_url, default_cover_url } = formData.value
     if (pic_url) return pic_url
     else if (default_cover_url) return default_cover_url
-    else return ''
+    else return ""
   }).value
 })
 
@@ -91,48 +94,41 @@ watch(isLoading, (newVal, oldVal) => {
   }
 })
 
-
-
 /**
  * 创建或更新歌单
  */
 const editMusicListInfo = async () => {
   const { name, pic_url } = formData.value
 
-  if (!name) return ElMessage.info('歌单名称不能为空')
-  if (pic_url && !regexRules.url.test(pic_url)) return ElMessage.info('请输入一个网址链接')
-  if (isCreateFlag.value)//创建歌单
-    await createMusicList(formData.value)
-  else//修改歌单信息
-    await updateMusicList(formData.value)
+  if (!name) return ElMessage.info("歌单名称不能为空")
+  if (pic_url && !regexRules.url.test(pic_url)) return ElMessage.info("请输入一个网址链接")
+  if (isCreateFlag.value)
+    //创建歌单
+    await createMusicList(formData.value) //修改歌单信息
+  else await updateMusicList(formData.value)
 
   //重置表单
   reSetFormData()
   // isOpen.value = false
 }
-
-
-
 </script>
 
 <style scoped>
 .header {
   display: flex;
-  justify-content: space-between
+  justify-content: space-between;
 }
 
 .el-form {
   width: 80%;
   margin: 0 auto;
-
 }
-
 
 /*region单选框样式*/
 .container {
   cursor: pointer;
   display: flex;
-  color: var(--borderColor)
+  color: var(--borderColor);
 }
 
 .container input {
@@ -156,12 +152,14 @@ const editMusicListInfo = async () => {
   stroke-width: 6;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: stroke-dasharray 0.5s ease, stroke-dashoffset 0.5s ease;
+  transition:
+    stroke-dasharray 0.5s ease,
+    stroke-dashoffset 0.5s ease;
   stroke-dasharray: 241 9999999;
   stroke-dashoffset: 0;
 }
 
-.container input:checked~svg .path {
+.container input:checked ~ svg .path {
   stroke-dasharray: 70.5096664428711 9999999;
   stroke-dashoffset: -262.2723388671875;
 }
@@ -174,11 +172,9 @@ const editMusicListInfo = async () => {
   justify-content: center;
 }
 
-
-@media (max-width:780px) {
+@media (max-width: 780px) {
   .el-form {
     width: 95%;
   }
-
 }
 </style>

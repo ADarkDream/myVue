@@ -1,22 +1,35 @@
 <template>
   <!--图片上传框-->
   <div class="uploadImage" :style="isAdmin ? '' : 'flex-direction: column;'">
-    <el-upload ref="upload" class="uploadDiv" :show-file-list="false" :on-change="fileChange" :on-exceed="handleExceed"
-      :limit="1" :auto-upload="false" drag accept="image/img,image/png,image/jpg,image/jpeg">
-      <el-image class="uploadImg" :class="{ isBg: options.sort === 'bg' && options.url }" fit="cover" title="点击上传图像"
-        :src="options.url">
+    <el-upload
+      ref="upload"
+      class="uploadDiv"
+      :show-file-list="false"
+      :on-change="fileChange"
+      :on-exceed="handleExceed"
+      :limit="1"
+      :auto-upload="false"
+      drag
+      accept="image/img,image/png,image/jpg,image/jpeg"
+    >
+      <el-image
+        class="uploadImg"
+        :class="{ isBg: options.sort === 'bg' && options.url }"
+        fit="cover"
+        title="点击上传图像"
+        :src="options.url"
+      >
         <template #error>
-          <div style="width: 100%;">
+          <div style="width: 100%">
             <SVG_plus class="svg" />
-            <el-text tag="p" type="info" v-if="isPC">支持拖拽上传</el-text><br>
+            <el-text tag="p" type="info" v-if="isPC">支持拖拽上传</el-text><br />
           </div>
         </template>
       </el-image>
       <template #tip>
         <div class="upload_desc">
           <el-text type="info">.img/png/jpg/jpeg</el-text>
-          <el-text type="info">
-            <{{ options.maxSize }}MB</el-text>
+          <el-text type="info"> <{{ options.maxSize }}MB</el-text>
         </div>
       </template>
     </el-upload>
@@ -38,39 +51,38 @@
             <el-option style="color: red" label="黑名单" :value="2" />
           </el-select>
         </div>
-
       </div>
       <div class="changeBtns" v-show="changeBtnsFlag">
         <el-button-group>
           <el-button @click="cancelUpload" type="danger">删除</el-button>
           <el-button @click="imgFullDialogVisible = true">浏览</el-button>
           <el-button type="primary" @click="uploadImage(uploadFile!)" :loading="isLoading">{{
-            isLoading
-              ?
-              '审核中' : '上传'
+            isLoading ? "审核中" : "上传"
           }}</el-button>
         </el-button-group>
       </div>
-
     </div>
 
-
     <!--  头像大图浏览框-->
-    <el-dialog v-model="imgFullDialogVisible" style="background-color: transparent;"
-      @click="imgFullDialogVisible = !imgFullDialogVisible" fullscreen :show-close="false">
+    <el-dialog
+      v-model="imgFullDialogVisible"
+      style="background-color: transparent"
+      @click="imgFullDialogVisible = !imgFullDialogVisible"
+      fullscreen
+      :show-close="false"
+    >
       <img :src="options.url" alt="Preview Image" />
     </el-dialog>
   </div>
-
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from "vue";
+import { ref, toRefs } from "vue"
 
 //stores
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import { useUploadFileStore } from "@/store/upload/uploadFileStore";
-import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
+import { useUploadFileStore } from "@/store/upload/uploadFileStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 //hooks
 
 import useUploadImage from "@/hooks/upload/useUploadImage"
@@ -86,23 +98,20 @@ const { cancelUpload } = uploadFileStore
 const { isPC } = toRefs(responsiveStore)
 const { fileChange, computedMd5, uploadImage } = useUploadImage()
 
-
 /**
  *  控制是否全屏浏览
  */
 const imgFullDialogVisible = ref(false)
 
-
-
-import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
+import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus"
 
 const upload = ref<UploadInstance>()
 
 /**
  * 已有文件之后，onchange事件不再触发，此函数覆盖上传
- * @param files 
+ * @param files
  */
-const handleExceed: UploadProps['onExceed'] = (files) => {
+const handleExceed: UploadProps["onExceed"] = files => {
   //清除上传输入框的内容
   // upload.value!.clearFiles()
   const file = files[0] as UploadRawFile
@@ -113,7 +122,6 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 }
 </script>
 
-
 <style scoped>
 .uploadImage {
   display: flex;
@@ -122,8 +130,6 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   align-items: center;
   --borderColor: rgba(141, 139, 139, 0.8);
 }
-
-
 
 .uploadDiv {
   .uploadImg {
@@ -140,7 +146,7 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
     .svg {
       width: 50px;
       transition: scale 0.5s ease;
-      fill: var(--borderColor)
+      fill: var(--borderColor);
     }
 
     .upload_desc {
@@ -169,7 +175,6 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   }
 }
 
-
 @media (hover: hover) {
   .uploadImg:hover {
     box-shadow: 0 0 2px 2px var(--borderColor);
@@ -181,24 +186,17 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
   }
 }
 
-
-
-@media (max-width:780px) {
+@media (max-width: 780px) {
   .uploadDiv {
-
     .uploadImg {
       width: 110px;
-      height: 110px
+      height: 110px;
     }
-
-
   }
-
 }
 </style>
 <style>
 .uploadImage {
-
   /* 去除拖拽上传的边框 */
   .el-upload-dragger,
   .el-upload-dragger.is-dragover {

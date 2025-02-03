@@ -39,47 +39,45 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, toRefs } from 'vue'
-import { useRouter } from "vue-router";
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { onMounted, ref, toRefs } from "vue"
+import { useRouter } from "vue-router"
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 
 const responsiveStore = useResponsiveStore()
 const { screenHeight } = toRefs(responsiveStore)
-const router = useRouter();
+const router = useRouter()
 const userInfoStore = useUserInfoStore()
 
 const { isAdmin } = toRefs(userInfoStore)
 
-
 //侧边栏激活菜单
-let index = ref(Number(sessionStorage.getItem('activeNumber')) || 0)
+let index = ref(Number(sessionStorage.getItem("activeNumber")) || 0)
 
 function change(num: number) {
   index.value = num
-  sessionStorage.setItem('activeNumber', num.toString())
+  sessionStorage.setItem("activeNumber", num.toString())
 }
-
 
 //初始获取进入的页面的页码
 function render() {
-  const params = window.location.pathname.split('/').pop()
-  if (params === 'articles') index.value = 1
-  else if (params === 'comments') index.value = 2
-  else if (params === 'notices') index.value = 3
-  else if (params === 'urls') index.value = 4
-  else if (params === 'images') index.value = 5
-  else if (params === 'feedback') index.value = 6
-  else if (params === '1999Images') index.value = 7
+  const params = window.location.pathname.split("/").pop()
+  if (params === "articles") index.value = 1
+  else if (params === "comments") index.value = 2
+  else if (params === "notices") index.value = 3
+  else if (params === "urls") index.value = 4
+  else if (params === "images") index.value = 5
+  else if (params === "feedback") index.value = 6
+  else if (params === "1999Images") index.value = 7
   else index.value = 0
-  sessionStorage.setItem('activeNumber', index.value.toString())
+  sessionStorage.setItem("activeNumber", index.value.toString())
 }
 
 onMounted(() => {
   //管理员登录判断
   if (!isAdmin.value) {
-    if (document.referrer.includes('muxidream')) return router.back()
-    return router.push({ name: 'home' })
+    if (document.referrer.includes("muxidream")) return router.back()
+    return router.push({ name: "home" })
   }
   render()
 })

@@ -129,19 +129,19 @@
     //         isDark
     //     }))
     // }
-
+    let isMaskHidden = false
     //加载事件，刷新或首次加载页面触发
     document.onreadystatechange = function () {
-        // 页面正在加载
-        if (document.readyState === 'loading') mask.style.display = 'block'
-        // 页面加载完毕
-        else if (document.readyState === 'complete') {
-            mask.style.opacity = 0
+        if (document.readyState === 'loading') {
+            mask.style.display = 'block';
+        } else if (document.readyState === 'complete' && !isMaskHidden) {
+            isMaskHidden = true; // 避免重复执行
+            mask.style.opacity = 0;
             setTimeout(() => {
-                mask.style.display = "none"
-            }, 300)
+                mask.style.display = "none";
+            }, 300);
         }
-    }
+    };
 </script>
 <script type="module" src="./src/main.ts"></script>
 

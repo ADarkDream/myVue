@@ -1,8 +1,10 @@
 <!--专辑封面-->
 <template>
   <div class="card">
-    <div class="img"
-      :style="'--bgImage:' + `url(${musicListInfo.pic_url || musicListInfo.default_cover_url || defaultAlbumArt})`">
+    <div
+      class="img"
+      :style="'--bgImage:' + `url(${musicListInfo.pic_url || musicListInfo.default_cover_url || defaultAlbumArt})`"
+    >
       <div class="save" @click.stop>
         <LikeHeart class="likeHeart" :isLike="isLike" @click="toggleLike()" v-if="!isOwner" />
         <el-dropdown v-else class="optionBtn" :trigger="isPC ? 'hover' : 'click'">
@@ -13,8 +15,9 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="a" :icon="Edit"
-                @click="showEditMusicListInfoDrawer(false, musicListInfo)">修改</el-dropdown-item>
+              <el-dropdown-item command="a" :icon="Edit" @click="showEditMusicListInfoDrawer(false, musicListInfo)"
+                >修改</el-dropdown-item
+              >
               <el-dropdown-item command="b" :icon="Delete" @click="deleteMusicList(musicListInfo)">删除</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -22,31 +25,33 @@
       </div>
     </div>
     <div class="text">
-      <p class="title"><el-text truncated>{{ musicListInfo.name }}</el-text></p>
-      <p class="info"><span><span v-if="isPC">上次更新：</span> {{ formatDate(new Date(musicListInfo.updated_time))
-          }}</span><span>{{
-            musicListInfo.songsCount }}首</span></p>
+      <p class="title">
+        <el-text truncated>{{ musicListInfo.name }}</el-text>
+      </p>
+      <p class="info">
+        <span><span v-if="isPC">上次更新：</span> {{ formatDate(new Date(musicListInfo.updated_time)) }}</span
+        ><span>{{ musicListInfo.songsCount }}首</span>
+      </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
-import { Delete, Edit, MoreFilled } from '@element-plus/icons-vue';
+import { ref, toRefs } from "vue"
+import { Delete, Edit, MoreFilled } from "@element-plus/icons-vue"
 //stores
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 //hooks
-import useTimestamp from "@/hooks/useTimestamp";
-import useMusicList from '@/hooks/music/useMusicList';
-import useMusic from '@/hooks/music/useMusic';
+import useTimestamp from "@/hooks/useTimestamp"
+import useMusicList from "@/hooks/music/useMusicList"
+import useMusic from "@/hooks/music/useMusic"
 //components
-import LikeHeart from "@/components/smallComp/LikeHeart.vue";
+import LikeHeart from "@/components/smallComp/LikeHeart.vue"
 //types
-import type { MusicListInfo } from "@/types/music";
+import type { MusicListInfo } from "@/types/music"
 //files
-import defaultAlbumArt from "@/assets/music/music.svg";
-
+import defaultAlbumArt from "@/assets/music/music.svg"
 
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
@@ -59,17 +64,14 @@ const { showEditMusicListInfoDrawer } = useMusic()
 
 const isLike = ref(false)
 
-const { musicListInfo } = defineProps(['musicListInfo']) as { musicListInfo: MusicListInfo }
+const { musicListInfo } = defineProps(["musicListInfo"]) as { musicListInfo: MusicListInfo }
 
 const isOwner = ref(musicListInfo.uid === uid.value)
 
 const toggleLike = () => {
   isLike.value = !isLike.value
-  ElMessage.info('功能开发中')
+  ElMessage.info("功能开发中")
 }
-
-
-
 </script>
 
 <style scoped>
@@ -77,10 +79,11 @@ const toggleLike = () => {
   width: 252px;
   height: 265px;
   background: white;
-  box-shadow: 2px 2px 5px #bebebe,
+  box-shadow:
+    2px 2px 5px #bebebe,
     -2px -2px 5px #bebebe;
   transition: 0.2s ease-in-out;
-  --bgImage: url('@/assets/music/music.svg');
+  --bgImage: url("@/assets/music/music.svg");
   --borderRadius: 30px;
   border-radius: var(--borderRadius);
 }
@@ -97,7 +100,7 @@ const toggleLike = () => {
 }
 
 .img::before {
-  content: '';
+  content: "";
   border-top-left-radius: var(--borderRadius);
   border-top-right-radius: var(--borderRadius);
   background: var(--bgImage) no-repeat center center/cover;
@@ -124,7 +127,7 @@ const toggleLike = () => {
   color: rgb(255, 91, 137);
   padding: 10px;
   border-radius: 5px;
-  transform: scale(1.5)
+  transform: scale(1.5);
 }
 
 .optionBtn:hover {
@@ -138,16 +141,15 @@ const toggleLike = () => {
   justify-content: space-around;
 }
 
-
 .text .title {
-  font-family: 'Lucida Sans', sans-serif;
+  font-family: "Lucida Sans", sans-serif;
   font-size: 15px;
   font-weight: 600;
   color: black;
 }
 
 .text .info {
-  font-family: 'Lucida Sans', sans-serif;
+  font-family: "Lucida Sans", sans-serif;
   color: #999;
   font-size: 13px;
   display: flex;
@@ -165,7 +167,6 @@ const toggleLike = () => {
   }
 }
 
-
 /*endregion*/
 
 /*移动端布局*/
@@ -173,7 +174,7 @@ const toggleLike = () => {
   .card {
     width: 126px;
     height: 132px;
-    --borderRadius: 15px
+    --borderRadius: 15px;
   }
 
   .save {

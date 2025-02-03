@@ -5,16 +5,15 @@
       <!--      <h1>聊天室-{{roomName}}</h1>-->
     </el-header>
     <el-main>
-
       <div>
         <h2>socket.io测试</h2>
-        <div style="display: flex;justify-content:space-between;width: 95%;min-height: 300px; ">
+        <div style="display: flex; justify-content: space-between; width: 95%; min-height: 300px">
           <el-card style="width: 50%">
             <template #header>
               <el-text type="primary">发送的信息</el-text>
             </template>
             <el-input placeholder="输入要发送的信息" v-model.trim="msg2" type="textarea"></el-input>
-            <br>
+            <br />
             <template #footer>
               <el-button-group>
                 <!--                <el-button type="success" @click="enterTheRoom()">加入房间</el-button>-->
@@ -32,60 +31,51 @@
             </template>
             <el-text type="warning" v-if="roomMsg.length === 0">暂无返回的消息</el-text>
             <div v-for="(item, index) in roomMsg" :key="index">
-              <el-text type="success">第{{
-                index
-                }}条{{ item.roomID === playerInfo.roomID ? '真的' : [item.roomID, playerInfo.roomID] }}
+              <el-text type="success"
+                >第{{ index }}条{{ item.roomID === playerInfo.roomID ? "真的" : [item.roomID, playerInfo.roomID] }}
               </el-text>
               ：{{ item.message }}
             </div>
-
           </el-card>
         </div>
       </div>
     </el-main>
-
   </el-container>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref, toRefs } from 'vue'
-import { useRouter, useRoute } from "vue-router";
+import { onMounted, onUnmounted, ref, toRefs } from "vue"
+import { useRouter, useRoute } from "vue-router"
 //stores
-import { useChatInfoStore } from "@/store/user/chat/useChatInfoStore";
-import { useChatMsgStore } from '@/store/user/chat/useChatMsgStore'
+import { useChatInfoStore } from "@/store/user/chat/useChatInfoStore"
+import { useChatMsgStore } from "@/store/user/chat/useChatMsgStore"
 //hooks
-import useTimestamp from "@/hooks/useTimestamp";
+import useTimestamp from "@/hooks/useTimestamp"
 
-
-const router = useRouter();
+const router = useRouter()
 const route = useRoute()
 const chatInfoStore = useChatInfoStore()
 const chatMsgStore = useChatMsgStore()
-const { playerInfo, socket } = toRefs(chatInfoStore)//本地用户信息
-const { roomMsg } = toRefs(chatMsgStore)//本地的聊天信息
-
-
-
-
-
+const { playerInfo, socket } = toRefs(chatInfoStore) //本地用户信息
+const { roomMsg } = toRefs(chatMsgStore) //本地的聊天信息
 
 // const { getTime } = useTimestamp()
 // const roomID = ref<string>(route.query.roomID as string || '')//房间ID
 // const playerName = ref<string>(sessionStorage.getItem('playerName') || '')//玩家昵称
 // const chatMsgInfo = JSON.parse(localStorage.getItem('chatMsgInfo') || '')
 
-
 onMounted(() => {
-
-  if (!playerInfo.value.playerName) {//昵称为空，返回主页
-    ElMessage.error('请先填写昵称')
-    return router.push({ name: 'chat', query: { roomID: route.query.roomID } })
+  if (!playerInfo.value.playerName) {
+    //昵称为空，返回主页
+    ElMessage.error("请先填写昵称")
+    return router.push({ name: "chat", query: { roomID: route.query.roomID } })
   }
 
-  if (!playerInfo.value.roomID) {//房间号为空，设置为当前房间号
+  if (!playerInfo.value.roomID) {
+    //房间号为空，设置为当前房间号
     playerInfo.value.roomID = route.query.roomID as string
   }
-  console.log('roomMsg', roomMsg)
+  console.log("roomMsg", roomMsg)
   // if (chatMsgInfo) {//pinia刷新之后不能获取复杂数据类型，bug? 手动获取
   //   console.log(chatMsgInfo)
   //   // roomMsg.splice(0, roomMsg.length, chatMsgInfo.roomMsg) //恢复聊天信息
@@ -95,9 +85,7 @@ onMounted(() => {
   //   })
   // }
 
-
   // if (playerInfo.roomID !== ROOMID) roomMsg.splice(0, roomMsg.length)//如果聊天信息不是当前房间的，则清除
-
 
   // if (route.query.from !== 'hall') enterTheRoom() //如果不是从大厅来的，则重新加入房间
 
@@ -108,26 +96,6 @@ onMounted(() => {
   // }
 })
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // let token = sessionStorage.getItem('token') || localStorage.getItem('token')
 // const baseUrl = 'ws://localhost:9999'
 
@@ -137,7 +105,7 @@ onMounted(() => {
 //region Socket.io
 // const socket = io('http://127.0.0.1:9999')
 //信息内部全部可改
-const msg2 = ref<string>('')
+const msg2 = ref<string>("")
 //收到的信息
 // const roomMessage = reactive<string[]>([])
 
@@ -146,17 +114,16 @@ const msg2 = ref<string>('')
 // }
 const addMsg = () => {
   //尝试重连
-  socket.value.emit('re-link', { playerInfo: playerInfo.value })
+  socket.value.emit("re-link", { playerInfo: playerInfo.value })
 }
 
 //发送信息
 const sendMsg2 = () => {
   if (msg2.value) {
-    socket.value.emit('room-message', { message: msg2.value })
-    msg2.value = ''
+    socket.value.emit("room-message", { message: msg2.value })
+    msg2.value = ""
   }
 }
-
 
 //关闭连接
 const closeConnection2 = () => {
@@ -167,27 +134,23 @@ const closeConnection2 = () => {
 
 //阻止用户直接关闭当前标签页
 const listener = (event: BeforeUnloadEvent) => {
-  event.preventDefault(); // 阻止默认的关闭行为
-  return; // 设置警告消息为空字符串，以触发浏览器显示默认的关闭提示
+  event.preventDefault() // 阻止默认的关闭行为
+  return // 设置警告消息为空字符串，以触发浏览器显示默认的关闭提示
 }
-window.addEventListener('beforeunload', listener)
-
+window.addEventListener("beforeunload", listener)
 
 //退出,删除全部监听
 onUnmounted(() => {
-  socket.value.emit('room-leave', { reason: '离开房间的原因' })
-  removeEventListener('beforeunload', listener)
-  console.log('已退出chatRoom')
+  socket.value.emit("room-leave", { reason: "离开房间的原因" })
+  removeEventListener("beforeunload", listener)
+  console.log("已退出chatRoom")
   // socket.removeAllListeners()
 })
 
-
 //endregion
-
-
 </script>
 <style scoped>
 .el-container {
-  background-color: var(--el-bg-color)
+  background-color: var(--el-bg-color);
 }
 </style>

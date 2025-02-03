@@ -1,6 +1,13 @@
 <template>
-  <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="Rules" label-width="auto" class="loginForm"
-    label-position="top">
+  <el-form
+    ref="ruleFormRef"
+    :model="ruleForm"
+    status-icon
+    :rules="Rules"
+    label-width="auto"
+    class="loginForm"
+    label-position="top"
+  >
     <el-form-item prop="email">
       <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" autocomplete="off" />
     </el-form-item>
@@ -8,38 +15,42 @@
       <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码" />
     </el-form-item>
     <el-form-item prop="policy" autocomplete="off">
-      <input type="checkbox" v-model="ruleForm.policy"><el-text> &ensp;我已阅读并同意</el-text>
+      <input type="checkbox" v-model="ruleForm.policy" /><el-text> &ensp;我已阅读并同意</el-text>
       <el-button link type="primary" @click="showPolicy">隐私政策</el-button>
-      <el-button style="position: absolute;right: 0" link @click="resetForm()">重置表单</el-button>
+      <el-button style="position: absolute; right: 0" link @click="resetForm()">重置表单</el-button>
     </el-form-item>
     <p class="other_login_div">
       <el-text>其他登录方式：</el-text>
-      <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq(true)' alt="QQ登录_小窗口"
-        title="小窗口" />
+      <img
+        class="login_icon"
+        src="@/assets/titleDiv/qq_login.png"
+        @click="login_by_qq(true)"
+        alt="QQ登录_小窗口"
+        title="小窗口"
+      />
       <!-- <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq()' alt="QQ登录_新窗口" title="新窗口" /> -->
     </p>
     <el-button class="submitBtn" @click="submitForm()" :loading="isLoading">登录</el-button>
-    <br>
+    <br />
     <el-link @click="toLogin(false)">前往注册</el-link>
   </el-form>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref } from "vue"
 import momo from "@/apis"
-import type { FormInstance, FormRules } from 'element-plus'
+import type { FormInstance, FormRules } from "element-plus"
 //stores
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import { useResponsiveStore } from '@/store/useResponsiveStore';
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 //hooks
-import useOAuth from '@/hooks/user/useOAuth';
+import useOAuth from "@/hooks/user/useOAuth"
 //utils
-import verifyRules from "@/utils/verifyRules";
-import titleDiv from '@/utils/titleDiv';
+import verifyRules from "@/utils/verifyRules"
+import titleDiv from "@/utils/titleDiv"
 //types
-import type { loginForm } from "@/types/form";
-import { UserInfo } from '@/types/user';
-
+import type { loginForm } from "@/types/form"
+import { UserInfo } from "@/types/user"
 
 const { showNotice } = titleDiv
 const userInfoStore = useUserInfoStore()
@@ -55,29 +66,27 @@ const ruleFormRef = ref<FormInstance>()
  * 跳转到QQ登录
  */
 const login_by_qq = (is_oauth = false) => {
-  ElMessage.info('先注册邮箱，再绑定QQ，然后才能使用QQ登录')
-  if (!ruleForm.policy) return ElMessage.error('请先阅读并勾选隐私政策！')
+  ElMessage.info("先注册邮箱，再绑定QQ，然后才能使用QQ登录")
+  if (!ruleForm.policy) return ElMessage.error("请先阅读并勾选隐私政策！")
   to_qq_oauth({ is_oauth, isPC: isPC.value })
-
 }
-
 
 //表单数据
 const ruleForm = reactive<loginForm>({
-  email: '',
-  password: '',
-  policy: false
+  email: "",
+  password: "",
+  policy: false,
 })
 
 //用哪些表单验证规则
 const Rules = ref<FormRules<typeof ruleForm>>({
-  email: [{ validator: verifyRules.email, required: true, trigger: 'blur' }],
-  password: [{ validator: verifyRules.password, required: true, trigger: 'blur' }],
-  policy: [{ validator: verifyRules.policy, required: true, trigger: 'blur' }]
+  email: [{ validator: verifyRules.email, required: true, trigger: "blur" }],
+  password: [{ validator: verifyRules.password, required: true, trigger: "blur" }],
+  policy: [{ validator: verifyRules.policy, required: true, trigger: "blur" }],
 })
 
 //切换loading状态
-const { toLogin } = defineProps(['toLogin'])
+const { toLogin } = defineProps(["toLogin"])
 const isLoading = ref(false)
 
 //显示隐私政策
@@ -89,7 +98,7 @@ const submitForm = async () => {
   isLoading.value = true
 
   if (!ruleFormRef.value) return
-  await ruleFormRef.value.validate(async (res) => {
+  await ruleFormRef.value.validate(async res => {
     if (res) {
       //此处调用momo上传
       await login()
@@ -101,7 +110,6 @@ const submitForm = async () => {
   })
 }
 
-
 //region重置表单
 const resetForm = () => {
   if (!ruleFormRef.value) return
@@ -112,20 +120,19 @@ const resetForm = () => {
 defineExpose({ submitForm })
 //endregion
 
-
 //region登录账号
 const login = async () => {
   try {
     //解决点击登录后马上切换导致误通过的BUG
     if (!ruleForm.policy) return
     const { email, password } = ruleForm
-    const result = await momo.post<{ userInfo: UserInfo }>('/login', {
+    const result = await momo.post<{ userInfo: UserInfo }>("/login", {
       email: email.toLowerCase(),
-      password
+      password,
     })
 
     // console.log(result)
-    if (!result.data) return ElMessage.error('登录失败')
+    if (!result.data) return ElMessage.error("登录失败")
     const { userInfo } = result.data
     updateLocalUserInfo(userInfo)
     //成功提示信息
@@ -142,9 +149,7 @@ const login = async () => {
 }
 
 //endregion
-
 </script>
-
 
 <style scoped>
 .submitBtn {

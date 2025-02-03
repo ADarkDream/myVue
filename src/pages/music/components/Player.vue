@@ -1,25 +1,23 @@
 <template>
   <!--播放器-->
   <div class="player" :class="{ hidePlayer: !isShowPlayer, showPlayer: isShowPlayer }" @click="togglePlayerVisible()">
-    <audio ref="audioEl" crossOrigin='anonymous' :src='thisMusic.src' type="audio/mpeg"></audio>
+    <audio ref="audioEl" crossOrigin="anonymous" :src="thisMusic.src" type="audio/mpeg"></audio>
     <div class="play-panel" :class="{ active: infoBarActive }">
-      <span ref="musicName" class="name" :class="{ scroll: isScrollName }" :style="transformX">{{
-        isLoading ? '加载中' : thisMusic.name || '未命名'
-        }}——<span class="artist">
-          {{
-            isLoading ? '加载中' : thisMusic.artists.map(artist => artist.name).join('&') || '未知艺术家'
-          }}
-        </span> </span>
+      <span ref="musicName" class="name" :class="{ scroll: isScrollName }" :style="transformX"
+        >{{ isLoading ? "加载中" : thisMusic.name || "未命名" }}——<span class="artist">
+          {{ isLoading ? "加载中" : thisMusic.artists.map(artist => artist.name).join("&") || "未知艺术家" }}
+        </span>
+      </span>
       <div class="progress-bar">
         <el-slider v-model="currentTime" @change="changeCurrentTime" :min="0" :max="duration" :show-tooltip="false" />
-        <div class="time"><span>{{
-          formatMusicTime(currentTime)
-            }}</span><span>{{ formatMusicTime(duration) }}</span></div>
+        <div class="time">
+          <span>{{ formatMusicTime(currentTime) }}</span
+          ><span>{{ formatMusicTime(duration) }}</span>
+        </div>
       </div>
     </div>
     <div class="control-panel" :class="{ active: controlPanelActive }">
-      <div class="album-art" :style="'--bgImage:' + `url(${thisMusic.album.pic_url || defaultAlbumArt})`"
-        @click="play({})"></div>
+      <div class="album-art" :style="'--bgImage:' + `url(${thisMusic.album.pic_url || defaultAlbumArt})`" @click="play({})"></div>
       <div class="controls">
         <div class="prev" @click="toggleMusic({ isNext: false, isAuto: false })">
           <SVG_pre />
@@ -41,9 +39,10 @@
           <!--播放模式-->
           <div @click="toggleMode()">
             <!--列表循环-->
-            <SVG_list_loop v-if="modeIndex === 0" class="control_icon" /> <!--顺序播放-->
+            <SVG_list_loop v-if="modeIndex === 0" class="control_icon" />
+            <!--顺序播放-->
             <!-- 顺序播放 -->
-            <SVG_sequential_play v-else-if="modeIndex === 1" class="control_icon" style="width: 26px;padding: 2px" />
+            <SVG_sequential_play v-else-if="modeIndex === 1" class="control_icon" style="width: 26px; padding: 2px" />
             <!--随机播放-->
             <SVG_random_play v-else-if="modeIndex === 2" class="control_icon" />
             <!--单曲循环-->
@@ -63,41 +62,40 @@
         </div>
       </div>
     </div>
-
   </div>
   <!--播放列表-->
   <el-drawer v-model="isShowPlayList" :with-header="false" :size="containerHeight + 'px'" direction="btt" show-close>
-    <h3 style="margin: 0;">播放列表</h3>
+    <h3 style="margin: 0">播放列表</h3>
     <play-list :songsList="currentPlayList" />
   </el-drawer>
 </template>
 <script setup lang="ts">
-import { onMounted, ref, computed, toRefs } from 'vue';
+import { onMounted, ref, computed, toRefs } from "vue"
 //stores
-import { useMusicListStore } from "@/store/music/useMusicListStore";
-import { usePlayConfigStore } from '@/store/music/usePlayConfigStore'
-import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
-import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useMusicListStore } from "@/store/music/useMusicListStore"
+import { usePlayConfigStore } from "@/store/music/usePlayConfigStore"
+import { useMusicPlayStore } from "@/store/music/useMusicPlayStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 //hooks
-import useTimestamp from "@/hooks/useTimestamp";
-import usePlayConfig from '@/hooks/music/usePlayConfig'
-import useMusicPlay from "@/hooks/music/useMusicPlay";
+import useTimestamp from "@/hooks/useTimestamp"
+import usePlayConfig from "@/hooks/music/usePlayConfig"
+import useMusicPlay from "@/hooks/music/useMusicPlay"
 //components
-const PlayList = defineAsyncComponent(() => import('@/pages/music/pages/PlayList.vue'))
+const PlayList = defineAsyncComponent(() => import("@/pages/music/pages/PlayList.vue"))
 //files
-import defaultAlbumArt from '@/assets/music/music.svg'
-import SVG_music_list from '@/assets/music/music_list.svg?component'
-import SVG_pre from '@/assets/music/pre.svg?component'
-import SVG_play from '@/assets/music/play.svg?component'
-import SVG_pause from '@/assets/music/pause.svg?component'
-import SVG_lock from '@/assets/music/lock.svg?component'
-import SVG_unlock from '@/assets/music/unlock.svg?component'
-import SVG_volume__mute from '@/assets/music/volume_mute.svg?component'
-import SVG_volume_voice from '@/assets/music/volume_voice.svg?component'
-import SVG_list_loop from '@/assets/music/list_loop.svg?component'
-import SVG_sequential_play from '@/assets/music/sequential_play.svg?component'
-import SVG_random_play from '@/assets/music/random_play.svg?component'
-import SVG_single_loop from '@/assets/music/single_loop.svg?component'
+import defaultAlbumArt from "@/assets/music/music.svg"
+import SVG_music_list from "@/assets/music/music_list.svg?component"
+import SVG_pre from "@/assets/music/pre.svg?component"
+import SVG_play from "@/assets/music/play.svg?component"
+import SVG_pause from "@/assets/music/pause.svg?component"
+import SVG_lock from "@/assets/music/lock.svg?component"
+import SVG_unlock from "@/assets/music/unlock.svg?component"
+import SVG_volume__mute from "@/assets/music/volume_mute.svg?component"
+import SVG_volume_voice from "@/assets/music/volume_voice.svg?component"
+import SVG_list_loop from "@/assets/music/list_loop.svg?component"
+import SVG_sequential_play from "@/assets/music/sequential_play.svg?component"
+import SVG_random_play from "@/assets/music/random_play.svg?component"
+import SVG_single_loop from "@/assets/music/single_loop.svg?component"
 
 const responsiveStore = useResponsiveStore()
 const { drawerSize, containerHeight } = toRefs(responsiveStore)
@@ -105,16 +103,13 @@ const musicListStore = useMusicListStore()
 const playConfigStore = usePlayConfigStore()
 const musicPlayStore = useMusicPlayStore()
 
-
 const { formatMusicTime } = useTimestamp()
 
 const isShowPlayList = ref(false)
 
-
 //播放列表、状态
 const { isPlaying, isLoading, playingIndex, thisMusic } = toRefs(musicListStore)
 const currentPlayList = computed(() => musicListStore.playList)
-
 
 //播放设置
 const { modeIndex } = toRefs(playConfigStore)
@@ -123,25 +118,22 @@ const { toggleMode } = usePlayConfig()
 
 //播放器
 const {
-  audioContext, audioElement, gainNode,
+  audioContext,
+  audioElement,
+  gainNode,
   infoBarActive,
   controlPanelActive,
   volume,
   isScrollName,
   isLock,
   isShowPlayer,
-  transformX, currentTime, duration
+  transformX,
+  currentTime,
+  duration,
 } = toRefs(musicPlayStore)
-const {
-  lockThePlayer,
-  togglePlayerVisible,
-  toggleVolumePanelVisible
-} = musicPlayStore
+const { lockThePlayer, togglePlayerVisible, toggleVolumePanelVisible } = musicPlayStore
 
 const { play, toggleMusic, setMediaInfo, changeCurrentTime } = useMusicPlay()
-
-
-
 
 //音频DOM元素
 const audioEl = ref<HTMLAudioElement>()
@@ -159,32 +151,27 @@ onMounted(async () => {
   }
   // 确保 audioElement 已经存在
   if (audioEl.value) {
-    musicPlayStore.setAudioElement(audioEl.value); // 将 audioEl 赋值给 store 中的 audioElement
+    musicPlayStore.setAudioElement(audioEl.value) // 将 audioEl 赋值给 store 中的 audioElement
   }
 
   // 等待 audioElement 的值被正确赋值
   if (audioElement.value) {
-    console.log('audioElement is:', audioElement.value); // 调试用，确认 audioElement 是否为 <audio>
+    console.log("audioElement is:", audioElement.value) // 调试用，确认 audioElement 是否为 <audio>
 
     if (audioElement.value instanceof HTMLAudioElement) {
       // 初始化 track 连接音频源
-      track = audioContext.value.createMediaElementSource(audioElement.value as HTMLAudioElement);
+      track = audioContext.value.createMediaElementSource(audioElement.value as HTMLAudioElement)
 
       // 连接 gainNode 以控制音量
       track.connect(gainNode.value).connect(audioContext.value.destination)
     } else {
-      console.error('audioElement 不是一个 HTMLAudioElement 实例')
+      console.error("audioElement 不是一个 HTMLAudioElement 实例")
     }
   } else {
-    console.warn("audioElement 未初始化");
+    console.warn("audioElement 未初始化")
   }
   togglePlayerVisible()
 })
-
-
-
-
-
 
 //如果浏览器支持
 if ("mediaSession" in navigator) {
@@ -193,11 +180,11 @@ if ("mediaSession" in navigator) {
 
   navigator.mediaSession.setActionHandler("play", () => {
     play({})
-    navigator.mediaSession.playbackState = "playing";
+    navigator.mediaSession.playbackState = "playing"
   })
   navigator.mediaSession.setActionHandler("pause", () => {
     play({})
-    navigator.mediaSession.playbackState = "paused";
+    navigator.mediaSession.playbackState = "paused"
   })
   navigator.mediaSession.setActionHandler("stop", () => {
     play({ pause: true })
@@ -214,7 +201,6 @@ if ("mediaSession" in navigator) {
   navigator.mediaSession.setActionHandler("nexttrack", () => {
     toggleMusic({ isNext: true, isAuto: false })
   })
-
 
   //监听歌曲切换
   //   watch(audioElement, (newVal, oldVal) => {
@@ -235,7 +221,7 @@ if ("mediaSession" in navigator) {
   width: 400px;
   position: relative;
   margin: 0 auto;
-  --bgImage: url('@/assets/music/music.svg');
+  --bgImage: url("@/assets/music/music.svg");
   --infoColor: rgb(171, 208, 246);
   --btnColor: #eee;
   /* --scrollNamePosition: -30%; */
@@ -253,7 +239,7 @@ if ("mediaSession" in navigator) {
     background-color: var(--infoColor);
     padding: 5px 15px 5px 5px;
     border-radius: 15px;
-    transition: all .5s ease;
+    transition: all 0.5s ease;
     box-shadow: 2px 1px 2px 1px rgba(0, 0, 0, 0.2);
     overflow: hidden;
 
@@ -273,7 +259,6 @@ if ("mediaSession" in navigator) {
       animation: scroll var(--scrollTime) linear infinite;
     }
 
-
     .artist {
       color: #494343;
       font-size: 14px;
@@ -287,7 +272,6 @@ if ("mediaSession" in navigator) {
       margin-left: 30%;
       width: 70%;
       position: relative;
-
 
       /*播放进度时间*/
 
@@ -307,7 +291,7 @@ if ("mediaSession" in navigator) {
     &.active {
       top: -47px;
       opacity: 1;
-      transition: all .5s ease;
+      transition: all 0.5s ease;
     }
   }
 
@@ -328,7 +312,7 @@ if ("mediaSession" in navigator) {
       border-radius: 50%;
       box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0);
       transform: scale(1);
-      transition: all .5s ease;
+      transition: all 0.5s ease;
 
       /*专辑图中间的白色圆点*/
       /*     &::after {
@@ -345,7 +329,7 @@ if ("mediaSession" in navigator) {
            }*/
 
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
@@ -363,7 +347,7 @@ if ("mediaSession" in navigator) {
     &.active .album-art {
       box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0.2);
       transform: scale(1.2);
-      transition: all .5s ease;
+      transition: all 0.5s ease;
     }
 
     &.paused .album-art::before {
@@ -371,7 +355,6 @@ if ("mediaSession" in navigator) {
       -webkit-animation: rotation 3s infinite linear;
       animation-fill-mode: forwards;
     }
-
 
     .controls {
       height: 80px;
@@ -383,7 +366,7 @@ if ("mediaSession" in navigator) {
 
       svg {
         fill: #c2c6cf;
-        animation: keyframes-fill .5s;
+        animation: keyframes-fill 0.5s;
       }
 
       .prev,
@@ -400,8 +383,8 @@ if ("mediaSession" in navigator) {
         margin: 0;
         background-color: var(--el-bg-color);
         cursor: pointer;
-        transition: background-color .3s ease;
-        -webkit-transition: background-color .3s ease;
+        transition: background-color 0.3s ease;
+        -webkit-transition: background-color 0.3s ease;
       }
 
       .prev svg,
@@ -414,8 +397,8 @@ if ("mediaSession" in navigator) {
       .play:hover,
       .next:hover {
         background-color: var(--btnColor);
-        transition: background-color .3s ease;
-        -webkit-transition: background-color .3s ease;
+        transition: background-color 0.3s ease;
+        -webkit-transition: background-color 0.3s ease;
       }
 
       /*下一首按钮*/
@@ -424,7 +407,6 @@ if ("mediaSession" in navigator) {
         transform: rotate(180deg);
       }
     }
-
   }
 
   /*专辑图旋转*/
@@ -456,7 +438,6 @@ if ("mediaSession" in navigator) {
   transform: scale(0.8);
 }
 
-
 /*长文本滚动：歌名过长自动滚动*/
 @keyframes scroll {
   from {
@@ -478,7 +459,6 @@ if ("mediaSession" in navigator) {
   50% {
     transform: rotate(-10deg) scale(1.2);
   }
-
 }
 
 /*播放器隐藏动画*/
@@ -514,7 +494,6 @@ if ("mediaSession" in navigator) {
 .showPlayer {
   animation: moveUpAndShow 2s forwards;
 }
-
 
 /*移动端布局*/
 @media (max-width: 780px) {

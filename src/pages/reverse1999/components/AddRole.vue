@@ -22,29 +22,27 @@
     </el-form-item>
     <div>
       <el-button @click="resetForm">重置</el-button>
-      <el-button type="primary" @click="submitForm()" :loading="isLoading">{{ isEdit ? '修改' : '添加'
-        }}角色信息</el-button>
+      <el-button type="primary" @click="submitForm()" :loading="isLoading">{{ isEdit ? "修改" : "添加" }}角色信息</el-button>
     </div>
   </el-form>
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
-import { useRolesStore } from '@/store/reverse1999/useRolesStore';
-import { useReverse1999Store } from '@/store/reverse1999/useReverse1999Store';
-import type { FormInstance, FormRules } from 'element-plus';
+import { ref, toRefs } from "vue"
+import { useRolesStore } from "@/store/reverse1999/useRolesStore"
+import { useReverse1999Store } from "@/store/reverse1999/useReverse1999Store"
+import type { FormInstance, FormRules } from "element-plus"
 //hooks
-import useReverse1999 from '@/hooks/reverse1999/useReverse1999';
+import useReverse1999 from "@/hooks/reverse1999/useReverse1999"
 
 //utils
-import verifyRules from "@/utils/verifyRules";
-import myFunction from "@/utils/myFunction";
+import verifyRules from "@/utils/verifyRules"
+import myFunction from "@/utils/myFunction"
 //files
 
+const rolesStore = useRolesStore()
 
-const rolesStore = useRolesStore();
-
-const reverse1999Store = useReverse1999Store();
+const reverse1999Store = useReverse1999Store()
 const { toggleAddRoleDrawer } = rolesStore
 const { isLoading, isEdit, formData, oldFormData } = toRefs(rolesStore)
 
@@ -56,9 +54,9 @@ const editRoleFormRef = ref<FormInstance>()
 
 //用哪些表单验证规则
 const Rules = ref<FormRules<typeof formData>>({
-  name: [{ validator: verifyRules.text, required: true, trigger: 'blur' }],
-  camp: [{ validator: verifyRules.text, required: true, trigger: 'blur' }],
-  race: [{ validator: verifyRules.text, required: true, trigger: 'blur' }]
+  name: [{ validator: verifyRules.text, required: true, trigger: "blur" }],
+  camp: [{ validator: verifyRules.text, required: true, trigger: "blur" }],
+  race: [{ validator: verifyRules.text, required: true, trigger: "blur" }],
 })
 
 //提交表单，再次判断表单验证是否通过
@@ -69,24 +67,25 @@ const submitForm = async () => {
   if (!editRoleFormRef.value) return
   try {
     const flag = await editRoleFormRef.value.validate()
-    console.log('表单验证结果：', flag);
+    console.log("表单验证结果：", flag)
     if (!flag) return
 
-    if (isEdit.value) {//修改或删除角色
+    if (isEdit.value) {
+      //修改或删除角色
       const newData = <Role>diffObj(formData.value, oldFormData.value)
       //判断角色信息是否修改
       if (!Object.keys(newData).length) {
-        ElMessage.info('角色信息未修改，已取消上传。')
+        ElMessage.info("角色信息未修改，已取消上传。")
       } else await updateRole({ ...newData, id: formData.value.id })
-    } else {//新增角色
+    } else {
+      //新增角色
       await addRole(formData.value)
     }
   } catch (error) {
-    console.log('发生错误：', error);
+    console.log("发生错误：", error)
   }
   isLoading.value = false
 }
-
 
 //region重置表单
 const resetForm = () => {
@@ -94,18 +93,17 @@ const resetForm = () => {
   if (isEdit.value) toggleAddRoleDrawer(true, oldFormData.value)
   else editRoleFormRef.value.resetFields()
 }
-
 </script>
 
 <style scoped>
 .editRoleForm {
   max-width: 600px;
-  margin: 0 auto
+  margin: 0 auto;
 }
 
 @media screen and (max-width: 780px) {
   .editRoleForm {
-    margin-top: 10px
+    margin-top: 10px;
   }
 }
 </style>

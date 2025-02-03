@@ -19,15 +19,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs } from 'vue';
-import { useRouter } from 'vue-router';
-import zhCn from 'element-plus/es/locale/lang/zh-cn' //elementPlus国际化
-import en from 'element-plus/es/locale/lang/en' //elementPlus国际化
+import { computed, ref, toRefs } from "vue"
+import { useRouter } from "vue-router"
+import zhCn from "element-plus/es/locale/lang/zh-cn" //elementPlus国际化
+import en from "element-plus/es/locale/lang/en" //elementPlus国际化
 //components
-import TitleDiv from "@/components/TitleDiv.vue";
+import TitleDiv from "@/components/TitleDiv.vue"
 //stores
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
-import { useResponsiveStore } from '@/store/useResponsiveStore';
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
@@ -36,21 +36,21 @@ const { token } = toRefs(userInfoStore)
 const { setTokenByType, checkLocalToken } = userInfoStore
 const { screenHeight } = toRefs(responsiveStore)
 
-const router = useRouter();
+const router = useRouter()
 
 const isPC = ref(true)
 
 // 判断是否是PC端
-window.addEventListener('resize', () => checkIsPC())
+window.addEventListener("resize", () => checkIsPC())
 
 function checkIsPC() {
   // console.log('屏幕变化了')
   //获取当前屏幕宽度
 
-  isPC.value = document.body.clientWidth > 980;
+  isPC.value = document.body.clientWidth > 980
   // 调用函数判断设备类型
   const userAgentInfo = navigator.userAgent
-  const agents = ['Android', 'iPhone', 'SymbianOS', 'Windows Phone', 'iPad', 'iPod']
+  const agents = ["Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod"]
   for (let i = 0; i < agents.length; i++) {
     if (userAgentInfo.includes(agents[i])) {
       isPC.value = false
@@ -62,21 +62,15 @@ function checkIsPC() {
 checkIsPC()
 checkLocalToken()
 
+const language = ref("zh-cn")
+const locale = computed(() => (language.value === "zh-cn" ? zhCn : en))
 
-
-
-
-
-const language = ref('zh-cn')
-const locale = computed(() => (language.value === 'zh-cn' ? zhCn : en))
-
-
-const isLoading = ref(true); // 控制加载状态
+const isLoading = ref(true) // 控制加载状态
 
 // 首次进入网站时显示加载动画
 onMounted(() => {
-  isLoading.value = false; // 首次渲染完成后关闭加载动画
-});
+  isLoading.value = false // 首次渲染完成后关闭加载动画
+})
 
 // 监听路由跳转
 // router.beforeEach((to, from, next) => {

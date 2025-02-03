@@ -1,20 +1,18 @@
 <template>
   <div class="hotWords">
     <el-text type="primary">搜索热词：</el-text>
-    <el-button text type="info" @click="changeKeyWords(word)" v-for="word in hotWords" :key="word">{{ word
-      }}</el-button>
+    <el-button text type="info" @click="changeKeyWords(word)" v-for="word in hotWords" :key="word">{{ word }}</el-button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, toRefs } from "vue";
+import { onMounted, toRefs } from "vue"
 //stores
-import { useMusicSearchStore } from "@/store/music/useMusicSearchStore";
-
+import { useMusicSearchStore } from "@/store/music/useMusicSearchStore"
 
 const searchStore = useMusicSearchStore()
 const { hotWords } = toRefs(searchStore)
-const { changeKeyWords } = defineProps(['changeKeyWords'])
+const { changeKeyWords } = defineProps(["changeKeyWords"])
 
 onMounted(() => searchStore.getHotWords())
 </script>
@@ -37,7 +35,6 @@ onMounted(() => searchStore.getHotWords())
     background-color: transparent;
   }
 }
-
 
 /*移动端布局*/
 @media (max-width: 780px) {

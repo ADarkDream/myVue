@@ -1,14 +1,22 @@
 <template>
-  <el-header class="header1">
-    评论管理
-  </el-header>
+  <el-header class="header1"> 评论管理 </el-header>
   <div class="header2">
     <span></span>
     <el-button @click="clearFilter">清空全部筛选</el-button>
   </div>
-  <el-main style="padding-bottom:0;padding-top: 0 ">
-    <el-table ref="tableRef" :data="tableData" style="width: 100%" max-height="500" stripe border highlight-current-row
-      table-layout="auto" type="type" :default-sort="{ prop: 'id', order: 'custom' }">
+  <el-main style="padding-bottom: 0; padding-top: 0">
+    <el-table
+      ref="tableRef"
+      :data="tableData"
+      style="width: 100%"
+      max-height="500"
+      stripe
+      border
+      highlight-current-row
+      table-layout="auto"
+      type="type"
+      :default-sort="{ prop: 'id', order: 'custom' }"
+    >
       <el-table-column fixed prop="id" label="ID" width="100" sortable />
       <el-table-column prop="articleId" label="文章ID" width="100">
         <template #default="scope">
@@ -17,11 +25,17 @@
       </el-table-column>
       <el-table-column prop="uid" label="用户ID" width="100" />
       <el-table-column prop="comment" label="评论内容" width="400" />
-      <el-table-column prop="status" label="状态" width="120" :filters="[
-        { text: '未过审', value: 0 },
-        { text: '已发布', value: 1 },
-        { text: '待审核', value: 2 },
-      ]" :filter-method="filterHandler">
+      <el-table-column
+        prop="status"
+        label="状态"
+        width="120"
+        :filters="[
+          { text: '未过审', value: 0 },
+          { text: '已发布', value: 1 },
+          { text: '待审核', value: 2 },
+        ]"
+        :filter-method="filterHandler"
+      >
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
             <el-select placeholder="选择状态(默认为发布中)" v-model="newComment.status" default-first-option>
@@ -45,16 +59,11 @@
         <template #default="scope">
           <div v-if="isEditRow !== scope.$index">
             <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row.id)">
-              删除
-            </el-button>
+            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row.id)"> 删除 </el-button>
           </div>
           <div v-else>
-            <el-button link type="primary" size="small" @click="isEditRow = -1">取消
-            </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newComment, scope.row)">
-              更新
-            </el-button>
+            <el-button link type="primary" size="small" @click="isEditRow = -1">取消 </el-button>
+            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newComment, scope.row)"> 更新 </el-button>
           </div>
         </template>
       </el-table-column>
@@ -62,29 +71,25 @@
   </el-main>
 </template>
 
-
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, reactive, ref } from "vue"
+import { useRouter } from "vue-router"
 import momo from "@/apis"
-import { ElMessage, ElMessageBox } from "element-plus";
-import type { TableColumnCtx, TableInstance } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus"
+import type { TableColumnCtx, TableInstance } from "element-plus"
 //hooks
-import useTimeStamp from "@/hooks/useTimestamp";
+import useTimeStamp from "@/hooks/useTimestamp"
 //utils
-import myFunction from "@/utils/myFunction";
+import myFunction from "@/utils/myFunction"
 //types
 import { Comment } from "@/types/articles"
-
-
 
 const { getTime } = useTimeStamp()
 const { diffObj } = myFunction
 const router = useRouter()
 const goArticle = (id: number) => {
-  router.push({ path: '/forum/article', query: { id, isEdit: 1 } })
+  router.push({ path: "/forum/article", query: { id, isEdit: 1 } })
 }
-
 
 const tableRef = ref<TableInstance>()
 let tableData: Comment[] = reactive([])
@@ -95,12 +100,8 @@ const clearFilter = () => {
 }
 
 //筛选器
-const filterHandler = (
-  value: string,
-  row: Comment,
-  column: TableColumnCtx<Comment>
-) => {
-  const property = column['property'] as keyof Comment //断言property是Comment中的键名
+const filterHandler = (value: string, row: Comment, column: TableColumnCtx<Comment>) => {
+  const property = column["property"] as keyof Comment //断言property是Comment中的键名
   return row[property] === value
 }
 
@@ -116,26 +117,23 @@ const filterHandler = (
 //   })
 // }
 
-
 const newComment = reactive<Comment>({
   id: 0,
   uid: 0,
   articleId: 0,
-  comment: '',
+  comment: "",
   status: 0,
-  created_time: '',
-}
-)
+  created_time: "",
+})
 
 //获取全部评论
 onMounted(async () => {
   await getComment()
 })
 
-
 const getComment = async () => {
   try {
-    const result = await momo.get('/getComments')
+    const result = await momo.get("/getComments")
     console.log(result)
     const { msg, data } = result
     ElMessage.success(msg)
@@ -144,11 +142,10 @@ const getComment = async () => {
       tableData.push(item)
     })
   } catch (error) {
-    console.log('发生错误：')
+    console.log("发生错误：")
     console.dir(error)
   }
 }
-
 
 //编辑标记
 const isEditRow = ref<number>(-1)
@@ -163,73 +160,68 @@ const handleEdit = (index: number, row: Comment) => {
 function checkUpdateRow(newData: Comment, oldData: Comment) {
   const data = <Comment>diffObj(newData, oldData)
   //判断评论信息是否修改
-  if (Object.keys(data).length === 0) return ElMessage.info('评论信息未修改，已取消上传。')
+  if (Object.keys(data).length === 0) return ElMessage.info("评论信息未修改，已取消上传。")
   else {
     //校验格式
-
 
     updateRow(data, oldData)
   }
 }
 
-
-
 //上传更新的评论信息
 function updateRow(data: Comment, oldData: Comment) {
-  momo.post('/updateComment', {
-    data,
-    id: oldData.id    //id被洗掉了，手动添加
-  }
-  ).then(result => {
-    // console.log(result)
-    const { msg } = result
-    //更新修订时间为当前时间
-    data.created_time = new Date().toISOString()
-    //将修改后的信息显示出来
-    Object.assign(oldData, data)
-    //去除编辑标记
-    isEditRow.value = -1
-    ElMessage.success(msg)
-  }).catch(error => {
-    console.log('发生错误：')
-    console.log(error)
-    //ElMessage.error('发生错误：' + error.message)
-  })
+  momo
+    .post("/updateComment", {
+      data,
+      id: oldData.id, //id被洗掉了，手动添加
+    })
+    .then(result => {
+      // console.log(result)
+      const { msg } = result
+      //更新修订时间为当前时间
+      data.created_time = new Date().toISOString()
+      //将修改后的信息显示出来
+      Object.assign(oldData, data)
+      //去除编辑标记
+      isEditRow.value = -1
+      ElMessage.success(msg)
+    })
+    .catch(error => {
+      console.log("发生错误：")
+      console.log(error)
+      //ElMessage.error('发生错误：' + error.message)
+    })
 }
-
 
 //确认删除评论
 const deleteRow = (index: number, id: number) => {
-  ElMessageBox.confirm(
-    '确认删除该评论吗?',
-    'Warning',
-    {
-      confirmButtonText: '确认删除',
-      cancelButtonText: '取消删除',
-      type: 'warning',
-      showClose: false
-    }
-  )
+  ElMessageBox.confirm("确认删除该评论吗?", "Warning", {
+    confirmButtonText: "确认删除",
+    cancelButtonText: "取消删除",
+    type: "warning",
+    showClose: false,
+  })
     .then(() => {
       deleteComment(index, id)
       console.log(index, id)
     })
-    .catch(() => ElMessage.info('删除操作已取消'))
+    .catch(() => ElMessage.info("删除操作已取消"))
 }
 
 //删除评论
 const deleteComment = (index: number, id: number) => {
-  momo.delete('/deleteComment', { id })
-    .then((result) => {
+  momo
+    .delete("/deleteComment", { id })
+    .then(result => {
       // console.log(result)
       ElMessage.success(result.msg)
       tableData.splice(index, 1)
       console.log(tableData)
-    }).catch(error => {
-      console.dir('发生错误：' + error)
+    })
+    .catch(error => {
+      console.dir("发生错误：" + error)
     })
 }
 </script>
-
 
 <style scoped></style>

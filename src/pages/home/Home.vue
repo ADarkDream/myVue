@@ -24,20 +24,18 @@
       <!--      </div>-->
     </el-footer>
   </el-container>
-
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from "vue";
-import { ElCollapseTransition } from "element-plus";
+import { ref, toRefs } from "vue"
+import { ElCollapseTransition } from "element-plus"
 //hooks
-import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 //components
-import Aside from "@/components/Aside.vue";
-import Approve from "@/components/Approve.vue";
-import SearchEngine from "@/pages/home/SearchEngine.vue";
-import Content from "@/pages/home/Content.vue";
-
+import Aside from "@/components/Aside.vue"
+import Approve from "@/components/Approve.vue"
+import SearchEngine from "@/pages/home/SearchEngine.vue"
+import Content from "@/pages/home/Content.vue"
 
 const responsiveStore = useResponsiveStore()
 const { isPC } = toRefs(responsiveStore)
@@ -50,29 +48,29 @@ isPC.value ? isScroll(false) : isScroll()
 //内容区是否显示
 const isShow = ref(false)
 // 切换类名
-const timeClass = ref('time')
+const timeClass = ref("time")
 
 //显示下方内容区,isShow.value=false不显示,isHide=true代表点击时间时关闭
 //!函数需修改 isSticky 部分，现在在移动端不会自动下滑
 function showContent(isHide = false) {
-  console.log('是否显示内容区,isShow：', isShow.value)
+  console.log("是否显示内容区,isShow：", isShow.value)
   if (isHide || isShow.value === false) {
-    isShow.value = !isShow.value//点击时间时开关，点击侧边栏时只开不关
-    if (!isPC.value) isSticky.value = true   //开启底部粘性定位
+    isShow.value = !isShow.value //点击时间时开关，点击侧边栏时只开不关
+    if (!isPC.value) isSticky.value = true //开启底部粘性定位
   }
 
   if (isShow.value && isPC.value) {
-    timeClass.value = 'timeUp'
-  } else timeClass.value = 'time'
+    timeClass.value = "timeUp"
+  } else timeClass.value = "time"
 
   if (!isPC.value) {
     isScroll(true) //允许纵向滚动
-    if (!isShow.value) setTimeout(() => {
-      isSticky.value = false //关闭底部粘性定位
-    }, 200)
+    if (!isShow.value)
+      setTimeout(() => {
+        isSticky.value = false //关闭底部粘性定位
+      }, 200)
   }
 }
-
 </script>
 
 <style scoped>
@@ -107,12 +105,12 @@ Aside {
 
 @keyframes TimeUp {
   from {
-    font-size: 120px
+    font-size: 120px;
   }
 
   to {
     transform: translateY(-200px);
-    font-size: 0
+    font-size: 0;
   }
 }
 
@@ -126,7 +124,6 @@ Aside {
   overflow: hidden;
 }
 */
-
 
 #jinrishici-sentence {
   font-size: 20px;
@@ -152,7 +149,6 @@ Aside {
     font-size: 100px;
     width: 45%;
     margin-top: 15%;
-
   }
 
   .el-footer {

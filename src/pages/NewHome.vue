@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div id="root"></div>
 </template>
 
@@ -1765,4 +1765,4 @@ const App: React.FC = () => {
     )
 }
 
-ReactDOM.render(<App />, document.getElementById("root"));</script>
+ReactDOM.render(<App />, document.getElementById("root"));</script> -->

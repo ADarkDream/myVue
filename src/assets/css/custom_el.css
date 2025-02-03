@@ -1,162 +1,150 @@
 .primary {
-    color: var(--el-color-primary);
+  color: var(--el-color-primary);
 }
 
 .warning {
-    color: var(--el-color-warning);
+  color: var(--el-color-warning);
 }
 
 .success {
-    color: var(--el-color-success);
+  color: var(--el-color-success);
 }
 
 .el-header {
-    height: auto;
-    padding: 20px 20px 0 20px;
+  height: auto;
+  padding: 20px 20px 0 20px;
 }
-
 
 /*region给折叠面板的样式*/
 .el-collapse {
-    border-radius: 5px;
+  border-radius: 5px;
 
+  /*第一个折叠面板的标题*/
 
-    /*第一个折叠面板的标题*/
+  .el-collapse-item:first-child .el-collapse-item__header {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
 
-    .el-collapse-item:first-child .el-collapse-item__header {
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+  /*最后一个折叠面板的标题(未激活时)*/
+
+  .el-collapse-item:last-child .el-collapse-item__header {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+
+  /*最后一个折叠面板的标题(激活时)*/
+
+  .el-collapse-item:last-child .el-collapse-item__header.is-active {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  /*最后一个折叠面板的内容区(激活时)*/
+
+  .el-collapse-item:last-child .el-collapse-item__wrap {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+
+  .el-collapse-item__header {
+    padding-left: 15px;
+    font-size: 16px;
+  }
+
+  .el-collapse-item__content {
+    position: relative;
+    font-family: 华文楷体, sans-serif;
+    word-spacing: 1px;
+    font-weight: 600;
+    --el-font-size-base: 15px;
+    font-size: 15px;
+    padding: 10px;
+    /*小标题*/
+    --el-font-size-extra-small: 15px;
+
+    .el-form-item--small {
+      font-size: 15px;
     }
 
-    /*最后一个折叠面板的标题(未激活时)*/
+    /*复选框文字内容*/
 
-    .el-collapse-item:last-child .el-collapse-item__header {
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
+    .el-checkbox.el-checkbox--small,
+    .el-checkbox__label {
+      font-size: 14px;
+      font-weight: 600;
     }
 
-    /*最后一个折叠面板的标题(激活时)*/
-
-    .el-collapse-item:last-child .el-collapse-item__header.is-active {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
+    .el-link {
+      text-indent: 2px;
     }
+  }
 
-    /*最后一个折叠面板的内容区(激活时)*/
-
-    .el-collapse-item:last-child .el-collapse-item__wrap {
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
+  @media (hover: hover) {
+    /*折叠面板的标题*/
+    .el-collapse-item__header:hover {
+      /*    color: var(--el-color-primary);*/
+      font-weight: 600;
     }
-
-
-    .el-collapse-item__header {
-        padding-left: 15px;
-        font-size: 16px;
-    }
-
-    .el-collapse-item__content {
-        position: relative;
-        font-family: 华文楷体, sans-serif;
-        word-spacing: 1px;
-        font-weight: 600;
-        --el-font-size-base: 15px;
-        font-size: 15px;
-        padding: 10px;
-        /*小标题*/
-        --el-font-size-extra-small: 15px;
-
-        .el-form-item--small {
-            font-size: 15px;
-        }
-
-        /*复选框文字内容*/
-
-        .el-checkbox.el-checkbox--small,
-        .el-checkbox__label {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .el-link {
-            text-indent: 2px
-        }
-    }
-
-
-    @media (hover: hover) {
-
-        /*折叠面板的标题*/
-        .el-collapse-item__header:hover {
-            /*    color: var(--el-color-primary);*/
-            font-weight: 600;
-        }
-
-
-    }
-
+  }
 }
-
 
 /*endregion*/
 
-
 /*去除输入框焦点边框*/
 .el-input__wrapper.is-focus {
-    box-shadow: none;
+  box-shadow: none;
 }
 
 /* 去掉el-dropdown的黑框 */
 .el-tooltip__trigger:focus {
-    outline: none;
+  outline: none;
 }
 
 /*el-button按钮插槽的自定义的SVG太小了，放大*/
 .custom_button_icon {
-    transform: scale(1.5)
+  transform: scale(1.5);
 }
 
 .el-dialog__header.show-close {
-    padding-right: 5px;
+  padding-right: 5px;
 }
 
 .el-dialog header {
-    padding: 0 5px;
+  padding: 0 5px;
 }
 
 .el-tabs__header {
-    margin: 0 0 10px;
+  margin: 0 0 10px;
 }
 
 /* .el-tabs__content {
     padding: 0 10px;
 } */
 
-
 /*移动端*/
 @media (max-width: 780px) {
+  .el-header,
+  .el-main {
+    padding: 10px 10px 0 10px;
+  }
 
-    .el-header,
-    .el-main {
-        padding: 10px 10px 0 10px;
-    }
+  .el-collapse-item__header {
+    font-size: 14px;
+  }
 
-    .el-collapse-item__header {
-        font-size: 14px;
-    }
+  .el-collapse-item__content {
+    --el-font-size-base: 15px;
+    font-size: 13px;
+  }
 
-    .el-collapse-item__content {
-        --el-font-size-base: 15px;
-        font-size: 13px;
-    }
+  .el-menu {
+    height: 40px;
+  }
 
-    .el-menu {
-        height: 40px
-    }
-
-    .el-card {
-        --el-card-padding: 5px;
-    }
+  .el-card {
+    --el-card-padding: 5px;
+  }
 }
 
 /*.music .el-collapse {*/

@@ -17,7 +17,7 @@
       <h1>404 NOT FOUND</h1>
       <div style="margin: 20px 0">
         对不起，您访问的页面已迷失在太阳系。
-        <br>
+        <br />
         Sorry,the page you visited has been lost in the solar system.
       </div>
       <el-space>
@@ -28,17 +28,15 @@
       </el-space>
     </div>
   </el-container>
-
-
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from "vue";
-import { onBeforeRouteLeave, useRouter } from "vue-router";
+import { ref, toRefs } from "vue"
+import { onBeforeRouteLeave, useRouter } from "vue-router"
 //stores
-import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 //utils
-import titleDiv from '@/utils/titleDiv';
+import titleDiv from "@/utils/titleDiv"
 
 const router = useRouter()
 const responsiveStore = useResponsiveStore()
@@ -54,7 +52,7 @@ timer1.value = setInterval(() => {
 }, 1000)
 //跳转到首页
 timer2.value = setTimeout(() => {
-  router.replace({ name: 'home' })
+  router.replace({ name: "home" })
 }, 11000)
 
 //显示站长联系方式
@@ -63,14 +61,18 @@ const showContact = () => titleDiv.showNotice({ show_num: 3, active_num: 1 })
 onBeforeRouteLeave(() => {
   clearTimeout(timer1.value)
   clearInterval(timer2.value)
-  console.log('计时器和倒计时已清除')
+  console.log("计时器和倒计时已清除")
 })
 </script>
 
 <style scoped>
 .el-container {
   position: relative;
-  font: normal 1em/1.45em 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font:
+    normal 1em/1.45em "Helvetica Neue",
+    Helvetica,
+    Arial,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   color: #fff;
   background: radial-gradient(ellipse at bottom, #1c2837 0%, #050608 100%) fixed;
@@ -93,7 +95,6 @@ onBeforeRouteLeave(() => {
   }
 }
 
-
 /*region太阳系动画*/
 .solar-system {
   top: 0;
@@ -102,11 +103,10 @@ onBeforeRouteLeave(() => {
   width: 100%;
   height: 100%;
   position: absolute;
-
 }
 
 .solar-system:after {
-  content: '';
+  content: "";
   position: absolute;
   height: 2px;
   width: 2px;
@@ -120,7 +120,6 @@ onBeforeRouteLeave(() => {
   top: 50%;
   left: 50%;
   position: absolute;
-
 }
 
 .solar-system div:not(.sun) {
@@ -130,7 +129,7 @@ onBeforeRouteLeave(() => {
 .solar-system div:not(.sun):before {
   left: 50%;
   border-radius: 100px;
-  content: '';
+  content: "";
   position: absolute;
 }
 
@@ -147,7 +146,9 @@ onBeforeRouteLeave(() => {
   border: 0 !important;
   background: radial-gradient(ellipse at center, #ffd000 1%, #f9b700 39%, #f9b700 39%, #e06317 100%) -28px -103px;
   background-size: 175%;
-  box-shadow: 0 0 10px 2px rgba(255, 107, 0, 0.4), 0 0 22px 11px rgba(255, 203, 0, 0.13);
+  box-shadow:
+    0 0 10px 2px rgba(255, 107, 0, 0.4),
+    0 0 22px 11px rgba(255, 203, 0, 0.13);
 }
 
 .mercury {
@@ -203,7 +204,7 @@ onBeforeRouteLeave(() => {
 
 .earth:after {
   position: absolute;
-  content: '';
+  content: "";
   height: 18px;
   width: 18px;
   left: 50%;
@@ -269,7 +270,7 @@ onBeforeRouteLeave(() => {
 
 .saturn:after {
   position: absolute;
-  content: '';
+  content: "";
   height: 2.34%;
   width: 4.676%;
   left: 50%;
@@ -278,7 +279,10 @@ onBeforeRouteLeave(() => {
   margin-left: -2.3%;
   margin-top: -1.2%;
   border-radius: 50% 50% 50% 50%;
-  box-shadow: 0 1px 0 1px #987641, 3px 1px 0 #987641, -3px 1px 0 #987641;
+  box-shadow:
+    0 1px 0 1px #987641,
+    3px 1px 0 #987641,
+    -3px 1px 0 #987641;
   -webkit-animation: orb 882.6952471456s linear infinite;
   animation: orb 882.6952471456s linear infinite;
   animation-direction: reverse;

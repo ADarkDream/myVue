@@ -1,6 +1,10 @@
 <template>
-  <div ref="containerRef" class="songs-list-container" :style="{ height: height + 'px', overflow: 'scroll' }"
-    v-show="songsList.length !== 0">
+  <div
+    ref="containerRef"
+    class="songs-list-container"
+    :style="{ height: height + 'px', overflow: 'scroll' }"
+    v-show="songsList.length !== 0"
+  >
     <!-- <div class="scroll-container">
       <div class="actual-height-container">
         <div class="translate-container">
@@ -47,33 +51,43 @@
       <div class="musicDiv">
         <div>
           <div class="songInfo">
-            <el-text>{{ index + 1 }}、{{ item.name || '未命名' }} -
-              {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }}
-            </el-text>&ensp;
+            <el-text
+              >{{ index + 1 }}、{{ item.name || "未命名" }} -
+              {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join("&") : "未知艺术家" }} </el-text
+            >&ensp;
             <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text>
           </div>
           <div class="btns">
-            <el-button link @click="playTheMusic(item, index)" size="small"
-              :type="thisMusic.id === item.id && isPlaying ? '' : 'primary'">
-              {{ thisMusic.id === item.id && isPlaying ? '暂停' : '播放' }}
+            <el-button
+              link
+              @click="playTheMusic(item, index)"
+              size="small"
+              :type="thisMusic.id === item.id && isPlaying ? '' : 'primary'"
+            >
+              {{ thisMusic.id === item.id && isPlaying ? "暂停" : "播放" }}
             </el-button>
-            <el-button link @click="addMusicList([item], { isReplace: true })" size="small" type="primary">
-              添加
-            </el-button>
-            <el-button link size="small" type="primary" @click="showMusicListDrawer([item.id])">
-              收藏
-            </el-button>
-            <el-button link v-if="item.cloud_music_id || item.id" @click="musicPlayUtils.shareMusicLink(item)"
-              size="small" type="primary">
+            <el-button link @click="addMusicList([item], { isReplace: true })" size="small" type="primary"> 添加 </el-button>
+            <el-button link size="small" type="primary" @click="showMusicListDrawer([item.id])"> 收藏 </el-button>
+            <el-button
+              link
+              v-if="item.cloud_music_id || item.id"
+              @click="musicPlayUtils.shareMusicLink(item)"
+              size="small"
+              type="primary"
+            >
               分享
             </el-button>
-            <el-button link v-if="item.cloud_music_id" @click="musicListUtils.goToCloudMusic(item.cloud_music_id)"
-              target="_blank" size="small" type="primary">
+            <el-button
+              link
+              v-if="item.cloud_music_id"
+              @click="musicListUtils.goToCloudMusic(item.cloud_music_id)"
+              target="_blank"
+              size="small"
+              type="primary"
+            >
               前往网易云
             </el-button>
-            <el-button link v-if="isOwner" @click="deleteMusic(item.id, index)" size="small" type="danger">
-              删除
-            </el-button>
+            <el-button link v-if="isOwner" @click="deleteMusic(item.id, index)" size="small" type="danger"> 删除 </el-button>
           </div>
         </div>
         <div class="playIcon">
@@ -87,29 +101,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from "vue";
+import { ref, toRefs } from "vue"
 //stores
-import { useMusicListStore } from "@/store/music/useMusicListStore";
-import { useMusicListDrawerStore } from "@/store/music/useMusicListDrawerStore";
+import { useMusicListStore } from "@/store/music/useMusicListStore"
+import { useMusicListDrawerStore } from "@/store/music/useMusicListDrawerStore"
 //hooks
-import { useResponsiveStore } from "@/store/useResponsiveStore";
-import useMusicPlay from "@/hooks/music/useMusicPlay";
-import useMusic from "@/hooks/music/useMusic";
-import useMusicList from "@/hooks/music/useMusicList";
+import { useResponsiveStore } from "@/store/useResponsiveStore"
+import useMusicPlay from "@/hooks/music/useMusicPlay"
+import useMusic from "@/hooks/music/useMusic"
+import useMusicList from "@/hooks/music/useMusicList"
 //utils
-import musicPlayUtils from "@/utils/music/musicPlay";
-import musicListUtils from "@/utils/music/musicList";
+import musicPlayUtils from "@/utils/music/musicPlay"
+import musicListUtils from "@/utils/music/musicList"
 //types
-import type { CloudSongInfo } from "@/types/music";
+import type { CloudSongInfo } from "@/types/music"
 //files
-import SVG_music_playing_indicator from '@/assets/music/music_playing_indicator.svg?component'
+import SVG_music_playing_indicator from "@/assets/music/music_playing_indicator.svg?component"
 // import useVirtualList from "@/hooks/useVirtualList";
-
 
 const musicListStore = useMusicListStore()
 const responsiveStore = useResponsiveStore()
 const musicListDrawerStore = useMusicListDrawerStore()
-
 
 const { drawerSize, isPC, mainPanelContentHeight } = toRefs(responsiveStore)
 const { music_id_list } = toRefs(musicListDrawerStore)
@@ -120,11 +132,14 @@ const { showMusicListDrawer } = useMusic()
 const { addMusicToPlay, toggleMusic, play } = useMusicPlay()
 const { deleteMusicFromList } = useMusicList()
 
-const props = defineProps(['songsList', 'height', 'isSearchList', 'isOwner']) as { songsList: CloudSongInfo[], height: number, isSearchList?: boolean, isOwner: boolean }
+const props = defineProps(["songsList", "height", "isSearchList", "isOwner"]) as {
+  songsList: CloudSongInfo[]
+  height: number
+  isSearchList?: boolean
+  isOwner: boolean
+}
 const { songsList, height, isSearchList, isOwner } = toRefs(props)
 const containerRef = ref()
-
-
 
 const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   //如果是当前播放的歌曲，则暂停
@@ -137,12 +152,10 @@ const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   else toggleMusic({ index })
 }
 
-
 const deleteMusic = async (id: number, index: number) => {
   music_id_list.value = [id]
   await deleteMusicFromList(musicListInfo.value!.music_list_id, index)
 }
-
 
 //分段懒加载
 // const handleScroll = () => {
@@ -153,7 +166,6 @@ const deleteMusic = async (id: number, index: number) => {
 // }
 //   console.log('滚动了');
 // }
-
 
 // const actualRenderData = ref(songsList.value)
 // console.log('actualRenderData', actualRenderData.value);
@@ -196,7 +208,6 @@ const deleteMusic = async (id: number, index: number) => {
   text-align: left;
   transition: all 0.2s linear;
   cursor: pointer;
-
 }
 
 .musicDiv:hover {
@@ -216,7 +227,6 @@ const deleteMusic = async (id: number, index: number) => {
   transition: height 0.3s ease;
 }
 
-
 .musicDiv:hover {
   border-radius: 5px;
 }
@@ -224,7 +234,6 @@ const deleteMusic = async (id: number, index: number) => {
 .musicDiv:hover .btns {
   height: 22px;
 }
-
 
 /* 播放图标 */
 .musicDiv .playIcon {

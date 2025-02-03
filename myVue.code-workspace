@@ -1,21 +1,17 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../server"
-		},
-		{
-			"path": "../../GitHub/NeteaseCloudMusicApi"
-		}
-	],
-	"settings": {
-		"cSpell.words": [
-			"avinfo",
-			"myvue",
-			"QINIUTHUMBNAIL"
-		],
-		"terminal.explorerKind": "both"
-	}
+  "folders": [
+    {
+      "path": ".",
+    },
+    {
+      "path": "../server",
+    },
+    {
+      "path": "../../GitHub/NeteaseCloudMusicApi",
+    },
+  ],
+  "settings": {
+    "cSpell.words": ["avinfo", "myvue", "QINIUTHUMBNAIL"],
+    "terminal.explorerKind": "both",
+  },
 }
