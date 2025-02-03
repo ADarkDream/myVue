@@ -5,20 +5,26 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode development",
-    "build:prod": "pnpm run sitemap && npx vite build --mode production",
+    "build:prod": "npm run sitemap && npm exec vite build --mode production",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview --mode production",
     "build-only": "vite build",
     "type-check": "vue-tsc --build --noEmit --force",
     "prettier-check": "prettier --check .",
     "prettier": "prettier --write .",
-    "start": "pnpm run dev",
+    "start": "npm run dev",
     "sitemap": "node updateSitemap.js"
   },
   "lint-staged": {
     "**/*.{js,jsx,tsx,ts,less,md,json}": [
-      "pnpm run prettier"
+      "npm run prettier"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier",
+      "commit-msg": "npm exec commitlint --edit $1"
+    }
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
