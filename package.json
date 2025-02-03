@@ -15,6 +15,11 @@
     "start": "pnpm run dev",
     "sitemap": "node updateSitemap.js"
   },
+  "lint-staged": {
+    "**/*.{js,jsx,tsx,ts,less,md,json}": [
+      "pnpm run prettier"
+    ]
+  },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
     "@highlightjs/vue-plugin": "github:highlightjs/vue-plugin",
@@ -41,6 +46,8 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
     "@tsconfig/node20": "^20.1.4",
     "@types/file-saver": "^2.0.7",
     "@types/node": "^20.17.12",
@@ -51,6 +58,8 @@
     "@vue/tsconfig": "^0.5.1",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
     "npm-run-all2": "^6.2.6",
     "prettier": "^3.4.2",
     "sass": "^1.83.4",
