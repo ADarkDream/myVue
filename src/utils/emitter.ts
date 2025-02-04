@@ -1,28 +1,28 @@
 // 引入mitt
 
-type Handler<T = any> = (payload: T) => void;
+type Handler<T = any> = (payload: T) => void
 
-const events: { [key: string]: Handler[] } = {};
+const events: { [key: string]: Handler[] } = {}
 
 // 注册事件监听
 function on<T>(event: string, handler: Handler<T>): void {
   if (!events[event]) {
-    events[event] = [];
+    events[event] = []
   }
-  events[event].push(handler);
+  events[event].push(handler)
 }
 
 // 触发事件
 function emit<T>(event: string, payload: T): void {
   if (events[event]) {
-    events[event].forEach((handler) => handler(payload));
+    events[event].forEach((handler) => handler(payload))
   }
 }
 
 // 移除事件监听
 function off<T>(event: string, handler: Handler<T>): void {
   if (events[event]) {
-    events[event] = events[event].filter((h) => h !== handler);
+    events[event] = events[event].filter((h) => h !== handler)
   }
 }
 
@@ -31,4 +31,4 @@ export const emitter = {
   on,
   emit,
   off,
-};
+}

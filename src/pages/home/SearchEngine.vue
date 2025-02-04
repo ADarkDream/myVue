@@ -3,71 +3,33 @@
   <div class="searchDiv">
     <!-- 当前的搜索引擎-->
     <el-button class="engine" style="margin-left: 5px">
-      <img
-        :alt="engineName"
-        class="searchEngine thisSearchEngine"
-        :src="searchImg"
-        @click="showEngines = !showEngines"
-      />&ensp;
+      <img :alt="engineName" class="searchEngine thisSearchEngine" :src="searchImg" @click="showEngines = !showEngines" />&ensp;
     </el-button>
     <template v-if="showEngines">
       <!--    默认的搜索引擎列表-->
-      <div class="engines" v-for="item in searchEngines" :key="item.id">
-        <el-button class="engine" v-show="engineId !== item.id && item.isShow">
-          <img
-            class="searchEngine"
-            :src="item.src"
-            :alt="item.name"
-            @click="changeEngine(item)"
-          />
+      <div v-for="item in searchEngines" :key="item.id" class="engines">
+        <el-button v-show="engineId !== item.id && item.isShow" class="engine">
+          <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)" />
         </el-button>
       </div>
       <!--    自定义的搜索引擎列表-->
-      <div class="engines" v-for="item in userEngines" :key="item.id">
-        <el-button class="engine" v-show="engineId !== item.id && item.isShow">
-          <img
-            class="searchEngine"
-            :src="item.src"
-            :alt="item.name"
-            @click="changeEngine(item)"
-          />
+      <div v-for="item in userEngines" :key="item.id" class="engines">
+        <el-button v-show="engineId !== item.id && item.isShow" class="engine">
+          <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)" />
         </el-button>
       </div>
     </template>
     <!--    添加自定义搜索引擎-->
-    <el-button
-      v-if="showEngines"
-      class="engine"
-      :icon="More"
-      plain
-      type="primary"
-      @click="engineOption = !engineOption"
-    />
+    <el-button v-if="showEngines" class="engine" :icon="More" plain type="primary" @click="engineOption = !engineOption" />
     <!--    搜索引擎切换-->
-    <el-button
-      class="change"
-      :icon="Sort"
-      style="margin-left: 0"
-      @click="showEngines = !showEngines"
-    />
+    <el-button class="change" :icon="Sort" style="margin-left: 0" @click="showEngines = !showEngines" />
     <!--    输入框-->
-    <input
-      v-model.trim="keyword"
-      class="search"
-      :placeholder="placeholder"
-      type="text"
-      @keyup.enter="search"
-    />
+    <input v-model.trim="keyword" class="search" :placeholder="placeholder" type="text" @keyup.enter="search" />
 
     <el-button class="searchBtn" :icon="Search" @click="search" />
   </div>
   <!-- 用户更改搜索引擎列表-->
-  <el-dialog
-    v-model="engineOption"
-    :fullscreen="!isPC"
-    title="更改搜索引擎列表"
-    :width="dialogWidth"
-  >
+  <el-dialog v-model="engineOption" :fullscreen="!isPC" title="更改搜索引擎列表" :width="dialogWidth">
     <EditEngines
       :close-engine-option="closeEngineOption"
       :engine-id="engineId"
@@ -79,68 +41,53 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import { onMounted, reactive, ref, toRefs } from "vue";
-import { More, Search, Sort } from "@element-plus/icons-vue";
-import momo from "@/apis";
+import { onMounted, reactive, ref, toRefs } from "vue"
+import { More, Search, Sort } from "@element-plus/icons-vue"
+import momo from "@/apis"
 //stores
-import { useLocalEnginesStore } from "@/store/useLocalEnginesStore";
-import { useUserInfoStore } from "@/store/user/useUserInfoStore";
+import { useLocalEnginesStore } from "@/store/useLocalEnginesStore"
+import { useUserInfoStore } from "@/store/user/useUserInfoStore"
 //hooks
-import { useResponsiveStore } from "@/store/useResponsiveStore";
+import { useResponsiveStore } from "@/store/useResponsiveStore"
 //components
-import EditEngines from "@/components/EditEngines.vue";
+import EditEngines from "@/components/EditEngines.vue"
 //utils
-import { emitter } from "@/utils/emitter";
+import { emitter } from "@/utils/emitter"
 //types
-import { EngineData } from "@/types/url";
+import { EngineData } from "@/types/url"
 
-const { searchEngines } = useLocalEnginesStore();
-const userInfoStore = useUserInfoStore();
-const responsiveStore = useResponsiveStore();
-const { isLogin } = toRefs(userInfoStore);
-const { isPC, dialogWidth } = toRefs(responsiveStore);
-const { isScroll } = responsiveStore;
+const { searchEngines } = useLocalEnginesStore()
+const userInfoStore = useUserInfoStore()
+const responsiveStore = useResponsiveStore()
+const { isLogin } = toRefs(userInfoStore)
+const { isPC, dialogWidth } = toRefs(responsiveStore)
+const { isScroll } = responsiveStore
 
-const placeholder = ref("海内存知己");
+const placeholder = ref("海内存知己")
 // 显示和隐藏
-const showEngines = ref(false);
+const showEngines = ref(false)
 //内容区是否显示
-const isShow = ref(false);
+const isShow = ref(false)
 // 切换类名
-const timeClass = ref("time");
+const timeClass = ref("time")
 
-const userEngines = reactive<EngineData[]>(
-  JSON.parse(localStorage.getItem("userEngines") || "[]")
-);
+const userEngines = reactive<EngineData[]>(JSON.parse(localStorage.getItem("userEngines") || "[]"))
 //当前显示的搜索引擎的信息
-const localThisEngine = localStorage.getItem("thisEngine") || "{}";
+const localThisEngine = localStorage.getItem("thisEngine") || "{}"
 //当前的搜索引擎，如果本地存储为空，则使用默认的第一个搜索引擎
-const thisEngine = reactive<EngineData>(
-  localThisEngine !== "{}" ? JSON.parse(localThisEngine) : searchEngines[0]
-);
-const engineId = ref(Number(thisEngine.engineId) || 0);
-const engineName = ref(thisEngine.name || searchEngines[engineId.value].name);
-const baseUrl = ref<string>(
-  thisEngine.baseUrl || searchEngines[engineId.value].baseUrl
-); //搜索引擎的主地址
-const searchUrl = ref<string>(
-  baseUrl.value + thisEngine.searchUrl ||
-    searchEngines[engineId.value].searchUrl!
-); //搜索引擎的搜索字段
-const searchImg = ref(
-  thisEngine.searchImg || searchEngines[engineId.value].src
-); //搜索引擎的图片
-const keyword = ref<string>(""); //搜索框输入的内容
-const hideList = reactive(JSON.parse(localStorage.getItem("hideList") || "[]"));
-const hideUserList = reactive(
-  JSON.parse(localStorage.getItem("hideUserList") || "[]")
-); //登录用户使用
-const hideLocalList = reactive(
-  JSON.parse(localStorage.getItem("hideLocalList") || "[]")
-); //未用户使用
-const searchFlag = ref(localStorage.getItem("searchFlag") !== "0"); //控制搜索结果是否在新窗口打开
+const thisEngine = reactive<EngineData>(localThisEngine !== "{}" ? JSON.parse(localThisEngine) : searchEngines[0])
+const engineId = ref(Number(thisEngine.engineId) || 0)
+const engineName = ref(thisEngine.name || searchEngines[engineId.value].name)
+const baseUrl = ref<string>(thisEngine.baseUrl || searchEngines[engineId.value].baseUrl) //搜索引擎的主地址
+const searchUrl = ref<string>(baseUrl.value + thisEngine.searchUrl || searchEngines[engineId.value].searchUrl!) //搜索引擎的搜索字段
+const searchImg = ref(thisEngine.searchImg || searchEngines[engineId.value].src) //搜索引擎的图片
+const keyword = ref<string>("") //搜索框输入的内容
+const hideList = reactive(JSON.parse(localStorage.getItem("hideList") || "[]"))
+const hideUserList = reactive(JSON.parse(localStorage.getItem("hideUserList") || "[]")) //登录用户使用
+const hideLocalList = reactive(JSON.parse(localStorage.getItem("hideLocalList") || "[]")) //未用户使用
+const searchFlag = ref(localStorage.getItem("searchFlag") !== "0") //控制搜索结果是否在新窗口打开
 //删除搜索引擎
-const engineOption = ref(false);
+const engineOption = ref(false)
 
 // const getHitokoto = async () => {
 //   try {
@@ -158,18 +105,18 @@ const engineOption = ref(false);
 //region 显示内容区
 emitter.on("showContent", () => {
   //为侧边栏注册的显示事件，如果点击侧边栏时Content组件未显示，则显示Content
-  if (isShow.value === false) showContent();
-});
+  if (isShow.value === false) showContent()
+})
 
 //显示下方内容区,isShow.value=false不显示
 function showContent() {
-  console.log("是否显示内容区,isShow：", isShow.value);
-  isShow.value = !isShow.value;
+  console.log("是否显示内容区,isShow：", isShow.value)
+  isShow.value = !isShow.value
   if (isShow.value && isPC.value) {
-    timeClass.value = "timeUp";
-  } else timeClass.value = "time";
+    timeClass.value = "timeUp"
+  } else timeClass.value = "time"
   if (!isPC.value) {
-    isShow.value ? isScroll(true) : isScroll(true);
+    isShow.value ? isScroll(true) : isScroll(true)
   }
 }
 
@@ -178,21 +125,13 @@ function showContent() {
 //搜索框搜索功能
 function search() {
   if (keyword.value) {
-    const resultUrl = searchUrl.value + keyword.value;
-    console.log(
-      "即将前往：",
-      searchFlag.value ? "新窗口" : "本页面",
-      resultUrl
-    );
+    const resultUrl = searchUrl.value + keyword.value
+    console.log("即将前往：", searchFlag.value ? "新窗口" : "本页面", resultUrl)
     //在窗口打开搜索结果
-    searchFlag.value
-      ? window.open(resultUrl, "_blank")
-      : (location.href = resultUrl);
+    searchFlag.value ? window.open(resultUrl, "_blank") : (location.href = resultUrl)
   } else {
     //在当前页打开搜索结果
-    searchFlag.value
-      ? window.open(baseUrl.value, "_blank")
-      : (location.href = baseUrl.value);
+    searchFlag.value ? window.open(baseUrl.value, "_blank") : (location.href = baseUrl.value)
   }
 }
 
@@ -205,32 +144,32 @@ function changeEngine(item: EngineData) {
     baseUrl: item.baseUrl,
     searchUrl: item.searchUrl,
     searchImg: item.src,
-  };
+  }
   //存储当前引擎的信息并修改
-  localStorage.setItem("thisEngine", JSON.stringify(engine));
-  engineId.value = item.id;
-  engineName.value = item.name;
-  baseUrl.value = item.baseUrl;
-  searchUrl.value = item.baseUrl + item.searchUrl;
-  searchImg.value = item.src;
-  showEngines.value = !showEngines.value;
+  localStorage.setItem("thisEngine", JSON.stringify(engine))
+  engineId.value = item.id
+  engineName.value = item.name
+  baseUrl.value = item.baseUrl
+  searchUrl.value = item.baseUrl + item.searchUrl
+  searchImg.value = item.src
+  showEngines.value = !showEngines.value
 }
 
 //隐藏用户自定义搜索引擎
 function hideUserEngine(engine: EngineData) {
   if (isLogin.value) {
-    hideUserList[engine.index!] = { id: engine.id, isShow: engine.isShow };
-    localStorage.setItem("hideUserList", JSON.stringify(hideUserList));
+    hideUserList[engine.index!] = { id: engine.id, isShow: engine.isShow }
+    localStorage.setItem("hideUserList", JSON.stringify(hideUserList))
   } else {
-    hideLocalList[engine.index!] = { id: engine.id, isShow: engine.isShow };
-    localStorage.setItem("hideLocalList", JSON.stringify(hideLocalList));
+    hideLocalList[engine.index!] = { id: engine.id, isShow: engine.isShow }
+    localStorage.setItem("hideLocalList", JSON.stringify(hideLocalList))
   }
 }
 
 //关闭添加搜索引擎界面
 const closeEngineOption = () => {
-  engineOption.value = false;
-};
+  engineOption.value = false
+}
 
 //获取自定义搜索引擎列表
 async function getEngineList() {
@@ -239,28 +178,28 @@ async function getEngineList() {
     await momo
       .get("/getEngines")
       .then((result) => {
-        console.log("获取自定义搜索引擎列表", result);
-        let { engineList } = result;
-        userEngines.splice(0, userEngines.length);
+        console.log("获取自定义搜索引擎列表", result)
+        let { engineList } = result
+        userEngines.splice(0, userEngines.length)
         engineList = engineList.map((item: EngineData) => {
-          item.isShow = true;
-          userEngines.push(item); //将新的数据加入进去
-          return item;
-        });
-        localStorage.setItem("userEngines", JSON.stringify(engineList));
+          item.isShow = true
+          userEngines.push(item) //将新的数据加入进去
+          return item
+        })
+        localStorage.setItem("userEngines", JSON.stringify(engineList))
       })
       .catch((error) => {
-        console.dir("发生错误：");
-        console.dir(error);
+        console.dir("发生错误：")
+        console.dir(error)
         //ElMessage.error('发生错误：' + error.message)
-      });
+      })
   } else {
     //如果未登录，就获取本地存储的搜索引擎
-    const engineList = JSON.parse(localStorage.getItem("localEngines") || "[]");
-    console.log("userEngines", userEngines);
+    const engineList = JSON.parse(localStorage.getItem("localEngines") || "[]")
+    console.log("userEngines", userEngines)
     if (engineList.length !== 0)
       //如果本地有记录
-      userEngines.splice(0, userEngines.length, ...engineList);
+      userEngines.splice(0, userEngines.length, ...engineList)
     // engineList.forEach((item: EngineData) => {
     //   userEngines.push(item)//将新的数据加入进去
     // })
@@ -268,16 +207,16 @@ async function getEngineList() {
 }
 
 onMounted(async () => {
-  await getEngineList(); //获取搜索引擎列表
+  await getEngineList() //获取搜索引擎列表
   // getHitokoto()//获取一言
 
   hideList.forEach((item: EngineData) => {
     //网页加载，遍历用户设置隐藏默认搜索引擎
     if (item !== null)
       searchEngines.forEach((engine) => {
-        if (engine.id === item.id) engine.isShow = item.isShow;
-      });
-  });
+        if (engine.id === item.id) engine.isShow = item.isShow
+      })
+  })
 
   if (isLogin.value && hideUserList.length !== 0) {
     //网页加载，遍历用户设置隐藏用户自定义的搜索引擎
@@ -285,19 +224,19 @@ onMounted(async () => {
       //遍历用户自定义的隐藏列表,将它的id和show状态同步到userEngines列表
       if (item !== null)
         userEngines.forEach((engine: EngineData) => {
-          if (engine.id === item.id) engine.isShow = item.isShow;
-        });
-    });
+          if (engine.id === item.id) engine.isShow = item.isShow
+        })
+    })
   } else if (hideLocalList.length !== 0) {
     //网页加载，遍历用户设置隐藏未登录用户的自定义的搜索引擎
     hideLocalList.forEach((item: EngineData) => {
       if (item)
         userEngines.forEach((engine: EngineData) => {
-          if (engine.id === item.id) engine.isShow = item.isShow;
-        });
-    });
+          if (engine.id === item.id) engine.isShow = item.isShow
+        })
+    })
   }
-});
+})
 </script>
 
 <style scoped>

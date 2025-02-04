@@ -219,7 +219,6 @@ async function getArticle() {
 // 复制功能
 
 function addCodeHighLight() {
-  // eslint-disable-next-line
   const codeBlocks = document.querySelectorAll('[class*="language-"]')
   codeBlocks.forEach((item: HTMLElement) => {
     const strArr = item.className.match(/language-([a-zA-Z]+)/) //匹配language-javascript的后半部分

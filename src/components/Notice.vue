@@ -9,16 +9,8 @@
             <el-card class="introduction">
               <el-text tag="p">
                 1.本站为社交化导航网站，提供
-                <div
-                  v-for="(item, index) in siteLink"
-                  :key="item.id"
-                  style="display: inline"
-                >
-                  <el-button
-                    link
-                    :title="item.title"
-                    :type="item.type"
-                    @click="router.push({ name: item.pathName })"
+                <div v-for="(item, index) in siteLink" :key="item.id" style="display: inline">
+                  <el-button link :title="item.title" :type="item.type" @click="router.push({ name: item.pathName })"
                     >{{ item.name }}
                   </el-button>
                   <span v-if="index !== siteLink.length - 1">、</span>
@@ -32,13 +24,7 @@
                   target="_blank"
                   :title="contactGroup[0].title"
                   type="primary"
-                  @click="
-                    copyText(
-                      contactGroup[0].value,
-                      contactGroup[0].name,
-                      contactGroup[0].url
-                    )
-                  "
+                  @click="copyText(contactGroup[0].value, contactGroup[0].name, contactGroup[0].url)"
                   >{{ contactGroup[0].name }}
                 </el-button>
                 ;重返未来群：
@@ -47,13 +33,7 @@
                   target="_blank"
                   :title="contactGroup[1].title"
                   type="primary"
-                  @click="
-                    copyText(
-                      contactGroup[1].value,
-                      contactGroup[1].name,
-                      contactGroup[1].url
-                    )
-                  "
+                  @click="copyText(contactGroup[1].value, contactGroup[1].name, contactGroup[1].url)"
                   >{{ contactGroup[1].name }} </el-button
                 >。
               </el-text>
@@ -82,51 +62,26 @@
               </el-text>
               <el-text tag="p">
                 5.本站正在持续更新和适配移动端，如UI错位或功能出错请
-                <el-button
-                  link
-                  title="前往反馈"
-                  type="primary"
-                  @click="changePage(3, 2)"
-                  >留言反馈</el-button
-                >
+                <el-button link title="前往反馈" type="primary" @click="changePage(3, 2)">留言反馈</el-button>
                 。
               </el-text>
-              <el-text tag="p" type="danger"
-                >6.本站所提供的所有资源均来自网络,侵权请联系删除。</el-text
-              >
+              <el-text tag="p" type="danger">6.本站所提供的所有资源均来自网络,侵权请联系删除。</el-text>
               <el-text tag="p"
-                >7.快速记忆本站域名：<el-text type="success">muxi</el-text
-                ><el-text type="primary">dream</el-text>.<el-text type="info"
-                  >cn</el-text
-                >，分别指<el-text type="success">木夕</el-text
-                ><el-text type="primary">梦</el-text>，而<el-text type="success"
-                  >木夕</el-text
-                >是<el-text type="primary">梦</el-text>这个字的拆解；<el-text
+                >7.快速记忆本站域名：<el-text type="success">muxi</el-text><el-text type="primary">dream</el-text>.<el-text
                   type="info"
                   >cn</el-text
+                >，分别指<el-text type="success">木夕</el-text><el-text type="primary">梦</el-text>，而<el-text type="success"
+                  >木夕</el-text
+                >是<el-text type="primary">梦</el-text>这个字的拆解；<el-text type="info">cn</el-text
                 >是中国国家顶级域名，代指中国。</el-text
               >
             </el-card>
           </el-collapse-item>
           <el-collapse-item :name="2" title="友情链接">
             <div class="friendLinks">
-              <el-link
-                v-for="(item, index) in friendlyLink"
-                :key="index"
-                :href="item.url"
-                target="_blank"
-                :title="item.title"
-                ><el-image
-                  :alt="item.name"
-                  class="link_ico"
-                  :src="item.imgUrl || customIco"
-                >
-                  <template #error>
-                    <img
-                      :alt="item.name"
-                      class="link_ico"
-                      :src="customIco"
-                    /> </template></el-image
+              <el-link v-for="(item, index) in friendlyLink" :key="index" :href="item.url" target="_blank" :title="item.title"
+                ><el-image :alt="item.name" class="link_ico" :src="item.imgUrl || customIco">
+                  <template #error> <img :alt="item.name" class="link_ico" :src="customIco" /> </template></el-image
                 >{{ item.name }}
               </el-link>
             </div>
@@ -136,19 +91,14 @@
               <p>
                 本站与 Microsoft Clarity
                 合作，通过行为指标、热图和会话回放来捕捉您使用本站的轨迹，以改进本站的产品和服务。网站使用数据是通过第一方和第三方
-                Cookie
-                以及其他跟踪技术捕获的，以确定产品和服务的受欢迎程度和在线活动。此外，本站将这些信息用于网站优化。有关
+                Cookie 以及其他跟踪技术捕获的，以确定产品和服务的受欢迎程度和在线活动。此外，本站将这些信息用于网站优化。有关
                 Microsoft 如何收集和使用您的数据的更多信息，请访问
-                <el-button
-                  :href="'https://privacy.microsoft.com/zh-CN/privacystatement'"
-                  link
-                  type="primary"
+                <el-button :href="'https://privacy.microsoft.com/zh-CN/privacystatement'" link type="primary"
                   >Microsoft 隐私声明 </el-button
                 >。
               </p>
               <p>
-                若您同意，则本站和 Microsoft
-                可以收集和使用此数据。您也可以点击此处<el-button
+                若您同意，则本站和 Microsoft 可以收集和使用此数据。您也可以点击此处<el-button
                   link
                   type="primary"
                   @click="clear_Clarity_cookie()"
@@ -168,11 +118,7 @@
     <!--    更新相关-->
     <el-tab-pane label="更新相关" :name="2">
       <el-collapse-transition class="noticeContent">
-        <el-collapse
-          v-model="showFlag.active_num"
-          accordion
-          style="border: none; text-align: left"
-        >
+        <el-collapse v-model="showFlag.active_num" accordion style="border: none; text-align: left">
           <!--    待更新的功能-->
           <el-collapse-item :name="1" title="待更新的功能">
             <template v-for="item in noUpdated" :key="item.id">
@@ -213,9 +159,7 @@
               >
                 <el-card>
                   <el-text tag="p"> {{ item.title }}</el-text>
-                  <el-text tag="p" type="info">
-                    &ensp;{{ item.content }}</el-text
-                  >
+                  <el-text tag="p" type="info"> &ensp;{{ item.content }}</el-text>
                 </el-card>
               </el-timeline-item>
             </el-timeline>
@@ -226,12 +170,7 @@
     <!--联系和反馈-->
     <el-tab-pane label="联系与反馈" :name="3">
       <el-collapse-transition class="noticeContent">
-        <el-collapse
-          v-show="showFlag.show_num === 3"
-          v-model="showFlag.active_num"
-          accordion
-          style="border: none"
-        >
+        <el-collapse v-show="showFlag.show_num === 3" v-model="showFlag.active_num" accordion style="border: none">
           <!--联系方式-->
           <el-collapse-item title="联系方式" :name="1">
             <div style="display: flex; justify-content: space-around">
@@ -268,9 +207,7 @@
                 />
               </el-form-item>
             </el-form>
-            <el-button type="primary" @click="submitFeedback"
-              >提交反馈</el-button
-            >
+            <el-button type="primary" @click="submitFeedback">提交反馈</el-button>
           </el-collapse-item>
         </el-collapse>
       </el-collapse-transition>
@@ -283,30 +220,30 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
-import { Edit } from "@element-plus/icons-vue";
-import { TabsPaneContext } from "element-plus";
+import { useRouter } from "vue-router"
+import { Edit } from "@element-plus/icons-vue"
+import { TabsPaneContext } from "element-plus"
 //stores
-import { useNoticeStore } from "@/store/useNoticeStore";
+import { useNoticeStore } from "@/store/useNoticeStore"
 //hooks
 // import useTimeStamp from "@/hooks/useTimestamp";
-import useNotice from "@/hooks/useNotice";
+import useNotice from "@/hooks/useNotice"
 //components
-import Approve from "@/components/Approve.vue";
+import Approve from "@/components/Approve.vue"
 //utils
-import myFunction from "@/utils/myFunction";
-import titleDiv from "@/utils/titleDiv";
+import myFunction from "@/utils/myFunction"
+import titleDiv from "@/utils/titleDiv"
 //files
-import customIco from "@/assets/home/custom.png";
+import customIco from "@/assets/home/custom.png"
 
-const noticeStore = useNoticeStore();
-const { updateNotes, noUpdated, feedback } = toRefs(noticeStore);
-const { copyText } = myFunction;
+const noticeStore = useNoticeStore()
+const { updateNotes, noUpdated, feedback } = toRefs(noticeStore)
+const { copyText } = myFunction
 // const { getDiffTime } = useTimeStamp()
-const { getNotices, submitFeedback } = useNotice();
-const router = useRouter();
+const { getNotices, submitFeedback } = useNotice()
+const router = useRouter()
 
-const { showFlag, changePage } = defineProps(["showFlag", "changePage"]); //切换页面的参数
+const { showFlag, changePage } = defineProps(["showFlag", "changePage"]) //切换页面的参数
 
 //站点链接
 const siteLink = [
@@ -342,7 +279,7 @@ const siteLink = [
     pathName: "music",
     url: "",
   },
-];
+]
 
 //联系方式
 const contactGroup = [
@@ -362,7 +299,7 @@ const contactGroup = [
     url: "https://qm.qq.com/q/Oq8R7YS6sM",
     imgUrl: "",
   },
-];
+]
 
 //联系方式
 const contact = [
@@ -398,7 +335,7 @@ const contact = [
     url: "https://github.com/ADarkDream",
     imgUrl: "",
   },
-];
+]
 
 //友情链接
 const friendlyLink = [
@@ -410,7 +347,7 @@ const friendlyLink = [
     url: "https://lilemy.cn/",
     imgUrl: "https://lilemy.cn/favicon.ico",
   },
-];
+]
 
 //其他待做
 const otherNoUpdated = [
@@ -441,32 +378,30 @@ const otherNoUpdated = [
     isCompleted: false,
   },
   { id: 11, text: "GenAI Script", isCompleted: false },
-];
+]
 
 onMounted(() => {
-  if (showFlag.show_num === 2 && updateNotes.value.length === 0)
-    getNotices(["updateNotes", "noUpdated"]); //获取公告
-});
+  if (showFlag.show_num === 2 && updateNotes.value.length === 0) getNotices(["updateNotes", "noUpdated"]) //获取公告
+})
 
 /*点击tabs标签时触发*/
 const tabClick = (pane: TabsPaneContext, ev: Event) => {
-  if (pane.paneName === 2 && updateNotes.value.length === 0)
-    getNotices(["updateNotes", "noUpdated"]); //获取公告
-  if (pane.paneName === 1) changePage(1, 1);
-  else changePage(pane.paneName, 2);
-};
+  if (pane.paneName === 2 && updateNotes.value.length === 0) getNotices(["updateNotes", "noUpdated"]) //获取公告
+  if (pane.paneName === 1) changePage(1, 1)
+  else changePage(pane.paneName, 2)
+}
 
 /**
  * 清除Clarity的cookie(本地全部ookie)
  */
 const clear_Clarity_cookie = () => {
   // window.clarity('consent', false)
-  titleDiv.delAllCookie();
-  ElMessage.success("已重置同意，刷新后可选择拒绝cookie");
+  titleDiv.delAllCookie()
+  ElMessage.success("已重置同意，刷新后可选择拒绝cookie")
   setTimeout(() => {
-    location.reload();
-  }, 1500);
-};
+    location.reload()
+  }, 1500)
+}
 </script>
 
 <style scoped>
