@@ -1,53 +1,53 @@
 <template>
   <div class="versions1999">
     <div class="header">
-      <el-button type="primary" :icon="Plus" @click="toggleAddVersionDrawer(true)">新增版本信息</el-button>
-      <el-button type="success" plain :icon="Refresh" @click="refreshVersion()">刷新</el-button>
+      <el-button :icon="Plus" type="primary" @click="toggleAddVersionDrawer(true)">新增版本信息</el-button>
+      <el-button :icon="Refresh" plain type="success" @click="refreshVersion()">刷新</el-button>
     </div>
     <el-table
       ref="tableRef"
+      border
       class="myCustomElTable"
       :data="tableData"
+      flexible
+      highlight-current-row
       :max-height="mainPanelContentHeight - (isPC ? 75 : 35)"
       stripe
-      flexible
-      border
-      highlight-current-row
       table-layout="auto"
     >
-      <el-table-column prop="id" label="ID" min-width="50" align="center" />
-      <el-table-column prop="versionName" label="版本名称" min-width="140" align="center" />
-      <el-table-column prop="version" label="版本值" min-width="60" align="center" />
-      <el-table-column prop="time" label="官方上传时间" min-width="130" align="center">
+      <el-table-column align="center" label="ID" min-width="50" prop="id" />
+      <el-table-column align="center" label="版本名称" min-width="140" prop="versionName" />
+      <el-table-column align="center" label="版本值" min-width="60" prop="version" />
+      <el-table-column align="center" label="官方上传时间" min-width="130" prop="time">
         <template #default="scope">
-          <el-tag type="primary" v-for="time in scope.row.time" :key="time">{{ time }} </el-tag>
+          <el-tag v-for="time in scope.row.time" :key="time" type="primary">{{ time }} </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" min-width="100" align="center" v-if="isAdmin">
+      <el-table-column v-if="isAdmin" align="center" label="状态" min-width="100" prop="status">
         <template #default="scope">
           {{ statusOptions[scope.row.status!].label }}
         </template>
       </el-table-column>
-      <el-table-column prop="updated_time" label="上次修改时间" min-width="150" align="center">
+      <el-table-column align="center" label="上次修改时间" min-width="150" prop="updated_time">
         <template #default="scope">
           {{ getTime(scope.row.updated_time) }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" min-width="100" align="center">
+      <el-table-column align="center" label="操作" min-width="100">
         <template #default="scope">
           <el-button
-            link
-            type="primary"
-            size="small"
-            @click="handleEdit(scope.$index, scope.row)"
             :disabled="!canEdit(scope.row.status)"
+            link
+            size="small"
+            type="primary"
+            @click="handleEdit(scope.$index, scope.row)"
             >编辑</el-button
           >
           <el-button
-            link
-            type="danger"
-            size="small"
             :disabled="!canDel(scope.row.status)"
+            link
+            size="small"
+            type="danger"
             @click="deleteRow(scope.$index, scope.row.id)"
           >
             删除
@@ -58,13 +58,13 @@
     <!--编辑版本信息的抽屉-->
     <el-drawer
       v-model="isShowAddVersionDrawer"
-      :title="isEdit ? '编辑版本信息' : '添加版本信息'"
-      :show-close="false"
-      direction="btt"
       :append-to-body="true"
-      size="40%"
-      @close="reSetFormData()"
       :before-close="beforeCloseDrawer"
+      direction="btt"
+      :show-close="false"
+      size="40%"
+      :title="isEdit ? '编辑版本信息' : '添加版本信息'"
+      @close="reSetFormData()"
     >
       <AddVersion />
     </el-drawer>

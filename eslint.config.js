@@ -1,3 +1,5 @@
+// @see: https://eslint.nodejs.cn/docs
+
 import globals from "globals"
 import eslint from "@eslint/js"
 import tseslint from "typescript-eslint"
@@ -9,6 +11,7 @@ import prettierConfig from "./.prettierrc.cjs"
 
 export default [
   {
+    /**忽略格式检查的文件列表*/
     ignores: [
       "node_modules",
       "dist",
@@ -34,7 +37,7 @@ export default [
 
   //javascript 规则
   {
-    files: ["**/*.{js,mjs,cjs,vue,ts}"],
+    files: ["**/*.{js,mjs,cjs,ts,vue}"],
     languageOptions: {
       parser: vueParser,
       globals: { ...globals.browser, ...globals.node },
@@ -48,82 +51,25 @@ export default [
         },
       },
     },
+    plugins: {
+      "@typescript-eslint": tseslint,
+      prettier: prettier,
+      vue: eslintPluginVue,
+    },
     rules: {
+      "prettier/prettier": ["error", prettierConfig], // 让 ESLint 执行 Prettier 规则
       // 对象结尾逗号
       "comma-dangle": "off",
 
       // 关闭未定义变量
       "no-undef": "off",
-
-      // 确保 Prettier 的行为不会被 ESLint 覆盖
-      quotes: ["error", "double", { allowTemplateLiterals: true }],
-
-      // 关闭对未定义变量的警告
-      "no-undefined": "off",
-
       //不使用的变量不报错
       "no-unused-vars": "off",
 
       // 禁止使用不规范的空格
       "no-irregular-whitespace": "off",
-
-      // 函数括号前的空格
-      "space-before-function-paren": 0,
-
-      // 箭头函数的空格
-      "arrow-spacing": [
-        2,
-        {
-          before: true,
-          after: true,
-        },
-      ],
-
-      // 代码块的空格
-      "block-spacing": [2, "always"],
-
-      // 大括号风格
-      "brace-style": [
-        2,
-        "1tbs",
-        {
-          allowSingleLine: true,
-        },
-      ],
-
-      // 对象属性换行
-      "object-property-newline": "off",
-
-      // JSX 引号风格
-      "jsx-quotes": [2, "prefer-single"],
-
-      // 对象键值对之间的空格
-      "key-spacing": [
-        2,
-        {
-          beforeColon: false,
-          afterColon: true,
-        },
-      ],
-
-      // 关键字之间的空格
-      "keyword-spacing": [
-        2,
-        {
-          before: true,
-          after: true,
-        },
-      ],
-
       // 构造函数首字母大写
-      "new-cap": [
-        2,
-        {
-          newIsCap: true,
-          capIsNew: false,
-        },
-      ],
-
+      "new-cap": [2, { newIsCap: true, capIsNew: false }],
       // new 操作符使用时需要括号
       "new-parens": 2,
 
@@ -141,10 +87,6 @@ export default [
 
       // 禁止 const 重新分配
       "no-const-assign": 2,
-
-      // 正则表达式中的控制字符
-      "no-control-regex": 0,
-
       // 禁止删除变量
       "no-delete-var": 2,
 
@@ -193,45 +135,7 @@ export default [
       // 禁止不需要的转义
       "no-useless-escape": 0,
 
-      // 数组的括号前后的间距
-      "array-bracket-spacing": [2, "never"],
-    },
-  },
-
-  // vue 规则
-  {
-    files: ["**/*.{ts,vue}"],
-    languageOptions: {
-      parser: vueParser,
-      globals: { ...globals.browser, ...globals.node },
-      parserOptions: {
-        /** typescript项目需要用到这个 */
-        parser: tseslint.parser,
-        ecmaVersion: "latest",
-        /** 允许在.vue 文件中使用 JSX */
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-    },
-    plugins: {
-      "@typescript-eslint": tseslint,
-      prettier: prettier,
-    },
-    rules: {
-      "prettier/prettier": ["error", prettierConfig], // 让 ESLint 执行 Prettier 规则
-      // "no-undef": "off", // 关闭未定义变量检查（TS 已处理）
-      // "no-unused-vars": "off", // 关闭未使用变量检查（TS 已处理）
-      // "@typescript-eslint/no-unused-vars": "warn", // 改为 TS 规则
-      // "@typescript-eslint/consistent-type-imports": "warn", // 统一使用 `import type`
-      // "vue/component-definition-name-casing": "off",
-      "vue/singleline-html-element-content-newline": ["off"],
-      "vue/no-mutating-props": [
-        "error",
-        {
-          shallowOnly: true,
-        },
-      ],
+      "vue/no-mutating-props": ["error", { shallowOnly: true }],
       // 要求组件名称始终为 “-” 链接的单词
       "vue/multi-word-component-names": "off",
 
@@ -246,20 +150,31 @@ export default [
 
       // 关闭 Prop 类型要求的警告
       "vue/require-prop-types": "off",
-      // 关闭属性顺序要求
-      "vue/attributes-order": "off",
+      // 属性顺序要求
+      "vue/attributes-order": [
+        "error",
+        {
+          order: [
+            "DEFINITION", // e.g. 'is', 'v-is'
+            "LIST_RENDERING", // e.g. 'v-for item in items'
+            "CONDITIONALS", // e.g. 'v-if', 'v-else-if', 'v-else', 'v-show', 'v-cloak'
+            "RENDER_MODIFIERS", // e.g. 'v-once', 'v-pre'
+            "GLOBAL", // e.g. 'id'
+            "UNIQUE", // e.g. 'ref', 'key'
+            "SLOT", // e.g. 'v-slot', 'slot'
+            "TWO_WAY_BINDING", // e.g. 'v-model'
+            "OTHER_DIRECTIVES", // e.g. 'v-custom-directive'
+            "OTHER_ATTR", // Includes ATTR_DYNAMIC, ATTR_STATIC, ATTR_SHORTHAND_BOOL
+            "EVENTS", // e.g. '@click="functionCall"', 'v-on="event"'
+            "CONTENT", // e.g. 'v-text', 'v-html'
+          ],
+          alphabetical: false, //同组内的属性会按字母排序
+        },
+      ],
 
       // 关闭对默认 Prop 的要求
       "vue/require-default-prop": "off",
 
-      // 关闭连字符命名检验
-      "vue/attribute-hyphenation": "off",
-
-      // 关闭自闭合标签的要求
-      "vue/html-self-closing": "off",
-
-      // 禁止在关闭的括号前有换行
-      "vue/html-closing-bracket-newline": "off",
       // 允许使用 v-html 指令
       "vue/no-v-html": "off",
     },

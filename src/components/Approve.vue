@@ -12,10 +12,10 @@
       type="info"
       @click="copyText('50011502001039', '备案号', 'https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')"
     >
-      <el-image src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" alt="图片加载失败" />
+      <el-image alt="图片加载失败" src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" />
       &ensp;渝公网安备50011502001039
     </el-button>
-    <el-text type="info" v-if="noWrap || isPC" style="margin: 0 1px">|</el-text>
+    <el-text v-if="noWrap || isPC" style="margin: 0 1px" type="info">|</el-text>
     <el-button link tag="a" type="info" @click="copyText('渝ICP备2024030473号', '备案号', 'http://beian.miit.gov.cn/')">
       渝ICP备2024030473号
     </el-button>

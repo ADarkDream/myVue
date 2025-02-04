@@ -1,33 +1,33 @@
 <template>
-  <el-form ref="editVersionFormRef" class="editVersionForm" :model="formData" status-icon :rules="Rules" label-width="auto">
-    <el-form-item label="版本名称" prop="halfName" autocomplete="off">
-      <el-input v-model.lazy.trim="formData.halfName" placeholder="版本名称" clearable>
+  <el-form ref="editVersionFormRef" class="editVersionForm" label-width="auto" :model="formData" :rules="Rules" status-icon>
+    <el-form-item autocomplete="off" label="版本名称" prop="halfName">
+      <el-input v-model.lazy.trim="formData.halfName" clearable placeholder="版本名称">
         <template #prepend>{{ formData.halfText }}</template>
       </el-input>
     </el-form-item>
-    <el-form-item label="版本数值" prop="version" autocomplete="off">
+    <el-form-item autocomplete="off" label="版本数值" prop="version">
       <el-input-number
         v-model.number.lazy.trim="formData.version"
-        @change="handleChange()"
-        placeholder="版本数值"
-        :min="10"
-        :max="1999"
         clearable
+        :max="1999"
+        :min="10"
+        placeholder="版本数值"
         style="min-width: 175px"
+        @change="handleChange()"
       />
     </el-form-item>
-    <el-form-item label="上传时间" prop="time" autocomplete="off">
-      <el-input-tag v-model.lazy.trim="formData.time" placeholder="官方上传时间(8位数字日期格式)" clearable />
+    <el-form-item autocomplete="off" label="上传时间" prop="time">
+      <el-input-tag v-model.lazy.trim="formData.time" clearable placeholder="官方上传时间(8位数字日期格式)" />
     </el-form-item>
-    <el-form-item label="选择状态" v-if="isAdmin">
-      <el-select placeholder="选择状态" v-model="formData.status" default-first-option>
+    <el-form-item v-if="isAdmin" label="选择状态">
+      <el-select v-model="formData.status" default-first-option placeholder="选择状态">
         <el-option v-for="{ label, value } in statusOptions" :key="value" :label :value />
       </el-select>
     </el-form-item>
 
     <div>
       <el-button @click="resetForm">重置</el-button>
-      <el-button type="primary" @click="submitForm()" :loading="isLoading" :disabled="isDisabled"
+      <el-button :disabled="isDisabled" :loading="isLoading" type="primary" @click="submitForm()"
         >{{ isEdit ? "修改" : "添加" }}版本信息</el-button
       >
     </div>

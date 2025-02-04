@@ -1,38 +1,38 @@
 <template>
-  <el-header class="header1" v-if="isPC"> 内容管理 </el-header>
+  <el-header v-if="isPC" class="header1"> 内容管理 </el-header>
   <el-header class="header2">
-    <el-switch v-model="tableVisible" size="large" active-text="表格" inactive-text="矩形" />
-    <el-switch v-model="draftVisible" v-show="tableVisible" size="large" active-text="文章" inactive-text="草稿" />
-    <el-button @click="clearFilter" v-show="tableVisible">清空全部筛选</el-button>
+    <el-switch v-model="tableVisible" active-text="表格" inactive-text="矩形" size="large" />
+    <el-switch v-show="tableVisible" v-model="draftVisible" active-text="文章" inactive-text="草稿" size="large" />
+    <el-button v-show="tableVisible" @click="clearFilter">清空全部筛选</el-button>
   </el-header>
   <!--    表格模式-->
   <el-main v-if="tableVisible" style="padding: 0">
     <!--      文章-->
     <template v-if="draftVisible">
-      <el-button text type="info" class="title">文章列表</el-button>
+      <el-button class="title" text type="info">文章列表</el-button>
       <el-divider>{{ allArticleList.length }}</el-divider>
       <!--    表格模式；文章-->
       <el-table
         ref="articleRef"
+        border
         :data="allArticleList"
+        :default-sort="{ prop: 'id', order: 'descending' }"
+        highlight-current-row
         max-height="500"
         stripe
-        border
-        highlight-current-row
         table-layout="auto"
-        :default-sort="{ prop: 'id', order: 'descending' }"
       >
-        <el-table-column fixed prop="id" label="ID" sortable />
-        <el-table-column prop="title" label="文章标题" />
-        <el-table-column prop="author" label="作者" />
+        <el-table-column fixed label="ID" prop="id" sortable />
+        <el-table-column label="文章标题" prop="title" />
+        <el-table-column label="作者" prop="author" />
         <el-table-column
-          prop="area"
-          label="板块"
+          :filter-method="filterHandler"
           :filters="[
             { text: '文章', value: '文章' },
             { text: '板块一', value: '板块一' },
           ]"
-          :filter-method="filterHandler"
+          label="板块"
+          prop="area"
         >
           <template #default="scope">
             <div v-if="scope.row.area == '文章'">文章</div>
@@ -40,13 +40,13 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="tags"
-          label="标签"
+          :filter-method="filterHandler"
           :filters="[
             { text: '标签b', value: '标签b' },
             { text: '散文', value: '散文' },
           ]"
-          :filter-method="filterHandler"
+          label="标签"
+          prop="tags"
         >
           <template #default="scope">
             <div v-if="scope.row.tags == '标签b'">标签b</div>
@@ -62,64 +62,64 @@
         <!--    </el-table-column>-->
 
         <el-table-column
-          prop="status"
-          label="文章状态"
+          :filter-method="filterHandler"
           :filters="[
             { text: '待审核', value: 0 },
             { text: '已发布', value: 1 },
             { text: '未过审', value: 2 },
           ]"
-          :filter-method="filterHandler"
+          label="文章状态"
+          prop="status"
         >
           <template #default="scope">
-            <el-button text type="primary" v-if="scope.row.status === 0">待审核</el-button>
-            <el-button text type="info" v-else-if="scope.row.status === 1">已发布</el-button>
-            <el-button text type="danger" v-else-if="scope.row.status === 2">未过审</el-button>
+            <el-button v-if="scope.row.status === 0" text type="primary">待审核</el-button>
+            <el-button v-else-if="scope.row.status === 1" text type="info">已发布</el-button>
+            <el-button v-else-if="scope.row.status === 2" text type="danger">未过审</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="created_time" label="创建时间" min-width="140">
+        <el-table-column label="创建时间" min-width="140" prop="created_time">
           <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
         </el-table-column>
-        <el-table-column prop="created_time" label="修改时间" min-width="140">
+        <el-table-column label="修改时间" min-width="140" prop="created_time">
           <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" min-width="140">
           <template #default="scope">
-            <el-button v-if="scope.row.status === 1" link type="primary" size="small" @click="goArticle(scope.row, 1)"
+            <el-button v-if="scope.row.status === 1" link size="small" type="primary" @click="goArticle(scope.row, 1)"
               >查看
             </el-button>
-            <el-button v-else link type="primary" size="small" @click="goArticle(scope.row, 0)">查看 </el-button>
-            <el-button link type="primary" size="small" @click="goEdit(scope.row, 0)">编辑 </el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.row.id, 0)"> 删除 </el-button>
+            <el-button v-else link size="small" type="primary" @click="goArticle(scope.row, 0)">查看 </el-button>
+            <el-button link size="small" type="primary" @click="goEdit(scope.row, 0)">编辑 </el-button>
+            <el-button link size="small" type="danger" @click="deleteRow(scope.row.id, 0)"> 删除 </el-button>
           </template>
         </el-table-column>
       </el-table>
     </template>
     <!--      草稿-->
     <template v-else>
-      <el-button text type="info" class="title">草稿箱</el-button>
+      <el-button class="title" text type="info">草稿箱</el-button>
       <el-divider>{{ draftList.length }}</el-divider>
       <el-table
         ref="draftRef"
+        border
         :data="draftList"
+        :default-sort="{ prop: 'id', order: 'descending' }"
+        highlight-current-row
         max-height="500"
         stripe
-        border
-        highlight-current-row
         style="width: 100%"
         table-layout="auto"
-        :default-sort="{ prop: 'id', order: 'descending' }"
       >
-        <el-table-column fixed prop="id" label="ID" sortable />
-        <el-table-column prop="title" label="草稿标题" />
+        <el-table-column fixed label="ID" prop="id" sortable />
+        <el-table-column label="草稿标题" prop="title" />
         <el-table-column
-          prop="area"
-          label="板块"
+          :filter-method="filterHandler"
           :filters="[
             { text: '文章', value: '文章' },
             { text: '板块一', value: '板块一' },
           ]"
-          :filter-method="filterHandler"
+          label="板块"
+          prop="area"
         >
           <template #default="scope">
             <div v-if="scope.row.area == '文章'">文章</div>
@@ -127,29 +127,29 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="tags"
-          label="标签"
+          :filter-method="filterHandler"
           :filters="[
             { text: '标签b', value: '标签b' },
             { text: '散文', value: '散文' },
           ]"
-          :filter-method="filterHandler"
+          label="标签"
+          prop="tags"
         >
           <template #default="scope">
             <div v-if="scope.row.tags == '标签b'">标签b</div>
             <div v-else-if="scope.row.tags === '散文'">散文</div>
           </template>
         </el-table-column>
-        <el-table-column prop="created_time" label="创建时间" min-width="140">
+        <el-table-column label="创建时间" min-width="140" prop="created_time">
           <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
         </el-table-column>
-        <el-table-column prop="created_time" label="修改时间" min-width="140">
+        <el-table-column label="修改时间" min-width="140" prop="created_time">
           <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" min-width="100">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="goEdit(scope.row, 1)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.row.id, 1)">删除</el-button>
+            <el-button link size="small" type="primary" @click="goEdit(scope.row, 1)">编辑</el-button>
+            <el-button link size="small" type="danger" @click="deleteRow(scope.row.id, 1)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -161,9 +161,9 @@
     <div class="div">
       <el-container>
         <el-main class="cards">
-          <el-button text type="info" class="title">草稿箱</el-button>
+          <el-button class="title" text type="info">草稿箱</el-button>
           <el-divider>{{ draftList.length }}</el-divider>
-          <el-card v-for="(item, index) in draftList" class="card" :key="index">
+          <el-card v-for="(item, index) in draftList" :key="index" class="card">
             <template #header>标题：{{ item.title || "空" }}</template>
             <el-space spacer="|">
               <span>板块：{{ item.area || "空" }}</span>
@@ -185,9 +185,9 @@
     <div class="div">
       <el-container>
         <el-main class="cards">
-          <el-button text class="title">待审核</el-button>
+          <el-button class="title" text>待审核</el-button>
           <el-divider> {{ noSubmitArticleList.length }}</el-divider>
-          <el-card shadow="hover" class="card" v-for="(item, index) in noSubmitArticleList" :key="index">
+          <el-card v-for="(item, index) in noSubmitArticleList" :key="index" class="card" shadow="hover">
             <template #header>{{ item.title }}——作者：{{ item.author }}</template>
             <el-space spacer="|">
               <span>板块：{{ item.area }}</span>
@@ -211,9 +211,9 @@
     <div class="div">
       <el-container>
         <el-main class="cards">
-          <el-button text type="danger" class="title">审核未通过(修改之后可再次审核)</el-button>
+          <el-button class="title" text type="danger">审核未通过(修改之后可再次审核)</el-button>
           <el-divider>{{ failedArticleList.length }}</el-divider>
-          <el-card v-for="(item, index) in failedArticleList" class="card" :key="index">
+          <el-card v-for="(item, index) in failedArticleList" :key="index" class="card">
             <template #header>标题：{{ item.title }}</template>
             <el-space spacer="|">
               <span>板块：{{ item.area }}</span>
@@ -236,9 +236,9 @@
     <div class="div">
       <el-container>
         <el-main class="cards">
-          <el-button text type="primary" class="title">已发布</el-button>
+          <el-button class="title" text type="primary">已发布</el-button>
           <el-divider>{{ articleList.length }}</el-divider>
-          <el-card shadow="hover" class="card" v-for="(item, index) in articleList" :key="index">
+          <el-card v-for="(item, index) in articleList" :key="index" class="card" shadow="hover">
             <template #header>{{ item.title }}——作者：{{ item.author }}</template>
             <el-space spacer="|">
               <span>板块：{{ item.area }}</span>

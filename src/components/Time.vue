@@ -1,6 +1,6 @@
 <template>
   <!--  时钟区域-->
-  <el-button link type="primary" shadow="never">{{ time }}</el-button>
+  <el-button link shadow="never" type="primary">{{ time }}</el-button>
 </template>
 
 <script setup lang="ts">

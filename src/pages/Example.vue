@@ -1,31 +1,31 @@
 <template>
-  <div class="example" v-if="false">
+  <div v-if="false" class="example">
     <div class="control">
-      <el-form :model="resortRule" :inline="true">
-        <el-form-item prop="star" label="星级筛选" :class="{ checked: !!resortRule.star }">
-          <el-select v-model="resortRule.star" placeholder="选择星级" clearable filterable @change="filterAndSortRoles" multiple>
+      <el-form :inline="true" :model="resortRule">
+        <el-form-item :class="{ checked: !!resortRule.star }" label="星级筛选" prop="star">
+          <el-select v-model="resortRule.star" clearable filterable multiple placeholder="选择星级" @change="filterAndSortRoles">
             <el-option v-for="item in options_star" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="damageType" label="伤害类型筛选" :class="{ checked: !!resortRule.damageType }">
+        <el-form-item :class="{ checked: !!resortRule.damageType }" label="伤害类型筛选" prop="damageType">
           <el-select
             v-model="resortRule.damageType"
-            placeholder="选择伤害类型"
             clearable
             default-first-option
             filterable
+            placeholder="选择伤害类型"
             @change="filterAndSortRoles"
           >
             <el-option v-for="item in options_damageType" :key="item.value" :label="item.label" :value="item.value"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item prop="valueType" label="排序类型">
+        <el-form-item label="排序类型" prop="valueType">
           <el-select
             v-model="resortRule.valueType"
-            placeholder="选择伤害类型"
             clearable
             default-first-option
             filterable
+            placeholder="选择伤害类型"
             @change="filterAndSortRoles"
           >
             <el-option v-for="item in options_valueType" :key="item.value" :label="item.label" :value="item.value"> </el-option>
@@ -33,15 +33,15 @@
         </el-form-item>
         <el-switch
           v-model="resortRule.isAsc"
-          :active-value="true"
           active-text="升序"
-          :inactive-value="false"
+          :active-value="true"
           inactive-text="降序"
+          :inactive-value="false"
           @change="filterAndSortRoles"
         >
         </el-switch>
       </el-form>
-      <form @submit.prevent="filterAndSortRoles" v-if="false">
+      <form v-if="false" @submit.prevent="filterAndSortRoles">
         <!-- 星级筛选 -->
         <label for="star-select">星级筛选：{{ resortRule.star }}</label>
         <select id="star-select" v-model="star" multiple @change="updateStarSelection">
@@ -70,7 +70,7 @@
 
         <!-- 排序方向 -->
         <label for="isAsc-switch">排序方向：</label>
-        <input id="isAsc-switch" type="checkbox" v-model="resortRule.isAsc" @change="filterAndSortRoles" />
+        <input id="isAsc-switch" v-model="resortRule.isAsc" type="checkbox" @change="filterAndSortRoles" />
         <span>{{ resortRule.isAsc ? "升序" : "降序" }}</span>
       </form>
     </div>
@@ -120,7 +120,7 @@
 
   <div>
     <ul id="list">
-      <li v-for="(item, index) in items" :key="index" @mouseover="showHoverBox($event, item)" @mouseleave="hideHoverBox">
+      <li v-for="(item, index) in items" :key="index" @mouseleave="hideHoverBox" @mouseover="showHoverBox($event, item)">
         {{ item.text }}
       </li>
     </ul>

@@ -2,21 +2,21 @@
   <el-scrollbar :height="isPC ? '400' : ''">
     <el-switch
       v-model="searchFlag"
-      @click="changeSearchFlag()"
       active-text="在新窗口打开搜索结果"
       inactive-text="在当前页打开搜索结果"
+      @click="changeSearchFlag()"
     />
     <el-divider>默认搜索引擎</el-divider>
     <el-card v-for="item in searchEngines" v-show="item.id !== engineId" :key="item.id" class="engineOption">
-      <el-button text><img :src="item.src" alt="" class="searchEngine" />{{ item.name }}</el-button>
-      <el-switch v-model="item.isShow" @click="hideEngine(item)" inline-prompt active-text="显示" inactive-text="隐藏" />
+      <el-button text><img alt="" class="searchEngine" :src="item.src" />{{ item.name }}</el-button>
+      <el-switch v-model="item.isShow" active-text="显示" inactive-text="隐藏" inline-prompt @click="hideEngine(item)" />
     </el-card>
     <el-divider>自定义搜索引擎</el-divider>
     <el-card v-for="item in userEngines" v-show="item.id !== engineId" :key="item.id" class="engineOption">
-      <el-button text><img :src="item.src" alt="" class="searchEngine" />{{ item.name }}</el-button>
+      <el-button text><img alt="" class="searchEngine" :src="item.src" />{{ item.name }}</el-button>
       <el-space>
-        <el-switch v-model="item.isShow" @click="hideUserEngine(item)" inline-prompt active-text="显示" inactive-text="隐藏" />
-        <el-button type="danger" :icon="Delete" @click="deleteEngine(item.id)" circle />
+        <el-switch v-model="item.isShow" active-text="显示" inactive-text="隐藏" inline-prompt @click="hideUserEngine(item)" />
+        <el-button circle :icon="Delete" type="danger" @click="deleteEngine(item.id)" />
       </el-space>
     </el-card>
   </el-scrollbar>
@@ -25,8 +25,8 @@
   <el-button type="primary" @click="closeEngineOption">确认修改</el-button>
 
   <!-- 用户添加或上传自定义搜索引擎-->
-  <el-dialog v-model="addEngineFlag" title="添加搜索引擎" :width="dialogWidth2" :show-close="false">
-    <AddSearchEngine :getEngineList="getEngineList" :closeDialog="closeDialog" />
+  <el-dialog v-model="addEngineFlag" :show-close="false" title="添加搜索引擎" :width="dialogWidth2">
+    <AddSearchEngine :close-dialog="closeDialog" :get-engine-list="getEngineList" />
   </el-dialog>
 </template>
 

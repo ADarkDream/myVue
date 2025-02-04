@@ -16,11 +16,11 @@
           <template v-if="data.day in bookDesc">
             <el-badge
               v-if="bookDesc[data.day].hasPaidNum !== 0"
-              :value="bookDesc[data.day].hasPaidNum"
               color="lightgray"
+              :value="bookDesc[data.day].hasPaidNum"
             ></el-badge>
-            <el-badge v-if="bookDesc[data.day].noPayNum !== 0" :value="bookDesc[data.day].noPayNum" color="lightgreen"></el-badge>
-            <span style="display: block; font-size: 12px" v-if="isPC"
+            <el-badge v-if="bookDesc[data.day].noPayNum !== 0" color="lightgreen" :value="bookDesc[data.day].noPayNum"></el-badge>
+            <span v-if="isPC" style="display: block; font-size: 12px"
               >总计<el-text type="primary">{{ bookDesc[data.day].noPay + bookDesc[data.day].hasPaid }}</el-text> 元</span
             >
           </template>

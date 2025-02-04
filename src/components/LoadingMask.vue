@@ -1,6 +1,6 @@
 <template>
   <!--    以下是网站加载动画的样式-->
-  <div id="loading-mask" v-show="show" :style="{ backgroundColor: isDark ? '#000' : '#FFF' }">
+  <div v-show="show" id="loading-mask" :style="{ backgroundColor: isDark ? '#000' : '#FFF' }">
     <svg viewBox="0 0 400 200">
       <text x="200" y="100">MOMO</text>
     </svg>

@@ -1,14 +1,14 @@
 <template>
   <el-collapse v-model="activeNames" accordion style="text-align: left">
-    <el-collapse-item title="账本月历" :name="1">
+    <el-collapse-item :name="1" title="账本月历">
       <el-card>
         <p>
           账本月历中，
-          <el-badge value="1" color="lightgray" />
+          <el-badge color="lightgray" value="1" />
           代表
           <el-text type="info">已销账的账单</el-text>
           ，
-          <el-badge :value="1" color="lightgreen" />
+          <el-badge color="lightgreen" :value="1" />
           代表
           <el-text type="success">尚未销账的账单</el-text>
           。每一天的
@@ -17,7 +17,7 @@
         </p>
       </el-card>
     </el-collapse-item>
-    <el-collapse-item title="账单详情" :name="2">
+    <el-collapse-item :name="2" title="账单详情">
       <el-card>
         <p>
           1、 账单详情中，
@@ -52,12 +52,12 @@
         <p>
           3、
           <el-date-picker
-            size="small"
-            type="daterange"
-            range-separator="To"
-            start-placeholder="开始日期"
             end-placeholder="结束日期"
+            range-separator="To"
+            size="small"
+            start-placeholder="开始日期"
             style="width: 160px"
+            type="daterange"
           />
           可用来自由地选择
           <el-text tag="b">任意日期范围</el-text>
@@ -65,7 +65,7 @@
         </p>
       </el-card>
     </el-collapse-item>
-    <el-collapse-item title="花费统计" :name="3">
+    <el-collapse-item :name="3" title="花费统计">
       <el-card>
         <p>
           <el-text tag="b" type="info">总支出</el-text>
@@ -87,7 +87,7 @@
         </p>
       </el-card>
     </el-collapse-item>
-    <el-collapse-item title="协作成员" :name="4">
+    <el-collapse-item :name="4" title="协作成员">
       <el-card>
         <p>
           <el-text tag="b">协作成员</el-text>
@@ -107,7 +107,7 @@
         <el-text tag="p" type="warning"> 5、注意：账本暂不支持退出协作和删除成员功能。 </el-text>
       </el-card>
     </el-collapse-item>
-    <el-collapse-item title="未解决BUG或未实现功能" :name="5">
+    <el-collapse-item :name="5" title="未解决BUG或未实现功能">
       <div style="padding-left: 10px">
         <p>1、添加账单之后,判断添加的数据是否在当前时间范围内,需要把dateRange改成全局共享</p>
         <p>2、组账单第一个销账会导致下面的子帐单UI错位，暂定为将子账单一并销账</p>
@@ -115,7 +115,7 @@
         <p>4、刷新之后会返回账本列表界面</p>
       </div>
     </el-collapse-item>
-    <el-collapse-item title="已解决BUG" :name="6">
+    <el-collapse-item :name="6" title="已解决BUG">
       <div style="padding-left: 10px">
         <p class="delLine">首次加载时日历界面无法获得帐单列表；</p>
         <p class="delLine">不要星期日开始；</p>

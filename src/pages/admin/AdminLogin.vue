@@ -2,33 +2,33 @@
   <div class="loginForm">
     <h2>Admin Login</h2>
     <div class="user-box">
-      <input type="text" v-model.lazy.trim="ruleForm.email" name="" required />
+      <input v-model.lazy.trim="ruleForm.email" name="" required type="text" />
       <label>Email</label>
     </div>
     <div class="user-box">
-      <input type="password" name="" required />
+      <input name="" required type="password" />
       <label>Password</label>
     </div>
     <div>
-      <el-button @click="submitForm(ruleFormRef)" :loading="loading">Login</el-button>
+      <el-button :loading="loading" @click="submitForm(ruleFormRef)">Login</el-button>
     </div>
   </div>
   <el-form
-    ref="ruleFormRef"
     v-show="false"
-    :model="ruleForm"
-    status-icon
-    :rules="Rules"
-    label-width="auto"
+    ref="ruleFormRef"
     class="loginForm"
     label-position="top"
+    label-width="auto"
+    :model="ruleForm"
+    :rules="Rules"
+    status-icon
   >
-    <el-form-item prop="email" class="user-box">
+    <el-form-item class="user-box" prop="email">
       <el-input v-model.lazy.trim="ruleForm.email" autocomplete="off" />
       <label>输入邮箱</label>
     </el-form-item>
-    <el-form-item prop="password" class="user-box">
-      <el-input v-model.lazy.trim="ruleForm.password" @keyup.enter="submitForm(ruleFormRef)" type="password" autocomplete="off" />
+    <el-form-item class="user-box" prop="password">
+      <el-input v-model.lazy.trim="ruleForm.password" autocomplete="off" type="password" @keyup.enter="submitForm(ruleFormRef)" />
       <label>输入密码</label>
     </el-form-item>
     <!-- <div class="btn">

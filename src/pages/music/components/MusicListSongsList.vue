@@ -1,9 +1,9 @@
 <template>
   <div
+    v-show="songsList.length !== 0"
     ref="containerRef"
     class="songs-list-container"
     :style="{ height: height + 'px', overflow: 'scroll' }"
-    v-show="songsList.length !== 0"
   >
     <!-- <div class="scroll-container">
       <div class="actual-height-container">
@@ -60,34 +60,34 @@
           <div class="btns">
             <el-button
               link
-              @click="playTheMusic(item, index)"
               size="small"
               :type="thisMusic.id === item.id && isPlaying ? '' : 'primary'"
+              @click="playTheMusic(item, index)"
             >
               {{ thisMusic.id === item.id && isPlaying ? "暂停" : "播放" }}
             </el-button>
-            <el-button link @click="addMusicList([item], { isReplace: true })" size="small" type="primary"> 添加 </el-button>
+            <el-button link size="small" type="primary" @click="addMusicList([item], { isReplace: true })"> 添加 </el-button>
             <el-button link size="small" type="primary" @click="showMusicListDrawer([item.id])"> 收藏 </el-button>
             <el-button
-              link
               v-if="item.cloud_music_id || item.id"
-              @click="musicPlayUtils.shareMusicLink(item)"
+              link
               size="small"
               type="primary"
+              @click="musicPlayUtils.shareMusicLink(item)"
             >
               分享
             </el-button>
             <el-button
-              link
               v-if="item.cloud_music_id"
-              @click="musicListUtils.goToCloudMusic(item.cloud_music_id)"
-              target="_blank"
+              link
               size="small"
+              target="_blank"
               type="primary"
+              @click="musicListUtils.goToCloudMusic(item.cloud_music_id)"
             >
               前往网易云
             </el-button>
-            <el-button link v-if="isOwner" @click="deleteMusic(item.id, index)" size="small" type="danger"> 删除 </el-button>
+            <el-button v-if="isOwner" link size="small" type="danger" @click="deleteMusic(item.id, index)"> 删除 </el-button>
           </div>
         </div>
         <div class="playIcon">

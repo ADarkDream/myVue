@@ -4,13 +4,13 @@
       <el-button type="primary" @click="dialogVisible = true">添加账本</el-button>
     </el-header>
     <el-main>
-      <el-empty style="margin: 0 auto" v-if="books.length === 0" description="暂无账本" />
-      <el-card class="book" shadow="hover" v-for="(item, index) in books" :key="item.bid" @click="goBook(item.bid)">
+      <el-empty v-if="books.length === 0" description="暂无账本" style="margin: 0 auto" />
+      <el-card v-for="(item, index) in books" :key="item.bid" class="book" shadow="hover" @click="goBook(item.bid)">
         <template #header>
           <el-input v-if="isEditID === item.bid" v-model.trim="newBookInfo.name" maxlength="10" />
           <template v-else>
             <el-text class="title">{{ item.name }}</el-text>
-            <el-text class="title" type="success" v-if="!item.key">[协作]</el-text>
+            <el-text v-if="!item.key" class="title" type="success">[协作]</el-text>
             <div @click.stop>
               <el-dropdown class="menu" :trigger="isPC ? 'hover' : 'click'">
                 <span>
@@ -20,9 +20,9 @@
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item @click="handleEdit(item.bid, index)" :icon="Edit">编辑</el-dropdown-item>
-                    <el-dropdown-item v-if="item.key" @click="shareKey(item)" :icon="Share">分享 </el-dropdown-item>
-                    <el-dropdown-item @click="updateBook(true, index)" :icon="Delete">删除 </el-dropdown-item>
+                    <el-dropdown-item :icon="Edit" @click="handleEdit(item.bid, index)">编辑</el-dropdown-item>
+                    <el-dropdown-item v-if="item.key" :icon="Share" @click="shareKey(item)">分享 </el-dropdown-item>
+                    <el-dropdown-item :icon="Delete" @click="updateBook(true, index)">删除 </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -35,7 +35,7 @@
         </div>
         <template #footer>
           <el-button-group v-if="isEditID === item.bid" style="margin-top: 5px">
-            <el-button type="primary" plain @click.stop="isEditID = 0">取消</el-button>
+            <el-button plain type="primary" @click.stop="isEditID = 0">取消</el-button>
             <el-button type="success" @click.stop="updateBook(false, index)">保存</el-button>
           </el-button-group>
           <el-text v-else class="footer">{{ getTime(item.updated_time) }}</el-text>
@@ -43,8 +43,8 @@
       </el-card>
     </el-main>
     <!--账本新建框-->
-    <el-dialog v-model="dialogVisible" :width="dialogWidth" :show-close="false" title="新增账本">
-      <AddBook :cancelAddBook="cancelAddBook" />
+    <el-dialog v-model="dialogVisible" :show-close="false" title="新增账本" :width="dialogWidth">
+      <AddBook :cancel-add-book="cancelAddBook" />
     </el-dialog>
   </el-container>
 </template>

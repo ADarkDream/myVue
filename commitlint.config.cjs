@@ -144,6 +144,7 @@ module.exports = defineConfig({
     scopes: getCacheScope(),
     // @see: https://github.com/Zhengqbbb/cz-git#options
     formatMessageCB: ({ defaultMessage, scope }) => {
+      // eslint-disable-next-line no-control-regex
       setCacheScope(scope.replaceAll(/\x1B\[[0-9;]*[mG]/g, ""))
       return defaultMessage
     },

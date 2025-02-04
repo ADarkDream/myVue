@@ -3,30 +3,30 @@
     <el-card class="content">
       <div class="title">
         <el-tooltip content="推荐导航网站" placement="bottom">
-          <el-button type="success" circle @click="changeFlag" :icon="UploadFilled" />
+          <el-button circle :icon="UploadFilled" type="success" @click="changeFlag" />
         </el-tooltip>
-        <el-text type="primary" style="font-size: 20px">{{ sortName }}</el-text>
+        <el-text style="font-size: 20px" type="primary">{{ sortName }}</el-text>
         <!--      <el-button v-if="false" @click="addAllUrl(localList[num],targetList[num])">批量上传 {{ nameList[num] }}-->
         <!--        网址到数据库-->
         <!--      </el-button>-->
         <el-tooltip content="隐藏，精简模式" placement="bottom">
-          <el-button type="danger" circle @click="showContent" :icon="CloseBold" />
+          <el-button circle :icon="CloseBold" type="danger" @click="showContent" />
         </el-tooltip>
       </div>
       <el-divider />
       <div class="mainContent">
         <!--网址显示区域-->
-        <el-card class="cards" shadow="hover" v-for="(item, index) in resultList" :key="index">
-          <el-button plain link
-            ><img class="urlImg" :src="item.img" alt="" />
-            <el-link :href="item.url" type="primary" :underline="false" target="_blank"> {{ item.name }}</el-link>
+        <el-card v-for="(item, index) in resultList" :key="index" class="cards" shadow="hover">
+          <el-button link plain
+            ><img alt="" class="urlImg" :src="item.img" />
+            <el-link :href="item.url" target="_blank" type="primary" :underline="false"> {{ item.name }}</el-link>
           </el-button>
           <template #footer>{{ item.detail }}</template>
         </el-card>
       </div>
     </el-card>
     <!--上传导航网址-->
-    <el-dialog v-model="dialogVisible" style="opacity: 1" :show-close="false" title="推荐导航网站" :width="dialogWidth">
+    <el-dialog v-model="dialogVisible" :show-close="false" style="opacity: 1" title="推荐导航网站" :width="dialogWidth">
       <AddUrl />
     </el-dialog>
   </div>

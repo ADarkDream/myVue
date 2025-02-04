@@ -3,7 +3,7 @@
     <el-scrollbar>
       <div class="conversation-area">
         <div class="msg online">
-          <img class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%281%29.png" alt="" />
+          <img alt="" class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%281%29.png" />
           <div class="msg-detail">
             <div class="msg-username">Madison Jones</div>
             <div class="msg-content">
@@ -13,7 +13,7 @@
           </div>
         </div>
         <div class="msg">
-          <img class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%2812%29.png" alt="" />
+          <img alt="" class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%2812%29.png" />
           <div class="msg-detail">
             <div class="msg-username">Miguel Cohen</div>
             <div class="msg-content">
@@ -25,13 +25,13 @@
         <div class="msg active">
           <div class="msg-profile group">
             <svg
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
               fill="none"
+              class="css-i6dzq1"
+              stroke="currentColor"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="css-i6dzq1"
+              stroke-width="2"
+              viewBox="0 0 24 24"
             >
               <path d="M12 2l10 6.5v7L12 22 2 15.5v-7L12 2zM12 22v-6.5" />
               <path d="M22 8.5l-10 7-10-7" />
@@ -47,7 +47,7 @@
           </div>
         </div>
         <div class="msg online">
-          <img class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%282%29.png" alt="" />
+          <img alt="" class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%282%29.png" />
           <div class="msg-detail">
             <div class="msg-username">Lea Debere</div>
             <div class="msg-content">
@@ -58,9 +58,9 @@
         </div>
         <div class="msg online">
           <img
+            alt=""
             class="msg-profile"
             src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%281%29+%281%29.png"
-            alt=""
           />
           <div class="msg-detail">
             <div class="msg-username">Jordan Smith</div>
@@ -72,9 +72,9 @@
         </div>
         <div class="msg">
           <img
+            alt=""
             class="msg-profile"
             src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%284%29+%281%29.png"
-            alt=""
           />
           <div class="msg-detail">
             <div class="msg-username">Jared Jackson</div>
@@ -86,9 +86,9 @@
         </div>
         <div class="msg online">
           <img
+            alt=""
             class="msg-profile"
             src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%283%29+%281%29.png"
-            alt=""
           />
           <div class="msg-detail">
             <div class="msg-username">Henry Clark</div>
@@ -99,7 +99,7 @@
           </div>
         </div>
         <div class="msg">
-          <img class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/qs6F3dgm.png" alt="" />
+          <img alt="" class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/qs6F3dgm.png" />
           <div class="msg-detail">
             <div class="msg-username">Jason Mraz</div>
             <div class="msg-content">
@@ -109,7 +109,7 @@
           </div>
         </div>
         <div class="msg">
-          <img class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%288%29.png" alt="" />
+          <img alt="" class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%288%29.png" />
           <div class="msg-detail">
             <div class="msg-username">Chiwa Lauren</div>
             <div class="msg-content">
@@ -119,7 +119,7 @@
           </div>
         </div>
         <div class="msg">
-          <img class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%289%29.png" alt="" />
+          <img alt="" class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%289%29.png" />
           <div class="msg-detail">
             <div class="msg-username">Caroline Orange</div>
             <div class="msg-content">
@@ -129,7 +129,7 @@
           </div>
         </div>
         <div class="msg">
-          <img class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%286%29.png" alt="" />
+          <img alt="" class="msg-profile" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%286%29.png" />
           <div class="msg-detail">
             <div class="msg-username">Lina Ashma</div>
             <div class="msg-content">
@@ -142,7 +142,7 @@
     </el-scrollbar>
     <button class="add" @click="showConnect"></button>
     <div class="overlay"></div>
-    <el-dialog v-model="isShowConnect" :width="isPC ? '40%' : '80%'" title="加入房间" :show-close="!isPC">
+    <el-dialog v-model="isShowConnect" :show-close="!isPC" title="加入房间" :width="isPC ? '40%' : '80%'">
       <ChatConnect />
     </el-dialog>
   </div>

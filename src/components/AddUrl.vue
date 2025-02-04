@@ -3,13 +3,13 @@
   <!--  <el-card>-->
 
   <!--  </el-card>-->
-  <el-form :model="form" label-width="auto" style="max-width: 600px; margin: 0 auto">
-    <el-image :src="src" alt="该地址无法获取默认图标" style="width: 40px; height: 40px" />
+  <el-form label-width="auto" :model="form" style="max-width: 600px; margin: 0 auto">
+    <el-image alt="该地址无法获取默认图标" :src="src" style="width: 40px; height: 40px" />
     <el-form-item label="站点名称">
       <el-input v-model="form.name" placeholder="必填" />
     </el-form-item>
     <el-form-item label="站点地址">
-      <el-input v-model="form.url" @blur="checkIco" type="text" placeholder="必填，站点地址" />
+      <el-input v-model="form.url" placeholder="必填，站点地址" type="text" @blur="checkIco" />
     </el-form-item>
     <el-form-item label="站点分类">
       <el-select v-model="form.sort" placeholder="必选，选择站点类型">
@@ -17,7 +17,7 @@
       </el-select>
     </el-form-item>
     <el-form-item label="站点标签">
-      <el-input v-model="form.tags" type="text" placeholder="选填" />
+      <el-input v-model="form.tags" placeholder="选填" type="text" />
     </el-form-item>
     <el-form-item label="站点详情">
       <el-input v-model="form.detail" placeholder="选填，站点的一句话介绍" />

@@ -12,11 +12,11 @@
       <Slider />
       <el-divider direction="horizontal">文件上传测试</el-divider>
       <UploadAudio />
-      <p class="other_login_div" v-if="false">
+      <p v-if="false" class="other_login_div">
         <el-text>其他登录方式(测试中)：</el-text>
-        <el-button type="primary" size="default" @click="login_by_qq(true)">QQ登录_小窗口</el-button>
-        <el-button type="primary" size="default" @click="login_by_qq()">QQ登录_新窗口</el-button>
-        <el-button type="primary" size="default" @click="connect_by_qq(true)">QQ绑定_新窗口</el-button>
+        <el-button size="default" type="primary" @click="login_by_qq(true)">QQ登录_小窗口</el-button>
+        <el-button size="default" type="primary" @click="login_by_qq()">QQ登录_新窗口</el-button>
+        <el-button size="default" type="primary" @click="connect_by_qq(true)">QQ绑定_新窗口</el-button>
       </p>
       <el-divider direction="horizontal">WIKI测试题</el-divider>
       <Example />

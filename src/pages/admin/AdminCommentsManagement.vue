@@ -7,63 +7,63 @@
   <el-main style="padding-bottom: 0; padding-top: 0">
     <el-table
       ref="tableRef"
+      border
       :data="tableData"
-      style="width: 100%"
+      :default-sort="{ prop: 'id', order: 'custom' }"
+      highlight-current-row
       max-height="500"
       stripe
-      border
-      highlight-current-row
+      style="width: 100%"
       table-layout="auto"
       type="type"
-      :default-sort="{ prop: 'id', order: 'custom' }"
     >
-      <el-table-column fixed prop="id" label="ID" width="100" sortable />
-      <el-table-column prop="articleId" label="文章ID" width="100">
+      <el-table-column fixed label="ID" prop="id" sortable width="100" />
+      <el-table-column label="文章ID" prop="articleId" width="100">
         <template #default="scope">
           <el-button text type="primary" @click="goArticle(scope.row.articleId)">{{ scope.row.articleId }}</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="uid" label="用户ID" width="100" />
-      <el-table-column prop="comment" label="评论内容" width="400" />
+      <el-table-column label="用户ID" prop="uid" width="100" />
+      <el-table-column label="评论内容" prop="comment" width="400" />
       <el-table-column
-        prop="status"
-        label="状态"
-        width="120"
+        :filter-method="filterHandler"
         :filters="[
           { text: '未过审', value: 0 },
           { text: '已发布', value: 1 },
           { text: '待审核', value: 2 },
         ]"
-        :filter-method="filterHandler"
+        label="状态"
+        prop="status"
+        width="120"
       >
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
-            <el-select placeholder="选择状态(默认为发布中)" v-model="newComment.status" default-first-option>
+            <el-select v-model="newComment.status" default-first-option placeholder="选择状态(默认为发布中)">
               <el-option label="已发布" :value="1" />
               <el-option label="未过审" :value="0" />
               <el-option label="待审核" :value="2" />
             </el-select>
           </div>
-          <el-button text type="info" v-else-if="scope.row.status === 1">已发布</el-button>
-          <el-button text type="danger" v-else-if="scope.row.status === 0">未过审</el-button>
-          <el-button text type="primary" v-else-if="scope.row.status === 2">待审核</el-button>
+          <el-button v-else-if="scope.row.status === 1" text type="info">已发布</el-button>
+          <el-button v-else-if="scope.row.status === 0" text type="danger">未过审</el-button>
+          <el-button v-else-if="scope.row.status === 2" text type="primary">待审核</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="created_time" label="创建时间" width="150">
+      <el-table-column label="创建时间" prop="created_time" width="150">
         <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
       </el-table-column>
       <!--           <el-table-column prop="updated_time" label="更新时间" width="150">-->
       <!--        <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>-->
       <!--      </el-table-column>-->
-      <el-table-column fixed="right" label="操作" width="150" align="center">
+      <el-table-column align="center" fixed="right" label="操作" width="150">
         <template #default="scope">
           <div v-if="isEditRow !== scope.$index">
-            <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row.id)"> 删除 </el-button>
+            <el-button link size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button link size="small" type="danger" @click="deleteRow(scope.$index, scope.row.id)"> 删除 </el-button>
           </div>
           <div v-else>
-            <el-button link type="primary" size="small" @click="isEditRow = -1">取消 </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newComment, scope.row)"> 更新 </el-button>
+            <el-button link size="small" type="primary" @click="isEditRow = -1">取消 </el-button>
+            <el-button link size="small" type="primary" @click.prevent="checkUpdateRow(newComment, scope.row)"> 更新 </el-button>
           </div>
         </template>
       </el-table-column>

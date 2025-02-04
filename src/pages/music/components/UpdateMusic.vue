@@ -1,13 +1,13 @@
 <template>
   <el-drawer
-    class="updateMusicDrawer"
     v-model="a"
-    :with-header="false"
-    :size="drawerSize - (isPC ? 39 : 39) + 'px'"
-    @touchstart="(e: TouchEvent) => e.stopPropagation()"
-    @touchend="(e: TouchEvent) => e.stopPropagation()"
+    class="updateMusicDrawer"
     direction="btt"
     show-close
+    :size="drawerSize - (isPC ? 39 : 39) + 'px'"
+    :with-header="false"
+    @touchend="(e: TouchEvent) => e.stopPropagation()"
+    @touchstart="(e: TouchEvent) => e.stopPropagation()"
   >
   </el-drawer>
 </template>

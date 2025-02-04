@@ -5,9 +5,9 @@
       <el-form-item label="背景色" style="text-align: left">
         <v-swatches
           v-model="bgSettings['--main-panel-bg-color']"
-          show-fallback
           fallback-input-type="color"
           popover-x="left"
+          show-fallback
         ></v-swatches>
         <el-icon @click="noticeNum = noticeNum === 0 ? 999 : 0">
           <InfoFilled />
@@ -17,7 +17,7 @@
         </Transition>
       </el-form-item>
       <el-form-item label="透明度">
-        <el-input-number v-model="bgSettings['--main-panel-bg-opacity']" type="number" :min="0" :max="1" :step="0.01" />
+        <el-input-number v-model="bgSettings['--main-panel-bg-opacity']" :max="1" :min="0" :step="0.01" type="number" />
         <el-icon @click="noticeNum = noticeNum === 1 ? 999 : 1">
           <InfoFilled />
         </el-icon>
@@ -26,7 +26,7 @@
         </Transition>
       </el-form-item>
       <el-form-item label="模糊度">
-        <el-input-number v-model="bgSettings['--main-panel-bg-filter']" type="number" :min="0" :step="0.01" />
+        <el-input-number v-model="bgSettings['--main-panel-bg-filter']" :min="0" :step="0.01" type="number" />
         <el-icon @click="noticeNum = noticeNum === 2 ? 999 : 2">
           <InfoFilled />
         </el-icon>
@@ -35,7 +35,7 @@
         </Transition>
       </el-form-item>
       <el-form-item label="饱和度">
-        <el-input-number v-model="bgSettings['--main-panel-bg-saturate']" type="number" :min="0" :step="0.01" />
+        <el-input-number v-model="bgSettings['--main-panel-bg-saturate']" :min="0" :step="0.01" type="number" />
         <el-icon @click="noticeNum = noticeNum === 3 ? 999 : 3">
           <InfoFilled />
         </el-icon>

@@ -1,12 +1,12 @@
 <template>
-  <el-tabs :tab-position="tabPosition" class="demo-tabs">
+  <el-tabs class="demo-tabs" :tab-position="tabPosition">
     <el-tab-pane label="新建账本">
-      <el-form ref="addBookFormRef" :model="addBookForm" label-width="auto" label-position="left">
-        <el-form-item prop="name" label="账本名">
+      <el-form ref="addBookFormRef" label-position="left" label-width="auto" :model="addBookForm">
+        <el-form-item label="账本名" prop="name">
           <el-input v-model="addBookForm.name" maxlength="10" placeholder="输入账本名" />
         </el-form-item>
-        <el-form-item prop="intro" label="账本简介">
-          <el-input v-model="addBookForm.intro" placeholder="输入账本简介" maxlength="30" />
+        <el-form-item label="账本简介" prop="intro">
+          <el-input v-model="addBookForm.intro" maxlength="30" placeholder="输入账本简介" />
         </el-form-item>
         <div class="btn">
           <el-button
@@ -21,12 +21,12 @@
       </el-form>
     </el-tab-pane>
     <el-tab-pane label="与他人协作">
-      <el-form ref="joinBookFormRef" :model="joinBookForm" label-width="auto" label-position="left">
-        <el-form-item prop="bid" label="账本ID">
+      <el-form ref="joinBookFormRef" label-position="left" label-width="auto" :model="joinBookForm">
+        <el-form-item label="账本ID" prop="bid">
           <el-input v-model="joinBookForm.bid" maxlength="5" placeholder="输入账本ID" />
         </el-form-item>
-        <el-form-item prop="key" label="邀请码">
-          <el-input v-model="joinBookForm.key" placeholder="输入账本邀请码" maxlength="10" />
+        <el-form-item label="邀请码" prop="key">
+          <el-input v-model="joinBookForm.key" maxlength="10" placeholder="输入账本邀请码" />
         </el-form-item>
 
         <div class="btn">

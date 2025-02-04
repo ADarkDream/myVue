@@ -1,6 +1,6 @@
 <template>
   <div ref="music" class="mainPanel" :style="{ ...bgSettings }">
-    <el-tabs class="tabs" v-model="activePanelIndex">
+    <el-tabs v-model="activePanelIndex" class="tabs">
       <el-tab-pane :name="0">
         <template #label>
           <el-text class="tab-label">
@@ -9,25 +9,25 @@
         </template>
         <MusicAdd />
       </el-tab-pane>
-      <el-tab-pane :name="1" :lazy="true">
+      <el-tab-pane :lazy="true" :name="1">
         <template #label>
           <el-text class="tab-label"> <SVG_music_list class="el-icon" style="transform: scale(1.5)" />&ensp;歌单广场 </el-text>
         </template>
-        <music-list-square :toggleToMusicList="toggleToMusicList" />
+        <music-list-square :toggle-to-music-list="toggleToMusicList" />
       </el-tab-pane>
-      <el-tab-pane :name="2" :lazy="true">
+      <el-tab-pane :lazy="true" :name="2">
         <template #label>
           <el-text class="tab-label"> <SVG_music_list class="el-icon" style="transform: scale(1.5)" />&ensp;歌单列表 </el-text>
         </template>
         <music-list />
       </el-tab-pane>
-      <el-tab-pane :name="3" :lazy="true">
+      <el-tab-pane :lazy="true" :name="3">
         <template #label>
           <el-text class="tab-label"> <SVG_music_list class="el-icon" style="transform: scale(1.5)" />&ensp;播放列表 </el-text>
         </template>
         <play-list :songs-list="playList" />
       </el-tab-pane>
-      <el-tab-pane :name="4" :lazy="true">
+      <el-tab-pane :lazy="true" :name="4">
         <template #label>
           <el-text class="tab-label">
             <el-icon> <Setting /> </el-icon>&ensp;设置
@@ -35,7 +35,7 @@
         </template>
         <MusicSettings />
       </el-tab-pane>
-      <el-tab-pane :name="5" :lazy="true">
+      <el-tab-pane :lazy="true" :name="5">
         <template #label>
           <el-text class="tab-label">
             <el-icon> <Tickets /> </el-icon>&ensp;备忘
@@ -62,13 +62,13 @@
       </el-tab-pane>
     </el-tabs>
     <!-- 搜索抽屉 -->
-    <el-drawer v-model="isShowSearchPanel" :with-header="false" :size="drawerSize + 'px'" direction="btt" show-close>
+    <el-drawer v-model="isShowSearchPanel" direction="btt" show-close :size="drawerSize + 'px'" :with-header="false">
       <SearchMusicDrawer />
     </el-drawer>
     <!-- 上传音乐抽屉 -->
     <!-- <UpdateMusic /> -->
     <!-- 歌单列表抽屉 -->
-    <el-drawer v-model="isShowMusicListDrawer" :size="drawerSize + 'px'" direction="btt" show-close>
+    <el-drawer v-model="isShowMusicListDrawer" direction="btt" show-close :size="drawerSize + 'px'">
       <template #header>
         <div class="title">收藏到歌单</div>
       </template>
@@ -77,12 +77,12 @@
     <!--新建歌单的抽屉-->
     <el-drawer
       v-model="isShowEditMusicListInfoDrawer"
-      :with-header="false"
-      :show-close="false"
-      direction="btt"
       :append-to-body="true"
-      size="50%"
       destroy-on-close
+      direction="btt"
+      :show-close="false"
+      size="50%"
+      :with-header="false"
       @close="resetUpload()"
     >
       <EditMusicListInfoDrawer />

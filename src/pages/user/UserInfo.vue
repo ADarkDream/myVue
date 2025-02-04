@@ -1,34 +1,34 @@
 <template>
   <el-container>
-    <el-header class="header1" v-if="isPC"> 用户信息 </el-header>
+    <el-header v-if="isPC" class="header1"> 用户信息 </el-header>
     <div class="user" :style="isPC ? 'right: 0;' : ''">
       <!--头像框-->
-      <el-avatar :size="isPC ? 150 : 75" title="更换头像" :src="headImgUrl" @error="errorImage" @click="changeAvatar()" />
+      <el-avatar :size="isPC ? 150 : 75" :src="headImgUrl" title="更换头像" @click="changeAvatar()" @error="errorImage" />
       <div>
         <div :style="isPC ? '' : 'text-align:left'">
-          <el-button text v-show="isDisabled" @click="isDisabled = false" title="修改昵称" :icon="Edit">
+          <el-button v-show="isDisabled" :icon="Edit" text title="修改昵称" @click="isDisabled = false">
             {{ username }}
           </el-button>
-          <el-text type="info" v-if="isDisabled" style="border: 1px solid #b5b7ba; padding: 0 2px">未实名 </el-text>
-          <div class="connectDiv" v-if="isDisabled">
+          <el-text v-if="isDisabled" style="border: 1px solid #b5b7ba; padding: 0 2px" type="info">未实名 </el-text>
+          <div v-if="isDisabled" class="connectDiv">
             <el-button @click="to_qq_oauth({ is_oauth: true, isPC: isPC, type: 'connect' })"> 绑定QQ</el-button>
           </div>
           <el-input
-            v-model.trim="newName"
-            @keyup.enter="checkNewName(newName)"
-            @blur="isUpdateName"
             v-show="!isDisabled"
-            :placeholder="username"
-            minlength="2"
+            v-model.trim="newName"
             maxlength="10"
+            minlength="2"
+            :placeholder="username"
             show-word-limit
+            @blur="isUpdateName"
+            @keyup.enter="checkNewName(newName)"
           />
         </div>
         <el-button-group class="account">
           <el-button @click="showEditForm('修改邮箱')">修改邮箱</el-button>
           <el-button @click="showEditForm('修改密码')">修改密码</el-button>
           <br v-if="isPC" />
-          <el-button @click="updateUserInfo()" type="primary">刷新信息</el-button>
+          <el-button type="primary" @click="updateUserInfo()">刷新信息</el-button>
           <el-button shadow="hover" type="danger" @click="showEditForm('注销账户')"> 注销账号 </el-button>
         </el-button-group>
       </div>
@@ -65,33 +65,33 @@
       <el-card class="textareaDiv" shadow="hover">
         <template #header>个人简介</template>
         <el-input
-          class="textarea"
           v-model="newSignature"
+          class="textarea"
+          maxlength="50"
+          placeholder="这千千万万个故事里，许会有一颗与你我一般无二的心。"
+          show-word-limit
+          type="textarea"
           @blur="isUpdateSignature"
           @keyup.enter="editSignature"
-          type="textarea"
-          maxlength="50"
-          show-word-limit
-          placeholder="这千千万万个故事里，许会有一颗与你我一般无二的心。"
         />
       </el-card>
       <div style="margin: 5px auto">
         试用性功能[无需登录]：
-        <el-button @click="router.push({ name: 'chat' })" type="info">聊天室</el-button>
+        <el-button type="info" @click="router.push({ name: 'chat' })">聊天室</el-button>
       </div>
     </el-main>
   </el-container>
 
   <!-- 用户昵称修改框-->
-  <el-dialog v-model="editNameFormVisible" title="修改昵称" width="500" class="change">
-    <el-form style="max-width: 600px" status-icon label-width="auto" label-position="left">
+  <el-dialog v-model="editNameFormVisible" class="change" title="修改昵称" width="500">
+    <el-form label-position="left" label-width="auto" status-icon style="max-width: 600px">
       <el-form-item>
-        <el-input v-model="newName" @keyup.enter="checkNewName(newName)" placeholder="输入新的昵称" />
+        <el-input v-model="newName" placeholder="输入新的昵称" @keyup.enter="checkNewName(newName)" />
       </el-form-item>
 
       <div class="btn">
         <el-button plain @click="editNameFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="checkNewName(newName)" :loading="loading">修改</el-button>
+        <el-button :loading="loading" type="primary" @click="checkNewName(newName)">修改</el-button>
       </div>
     </el-form>
   </el-dialog>
@@ -99,71 +99,71 @@
   <!-- 用户修改框-->
   <el-dialog
     v-model="dialogFormVisible"
-    :title="titleStr"
-    width="500"
-    :fullscreen="!isPC"
     :before-close="handleClose"
     class="change"
+    :fullscreen="!isPC"
+    :title="titleStr"
+    width="500"
   >
     <el-form
       ref="ruleFormRef"
-      style="max-width: 600px"
-      :model="ruleForm"
-      status-icon
-      :rules="Rules"
-      label-width="auto"
       label-position="left"
+      label-width="auto"
+      :model="ruleForm"
+      :rules="Rules"
+      status-icon
+      style="max-width: 600px"
     >
-      <el-text type="warning" v-if="deleteUserFlag">
+      <el-text v-if="deleteUserFlag" type="warning">
         请注意，注销账户仅会删除你的账号邮箱、密码等信息，而不会删除您在本站发布和保存的其他内容。
       </el-text>
-      <el-form-item prop="email" label="输入邮箱：">
+      <el-form-item label="输入邮箱：" prop="email">
         <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" />
       </el-form-item>
-      <el-form-item prop="password" label="输入密码：">
-        <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码" />
+      <el-form-item label="输入密码：" prop="password">
+        <el-input v-model.lazy.trim="ruleForm.password" autocomplete="off" placeholder="输入密码" type="password" />
       </el-form-item>
       <!--      修改邮箱-->
       <el-form-item
-        prop="newEmail"
-        label="输入新邮箱："
-        :rules="[{ validator: checkNewEmail, trigger: 'blur' }]"
         v-if="editEmailBtnFlag"
+        label="输入新邮箱："
+        prop="newEmail"
+        :rules="[{ validator: checkNewEmail, trigger: 'blur' }]"
       >
         <el-input v-model.lazy.trim="ruleForm.newEmail" placeholder="输入新邮箱" />
       </el-form-item>
       <!--      修改密码-->
       <el-form-item
-        prop="newPassword"
-        label="输入新密码："
-        :rules="[{ validator: checkNewPassword, trigger: 'blur' }]"
         v-if="editPasswordBtnFlag"
+        label="输入新密码："
+        prop="newPassword"
+        :rules="[{ validator: checkNewPassword, trigger: 'blur' }]"
       >
-        <el-input v-model.lazy.trim="ruleForm.newPassword" type="password" autocomplete="off" placeholder="输入新密码" />
+        <el-input v-model.lazy.trim="ruleForm.newPassword" autocomplete="off" placeholder="输入新密码" type="password" />
       </el-form-item>
       <!--      注销账户-->
       <el-form-item
-        prop="checkPassword"
-        label="确认密码："
-        :rules="[{ validator: validatePassword2, trigger: 'blur' }]"
         v-if="deleteUserFlag"
+        label="确认密码："
+        prop="checkPassword"
+        :rules="[{ validator: validatePassword2, trigger: 'blur' }]"
       >
-        <el-input v-model.lazy.trim="ruleForm.checkPassword" type="password" autocomplete="off" placeholder="确认密码" />
+        <el-input v-model.lazy.trim="ruleForm.checkPassword" autocomplete="off" placeholder="确认密码" type="password" />
       </el-form-item>
       <div class="btn">
         <el-button plain @click="hideForm">取消</el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef, 0)" :loading="loading" v-if="editEmailBtnFlag">
+        <el-button v-if="editEmailBtnFlag" :loading="loading" type="primary" @click="submitForm(ruleFormRef, 0)">
           修改邮箱
         </el-button>
-        <el-button type="primary" @click="submitForm(ruleFormRef, 1)" :loading="loading" v-if="editPasswordBtnFlag">
+        <el-button v-if="editPasswordBtnFlag" :loading="loading" type="primary" @click="submitForm(ruleFormRef, 1)">
           修改密码
         </el-button>
-        <el-button type="danger" @click="submitForm(ruleFormRef, 2)" :loading="loading" v-if="deleteUserFlag"> 注销 </el-button>
+        <el-button v-if="deleteUserFlag" :loading="loading" type="danger" @click="submitForm(ruleFormRef, 2)"> 注销 </el-button>
       </div>
     </el-form>
   </el-dialog>
   <!--图片上传框-->
-  <el-dialog v-model="dialogVisible" :width="isPC ? '' : 'wide:50%'" :show-close="false" title="上传图片">
+  <el-dialog v-model="dialogVisible" :show-close="false" title="上传图片" :width="isPC ? '' : 'wide:50%'">
     <UploadImage />
   </el-dialog>
 </template>

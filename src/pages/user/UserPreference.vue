@@ -1,7 +1,7 @@
 <template>
   <div class="userPreference">
-    <el-header class="header1" v-if="isPC">
-      偏好设置<el-text type="warning" v-if="isLoading">&ensp;审核中...</el-text>
+    <el-header v-if="isPC" class="header1">
+      偏好设置<el-text v-if="isLoading" type="warning">&ensp;审核中...</el-text>
     </el-header>
     <el-main>
       <div style="margin-bottom: 20px">
@@ -12,16 +12,16 @@
       </div>
       <div>
         <el-space v-if="isShow && !dialogVisible">
-          <el-switch v-model="useUserBGUrl" inline-prompt active-text="应用" inactive-text="去除" size="large" />
-          <el-button type="primary" @click="dialogVisible = true" :icon="UploadFilled">上传</el-button>
-          <el-button type="danger" :icon="Delete" @click="deleteRow()">删除</el-button>
+          <el-switch v-model="useUserBGUrl" active-text="应用" inactive-text="去除" inline-prompt size="large" />
+          <el-button :icon="UploadFilled" type="primary" @click="dialogVisible = true">上传</el-button>
+          <el-button :icon="Delete" type="danger" @click="deleteRow()">删除</el-button>
         </el-space>
       </div>
 
-      <el-image :src="bgUrl" v-if="isShow && !dialogVisible" style="width: 50%" />
+      <el-image v-if="isShow && !dialogVisible" :src="bgUrl" style="width: 50%" />
       <!--图片上传框-->
       <UploadImage v-if="!isShow || dialogVisible" />
-      <el-button v-if="dialogVisible" type="primary" @click="dialogVisible = false" style="margin-top: 10px">取消上传</el-button>
+      <el-button v-if="dialogVisible" style="margin-top: 10px" type="primary" @click="dialogVisible = false">取消上传</el-button>
     </el-main>
   </div>
 </template>

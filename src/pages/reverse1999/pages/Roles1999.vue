@@ -1,24 +1,24 @@
 <template>
   <div class="roles1999">
     <!--PC筛选框-->
-    <el-row class="header2" v-if="isPC">
+    <el-row v-if="isPC" class="header2">
       <el-col :sm="4">
         <el-input
           v-model.trim="searchInfo.name"
-          @change="filterChange()"
-          placeholder="角色名称"
           clearable
+          placeholder="角色名称"
           :prefix-icon="Search"
+          @change="filterChange()"
         />
       </el-col>
       <el-col :sm="4">
-        <el-select v-model="searchInfo.camp" @change="filterChange()" default-first-option>
+        <el-select v-model="searchInfo.camp" default-first-option @change="filterChange()">
           <el-option label="全选阵营" value="" />
           <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'" :value="name" />
         </el-select>
       </el-col>
       <el-col :sm="4">
-        <el-select v-model="searchInfo.race" @change="filterChange()" default-first-option>
+        <el-select v-model="searchInfo.race" default-first-option @change="filterChange()">
           <el-option label="全选种族" value="" />
           <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'" :value="name" />
         </el-select>
@@ -26,53 +26,53 @@
       <el-col :sm="3">
         <el-input
           v-model.trim="searchInfo.otherTags"
-          @change="filterChange()"
-          placeholder="其他标签"
           clearable
+          placeholder="其他标签"
           :prefix-icon="Search"
+          @change="filterChange()"
         />
       </el-col>
       <el-col :sm="8">
         <!-- <el-button @click="filterChange" type="primary">查找</el-button> -->
         <el-button @click="clearFilter">清空筛选条件</el-button>
         <el-button type="primary" @click="toggleAddRoleDrawer()">新增角色</el-button>
-        <el-button type="success" plain @click="refreshRole()" :icon="Refresh" title="刷新角色信息">刷新</el-button>
-        <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
+        <el-button :icon="Refresh" plain title="刷新角色信息" type="success" @click="refreshRole()">刷新</el-button>
+        <el-button plain type="success" @click="export_excel()">导出Excel</el-button>
       </el-col>
     </el-row>
     <!--移动端筛选框-->
-    <div class="header" v-else>
-      <el-button @click="dialogVisible = true" type="primary">筛选/查找</el-button>
+    <div v-else class="header">
+      <el-button type="primary" @click="dialogVisible = true">筛选/查找</el-button>
       <el-button type="primary" @click="toggleAddRoleDrawer()">新增角色</el-button>
-      <el-button type="success" size="small" plain @click="refreshRole()" :icon="Refresh" title="刷新角色信息">刷新</el-button>
-      <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
+      <el-button :icon="Refresh" plain size="small" title="刷新角色信息" type="success" @click="refreshRole()">刷新</el-button>
+      <el-button plain type="success" @click="export_excel()">导出Excel</el-button>
     </div>
     <el-table
       ref="tableRef"
+      border
       class="myCustomElTable"
       :data="tableData"
+      :default-sort="{ prop: 'id', order: 'custom' }"
+      flexible
+      highlight-current-row
       :max-height="mainPanelContentHeight - (isPC ? 100 : 70)"
       stripe
-      flexible
-      border
-      highlight-current-row
       table-layout="auto"
-      :default-sort="{ prop: 'id', order: 'custom' }"
       @sort-change="handleSortChange"
     >
       <!--              @filter-change="filterChange">-->
-      <el-table-column prop="id" label="ID" min-width="60" align="center" fixed sortable />
-      <el-table-column prop="name" label="角色名" min-width="120" align="center" :fixed="!isPC">
+      <el-table-column align="center" fixed label="ID" min-width="60" prop="id" sortable />
+      <el-table-column align="center" :fixed="!isPC" label="角色名" min-width="120" prop="name">
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
             <el-input v-model="newInfo.name" />
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="camp" label="所属阵营" min-width="120" align="center">
+      <el-table-column align="center" label="所属阵营" min-width="120" prop="camp">
         <template #default="scope">
           <template v-if="isEditRow === scope.$index">
-            <el-select placeholder="选择阵营" v-model="newInfo.camp" default-first-option>
+            <el-select v-model="newInfo.camp" default-first-option placeholder="选择阵营">
               <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'" :value="name" />
             </el-select>
           </template>
@@ -81,10 +81,10 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="race" label="所属种族" min-width="130" align="center">
+      <el-table-column align="center" label="所属种族" min-width="130" prop="race">
         <template #default="scope">
           <template v-if="isEditRow === scope.$index">
-            <el-select placeholder="选择种族" v-model="newInfo.race" default-first-option>
+            <el-select v-model="newInfo.race" default-first-option placeholder="选择种族">
               <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'" :value="name" />
             </el-select>
           </template>
@@ -93,23 +93,23 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="otherTags" label="其它标签" min-width="200" align="center">
+      <el-table-column align="center" label="其它标签" min-width="200" prop="otherTags">
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
             <el-input v-model="newInfo.otherTags" />
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="created_time" label="创建时间" min-width="100" align="center" v-if="isAdmin">
+      <el-table-column v-if="isAdmin" align="center" label="创建时间" min-width="100" prop="created_time">
         <template #default="scope">{{ getDiffTime(scope.row.created_time) }}</template>
       </el-table-column>
-      <el-table-column prop="updated_time" label="更新时间" min-width="100" align="center">
+      <el-table-column align="center" label="更新时间" min-width="100" prop="updated_time">
         <template #default="scope">{{ getDiffTime(scope.row.updated_time) }}</template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" min-width="100" align="center" v-if="isAdmin">
+      <el-table-column v-if="isAdmin" align="center" label="状态" min-width="100" prop="status">
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
-            <el-select placeholder="选择状态" v-model="newInfo.status" default-first-option>
+            <el-select v-model="newInfo.status" default-first-option placeholder="选择状态">
               <el-option v-for="{ label, value } in statusOptions" :key="value" :label :value />
             </el-select>
           </div>
@@ -118,7 +118,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" min-width="100" align="center" :fixed="isPC ? 'right' : false">
+      <el-table-column align="center" :fixed="isPC ? 'right' : false" label="操作" min-width="100">
         <!-- <template #header v-if="isPC">
             <div style="display: flex;justify-content: space-around;">
               <span>操作</span><el-button type="success" size="small" plain @click="refreshRole()" :icon="Refresh"
@@ -128,26 +128,26 @@
         <template #default="scope">
           <div v-if="isEditRow !== scope.$index">
             <el-button
-              link
-              type="primary"
-              size="small"
-              @click="handleEdit(scope.$index, scope.row)"
               :disabled="!canEdit(scope.row.status)"
+              link
+              size="small"
+              type="primary"
+              @click="handleEdit(scope.$index, scope.row)"
               >编辑</el-button
             >
             <el-button
-              link
-              type="danger"
-              size="small"
               :disabled="!canDel(scope.row.status)"
+              link
+              size="small"
+              type="danger"
               @click="deleteRow(scope.$index, scope.row.id)"
             >
               删除
             </el-button>
           </div>
           <div v-else>
-            <el-button link type="info" size="small" @click="exit_edit()">取消 </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newInfo, scope.row)"> 更新 </el-button>
+            <el-button link size="small" type="info" @click="exit_edit()">取消 </el-button>
+            <el-button link size="small" type="primary" @click.prevent="checkUpdateRow(newInfo, scope.row)"> 更新 </el-button>
           </div>
         </template>
       </el-table-column>
@@ -156,35 +156,35 @@
       <el-pagination
         v-model:current-page="currentPage"
         v-model:page-size="pageSize"
-        size="small"
-        :page-sizes="[10, 25, 50, 100]"
         :layout="layout"
+        :page-sizes="[10, 25, 50, 100]"
+        size="small"
         :total="total"
-        @size-change="render"
         @current-change="render"
+        @size-change="render"
       />
     </div>
 
     <!--移动端筛选框2-->
-    <el-drawer v-model="dialogVisible" title="筛选角色" :show-close="false" direction="btt" :append-to-body="true" size="40%">
+    <el-drawer v-model="dialogVisible" :append-to-body="true" direction="btt" :show-close="false" size="40%" title="筛选角色">
       <el-row>
         <el-col :md="3" :sm="4">
           <el-input
             v-model.trim="searchInfo.name"
-            @change="filterChange()"
-            placeholder="角色名称"
             clearable
+            placeholder="角色名称"
             :prefix-icon="Search"
+            @change="filterChange()"
           />
         </el-col>
         <el-col :md="3" :sm="4">
-          <el-select v-model="searchInfo.camp" @change="filterChange()" default-first-option>
+          <el-select v-model="searchInfo.camp" default-first-option @change="filterChange()">
             <el-option label="全选阵营" value="" />
             <el-option v-for="{ name, count } in campInfo" :key="name" :label="name + '[' + count + ']'" :value="name" />
           </el-select>
         </el-col>
         <el-col :md="3" :sm="4">
-          <el-select v-model="searchInfo.race" @change="filterChange()" default-first-option>
+          <el-select v-model="searchInfo.race" default-first-option @change="filterChange()">
             <el-option label="全选种族" value="" />
             <el-option v-for="{ name, count } in raceInfo" :key="name" :label="name + '[' + count + ']'" :value="name" />
           </el-select>
@@ -192,14 +192,14 @@
         <el-col :md="3" :sm="4">
           <el-input
             v-model.trim="searchInfo.otherTags"
-            @change="filterChange()"
-            placeholder="其他标签"
             clearable
+            placeholder="其他标签"
             :prefix-icon="Search"
+            @change="filterChange()"
           />
         </el-col>
         <el-col :md="6" :sm="7">
-          <el-button @click="filterChange" type="primary">查找</el-button>
+          <el-button type="primary" @click="filterChange">查找</el-button>
           <el-button @click="clearFilter">清空筛选条件</el-button>
         </el-col>
       </el-row>

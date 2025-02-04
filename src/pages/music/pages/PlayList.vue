@@ -22,24 +22,24 @@
               <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text>
             </div>
             <div class="btns">
-              <el-button link @click="playTheMusic(item, index)" size="small" type="primary"> 播放 </el-button>
+              <el-button link size="small" type="primary" @click="playTheMusic(item, index)"> 播放 </el-button>
               <el-button link size="small" type="primary" @click="showMusicListDrawer([item.id])"> 收藏 </el-button>
               <el-button
-                link
                 v-if="item.cloud_music_id || item.id"
-                @click="musicPlayUtils.shareMusicLink(item)"
+                link
                 size="small"
                 type="primary"
+                @click="musicPlayUtils.shareMusicLink(item)"
               >
                 分享
               </el-button>
               <el-button
-                link
                 v-if="item.cloud_music_id"
-                @click="musicListUtils.goToCloudMusic(item.cloud_music_id)"
-                target="_blank"
+                link
                 size="small"
+                target="_blank"
                 type="primary"
+                @click="musicListUtils.goToCloudMusic(item.cloud_music_id)"
               >
                 前往网易云
               </el-button>

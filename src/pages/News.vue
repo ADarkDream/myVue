@@ -8,9 +8,9 @@
         <el-input v-model="newsNum" placeholder="新闻条数" style="width: 75px" />
         &ensp;<el-text>类别：</el-text>
         <div v-if="isPC">
-          <el-button v-for="(item, index) in channelList" type="text" :key="index" @click="getNews(item)">{{ item }}</el-button>
+          <el-button v-for="(item, index) in channelList" :key="index" type="text" @click="getNews(item)">{{ item }}</el-button>
         </div>
-        <el-select v-else v-model="channel" placeholder="新闻类别" filterable @change="getNews(channel)" style="width: 75px">
+        <el-select v-else v-model="channel" filterable placeholder="新闻类别" style="width: 75px" @change="getNews(channel)">
           <el-option v-for="(item, index) in channelList" :key="index" :label="item" :value="item"> </el-option>
         </el-select>
       </div>
@@ -18,9 +18,9 @@
     <el-main>
       <el-scrollbar :height="isPC ? screenHeight - 220 : screenHeight - 120">
         <!--新闻列表区-->
-        <div class="card" v-for="(item, index) in newsList" :key="index">
+        <div v-for="(item, index) in newsList" :key="index" class="card">
           <div class="articleCover">
-            <el-image :src="item.pic" fit="cover" :draggable="false" lazy>
+            <el-image :draggable="false" fit="cover" lazy :src="item.pic">
               <template #error>
                 <div class="image-slot">
                   <el-icon>
@@ -32,15 +32,15 @@
           </div>
 
           <div class="articleInfo">
-            <el-text tag="p" class="title" size="large" truncated>{{ item.title }}</el-text>
+            <el-text class="title" size="large" tag="p" truncated>{{ item.title }}</el-text>
 
             <!--            <el-text size="small" tag="sub" truncated v-html="item.content"></el-text>-->
             <div class="link">
               <el-link
-                type="primary"
-                target="_blank"
                 :href="isPC ? item.weburl : item.url"
+                target="_blank"
                 :title="'点击前往' + isPC ? 'PC' : '移动' + '端'"
+                type="primary"
                 >点击跳转</el-link
               >
             </div>

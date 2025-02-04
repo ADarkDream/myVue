@@ -1,23 +1,23 @@
 <template>
-  <div class="download1999" ref="download1999">
+  <div ref="download1999" class="download1999">
     <div style="position: relative">
-      <el-image class="logo" :src="logo" v-if="isPC" draggable="false" />
+      <el-image v-if="isPC" class="logo" draggable="false" :src="logo" />
       <h1>1999国服官图(以影像之)下载</h1>
       <el-collapse v-model="activeIndex" accordion>
-        <el-collapse-item title="资源文档" name="1">
+        <el-collapse-item name="1" title="资源文档">
           <div class="links">
             <el-button
-              link
-              target="_blank"
               v-for="{ id, name, title, label, value, url } in links"
               :key="id"
-              @click="copyText(value, name, url)"
+              link
+              target="_blank"
               :title="title"
+              @click="copyText(value, name, url)"
               >{{ label }}
             </el-button>
           </div>
         </el-collapse-item>
-        <el-collapse-item title="筛选条件【所有条件不选则默认全选】" name="2">
+        <el-collapse-item name="2" title="筛选条件【所有条件不选则默认全选】">
           <el-form :label-position="isPC ? 'left' : 'top'">
             <el-form-item label="选择版本[默认全选]：" style="flex-direction: column">
               <el-checkbox
@@ -48,8 +48,8 @@
                 <el-checkbox
                   v-for="({ name, count }, index) in campInfo"
                   :key="index"
-                  @click="roleTypeChange(name, '')"
                   @change="handleCheckCampChange"
+                  @click="roleTypeChange(name, '')"
                 >
                   {{ name }}[{{ count }}]
                 </el-checkbox>
@@ -60,8 +60,8 @@
                 <el-checkbox
                   v-for="({ name, count }, index) in raceInfo"
                   :key="index"
-                  @click="roleTypeChange('', name)"
                   @change="handleCheckCampChange"
+                  @click="roleTypeChange('', name)"
                 >
                   {{ name }}[{{ count }}]
                 </el-checkbox>
@@ -104,17 +104,17 @@
             </el-form-item>
             <div style="text-align: center">
               <el-button @click="reset">重置</el-button>
-              <el-button type="primary" :icon="Search" @click="getImages">筛选</el-button>
-              <el-button type="warning" :icon="Warning" @click="showDownloadNotice()" v-show="isShow"> 下载须知 </el-button>
+              <el-button :icon="Search" type="primary" @click="getImages">筛选</el-button>
+              <el-button v-show="isShow" :icon="Warning" type="warning" @click="showDownloadNotice()"> 下载须知 </el-button>
               <br v-if="!isPC" />
-              <el-button :type="chooseType[isChoose].type" :icon="chooseType[isChoose].icon" @click="selectBtn()" v-show="isShow">
+              <el-button v-show="isShow" :icon="chooseType[isChoose].icon" :type="chooseType[isChoose].type" @click="selectBtn()">
                 <span>{{ chooseType[isChoose].text }}</span>
               </el-button>
               <el-button v-if="imgList.length && isPC" type="success" @click="checkPort()">检查本地代理</el-button>
-              <el-button type="success" :icon="Download" @click="downloadImages" v-show="isShow">开始下载 </el-button>
+              <el-button v-show="isShow" :icon="Download" type="success" @click="downloadImages">开始下载 </el-button>
               <br />
               <div class="statement">
-                <el-text type="danger" v-show="isShow && !isPC">
+                <el-text v-show="isShow && !isPC" type="danger">
                   注意：移动端浏览器可能无法批量下载，如尝试下载等待之后没有反应，请切换浏览器或长按图片保存。<br />
                 </el-text>
                 <el-text type="success" @click="showNotice({ show_num: 3, active_num: 1 })"
@@ -126,30 +126,30 @@
             </div>
           </el-form>
         </el-collapse-item>
-        <el-collapse-item title="待完善功能" name="3">
-          <el-text tag="p" v-for="item in unCompleted.slice().reverse()" :key="item.id">
+        <el-collapse-item name="3" title="待完善功能">
+          <el-text v-for="item in unCompleted.slice().reverse()" :key="item.id" tag="p">
             <el-icon> <Edit /> </el-icon>{{ item.content }}
           </el-text>
         </el-collapse-item>
-        <el-collapse-item title="已实现功能" name="4">
-          <el-text tag="p" v-for="(item, index) in completed.slice().reverse()" :key="index">
+        <el-collapse-item name="4" title="已实现功能">
+          <el-text v-for="(item, index) in completed.slice().reverse()" :key="index" tag="p">
             <el-icon :color="index === 0 ? 'var(--el-color-success' : ''">
               <Check />
             </el-icon>
-            <el-text :type="index === 0 ? 'success' : ''" style="margin: 0 5px">{{ item.content }}</el-text>
-            <el-text type="danger" v-if="index === 0">[new]</el-text>
+            <el-text style="margin: 0 5px" :type="index === 0 ? 'success' : ''">{{ item.content }}</el-text>
+            <el-text v-if="index === 0" type="danger">[new]</el-text>
           </el-text>
         </el-collapse-item>
-        <el-collapse-item title="群聊和赞赏" style="text-align: center" name="5">
+        <el-collapse-item name="5" style="text-align: center" title="群聊和赞赏">
           欢迎通过
-          <el-text @click="showNotice({ show_num: 3, active_num: 2 })" type="success" title="点击反馈">反馈 </el-text>
+          <el-text title="点击反馈" type="success" @click="showNotice({ show_num: 3, active_num: 2 })">反馈 </el-text>
           向默默提出功能建议或BUG。 也欢迎来咱们九群玩（默默不是群主）<br />
           <el-button
             link
-            type="primary"
             target="_blank"
-            @click="copyText('904688184', 'QQ群号', 'https://qm.qq.com/q/Oq8R7YS6sM')"
             title="点击前往QQ"
+            type="primary"
+            @click="copyText('904688184', 'QQ群号', 'https://qm.qq.com/q/Oq8R7YS6sM')"
           >
             点击加入群聊【金兔子特供部门🐰】
           </el-button>
@@ -162,23 +162,23 @@
           <el-text>(设计中)</el-text>&ensp; 当前收到赞赏： <el-text type="success">{{ fee }}</el-text
           >&ensp;元(手动录入会有延迟)
           <br />
-          <el-button v-if="!showPayCode" @click="showPayCode = true" type="success">点击展示微信赞赏码</el-button>
-          <el-image v-else style="width: 200px" :src="pay_code_src" />
+          <el-button v-if="!showPayCode" type="success" @click="showPayCode = true">点击展示微信赞赏码</el-button>
+          <el-image v-else :src="pay_code_src" style="width: 200px" />
         </el-collapse-item>
       </el-collapse>
     </div>
-    <el-affix position="top" target=".download1999" :offset="isPC ? 50 : 85">
-      <div class="floatBar" v-show="isShow">
-        <el-button @click="scrollToTop" :icon="Top" type="default">返回顶部</el-button>
+    <el-affix :offset="isPC ? 50 : 85" position="top" target=".download1999">
+      <div v-show="isShow" class="floatBar">
+        <el-button :icon="Top" type="default" @click="scrollToTop">返回顶部</el-button>
         <el-button-group class="btnGroup" type="info">
-          <el-button @click="autoCol" :type="autoFlag ? 'primary' : 'default'">
+          <el-button :type="autoFlag ? 'primary' : 'default'" @click="autoCol">
             <SVG_auto class="el-icon" /> <span>自动</span>
           </el-button>
-          <el-button @click="autoCol(3)" :type="autoFlag === false && colNum === 3 ? 'primary' : 'default'">
+          <el-button :type="autoFlag === false && colNum === 3 ? 'primary' : 'default'" @click="autoCol(3)">
             <SVG_grid_four class="el-icon" />
             <span>3列</span>
           </el-button>
-          <el-button @click="autoCol(5)" :type="autoFlag === false && colNum === 5 ? 'primary' : 'default'">
+          <el-button :type="autoFlag === false && colNum === 5 ? 'primary' : 'default'" @click="autoCol(5)">
             <SVG_grid_nine class="el-icon" />
             <span>5列</span>
           </el-button>
@@ -187,25 +187,25 @@
     </el-affix>
 
     <!--    第三方库，瀑布流标签 不能包裹在el-container中,懒加载会失效-->
-    <wc-flow-layout :gap="10" :cols="colNum">
+    <wc-flow-layout :cols="colNum" :gap="10">
       <div
         v-for="(item, index) in imgList"
-        :key="item.id"
-        @click="checkImage(item, index, $event)"
-        class="preImg"
         :id="'imgDiv-' + item.id"
+        :key="item.id"
         ref="imgDivRefs"
+        class="preImg"
+        @click="checkImage(item, index, $event)"
       >
         <el-image
-          :src="item.imgUrl"
-          :zoom-rate="1.2"
           :id="'img-' + item.id"
+          fit="scale-down"
+          :initial-index="index"
+          lazy
           :max-scale="7"
           :min-scale="0.2"
           :preview-src-list="previewImgList"
-          :initial-index="index"
-          fit="scale-down"
-          lazy
+          :src="item.imgUrl"
+          :zoom-rate="1.2"
         >
           <template #error>
             <div class="image-slot">
@@ -221,13 +221,13 @@
     <!--  下载须知公告界面-->
     <el-dialog
       v-model="isShowDownloadNotice"
-      :width="isPC ? '60%' : '90%'"
+      destroy-on-close
       :show-close="!isPC"
       style="z-index: 100"
-      destroy-on-close
+      :width="isPC ? '60%' : '90%'"
     >
       <template #header><span style="font-size: 24px">下载须知</span></template>
-      <DownloadNotice :showFlag="showFlag" :showPayCodePanel="showPayCodePanel" :downloadLimitNum="downloadLimitNum" />
+      <DownloadNotice :download-limit-num="downloadLimitNum" :show-flag="showFlag" :show-pay-code-panel="showPayCodePanel" />
     </el-dialog>
   </div>
 </template>

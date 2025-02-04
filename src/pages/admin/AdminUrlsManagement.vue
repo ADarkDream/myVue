@@ -5,13 +5,13 @@
       <el-button type="primary" @click="dialogVisible = true">发布新导航</el-button>
     </el-col>
     <el-col :span="3">
-      <el-input v-model.trim="searchUrl.name" placeholder="网站名" clearable :prefix-icon="Search" />
+      <el-input v-model.trim="searchUrl.name" clearable placeholder="网站名" :prefix-icon="Search" />
     </el-col>
     <el-col :span="3">
-      <el-input v-model.trim="searchUrl.detail" placeholder="网站简介" clearable :prefix-icon="Search" />
+      <el-input v-model.trim="searchUrl.detail" clearable placeholder="网站简介" :prefix-icon="Search" />
     </el-col>
-    <el-col :span="3" v-if="false">
-      <el-input v-model.trim="searchUrl.uid" placeholder="上传者uid" clearable :prefix-icon="Search" />
+    <el-col v-if="false" :span="3">
+      <el-input v-model.trim="searchUrl.uid" clearable placeholder="上传者uid" :prefix-icon="Search" />
     </el-col>
     <el-col :span="3">
       <el-select v-model.trim="searchUrl.status" placeholder="All">
@@ -26,89 +26,89 @@
         <el-option v-for="(item, index) in sort" :key="index" :label="item.text" :value="item.value" />
       </el-select>
     </el-col>
-    <el-col :span="3" v-if="false">
-      <el-input v-model.trim="searchUrl.tags" placeholder="网站标签" clearable :prefix-icon="Search" />
+    <el-col v-if="false" :span="3">
+      <el-input v-model.trim="searchUrl.tags" clearable placeholder="网站标签" :prefix-icon="Search" />
     </el-col>
     <el-col :span="5">
-      <el-button @click="filterChange" type="primary">筛选查找</el-button>
+      <el-button type="primary" @click="filterChange">筛选查找</el-button>
       <el-button @click="clearFilter">清空全部筛选</el-button>
     </el-col>
   </div>
   <el-main style="padding: 0">
-    <el-form class="search" :model="newUrl" label-position="left" label-width="auto">
+    <el-form class="search" label-position="left" label-width="auto" :model="newUrl">
       <el-form-item label-width="auto"> </el-form-item>
     </el-form>
 
     <el-table
       ref="tableRef"
+      border
       :data="tableData"
-      style="width: 100%"
+      :default-sort="{ prop: 'id', order: 'custom' }"
+      highlight-current-row
       max-height="500"
       stripe
-      border
-      highlight-current-row
+      style="width: 100%"
       table-layout="auto"
       type="type"
-      :default-sort="{ prop: 'id', order: 'custom' }"
       @sort-change="handleSortChange"
     >
       <!--              @filter-change="filterChange">-->
-      <el-table-column fixed prop="id" label="ID" width="70" align="center" sortable />
-      <el-table-column prop="img" label="图标" width="60" align="center">
+      <el-table-column align="center" fixed label="ID" prop="id" sortable width="70" />
+      <el-table-column align="center" label="图标" prop="img" width="60">
         <template #default="scope">
           <el-input v-if="isEditRow === scope.$index" v-model="newUrl.img" />
-          <el-image v-else :src="scope.row.img" style="width: 20px" lazy />
+          <el-image v-else lazy :src="scope.row.img" style="width: 20px" />
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="网站名" width="150">
+      <el-table-column label="网站名" prop="name" width="150">
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
             <el-input v-model="newUrl.name" />
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="detail" label="网站简介" width="150">
+      <el-table-column label="网站简介" prop="detail" width="150">
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
             <el-input v-model="newUrl.detail" />
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="url" label="网站地址" width="300">
+      <el-table-column label="网站地址" prop="url" width="300">
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
-            <el-input type="text" v-model="newUrl.url" />
+            <el-input v-model="newUrl.url" type="text" />
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="uid" label="上传用户uid" width="120" align="center">
+      <el-table-column align="center" label="上传用户uid" prop="uid" width="120">
         <template #default="scope">
-          <el-button text v-if="scope.row.uid === 0">管理员</el-button>
-          <el-button text v-else type="primary">{{ scope.row.uid }}</el-button>
+          <el-button v-if="scope.row.uid === 0" text>管理员</el-button>
+          <el-button v-else text type="primary">{{ scope.row.uid }}</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="网站状态" width="130" align="center">
+      <el-table-column align="center" label="网站状态" prop="status" width="130">
         <!--                       :filters="[ {text: '待审核', value: 0},{text: '正在使用', value: 1}]" column-key="status">-->
         <!--                       :filter-method="filterHandler">-->
         <template #default="scope">
           <template v-if="isEditRow === scope.$index">
-            <el-select placeholder="待审核" v-model="newUrl.status" default-first-option>
+            <el-select v-model="newUrl.status" default-first-option placeholder="待审核">
               <el-option label="待审核" :value="0" />
               <el-option label="正在使用" :value="1" />
             </el-select>
           </template>
           <template v-else>
-            <el-button text v-if="scope.row.status === 1">正在使用</el-button>
-            <el-button text type="primary" v-else-if="scope.row.status === 0">待审核</el-button>
+            <el-button v-if="scope.row.status === 1" text>正在使用</el-button>
+            <el-button v-else-if="scope.row.status === 0" text type="primary">待审核</el-button>
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="sort" label="网站分类" width="130" align="center">
+      <el-table-column align="center" label="网站分类" prop="sort" width="130">
         <!--                       :filters="sort" :column-key="'sort'">-->
         <!--                       :filter-method="filterHandler">-->
         <template #default="scope">
           <template v-if="isEditRow === scope.$index">
-            <el-select placeholder="选择分类(默认为更新说明)" v-model="newUrl.sort" default-first-option>
+            <el-select v-model="newUrl.sort" default-first-option placeholder="选择分类(默认为更新说明)">
               <el-option v-for="(item, index) in sort" :key="index" :label="item.text" :value="item.value" />
             </el-select>
           </template>
@@ -117,20 +117,20 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="tags" label="标签" width="120" align="center" v-if="false" />
+      <el-table-column v-if="false" align="center" label="标签" prop="tags" width="120" />
 
-      <el-table-column prop="updated_time" label="更新时间" width="150" align="center">
+      <el-table-column align="center" label="更新时间" prop="updated_time" width="150">
         <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="100" align="center">
+      <el-table-column align="center" fixed="right" label="操作" width="100">
         <template #default="scope">
           <div v-if="isEditRow !== scope.$index">
-            <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row.id)"> 删除 </el-button>
+            <el-button link size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button link size="small" type="danger" @click="deleteRow(scope.$index, scope.row.id)"> 删除 </el-button>
           </div>
           <div v-else>
-            <el-button link type="primary" size="small" @click="handleCancel">取消 </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newUrl, scope.row)"> 更新 </el-button>
+            <el-button link size="small" type="primary" @click="handleCancel">取消 </el-button>
+            <el-button link size="small" type="primary" @click.prevent="checkUpdateRow(newUrl, scope.row)"> 更新 </el-button>
           </div>
         </template>
       </el-table-column>
@@ -139,11 +139,11 @@
       <el-pagination
         v-model:current-page="currentPage"
         v-model:page-size="pageSize"
-        :page-sizes="[10, 25, 50, 100]"
         :layout="total / pageSize > 10 ? 'total, sizes, prev, pager, next,jumper' : 'total, sizes, prev, pager, next'"
+        :page-sizes="[10, 25, 50, 100]"
         :total="total"
-        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
       />
     </div>
   </el-main>

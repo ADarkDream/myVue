@@ -1,39 +1,39 @@
 <template>
   <el-form
     ref="ruleFormRef"
-    :model="ruleForm"
-    status-icon
-    :rules="Rules"
-    label-width="auto"
     class="registerForm"
     label-position="top"
+    label-width="auto"
+    :model="ruleForm"
+    :rules="Rules"
+    status-icon
   >
     <el-form-item prop="username">
       <el-input v-model.lazy.trim="ruleForm.username" placeholder="输入昵称" />
     </el-form-item>
     <el-form-item prop="email">
-      <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" autocomplete="off" />
+      <el-input v-model.lazy.trim="ruleForm.email" autocomplete="off" placeholder="输入邮箱" />
     </el-form-item>
     <el-form-item prop="password">
-      <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码" />
+      <el-input v-model.lazy.trim="ruleForm.password" autocomplete="off" placeholder="输入密码" type="password" />
     </el-form-item>
     <el-form-item prop="checkPassword">
-      <el-input v-model.lazy.trim="ruleForm.checkPassword" type="password" autocomplete="off" placeholder="确认密码" />
+      <el-input v-model.lazy.trim="ruleForm.checkPassword" autocomplete="off" placeholder="确认密码" type="password" />
     </el-form-item>
     <el-form-item prop="emailCode">
       <div style="display: flex; justify-content: space-between; width: 100%">
         <el-input v-model.lazy.trim="ruleForm.emailCode" autocomplete="off" placeholder="输入邮箱获取验证码" />
-        <el-button type="primary" :disabled="isDisabled" @click="getEmailCode()">
+        <el-button :disabled="isDisabled" type="primary" @click="getEmailCode()">
           {{ isDisabled ? t + "秒后获取" : "获取" }}
         </el-button>
       </div>
     </el-form-item>
-    <el-form-item prop="policy" autocomplete="off">
-      <input type="checkbox" v-model="ruleForm.policy" />&ensp;我已阅读并同意
+    <el-form-item autocomplete="off" prop="policy">
+      <input v-model="ruleForm.policy" type="checkbox" />&ensp;我已阅读并同意
       <el-button link type="primary" @click="showPolicy">隐私政策</el-button>
-      <el-button style="position: absolute; right: 0" link @click="resetForm()">重置表单</el-button>
+      <el-button link style="position: absolute; right: 0" @click="resetForm()">重置表单</el-button>
     </el-form-item>
-    <el-button class="submitBtn" @click="submitForm()" :loading="isLoading">注册</el-button>
+    <el-button class="submitBtn" :loading="isLoading" @click="submitForm()">注册</el-button>
     <br />
     <el-link @click="toLogin(true)">前往登录</el-link>
   </el-form>

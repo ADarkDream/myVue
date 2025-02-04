@@ -1,15 +1,15 @@
 <template>
-  <el-form ref="editRoleFormRef" class="editRoleForm" :model="formData" status-icon :rules="Rules" label-width="auto">
-    <el-form-item label="角色名称" prop="name" autocomplete="off">
+  <el-form ref="editRoleFormRef" class="editRoleForm" label-width="auto" :model="formData" :rules="Rules" status-icon>
+    <el-form-item autocomplete="off" label="角色名称" prop="name">
       <!-- <el-input v-model="formData.name" placeholder="必填" /> -->
-      <el-input v-model.lazy.trim="formData.name" placeholder="角色名称" clearable />
+      <el-input v-model.lazy.trim="formData.name" clearable placeholder="角色名称" />
     </el-form-item>
-    <el-form-item label="角色阵营" prop="camp" autocomplete="off">
+    <el-form-item autocomplete="off" label="角色阵营" prop="camp">
       <el-select v-model="formData.camp">
         <el-option v-for="{ name } in campInfo" :key="name" :label="name" :value="name" />
       </el-select>
     </el-form-item>
-    <el-form-item label="角色种族" prop="race" autocomplete="off">
+    <el-form-item autocomplete="off" label="角色种族" prop="race">
       <el-select v-model="formData.race">
         <el-option v-for="{ name } in raceInfo" :key="name" :label="name" :value="name" />
       </el-select>
@@ -17,12 +17,12 @@
     <!-- <el-form-item label="角色标签">
       <el-input v-model="formData.tags" type="text" placeholder="选填" />
     </el-form-item> -->
-    <el-form-item label="其他标签" prop="otherTags" autocomplete="off">
-      <el-input v-model.trim="formData.otherTags" placeholder="其他标签,以英文逗号分隔" clearable />
+    <el-form-item autocomplete="off" label="其他标签" prop="otherTags">
+      <el-input v-model.trim="formData.otherTags" clearable placeholder="其他标签,以英文逗号分隔" />
     </el-form-item>
     <div>
       <el-button @click="resetForm">重置</el-button>
-      <el-button type="primary" @click="submitForm()" :loading="isLoading">{{ isEdit ? "修改" : "添加" }}角色信息</el-button>
+      <el-button :loading="isLoading" type="primary" @click="submitForm()">{{ isEdit ? "修改" : "添加" }}角色信息</el-button>
     </div>
   </el-form>
 </template>

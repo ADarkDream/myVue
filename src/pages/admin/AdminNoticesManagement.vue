@@ -7,27 +7,27 @@
   <el-main style="padding-bottom: 0; padding-top: 0">
     <el-table
       ref="tableRef"
-      :data="tableData"
-      style="width: 100%"
-      stripe
       border
+      :data="tableData"
+      :default-sort="{ prop: 'id', order: 'custom' }"
       highlight-current-row
+      stripe
+      style="width: 100%"
       table-layout="auto"
       type="type"
-      :default-sort="{ prop: 'id', order: 'custom' }"
     >
-      <el-table-column fixed prop="id" label="ID" width="70" sortable />
-      <el-table-column prop="title" label="公告标题" width="150">
+      <el-table-column fixed label="ID" prop="id" sortable width="70" />
+      <el-table-column label="公告标题" prop="title" width="150">
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
             <el-input v-model="newNotice.title" />
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="sort" label="公告分类" width="150" :filters="noticeSort" :filter-method="filterHandler">
+      <el-table-column :filter-method="filterHandler" :filters="noticeSort" label="公告分类" prop="sort" width="150">
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
-            <el-select placeholder="选择分类(默认为更新说明)" v-model="newNotice.sort" default-first-option>
+            <el-select v-model="newNotice.sort" default-first-option placeholder="选择分类(默认为更新说明)">
               <el-option v-for="(item, index) in noticeSort" :key="index" :label="item.text" :value="item.value" />
             </el-select>
           </div>
@@ -37,50 +37,50 @@
           <div v-else-if="scope.row.sort === 'unCompleted'">1999待完成内容</div>
         </template>
       </el-table-column>
-      <el-table-column prop="content" label="公告内容" width="300">
+      <el-table-column label="公告内容" prop="content" width="300">
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
-            <el-input type="textarea" v-model="newNotice.content" />
+            <el-input v-model="newNotice.content" type="textarea" />
           </div>
         </template>
       </el-table-column>
 
       <el-table-column
-        prop="status"
-        label="状态"
-        width="120"
+        :filter-method="filterHandler"
         :filters="[
           { text: '已发布', value: 1 },
           { text: '已撤销', value: 0 },
         ]"
-        :filter-method="filterHandler"
+        label="状态"
+        prop="status"
+        width="120"
       >
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
-            <el-select placeholder="选择状态(默认为发布中)" v-model="newNotice.status" default-first-option>
+            <el-select v-model="newNotice.status" default-first-option placeholder="选择状态(默认为发布中)">
               <el-option label="已发布" :value="1" />
               <el-option label="已撤销" :value="0" />
             </el-select>
           </div>
-          <el-button text v-else-if="scope.row.status === 1">已发布</el-button>
-          <el-button text type="danger" v-else-if="scope.row.status === 0">已撤销</el-button>
+          <el-button v-else-if="scope.row.status === 1" text>已发布</el-button>
+          <el-button v-else-if="scope.row.status === 0" text type="danger">已撤销</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="created_time" label="创建时间" width="150">
+      <el-table-column label="创建时间" prop="created_time" width="150">
         <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
       </el-table-column>
-      <el-table-column prop="created_time" label="修订时间" width="150">
+      <el-table-column label="修订时间" prop="created_time" width="150">
         <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="100">
         <template #default="scope">
           <div v-if="isEditRow !== scope.$index">
-            <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row.id)"> 删除 </el-button>
+            <el-button link size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button link size="small" type="danger" @click="deleteRow(scope.$index, scope.row.id)"> 删除 </el-button>
           </div>
           <div v-else>
-            <el-button link type="primary" size="small" @click="handleCancel">取消 </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(newNotice, scope.row)"> 更新 </el-button>
+            <el-button link size="small" type="primary" @click="handleCancel">取消 </el-button>
+            <el-button link size="small" type="primary" @click.prevent="checkUpdateRow(newNotice, scope.row)"> 更新 </el-button>
           </div>
         </template>
       </el-table-column>
@@ -88,7 +88,7 @@
   </el-main>
 
   <el-dialog v-model="dialogVisible" :show-close="false" title="发布新公告">
-    <el-form :model="form" label-width="auto" style="max-width: 600px; margin: 0 auto">
+    <el-form label-width="auto" :model="form" style="max-width: 600px; margin: 0 auto">
       <el-form-item label="公告标题">
         <el-input v-model="form.title" />
       </el-form-item>

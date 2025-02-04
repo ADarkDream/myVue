@@ -1,6 +1,6 @@
 <template>
   <label class="slider">
-    <input type="range" class="level" v-model="volumeNum" :min="min" :max="max" @change="changeVolume(volumeNum / 100)" />
+    <input v-model="volumeNum" class="level" :max="max" :min="min" type="range" @change="changeVolume(volumeNum / 100)" />
     <span class="volume">
       <SVG_volume_mute v-if="volumeNum === '0'" class="icon small_icon" />
       <SVG_volume_fill v-else class="icon small_icon" />

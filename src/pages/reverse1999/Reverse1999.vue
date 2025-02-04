@@ -1,6 +1,6 @@
 <template>
   <div ref="reverse1999" class="mainPanel" :style="bgSettings">
-    <el-tabs class="tabs" v-model="activePanelIndex">
+    <el-tabs v-model="activePanelIndex" class="tabs">
       <el-tab-pane :name="0">
         <template #label>
           <el-text class="tab-label">
@@ -68,25 +68,25 @@
         </div>
       </el-tab-pane>
       <!-- 使用 keep-alive 缓存页面, slot props 动态渲染路由组件 -->
-      <router-view v-slot="{ Component }" v-show="isShowOtherPage">
+      <router-view v-show="isShowOtherPage" v-slot="{ Component }">
         <Transition :name="toRight ? 'list' : 'relist'">
           <keep-alive v-if="isKeepAlive">
             <component :is="Component" :style="containerStyle" />
           </keep-alive>
-          <component v-else :is="Component" :style="containerStyle" />
+          <component :is="Component" v-else :style="containerStyle" />
         </Transition>
       </router-view>
     </el-tabs>
     <!--新建角色的抽屉-->
     <el-drawer
       v-model="isShowAddRoleDrawer"
-      :title="isEdit ? '编辑角色信息' : '添加新角色'"
-      :show-close="false"
-      direction="btt"
       :append-to-body="true"
-      size="40%"
-      @close="reSetFormData()"
       :before-close="beforeCloseDrawer"
+      direction="btt"
+      :show-close="false"
+      size="40%"
+      :title="isEdit ? '编辑角色信息' : '添加新角色'"
+      @close="reSetFormData()"
     >
       <AddRole />
     </el-drawer>

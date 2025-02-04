@@ -2,32 +2,32 @@
   <div class="container">
     <div class="title">
       <span>歌单广场[暂时只显示最近十个歌单]</span>
-      <el-button link :icon="Refresh" @click="getAllMusicListsInfo()">{{ isPC ? "刷新" : "" }}</el-button>
+      <el-button :icon="Refresh" link @click="getAllMusicListsInfo()">{{ isPC ? "刷新" : "" }}</el-button>
     </div>
-    <div class="openMusicList" @touchstart="stopTouch" @touchend="stopTouch">
+    <div class="openMusicList" @touchend="stopTouch" @touchstart="stopTouch">
       <div
         v-for="item in publicMusicListInfo"
         :key="item.music_list_id"
         class="musicList"
         @click="toggleToMusicList({ music_list_id: item.music_list_id })"
       >
-        <MusicListCoverComp :musicListInfo="item" />
+        <MusicListCoverComp :music-list-info="item" />
       </div>
     </div>
     <br />
     <div class="title">
       <span>我创建的歌单</span>
-      <el-button link :icon="Plus" @click="showEditMusicListInfoDrawer(true)">{{ isPC ? "创建歌单" : "" }}</el-button>
+      <el-button :icon="Plus" link @click="showEditMusicListInfoDrawer(true)">{{ isPC ? "创建歌单" : "" }}</el-button>
     </div>
-    <div class="openMusicList" @touchstart="stopTouch" @touchend="stopTouch">
-      <el-button text type="primary" v-if="myMusicListInfo.length === 0" style="margin: 0 auto">{{ "暂无歌单" }}</el-button>
+    <div class="openMusicList" @touchend="stopTouch" @touchstart="stopTouch">
+      <el-button v-if="myMusicListInfo.length === 0" style="margin: 0 auto" text type="primary">{{ "暂无歌单" }}</el-button>
       <div
         v-for="item in myMusicListInfo"
         :key="item.music_list_id"
         class="musicList"
         @click="toggleToMusicList({ music_list_id: item.music_list_id }, isLogin)"
       >
-        <MusicListCoverComp :musicListInfo="item" />
+        <MusicListCoverComp :music-list-info="item" />
       </div>
     </div>
   </div>

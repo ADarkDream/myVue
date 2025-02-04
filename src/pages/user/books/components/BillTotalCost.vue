@@ -1,30 +1,30 @@
 <template>
   <el-table
-    :data="totalCostList"
-    :min-height="200"
-    stripe
     border
-    highlight-current-row
-    row-key="uid"
-    table-layout="auto"
+    :data="totalCostList"
     :default-sort="{ prop: 'uid', order: 'custom' }"
+    highlight-current-row
+    :min-height="200"
+    row-key="uid"
     :row-style="showDelLine"
+    stripe
+    table-layout="auto"
   >
     <template #empty>
       <el-empty />
     </template>
-    <el-table-column prop="username" label="昵称" min-width="80" align="center" />
-    <el-table-column prop="totalExpense" label="总支出" min-width="80" align="center">
+    <el-table-column align="center" label="昵称" min-width="80" prop="username" />
+    <el-table-column align="center" label="总支出" min-width="80" prop="totalExpense">
       <template #default="scope">
         <el-text type="info">{{ scope.row.totalExpense }}</el-text>
       </template>
     </el-table-column>
-    <el-table-column prop="expense" label="当前支出" min-width="80" align="center">
+    <el-table-column align="center" label="当前支出" min-width="80" prop="expense">
       <template #default="scope">
         <el-text type="warning">{{ scope.row.expense }}</el-text>
       </template>
     </el-table-column>
-    <el-table-column prop="income" label="应收取" min-width="80" align="center">
+    <el-table-column align="center" label="应收取" min-width="80" prop="income">
       <template #default="scope">
         <span v-if="scope.$index + 1 === totalCostList.length"
           >平均 <el-text type="primary">{{ scope.row.income }}</el-text></span

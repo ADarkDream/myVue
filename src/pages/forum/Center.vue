@@ -3,12 +3,12 @@
     <!--   文章筛选区-->
     <el-collapse v-model="activeNames" accordion>
       <el-collapse-item title="&ensp;&ensp;&ensp;文章筛选条件">
-        <el-form size="small" :inline="isPC" :model="articleParams" label-position="left">
+        <el-form :inline="isPC" label-position="left" :model="articleParams" size="small">
           <el-form-item label="文章标题">
             <el-input
               v-model.trim="articleParams.title"
-              placeholder="填写文章标题"
               clearable
+              placeholder="填写文章标题"
               :prefix-icon="Search"
               @keyup.enter="getArticleList"
             />
@@ -16,8 +16,8 @@
           <el-form-item label="文章作者">
             <el-input
               v-model.trim="articleParams.author"
-              placeholder="填写作者昵称"
               clearable
+              placeholder="填写作者昵称"
               :prefix-icon="Search"
               @keyup.enter="getArticleList"
             />
@@ -49,13 +49,13 @@
     <!--文章列表区-->
     <div class="content">
       <div
-        class="card"
         v-for="{ id, title, coverUrl, area, tags, author, created_time } in articleList"
         :key="id"
+        class="card"
         @click="toArticle(id, title)"
       >
         <div class="articleCover">
-          <el-image :src="coverUrl" fit="cover" :draggable="false" v-if="coverUrl" lazy>
+          <el-image v-if="coverUrl" :draggable="false" fit="cover" lazy :src="coverUrl">
             <template #error>
               <div class="image-slot">
                 <el-icon size="40px">
@@ -78,7 +78,7 @@
             <el-text size="small" tag="sub" truncated>板块：{{ area }}&ensp;&ensp;&ensp;标签：{{ tags }} </el-text>
           </div>
           <div class="footer">
-            <el-text size="small" tag="b" style="width: 30%" truncated>{{ author }}</el-text>
+            <el-text size="small" style="width: 30%" tag="b" truncated>{{ author }}</el-text>
             <el-text size="small" truncated> &ensp;&ensp;发布于:{{ getDiffTime(created_time) }} </el-text>
           </div>
         </div>

@@ -5,13 +5,13 @@
         <div class="detail-area-header">
           <div class="msg-profile group">
             <svg
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
               fill="none"
+              class="css-i6dzq1"
+              stroke="currentColor"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="css-i6dzq1"
+              stroke-width="2"
+              viewBox="0 0 24 24"
             >
               <path d="M12 2l10 6.5v7L12 22 2 15.5v-7L12 2zM12 22v-6.5" />
               <path d="M22 8.5l-10 7-10-7" />
@@ -23,14 +23,14 @@
           <div class="detail-buttons">
             <button class="detail-button">
               <svg
-                viewbox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
                 stroke="currentColor"
-                stroke-width="0"
+                class="feather feather-phone"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="feather feather-phone"
+                stroke-width="0"
+                viewbox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
                 <path
                   d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"
@@ -40,24 +40,24 @@
             </button>
             <button class="detail-button">
               <svg
-                viewbox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
                 fill="currentColor"
                 stroke="currentColor"
-                stroke-width="0"
+                class="feather feather-video"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="feather feather-video"
+                stroke-width="0"
+                viewbox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
               >
                 <path d="M23 7l-7 5 7 5V7z" />
-                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+                <rect height="14" rx="2" ry="2" width="15" x="1" y="5" />
               </svg>
               Video Chat
             </button>
           </div>
         </div>
         <div class="detail-changes">
-          <input type="text" placeholder="Search in Conversation" />
+          <input placeholder="Search in Conversation" type="text" />
           <div class="detail-change">
             Change Color
             <div class="colors">
@@ -70,14 +70,14 @@
           <div class="detail-change">
             Change Emoji
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewbox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
               stroke-linecap="round"
-              stroke-linejoin="round"
               class="feather feather-thumbs-up"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
             >
               <path
                 d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3zM7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"
@@ -88,16 +88,16 @@
         <div class="detail-photos">
           <div class="detail-photo-title">
             <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewbox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
               stroke-linecap="round"
-              stroke-linejoin="round"
               class="feather feather-image"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewbox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <rect height="18" rx="2" ry="2" width="18" x="3" y="3" />
               <circle cx="8.5" cy="8.5" r="1.5" />
               <path d="M21 15l-5-5L5 21" />
             </svg>
@@ -144,16 +144,16 @@
           </div>
           <div class="view-more">View More</div>
         </div>
-        <a href="https://twitter.com/AysnrTrkk" class="follow-me" target="_blank">
+        <a class="follow-me" href="https://twitter.com/AysnrTrkk" target="_blank">
           <span class="follow-text">
             <svg
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
               fill="none"
+              class="css-i6dzq1"
+              stroke="currentColor"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="css-i6dzq1"
+              stroke-width="2"
+              viewBox="0 0 24 24"
             >
               <path
                 d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"

@@ -3,26 +3,26 @@
   <div class="uploadImage" :style="isAdmin ? '' : 'flex-direction: column;'">
     <el-upload
       ref="upload"
+      :auto-upload="false"
       class="uploadDiv"
-      :show-file-list="false"
+      accept="image/img,image/png,image/jpg,image/jpeg"
+      drag
+      :limit="1"
       :on-change="fileChange"
       :on-exceed="handleExceed"
-      :limit="1"
-      :auto-upload="false"
-      drag
-      accept="image/img,image/png,image/jpg,image/jpeg"
+      :show-file-list="false"
     >
       <el-image
         class="uploadImg"
         :class="{ isBg: options.sort === 'bg' && options.url }"
         fit="cover"
-        title="点击上传图像"
         :src="options.url"
+        title="点击上传图像"
       >
         <template #error>
           <div style="width: 100%">
             <SVG_plus class="svg" />
-            <el-text tag="p" type="info" v-if="isPC">支持拖拽上传</el-text><br />
+            <el-text v-if="isPC" tag="p" type="info">支持拖拽上传</el-text><br />
           </div>
         </template>
       </el-image>
@@ -37,26 +37,26 @@
       <div v-if="changeBtnsFlag && isAdmin">
         <div>
           <span>选择分类：</span>
-          <el-select class="select" placeholder="选择分类(默认为头像)" v-model="options.sort" default-first-option>
+          <el-select v-model="options.sort" class="select" default-first-option placeholder="选择分类(默认为头像)">
             <el-option label="头像" value="headImg" />
             <el-option label="背景" value="bg" />
-            <el-option v-if="isAdmin" style="color: red" label="黑名单" value="blacklist" />
+            <el-option v-if="isAdmin" label="黑名单" style="color: red" value="blacklist" />
           </el-select>
         </div>
         <div v-if="isAdmin">
           选择状态：
-          <el-select placeholder="选择状态(默认为待审核)" v-model="options.status" default-first-option>
+          <el-select v-model="options.status" default-first-option placeholder="选择状态(默认为待审核)">
             <el-option label="待审核" :value="0" />
             <el-option label="审核通过" :value="1" />
-            <el-option style="color: red" label="黑名单" :value="2" />
+            <el-option label="黑名单" style="color: red" :value="2" />
           </el-select>
         </div>
       </div>
-      <div class="changeBtns" v-show="changeBtnsFlag">
+      <div v-show="changeBtnsFlag" class="changeBtns">
         <el-button-group>
-          <el-button @click="cancelUpload" type="danger">删除</el-button>
+          <el-button type="danger" @click="cancelUpload">删除</el-button>
           <el-button @click="imgFullDialogVisible = true">浏览</el-button>
-          <el-button type="primary" @click="uploadImage(uploadFile!)" :loading="isLoading">{{
+          <el-button :loading="isLoading" type="primary" @click="uploadImage(uploadFile!)">{{
             isLoading ? "审核中" : "上传"
           }}</el-button>
         </el-button-group>
@@ -66,12 +66,12 @@
     <!--  头像大图浏览框-->
     <el-dialog
       v-model="imgFullDialogVisible"
-      style="background-color: transparent"
-      @click="imgFullDialogVisible = !imgFullDialogVisible"
       fullscreen
       :show-close="false"
+      style="background-color: transparent"
+      @click="imgFullDialogVisible = !imgFullDialogVisible"
     >
-      <img :src="options.url" alt="Preview Image" />
+      <img alt="Preview Image" :src="options.url" />
     </el-dialog>
   </div>
 </template>

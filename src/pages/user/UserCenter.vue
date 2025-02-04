@@ -1,6 +1,6 @@
 <template>
   <el-container class="container mainPanel" :style="'height:' + containerHeight + 'px'">
-    <el-aside width="200px" v-if="isPC">
+    <el-aside v-if="isPC" width="200px">
       <el-scrollbar>
         <el-menu :default-active="index.toString()">
           <el-menu-item index="0" @click="change(0)">个人信息</el-menu-item>
@@ -11,7 +11,7 @@
         </el-menu>
       </el-scrollbar>
     </el-aside>
-    <div class="mobileUserCenter" ref="mobileUserCenter" style="width: 100%">
+    <div ref="mobileUserCenter" class="mobileUserCenter" style="width: 100%">
       <router-view />
       <TabBar v-if="!isPC" :change="change" :index="index" />
     </div>

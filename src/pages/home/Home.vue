@@ -2,7 +2,7 @@
   <el-container class="homePanel" style="overflow: hidden">
     <!--  侧边栏-->
     <el-aside direction="vertical">
-      <Aside :showContent="showContent" />
+      <Aside :show-content="showContent" />
     </el-aside>
     <el-main style="position: relative">
       <!--首页时钟-->
@@ -11,7 +11,7 @@
       <SearchEngine />
       <!--内容区域-->
       <el-collapse-transition v-show="isShow" class="content">
-        <Content :showContent="showContent" />
+        <Content :show-content="showContent" />
       </el-collapse-transition>
     </el-main>
     <el-footer>
@@ -20,7 +20,7 @@
       <!--        命里有时终须有，命里无时梦里有。-->
       <!--      </el-button><br>-->
       <!--备案号-->
-      <Approve :noWrap="true" />
+      <Approve :no-wrap="true" />
       <!--      </div>-->
     </el-footer>
   </el-container>

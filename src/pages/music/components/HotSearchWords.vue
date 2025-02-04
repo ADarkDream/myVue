@@ -1,7 +1,7 @@
 <template>
   <div class="hotWords">
     <el-text type="primary">搜索热词：</el-text>
-    <el-button text type="info" @click="changeKeyWords(word)" v-for="word in hotWords" :key="word">{{ word }}</el-button>
+    <el-button v-for="word in hotWords" :key="word" text type="info" @click="changeKeyWords(word)">{{ word }}</el-button>
   </div>
 </template>
 

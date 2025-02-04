@@ -7,46 +7,46 @@
   <el-main style="padding-bottom: 0; padding-top: 0">
     <el-table
       ref="tableRef"
+      border
       :data="tableData"
-      style="width: 100%"
+      :default-sort="{ prop: 'id', order: 'custom' }"
+      highlight-current-row
       max-height="500"
       stripe
-      border
-      highlight-current-row
+      style="width: 100%"
       table-layout="auto"
       type="type"
-      :default-sort="{ prop: 'id', order: 'custom' }"
     >
-      <el-table-column fixed prop="id" label="ID" width="70" sortable />
-      <el-table-column prop="contact" label="联系方式" width="200" />
-      <el-table-column prop="content" label="反馈内容" width="400" />
+      <el-table-column fixed label="ID" prop="id" sortable width="70" />
+      <el-table-column label="联系方式" prop="contact" width="200" />
+      <el-table-column label="反馈内容" prop="content" width="400" />
       <el-table-column
-        prop="status"
-        label="状态"
-        width="100"
+        :filter-method="filterHandler"
         :filters="[
           { text: '已标记', value: 1 },
           { text: '未标记', value: 0 },
         ]"
-        :filter-method="filterHandler"
+        label="状态"
+        prop="status"
+        width="100"
       >
         <template #default="scope">
-          <el-button text type="primary" v-if="scope.row.status === 1">已标记</el-button>
-          <el-button text type="info" v-else-if="scope.row.status === 0">未标记</el-button>
+          <el-button v-if="scope.row.status === 1" text type="primary">已标记</el-button>
+          <el-button v-else-if="scope.row.status === 0" text type="info">未标记</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="created_time" label="创建时间" width="150">
+      <el-table-column label="创建时间" prop="created_time" width="150">
         <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
       </el-table-column>
-      <el-table-column prop="updated_time" label="标记时间" width="150">
+      <el-table-column label="标记时间" prop="updated_time" width="150">
         <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" width="120" align="center">
+      <el-table-column align="center" fixed="right" label="操作" width="120">
         <template #default="scope">
-          <el-button link type="primary" size="small" @click="updateFeedback(scope.$index, scope.row)"
+          <el-button link size="small" type="primary" @click="updateFeedback(scope.$index, scope.row)"
             ><span v-if="scope.row.status === 0">标记</span><span v-else>取消标记</span></el-button
           >
-          <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row.id)"> 删除 </el-button>
+          <el-button link size="small" type="danger" @click="deleteRow(scope.$index, scope.row.id)"> 删除 </el-button>
         </template>
       </el-table-column>
     </el-table>

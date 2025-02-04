@@ -12,7 +12,7 @@
             <template #header>
               <el-text type="primary">发送的信息</el-text>
             </template>
-            <el-input placeholder="输入要发送的信息" v-model.trim="msg2" type="textarea"></el-input>
+            <el-input v-model.trim="msg2" placeholder="输入要发送的信息" type="textarea"></el-input>
             <br />
             <template #footer>
               <el-button-group>
@@ -29,7 +29,7 @@
             <template #header>
               <el-text type="primary">socket.io 收到的信息</el-text>
             </template>
-            <el-text type="warning" v-if="roomMsg.length === 0">暂无返回的消息</el-text>
+            <el-text v-if="roomMsg.length === 0" type="warning">暂无返回的消息</el-text>
             <div v-for="(item, index) in roomMsg" :key="index">
               <el-text type="success"
                 >第{{ index }}条{{ item.roomID === playerInfo.roomID ? "真的" : [item.roomID, playerInfo.roomID] }}

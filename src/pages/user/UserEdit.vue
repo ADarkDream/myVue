@@ -1,20 +1,20 @@
 <template>
   <el-container>
-    <el-header class="header1" v-if="isPC">
+    <el-header v-if="isPC" class="header1">
       <span>文章编辑</span>
     </el-header>
-    <el-form :inline="true" class="form" :model="data">
+    <el-form class="form" :inline="true" :model="data">
       <el-form-item label="文章标题" required>
-        <el-input v-model="data.title" placeholder="填写文章标题" clearable />
+        <el-input v-model="data.title" clearable placeholder="填写文章标题" />
       </el-form-item>
       <el-form-item label="发布板块" required>
-        <el-select v-model="data.area" placeholder="选择发布板块" clearable>
+        <el-select v-model="data.area" clearable placeholder="选择发布板块">
           <el-option label="文章" value="文章" />
           <el-option label="教程" value="教程" />
         </el-select>
       </el-form-item>
       <el-form-item label="标签设置" required>
-        <el-select v-model="data.tags" placeholder="选择文章标签" clearable>
+        <el-select v-model="data.tags" clearable placeholder="选择文章标签">
           <el-option label="散文" value="散文" />
           <el-option label="小说" value="小说" />
           <el-option label="前端" value="前端" />
@@ -22,19 +22,19 @@
           <el-option label="其他" value="其他" />
         </el-select>
       </el-form-item>
-      <Toolbar style="margin: 0 10px; width: 100%" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
+      <Toolbar :default-config="toolbarConfig" :editor="editorRef" :mode="mode" style="margin: 0 10px; width: 100%" />
       <Editor
-        class="editor"
-        :style="{ height: screenHeight - 500 + 'px' }"
         v-model="valueHtml"
-        :defaultConfig="editorConfig"
+        class="editor"
+        :default-config="editorConfig"
         :mode="mode"
+        :style="{ height: screenHeight - 500 + 'px' }"
         @on-created="handleCreated"
       />
 
       <el-footer style="margin: 20px 0 40px 0; display: flex; justify-content: space-evenly">
         <el-button @click="addDraft">保存为草稿</el-button>
-        <el-button @click="submit" type="primary">发布文章</el-button>
+        <el-button type="primary" @click="submit">发布文章</el-button>
       </el-footer>
     </el-form>
   </el-container>

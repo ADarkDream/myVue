@@ -3,7 +3,7 @@
     <!--    导航栏-->
     <el-tabs v-model="showNum" @tab-click="tabClick">
       <!--少量下载说明-->
-      <el-tab-pane :name="1" label="少量下载">
+      <el-tab-pane label="少量下载" :name="1">
         <el-card>
           <p class="title">默认情况下，你可以一次性批量下载最多{{ downloadLimitNum }}张图片。</p>
           <p>
@@ -24,7 +24,7 @@
         </el-card>
       </el-tab-pane>
       <!--大量下载说明-->
-      <el-tab-pane :name="2" label="下载大量(仅限PC)">
+      <el-tab-pane label="下载大量(仅限PC)" :name="2">
         <el-card>
           <p class="title">
             如果你要一次性下载大于{{ downloadLimitNum }}张或更多图片，这里有两种方式
@@ -40,9 +40,9 @@
             <el-link href="https://wwqb.lanzout.com/inNks2iuwojg" target="_blank" type="success">JS脚本压缩包(2.4MB) </el-link>
             。使用方式：电脑配有
             <el-link
+              title="点击前往Node.Js中文官网"
               type="primary"
               @click="copyText('https://nodejs.org/zh-cn', 'Node.Js中文官网地址', 'https://nodejs.org/zh-cn')"
-              title="点击前往Node.Js中文官网"
               >Node.js环境
             </el-link>
             ，在脚本所在目录的CMD窗口输入命令
@@ -56,6 +56,7 @@
             <el-link href="https://wwqb.lanzout.com/iNPEp2iuvrih" target="_blank" type="success"> EXE格式(14.9MB) </el-link
             >，使用方式请查看
             <el-link
+              title="点击前往download-reverse1999"
               type="primary"
               @click="
                 copyText(
@@ -64,7 +65,6 @@
                   'https://gitee.com/MuXi-Dream/download-reverse1999'
                 )
               "
-              title="点击前往download-reverse1999"
               >Gitee
             </el-link>
           </p>
@@ -78,7 +78,7 @@
         </el-card>
       </el-tab-pane>
       <!--其它说明-->
-      <el-tab-pane :name="3" label="其它说明">
+      <el-tab-pane label="其它说明" :name="3">
         <el-collapse v-model="activeNum" accordion>
           <el-collapse-item :name="1" title="Q：为什么要作出限制？">
             <p class="title">A：</p>
@@ -104,6 +104,7 @@
               <el-link type="primary" @click="changePage(2)">大量下载</el-link>
               ：通过默默提供的脚本，在你的本地运行一个网站代理，再从本地直接从
               <el-link
+                title="点击前往重返未来1999官网"
                 type="primary"
                 @click="
                   copyText(
@@ -112,7 +113,6 @@
                     'https://re.bluepoch.com/home/detail.html#wallpaper'
                   )
                 "
-                title="点击前往重返未来1999官网"
                 >重返未来1999官网
               </el-link>
               下载图片(简单来说就是，你直接从重返未来1999官网下载，不通过默默的中转，不会额外消耗默默的带宽和流量)
@@ -123,20 +123,20 @@
             <p>1.本着为爱发颠为大家提供这个便利功能(虽然平时用不上)，希望大家多多支持(遇到bug热心反馈一下)！</p>
             <p>
               2.关于下载的脚本，可前往
-              <el-link type="primary" title="Github 和 Gitee" @click="showUrl = !showUrl"> 本项目开源地址 </el-link>
+              <el-link title="Github 和 Gitee" type="primary" @click="showUrl = !showUrl"> 本项目开源地址 </el-link>
               <Transition name="transition1">
                 <el-link
-                  style="margin-left: 6px"
                   v-if="showUrl"
-                  type="primary"
                   href="https://gitee.com/MuXi-Dream/download-reverse1999"
+                  style="margin-left: 6px"
                   target="_blank"
+                  type="primary"
                 >
                   Gitee
                 </el-link> </Transition
               >&ensp;
               <Transition name="transition1">
-                <el-link v-if="showUrl" type="primary" href="https://github.com/ADarkDream/Download-Reverse1999" target="_blank">
+                <el-link v-if="showUrl" href="https://github.com/ADarkDream/Download-Reverse1999" target="_blank" type="primary">
                   GitHub
                 </el-link>
               </Transition>
@@ -147,7 +147,7 @@
             </p>
             <p>
               4.如果你想使用默默的壁纸列表接口或角色信息列表
-              <el-button link type="primary" target="_blank" @click="contact_momo()" title="点击前往API文档(无偿但不公开)">
+              <el-button link target="_blank" title="点击前往API文档(无偿但不公开)" type="primary" @click="contact_momo()">
                 API文档，无偿提供，但为了防止被滥用，请联系默默
               </el-button>
               。
@@ -158,7 +158,7 @@
     </el-tabs>
     <br />
     <div>
-      <el-link type="warning" class="statement" @click="showPayCodePanel()" title="点击查看赞助界面"
+      <el-link class="statement" title="点击查看赞助界面" type="warning" @click="showPayCodePanel()"
         >若有意可在本页底部
         <span class="primary">群聊和赞助</span>
         处为默默提供援助，拜谢(≧*∀*≦)。

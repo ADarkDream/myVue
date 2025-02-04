@@ -7,80 +7,80 @@
   <el-main style="padding-bottom: 0; padding-top: 0">
     <el-table
       ref="tableRef"
+      border
       :data="tableData"
-      style="width: 100%"
+      :default-sort="{ prop: 'id', order: 'custom' }"
+      highlight-current-row
       max-height="500"
       stripe
-      border
-      highlight-current-row
+      style="width: 100%"
       table-layout="auto"
       type="type"
-      :default-sort="{ prop: 'id', order: 'custom' }"
     >
-      <el-table-column fixed prop="id" label="ID" width="70" sortable />
+      <el-table-column fixed label="ID" prop="id" sortable width="70" />
 
       <el-table-column
-        fixed
-        prop="sort"
-        label="分类"
-        width="120"
+        :filter-method="filterHandler"
         :filters="[
           { text: '头像', value: 'headImg' },
           { text: '背景', value: 'bg' },
           { text: '黑名单', value: 'blacklist' },
         ]"
-        :filter-method="filterHandler"
+        fixed
+        label="分类"
+        prop="sort"
+        width="120"
       >
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
-            <el-select placeholder="选择状态" v-model="urlInfo.sort">
+            <el-select v-model="urlInfo.sort" placeholder="选择状态">
               <el-option label="头像" value="headImg" />
               <el-option label="背景" value="bg" />
               <el-option label="黑名单" value="blacklist" />
             </el-select>
           </div>
-          <el-button text type="danger" v-else-if="scope.row.sort === 'blacklist' || scope.row.status === 2">黑名单 </el-button>
-          <el-button text v-else-if="scope.row.sort === 'headImg'">头像</el-button>
-          <el-button text v-else-if="scope.row.sort === 'bg'">背景</el-button>
+          <el-button v-else-if="scope.row.sort === 'blacklist' || scope.row.status === 2" text type="danger">黑名单 </el-button>
+          <el-button v-else-if="scope.row.sort === 'headImg'" text>头像</el-button>
+          <el-button v-else-if="scope.row.sort === 'bg'" text>背景</el-button>
         </template>
       </el-table-column>
       <el-table-column
-        fixed
-        prop="status"
-        label="状态"
-        width="120"
+        :filter-method="filterHandler"
         :filters="[
           { text: '待审核', value: 0 },
           { text: '审核通过', value: 1 },
           { text: '黑名单', value: 2 },
         ]"
-        :filter-method="filterHandler"
+        fixed
+        label="状态"
+        prop="status"
+        width="120"
       >
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
-            <el-select placeholder="选择状态(默认为待审核)" v-model="urlInfo.status" default-first-option>
+            <el-select v-model="urlInfo.status" default-first-option placeholder="选择状态(默认为待审核)">
               <el-option label="待审核" :value="0" />
               <el-option label="审核通过" :value="1" />
               <el-option label="黑名单" :value="2" />
             </el-select>
           </div>
-          <el-button text type="primary" v-else-if="scope.row.status === 0">待审核</el-button>
-          <el-button text type="info" v-else-if="scope.row.status === 1">审核通过</el-button>
-          <el-button text type="danger" v-else-if="scope.row.status === 2">黑名单</el-button>
+          <el-button v-else-if="scope.row.status === 0" text type="primary">待审核</el-button>
+          <el-button v-else-if="scope.row.status === 1" text type="info">审核通过</el-button>
+          <el-button v-else-if="scope.row.status === 2" text type="danger">黑名单</el-button>
         </template>
       </el-table-column>
 
-      <el-table-column prop="imgUrl" sum-text label="网址" width="150" align="center">
+      <el-table-column align="center" label="网址" prop="imgUrl" sum-text width="150">
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
             <el-input v-model="urlInfo.imgUrl" placeholder="请输入图片链接" />
           </div>
           <div v-else>
-            <el-image :src="scope.row.imgUrl" alt="" style="width: 50px" loading="lazy" />
+            <el-image alt="" loading="lazy" :src="scope.row.imgUrl" style="width: 50px" />
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="imgName" label="图片名" width="200">
+      <el-table-column label="图片名" prop="imgName" width="200">
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
             <el-input v-model="urlInfo.imgName" placeholder="请输入图片名称" />
@@ -90,24 +90,24 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="imgPath" sum-text label="服务器存储路径" width="150" align="center" />
-      <el-table-column prop="imgMD5" label="MD5值" width="100" />
-      <el-table-column prop="uid" label="上传用户UID" width="100" sortable />
-      <el-table-column prop="created_time" label="修改时间" width="150">
+      <el-table-column align="center" label="服务器存储路径" prop="imgPath" sum-text width="150" />
+      <el-table-column label="MD5值" prop="imgMD5" width="100" />
+      <el-table-column label="上传用户UID" prop="uid" sortable width="100" />
+      <el-table-column label="修改时间" prop="created_time" width="150">
         <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
       </el-table-column>
-      <el-table-column prop="created_time" label="创建时间" width="150">
+      <el-table-column label="创建时间" prop="created_time" width="150">
         <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
       </el-table-column>
       <el-table-column fixed="right" label="操作" width="100">
         <template #default="scope">
           <div v-if="isEditRow !== scope.$index">
-            <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row)"> 删除 </el-button>
+            <el-button link size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button link size="small" type="danger" @click="deleteRow(scope.$index, scope.row)"> 删除 </el-button>
           </div>
           <div v-else>
-            <el-button link type="primary" size="small" @click="handleCancel">取消 </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkUpdateRow(urlInfo, scope.row)"> 更新 </el-button>
+            <el-button link size="small" type="primary" @click="handleCancel">取消 </el-button>
+            <el-button link size="small" type="primary" @click.prevent="checkUpdateRow(urlInfo, scope.row)"> 更新 </el-button>
           </div>
         </template>
       </el-table-column>

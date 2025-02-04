@@ -1,5 +1,5 @@
 <template>
-  <el-container @touchstart="stopTouch" @touchend="stopTouch">
+  <el-container @touchend="stopTouch" @touchstart="stopTouch">
     <el-header>
       <el-breadcrumb :separator-icon="ArrowRight">
         <el-breadcrumb-item :to="{ name: 'books' }">账本列表</el-breadcrumb-item>
@@ -8,14 +8,14 @@
     </el-header>
     <el-main>
       <el-tabs v-model="activeName" :tab-position="tabPosition">
-        <el-tab-pane :style="tabContentHeight" label="账本月历" :name="0">
-          <BookCalendar :getTheBillDesc="getTheBillDesc" :bookDesc="bookDesc" :changeTab="changeTab" />
+        <el-tab-pane label="账本月历" :name="0" :style="tabContentHeight">
+          <BookCalendar :book-desc="bookDesc" :change-tab="changeTab" :get-the-bill-desc="getTheBillDesc" />
         </el-tab-pane>
         <el-tab-pane label="账单详情" :name="1">
-          <BillDetails :showBillPanel="showBillPanel" :isNull="bookInfo.isNull" :deleteRow="deleteRow" />
+          <BillDetails :delete-row="deleteRow" :is-null="bookInfo.isNull" :show-bill-panel="showBillPanel" />
         </el-tab-pane>
         <el-tab-pane label="花费统计" :name="2">
-          <BillTotalCost :totalCostList="totalCostList" />
+          <BillTotalCost :total-cost-list="totalCostList" />
         </el-tab-pane>
         <el-tab-pane label="协作成员" :name="3">
           <el-empty v-if="members.length <= 1" description="暂无成员">
@@ -33,7 +33,7 @@
           </el-empty>
           <div v-else>
             <div style="display: flex; justify-content: space-evenly">
-              <el-text type="primary" v-for="item in members" :key="item.uid">{{ item.username }}</el-text>
+              <el-text v-for="item in members" :key="item.uid" type="primary">{{ item.username }}</el-text>
             </div>
             <el-button
               v-if="uid === bookInfo.uid"
@@ -60,13 +60,13 @@
     <!--账单新建框-->
     <el-dialog
       v-model="dialogVisible"
-      :width="dialogWidth"
-      :fullscreen="!isPC"
-      :draggable="isPC"
-      title="修改/新增账单"
       destroy-on-close
+      :draggable="isPC"
+      :fullscreen="!isPC"
+      title="修改/新增账单"
+      :width="dialogWidth"
     >
-      <AddBill :cancelAddBill="cancelAddBill" :thisBill="thisBill" :url="'/addBill'" />
+      <AddBill :cancel-add-bill="cancelAddBill" :this-bill="thisBill" :url="'/addBill'" />
     </el-dialog>
   </el-container>
 </template>

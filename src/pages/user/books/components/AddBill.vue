@@ -1,41 +1,41 @@
 <template>
-  <el-form ref="addBillFormRef" :model="addBillForm" label-width="auto" :style="isPC ? 'margin:0 5%' : ''">
-    <el-form-item prop="name" label="账单条目">
+  <el-form ref="addBillFormRef" label-width="auto" :model="addBillForm" :style="isPC ? 'margin:0 5%' : ''">
+    <el-form-item label="账单条目" prop="name">
       <el-input v-model="addBillForm.name" maxlength="10" placeholder="输入账单条目" />
     </el-form-item>
     <el-row>
       <el-col :span="isPC ? 11 : 11">
-        <el-form-item prop="price" label="账单花费">
+        <el-form-item label="账单花费" prop="price">
           <el-input-number
             v-model="addBillForm.price"
+            controls-position="right"
+            :max="1000"
+            :min="0"
+            placeholder="输入账单花费金额"
             :precision="2"
             :step="0.1"
-            :min="0"
-            :max="1000"
-            controls-position="right"
-            placeholder="输入账单花费金额"
           />
         </el-form-item>
       </el-col>
       <el-col :span="1" />
       <el-col :span="isPC ? 8 : 12">
-        <el-form-item prop="bill_date" label="账单日期">
+        <el-form-item label="账单日期" prop="bill_date">
           <el-date-picker
             v-model="addBillForm.bill_date"
-            type="date"
-            placeholder="选择账单日期"
             :default-value="new Date()"
             :disabled-date="disabledDate"
+            placeholder="选择账单日期"
+            type="date"
             value-format="YYYY-MM-DD"
           />
         </el-form-item>
       </el-col>
     </el-row>
-    <el-form-item prop="desc" label="账单备注">
-      <el-input v-model="addBillForm.desc" placeholder="输入账单备注" maxlength="30" />
+    <el-form-item label="账单备注" prop="desc">
+      <el-input v-model="addBillForm.desc" maxlength="30" placeholder="输入账单备注" />
     </el-form-item>
-    <el-form-item prop="type" label="账单类型">
-      <el-input v-model="addBillForm.type" placeholder="输入账单类型" maxlength="30" />
+    <el-form-item label="账单类型" prop="type">
+      <el-input v-model="addBillForm.type" maxlength="30" placeholder="输入账单类型" />
     </el-form-item>
     <el-row>
       <el-col :span="12">
@@ -44,8 +44,8 @@
         </el-form-item>
       </el-col>
       <el-col :span="10">
-        <el-form-item prop="gid" label="账单组别">
-          <el-input-number :disabled="!isChild" v-model="addBillForm.gid" :min="0" controls-position="right" />
+        <el-form-item label="账单组别" prop="gid">
+          <el-input-number v-model="addBillForm.gid" controls-position="right" :disabled="!isChild" :min="0" />
         </el-form-item>
       </el-col>
     </el-row>
@@ -56,7 +56,7 @@
     <div class="btn">
       <el-button @click="reset(addBillFormRef)">重置</el-button>
       <el-button type="primary" @click="submit('/addBill')">{{ isChild ? "新增合并账单" : "新增账单" }} </el-button>
-      <el-button type="primary" v-if="addBillForm.id !== 0" @click="submit('/updateBill')">修改账单</el-button>
+      <el-button v-if="addBillForm.id !== 0" type="primary" @click="submit('/updateBill')">修改账单</el-button>
     </div>
   </el-form>
 </template>

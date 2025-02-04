@@ -5,9 +5,9 @@
       <el-switch
         v-if="isSuperAdmin"
         v-model="tableVisible"
-        size="large"
         active-text="管理员"
         inactive-text="用户"
+        size="large"
         @click="getAllAdmins"
       />
       <el-button @click="clearFilter">清空全部筛选</el-button>
@@ -17,58 +17,58 @@
       <el-table
         v-show="!tableVisible"
         ref="tableRef"
+        border
         :data="tableData"
-        style="width: 100%"
+        :default-sort="{ prop: 'uid', order: 'custom' }"
+        highlight-current-row
         max-height="500"
         stripe
-        border
-        highlight-current-row
+        style="width: 100%"
         table-layout="auto"
-        :default-sort="{ prop: 'uid', order: 'custom' }"
         @sort-change="handleSortChange"
       >
-        <el-table-column fixed prop="uid" label="UID" width="80" sortable />
-        <el-table-column prop="username" label="用户昵称" width="200">
+        <el-table-column fixed label="UID" prop="uid" sortable width="80" />
+        <el-table-column label="用户昵称" prop="username" width="200">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
-              <el-input v-model="newUserInfo.username" minlength="2" maxlength="10" show-word-limit />
+              <el-input v-model="newUserInfo.username" maxlength="10" minlength="2" show-word-limit />
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="email" label="用户邮箱" width="200">
+        <el-table-column label="用户邮箱" prop="email" width="200">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
               <el-input v-model="newUserInfo.email" />
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="signature" label="个性签名" width="250">
+        <el-table-column label="个性签名" prop="signature" width="250">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
               <el-input v-model="newUserInfo.signature" maxlength="30" show-word-limit />
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="headImgUrl" sum-text label="用户头像" width="150" align="center">
+        <el-table-column align="center" label="用户头像" prop="headImgUrl" sum-text width="150">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
               <el-input v-model="newUserInfo.headImgId" placeholder="请输入图片ID" />
             </div>
             <div v-else>
-              <el-image :src="scope.row.headImgUrl" alt="" style="width: 50px" loading="lazy" />
+              <el-image alt="" loading="lazy" :src="scope.row.headImgUrl" style="width: 50px" />
             </div>
           </template>
         </el-table-column>
         <el-table-column
-          prop="headImgStatus"
-          label="头像状态"
-          width="120"
+          :filter-method="filterHandler"
           :filters="[
             { text: '待审核', value: 0 },
             { text: '审核通过', value: 1 },
             { text: '黑名单', value: 2 },
           ]"
-          :filter-method="filterHandler"
+          label="头像状态"
+          prop="headImgStatus"
+          width="120"
         >
           <template #default="scope">
             <!--          <div v-if="isEditRow===scope.$index">-->
@@ -78,31 +78,31 @@
             <!--              <el-option label="黑名单" :value="2"/>-->
             <!--            </el-select>-->
             <!--          </div>-->
-            <el-button text type="primary" v-if="scope.row.headImgStatus === 0">待审核</el-button>
-            <el-button text type="info" v-else-if="scope.row.headImgStatus === 1">审核通过</el-button>
-            <el-button text type="danger" v-else-if="scope.row.headImgStatus === 2">黑名单</el-button>
+            <el-button v-if="scope.row.headImgStatus === 0" text type="primary">待审核</el-button>
+            <el-button v-else-if="scope.row.headImgStatus === 1" text type="info">审核通过</el-button>
+            <el-button v-else-if="scope.row.headImgStatus === 2" text type="danger">黑名单</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="bgUrl" label="背景图" width="150" align="center">
+        <el-table-column align="center" label="背景图" prop="bgUrl" width="150">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
               <el-input v-model="newUserInfo.bgId" placeholder="请输入图片ID" />
             </div>
             <div v-else>
-              <el-image :src="scope.row.bgUrl" alt="" style="width: 50px" loading="lazy" />
+              <el-image alt="" loading="lazy" :src="scope.row.bgUrl" style="width: 50px" />
             </div>
           </template>
         </el-table-column>
         <el-table-column
-          prop="bgStatus"
-          label="背景图状态"
-          width="120"
+          :filter-method="filterHandler"
           :filters="[
             { text: '待审核', value: 0 },
             { text: '审核通过', value: 1 },
             { text: '黑名单', value: 2 },
           ]"
-          :filter-method="filterHandler"
+          label="背景图状态"
+          prop="bgStatus"
+          width="120"
         >
           <template #default="scope">
             <!--          <div v-if="isEditRow===scope.$index">-->
@@ -112,31 +112,31 @@
             <!--              <el-option label="黑名单" :value="2"/>-->
             <!--            </el-select>-->
             <!--          </div>-->
-            <el-button text type="primary" v-if="scope.row.bgStatus === 0">待审核</el-button>
-            <el-button text type="info" v-else-if="scope.row.bgStatus === 1">审核通过</el-button>
-            <el-button text type="danger" v-else-if="scope.row.bgStatus === 2">黑名单</el-button>
+            <el-button v-if="scope.row.bgStatus === 0" text type="primary">待审核</el-button>
+            <el-button v-else-if="scope.row.bgStatus === 1" text type="info">审核通过</el-button>
+            <el-button v-else-if="scope.row.bgStatus === 2" text type="danger">黑名单</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="created_time" label="创建时间" width="150">
+        <el-table-column label="创建时间" prop="created_time" width="150">
           <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
         </el-table-column>
-        <el-table-column prop="updated_time" label="更新时间" width="150">
+        <el-table-column label="更新时间" prop="updated_time" width="150">
           <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
         </el-table-column>
-        <el-table-column label="设为管理员" width="100" v-if="isSuperAdmin">
+        <el-table-column v-if="isSuperAdmin" label="设为管理员" width="100">
           <template #default="scope">
-            <el-button link type="primary" size="small" @click="addAdmin(scope.row.uid)">设为管理员</el-button>
+            <el-button link size="small" type="primary" @click="addAdmin(scope.row.uid)">设为管理员</el-button>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="100">
           <template #default="scope">
             <div v-if="isEditRow !== scope.$index">
-              <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row, false)"> 删除 </el-button>
+              <el-button link size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-button link size="small" type="danger" @click="deleteRow(scope.$index, scope.row, false)"> 删除 </el-button>
             </div>
             <div v-else>
-              <el-button link type="primary" size="small" @click="handleCancel">取消 </el-button>
-              <el-button link type="primary" size="small" @click="checkUpdateRow(newUserInfo, scope.row, false)">
+              <el-button link size="small" type="primary" @click="handleCancel">取消 </el-button>
+              <el-button link size="small" type="primary" @click="checkUpdateRow(newUserInfo, scope.row, false)">
                 更新
               </el-button>
             </div>
@@ -147,111 +147,111 @@
       <el-table
         v-show="tableVisible"
         ref="tableRef2"
+        border
         :data="tableData2"
-        style="width: 100%"
+        :default-sort="{ prop: 'uid', order: 'custom' }"
+        highlight-current-row
         max-height="500"
         stripe
-        border
-        highlight-current-row
+        style="width: 100%"
         table-layout="auto"
-        :default-sort="{ prop: 'uid', order: 'custom' }"
         @sort-change="handleSortChange"
       >
-        <el-table-column fixed prop="uid" label="UID" width="80" sortable />
-        <el-table-column prop="username" label="管理员昵称" width="200">
+        <el-table-column fixed label="UID" prop="uid" sortable width="80" />
+        <el-table-column label="管理员昵称" prop="username" width="200">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
-              <el-input v-model="newUserInfo.username" minlength="2" maxlength="10" show-word-limit />
+              <el-input v-model="newUserInfo.username" maxlength="10" minlength="2" show-word-limit />
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="email" label="管理员邮箱" width="200">
+        <el-table-column label="管理员邮箱" prop="email" width="200">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
               <el-input v-model="newUserInfo.email" />
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="password" label="管理员密码" width="250">
+        <el-table-column label="管理员密码" prop="password" width="250">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
               <el-input
                 v-model="newUserInfo.password"
-                placeholder="输入可修改密码"
-                minlength="6"
                 maxlength="18"
+                minlength="6"
+                placeholder="输入可修改密码"
                 show-word-limit
               />
             </div>
-            <el-button text type="info" v-else-if="scope.row.password === ''">不做展示</el-button>
+            <el-button v-else-if="scope.row.password === ''" text type="info">不做展示</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="headImgUrl" sum-text label="用户头像" width="150" align="center">
+        <el-table-column align="center" label="用户头像" prop="headImgUrl" sum-text width="150">
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
               <el-input v-model="newUserInfo.headImgId" placeholder="请输入图片ID" />
             </div>
             <div v-else>
-              <el-image :src="scope.row.headImgUrl" alt="" style="width: 50px" loading="lazy" />
+              <el-image alt="" loading="lazy" :src="scope.row.headImgUrl" style="width: 50px" />
             </div>
           </template>
         </el-table-column>
         <el-table-column
-          prop="headImgStatus"
-          label="头像状态"
-          width="120"
+          :filter-method="filterHandler"
           :filters="[
             { text: '待审核', value: 0 },
             { text: '审核通过', value: 1 },
             { text: '黑名单', value: 2 },
           ]"
-          :filter-method="filterHandler"
+          label="头像状态"
+          prop="headImgStatus"
+          width="120"
         >
           <template #default="scope">
-            <el-button text type="primary" v-if="scope.row.headImgStatus === 0">待审核</el-button>
-            <el-button text type="info" v-else-if="scope.row.headImgStatus === 1">审核通过</el-button>
-            <el-button text type="danger" v-else-if="scope.row.headImgStatus === 2">黑名单</el-button>
+            <el-button v-if="scope.row.headImgStatus === 0" text type="primary">待审核</el-button>
+            <el-button v-else-if="scope.row.headImgStatus === 1" text type="info">审核通过</el-button>
+            <el-button v-else-if="scope.row.headImgStatus === 2" text type="danger">黑名单</el-button>
           </template>
         </el-table-column>
         <el-table-column
-          prop="isSuperAdmin"
-          label="管理员状态"
-          width="130"
+          :filter-method="filterHandler"
           :filters="[
             { text: '普通管理员', value: 0 },
             { text: '超级管理员', value: 1 },
             { text: '权限冻结', value: 2 },
           ]"
-          :filter-method="filterHandler"
+          label="管理员状态"
+          prop="isSuperAdmin"
+          width="130"
         >
           <template #default="scope">
             <div v-if="isEditRow === scope.$index">
-              <el-select placeholder="选择状态(默认为普通管理员)" v-model="newUserInfo.isSuperAdmin" default-first-option>
+              <el-select v-model="newUserInfo.isSuperAdmin" default-first-option placeholder="选择状态(默认为普通管理员)">
                 <el-option label="普通管理员" :value="0" />
                 <el-option disabled label="超级管理员" :value="1" />
                 <el-option label="权限冻结" :value="2" />
               </el-select>
             </div>
-            <el-button text type="info" v-else-if="scope.row.isSuperAdmin === 0">普通管理员</el-button>
-            <el-button text type="primary" v-else-if="scope.row.isSuperAdmin === 1">超级管理员</el-button>
-            <el-button text type="danger" v-else-if="scope.row.isSuperAdmin === 2">权限冻结</el-button>
+            <el-button v-else-if="scope.row.isSuperAdmin === 0" text type="info">普通管理员</el-button>
+            <el-button v-else-if="scope.row.isSuperAdmin === 1" text type="primary">超级管理员</el-button>
+            <el-button v-else-if="scope.row.isSuperAdmin === 2" text type="danger">权限冻结</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="created_time" label="创建时间" width="150">
+        <el-table-column label="创建时间" prop="created_time" width="150">
           <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
         </el-table-column>
-        <el-table-column prop="updated_time" label="更新时间" width="150">
+        <el-table-column label="更新时间" prop="updated_time" width="150">
           <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="100">
           <template #default="scope">
             <div v-if="isEditRow !== scope.$index">
-              <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-              <el-button link type="danger" size="small" @click="deleteRow(scope.$index, scope.row, true)"> 删除 </el-button>
+              <el-button link size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              <el-button link size="small" type="danger" @click="deleteRow(scope.$index, scope.row, true)"> 删除 </el-button>
             </div>
             <div v-else>
-              <el-button link type="primary" size="small" @click="handleCancel">取消 </el-button>
-              <el-button link type="primary" size="small" @click="checkUpdateRow(newUserInfo, scope.row, true)"> 更新 </el-button>
+              <el-button link size="small" type="primary" @click="handleCancel">取消 </el-button>
+              <el-button link size="small" type="primary" @click="checkUpdateRow(newUserInfo, scope.row, true)"> 更新 </el-button>
             </div>
           </template>
         </el-table-column>

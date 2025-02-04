@@ -9,7 +9,7 @@
         </span>
       </span>
       <div class="progress-bar">
-        <el-slider v-model="currentTime" @change="changeCurrentTime" :min="0" :max="duration" :show-tooltip="false" />
+        <el-slider v-model="currentTime" :max="duration" :min="0" :show-tooltip="false" @change="changeCurrentTime" />
         <div class="time">
           <span>{{ formatMusicTime(currentTime) }}</span
           ><span>{{ formatMusicTime(duration) }}</span>
@@ -64,9 +64,9 @@
     </div>
   </div>
   <!--播放列表-->
-  <el-drawer v-model="isShowPlayList" :with-header="false" :size="containerHeight + 'px'" direction="btt" show-close>
+  <el-drawer v-model="isShowPlayList" direction="btt" show-close :size="containerHeight + 'px'" :with-header="false">
     <h3 style="margin: 0">播放列表</h3>
-    <play-list :songsList="currentPlayList" />
+    <play-list :songs-list="currentPlayList" />
   </el-drawer>
 </template>
 <script setup lang="ts">

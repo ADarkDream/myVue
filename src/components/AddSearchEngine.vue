@@ -1,12 +1,12 @@
 <template>
-  <el-form ref="addEngineFormRef" status-icon :model="addEngineForm" label-width="auto" label-position="left">
+  <el-form ref="addEngineFormRef" label-position="left" label-width="auto" :model="addEngineForm" status-icon>
     <!--显示网站图标-->
-    <el-image :src="src" alt="该地址无法获取默认图标" style="width: 40px; height: 40px" />
+    <el-image alt="该地址无法获取默认图标" :src="src" style="width: 40px; height: 40px" />
     <!--      网址主要地址-->
     <el-form-item>
       <el-col :span="5">
         <el-form-item prop="protocol">
-          <el-select placeholder="https://" v-model="addEngineForm.protocol" default-first-option>
+          <el-select v-model="addEngineForm.protocol" default-first-option placeholder="https://">
             <el-option label="https://" value="https://" />
             <el-option label="http://" value="http://" />
           </el-select>
@@ -15,7 +15,7 @@
       <el-col :span="1"></el-col>
       <el-col :span="18">
         <el-form-item prop="baseUrl" :rules="[{ required: true, message: '主要地址是必需的' }]">
-          <el-input v-model="addEngineForm.baseUrl" @blur="checkIco" placeholder="输入网站域名或主要地址(例:www.baidu.com)" />
+          <el-input v-model="addEngineForm.baseUrl" placeholder="输入网站域名或主要地址(例:www.baidu.com)" @blur="checkIco" />
         </el-form-item>
       </el-col>
     </el-form-item>

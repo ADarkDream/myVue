@@ -1,36 +1,36 @@
 <template>
   <el-form
     ref="ruleFormRef"
-    :model="ruleForm"
-    status-icon
-    :rules="Rules"
-    label-width="auto"
     class="loginForm"
     label-position="top"
+    label-width="auto"
+    :model="ruleForm"
+    :rules="Rules"
+    status-icon
   >
     <el-form-item prop="email">
-      <el-input v-model.lazy.trim="ruleForm.email" placeholder="输入邮箱" autocomplete="off" />
+      <el-input v-model.lazy.trim="ruleForm.email" autocomplete="off" placeholder="输入邮箱" />
     </el-form-item>
     <el-form-item prop="password">
-      <el-input v-model.lazy.trim="ruleForm.password" type="password" autocomplete="off" placeholder="输入密码" />
+      <el-input v-model.lazy.trim="ruleForm.password" autocomplete="off" placeholder="输入密码" type="password" />
     </el-form-item>
-    <el-form-item prop="policy" autocomplete="off">
-      <input type="checkbox" v-model="ruleForm.policy" /><el-text> &ensp;我已阅读并同意</el-text>
+    <el-form-item autocomplete="off" prop="policy">
+      <input v-model="ruleForm.policy" type="checkbox" /><el-text> &ensp;我已阅读并同意</el-text>
       <el-button link type="primary" @click="showPolicy">隐私政策</el-button>
-      <el-button style="position: absolute; right: 0" link @click="resetForm()">重置表单</el-button>
+      <el-button link style="position: absolute; right: 0" @click="resetForm()">重置表单</el-button>
     </el-form-item>
     <p class="other_login_div">
       <el-text>其他登录方式：</el-text>
       <img
+        alt="QQ登录_小窗口"
         class="login_icon"
         src="@/assets/titleDiv/qq_login.png"
-        @click="login_by_qq(true)"
-        alt="QQ登录_小窗口"
         title="小窗口"
+        @click="login_by_qq(true)"
       />
       <!-- <img class="login_icon" src="@/assets/titleDiv/qq_login.png" @click='login_by_qq()' alt="QQ登录_新窗口" title="新窗口" /> -->
     </p>
-    <el-button class="submitBtn" @click="submitForm()" :loading="isLoading">登录</el-button>
+    <el-button class="submitBtn" :loading="isLoading" @click="submitForm()">登录</el-button>
     <br />
     <el-link @click="toLogin(false)">前往注册</el-link>
   </el-form>

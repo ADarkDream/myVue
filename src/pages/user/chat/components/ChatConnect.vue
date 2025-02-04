@@ -1,17 +1,17 @@
 <template>
   <el-form :model="formData" require-asterisk-position="right">
     <el-form-item label="房间号">
-      <el-input placeholder="请输入房间号" v-model="formData.roomID" clearable maxlength="20" />
+      <el-input v-model="formData.roomID" clearable maxlength="20" placeholder="请输入房间号" />
     </el-form-item>
     <el-form-item label="昵称" required>
-      <el-input placeholder="请输入昵称" v-model.trim="formData.playerName" clearable maxlength="10" />
+      <el-input v-model.trim="formData.playerName" clearable maxlength="10" placeholder="请输入昵称" />
     </el-form-item>
-    <el-button type="primary" @click="addRoom" :loading="isLoading" :disabled="!!formData.roomID"
+    <el-button :disabled="!!formData.roomID" :loading="isLoading" type="primary" @click="addRoom"
       >创建房间{{ !!formData.roomID ? "不需要房间号" : "" }}</el-button
     >
-    <el-button type="primary" @click="joinRoom" :loading="isLoading">加入房间</el-button>
-    <el-button type="primary" plain @click="socket.connect()" :loading="isLoading">连接</el-button>
-    <el-button type="warning" plain @click="socket.disconnect()" :loading="isLoading" v-if="false">断联</el-button>
+    <el-button :loading="isLoading" type="primary" @click="joinRoom">加入房间</el-button>
+    <el-button :loading="isLoading" plain type="primary" @click="socket.connect()">连接</el-button>
+    <el-button v-if="false" :loading="isLoading" plain type="warning" @click="socket.disconnect()">断联</el-button>
   </el-form>
 </template>
 

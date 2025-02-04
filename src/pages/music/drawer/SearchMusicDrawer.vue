@@ -3,10 +3,10 @@
     <div class="header">
       <div class="searchDiv">
         <el-button :icon="Back" size="small" @click="isShowSearchPanel = false"></el-button>
-        <el-input class="search" v-model.trim="keyWords" @keyup.enter="searchMusic()" placeholder="歌曲名或歌手名" clearable />
+        <el-input v-model.trim="keyWords" class="search" clearable placeholder="歌曲名或歌手名" @keyup.enter="searchMusic()" />
         <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
       </div>
-      <el-radio-group v-model="searchConfig.type" size="small" style="height: 30px" v-if="false">
+      <el-radio-group v-if="false" v-model="searchConfig.type" size="small" style="height: 30px">
         <el-radio-button label="单曲" :value="1" />
         <el-radio-button label="专辑" :value="10" />
         <el-radio-button label="歌手" :value="100" />
@@ -14,17 +14,17 @@
         <el-radio-button label="用户" :value="1002" />
         <el-radio-button label="歌词" :value="1006" />
       </el-radio-group>
-      <HotSearchWords :changeKeyWords="changeKeyWords" style="height: 30px; overflow: hidden" />
+      <HotSearchWords :change-key-words="changeKeyWords" style="height: 30px; overflow: hidden" />
     </div>
     <div v-if="showResult">
       <music-list-songs-list
         v-if="searchResultType === 1 && showResult"
-        :songsList="searchResult"
         :height="searchDivHeight"
-        :isSearchList="true"
+        :is-search-list="true"
+        :songs-list="searchResult"
       />
       <div v-else-if="searchResultType === 10 && showResult">
-        <div class="songInfo" v-for="(album, index) in searchResult" :key="index">
+        <div v-for="(album, index) in searchResult" :key="index" class="songInfo">
           <el-text
             >{{ index + 1 }}、{{ album.name || "未命名" }} -
             <!-- {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join('&') : '未知艺术家' }} --> </el-text
@@ -35,14 +35,14 @@
       <div class="footer">
         <el-pagination
           v-model:current-page="page"
-          :page-size="10"
           :layout="isPC ? 'prev, pager, next,total' : 'prev, pager, next'"
+          :page-size="10"
           :total="totalNum"
           @current-change="searchMusic()"
         />
       </div>
     </div>
-    <el-empty v-else description=" " style="padding: 0" image="/fool.png" :image-size="350" />
+    <el-empty v-else description=" " image="/fool.png" :image-size="350" style="padding: 0" />
   </div>
 </template>
 

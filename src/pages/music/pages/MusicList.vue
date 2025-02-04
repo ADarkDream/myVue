@@ -10,13 +10,13 @@
     <div v-else :class="{ hide: isHidden }">
       <div class="infoDiv">
         <div
-          :style="'--coverImg:' + `url(${musicListInfo?.pic_url || musicListInfo?.default_cover_url || defaultAlbumArt})`"
           class="cover"
+          :style="'--coverImg:' + `url(${musicListInfo?.pic_url || musicListInfo?.default_cover_url || defaultAlbumArt})`"
         ></div>
         <div class="music_list_info">
           <p class="title">
             <el-text>{{ musicListInfo?.name }}</el-text>
-            <el-button link type="warning" :icon="ArrowUpBold" v-show="!isHidden" @click="toggleInfoVisible">
+            <el-button v-show="!isHidden" :icon="ArrowUpBold" link type="warning" @click="toggleInfoVisible">
               {{ "收起" }}
             </el-button>
           </p>
@@ -29,10 +29,10 @@
             </p>
             <p>
               歌曲数：{{ musicListInfo?.songsCount
-              }}<el-button link size="small" plain type="primary" @click="refresh()">刷新</el-button>
+              }}<el-button link plain size="small" type="primary" @click="refresh()">刷新</el-button>
             </p>
             <p>
-              介绍：<el-text type="info" class="description" truncated :line-clamp="isPC ? 3 : 1">{{
+              介绍：<el-text class="description" :line-clamp="isPC ? 3 : 1" truncated type="info">{{
                 musicListInfo?.description || "暂无介绍"
               }}</el-text>
             </p>
@@ -42,11 +42,11 @@
             </p>
           </div>
 
-          <el-button-group class="btnGroup" size="small" type="primary" v-if="isPC && !isHidden">
+          <el-button-group v-if="isPC && !isHidden" class="btnGroup" size="small" type="primary">
             <el-button @click="addTheList(true)">播放</el-button>
             <el-button @click="addTheList()">添加</el-button>
-            <el-button @click="connectMusicList()" v-show="isOwner">收藏</el-button>
-            <el-button @click="showEditMusicListInfoDrawer(false, musicListInfo)" v-if="isOwner">编辑</el-button>
+            <el-button v-show="isOwner" @click="connectMusicList()">收藏</el-button>
+            <el-button v-if="isOwner" @click="showEditMusicListInfoDrawer(false, musicListInfo)">编辑</el-button>
             <el-button @click="shareMusicListLink()">分享</el-button>
             <el-button
               v-if="musicListInfo.cloud_music_list_id"
@@ -54,16 +54,16 @@
               >前往网易云</el-button
             >
           </el-button-group>
-          <el-button link type="warning" :icon="ArrowDownBold" v-show="isHidden" @click="toggleInfoVisible()">
+          <el-button v-show="isHidden" :icon="ArrowDownBold" link type="warning" @click="toggleInfoVisible()">
             {{ "显示" }}
           </el-button>
         </div>
       </div>
-      <el-button-group class="btnGroup" style="margin: 5px 0" size="small" type="primary" v-if="!isPC && !isHidden">
+      <el-button-group v-if="!isPC && !isHidden" class="btnGroup" size="small" style="margin: 5px 0" type="primary">
         <el-button @click="addTheList(true)">播放</el-button>
         <el-button @click="addTheList()">添加</el-button>
         <el-button :disabled="!isOwner">收藏</el-button>
-        <el-button @click="showEditMusicListInfoDrawer(false, musicListInfo)" v-if="isOwner">编辑</el-button>
+        <el-button v-if="isOwner" @click="showEditMusicListInfoDrawer(false, musicListInfo)">编辑</el-button>
         <el-button @click="shareMusicListLink()">分享</el-button>
         <el-button
           v-if="musicListInfo.cloud_music_list_id"
@@ -73,10 +73,10 @@
       </el-button-group>
     </div>
     <music-list-songs-list
-      :songsList="musicList"
-      :height="mainPanelContentHeight - (isPC ? 100 : 70)"
       v-show="musicList.length !== 0"
-      :isOwner
+      :height="mainPanelContentHeight - (isPC ? 100 : 70)"
+      :is-owner
+      :songs-list="musicList"
     />
   </div>
 </template>

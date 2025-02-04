@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div class="articleBar" v-if="isAdmin">
+    <div v-if="isAdmin" class="articleBar">
       <el-button @click="router.back()">
         <el-icon>
           <ArrowLeftBold />
         </el-icon>
         返回
       </el-button>
-      <el-button v-if="isAdmin" @click="checkArticle(1)" type="success">审核通过</el-button>
-      <el-button v-if="isAdmin" @click="checkArticle(2)" type="danger">审核不通过</el-button>
-      <el-button @click="getArticle" :icon="Refresh"> 刷新 </el-button>
+      <el-button v-if="isAdmin" type="success" @click="checkArticle(1)">审核通过</el-button>
+      <el-button v-if="isAdmin" type="danger" @click="checkArticle(2)">审核不通过</el-button>
+      <el-button :icon="Refresh" @click="getArticle"> 刷新 </el-button>
     </div>
     <div class="mainContent">
       <!--文章区域-->
@@ -24,15 +24,15 @@
         </el-header>
         <el-divider />
         <el-main style="padding: 0 20px">
-          <div v-html="article.text" class="articleContent" />
+          <div class="articleContent" v-html="article.text" />
         </el-main>
         <el-divider />
         <el-footer>
           <el-space class="articleFooter" style="text-align: initial; font-size: 14px">
             <span
-              >板块：<el-button link @click="toForumCenter('', article.area, '')" type="primary"> {{ article.area }}</el-button
+              >板块：<el-button link type="primary" @click="toForumCenter('', article.area, '')"> {{ article.area }}</el-button
               ><br />
-              标签：<el-button link @click="toForumCenter('', '', article.tags)" type="primary">
+              标签：<el-button link type="primary" @click="toForumCenter('', '', article.tags)">
                 {{ article.tags }}</el-button
               ></span
             >
@@ -47,42 +47,42 @@
       <!--评论区域-->
       <div class="commentArea">
         <!--评论输入框-->
-        <div class="addCommentDiv" v-if="isShow && !isAdmin" ref="commentBox" :class="{ '': isFixed, fixed: isFixed }">
+        <div v-if="isShow && !isAdmin" ref="commentBox" class="addCommentDiv" :class="{ '': isFixed, fixed: isFixed }">
           <el-row class="addComment" :gutter="10">
-            <el-col :lg="2" :md="3" :sm="3" :xs="4" style="display: flex; justify-content: center">
-              <el-avatar :src="headImgUrl" shape="circle" />
+            <el-col :lg="2" :md="3" :sm="3" style="display: flex; justify-content: center" :xs="4">
+              <el-avatar shape="circle" :src="headImgUrl" />
             </el-col>
             <el-col :lg="20" :md="18" :sm="18" :xs="15">
               <el-input
-                class="input"
                 v-model="comment"
-                maxlength="300"
                 :autosize="true"
+                class="input"
+                maxlength="300"
                 placeholder="发表你的评论"
                 show-word-limit
                 type="textarea"
               ></el-input>
             </el-col>
-            <el-col :lg="2" :md="3" :sm="3" :xs="5" style="display: flex">
-              <el-button @click="addComment" type="primary">发表</el-button>
+            <el-col :lg="2" :md="3" :sm="3" style="display: flex" :xs="5">
+              <el-button type="primary" @click="addComment">发表</el-button>
             </el-col>
           </el-row>
         </div>
         <div style="margin-bottom: 30px">
           <el-divider>评论区</el-divider>
           <div v-if="comments.length === 0">暂无评论</div>
-          <el-row v-else v-for="(item, index) in comments" :key="index" class="comments" :gutter="10">
-            <el-col :sm="2" :xs="4" style="align-items: flex-start"
+          <el-row v-for="(item, index) in comments" v-else :key="index" class="comments" :gutter="10">
+            <el-col :sm="2" style="align-items: flex-start" :xs="4"
               ><!--左边头像-->
               <div class="commentsAvatarDiv">
                 <el-avatar :src="item.headImgUrl" @error="errorImage" />
               </div>
             </el-col>
-            <el-col :sm="22" :xs="20" style="display: flex; flex-wrap: wrap"
+            <el-col :sm="22" style="display: flex; flex-wrap: wrap" :xs="20"
               ><!--右边评论区-->
               <div class="commentsBar">
                 <el-space spacer="" style="text-align: left">
-                  <el-text type="success" v-if="item.uid === article.authorId">[作者]</el-text>
+                  <el-text v-if="item.uid === article.authorId" type="success">[作者]</el-text>
                   <el-text type="primary"> {{ item.observer }}</el-text>
                 </el-space>
                 <el-space spacer="" style="margin-right: 10px">
@@ -98,9 +98,9 @@
                       <el-dropdown-menu>
                         <el-dropdown-item command="a" :icon="WarnTriangleFilled">举报</el-dropdown-item>
                         <el-dropdown-item
+                          v-if="isAdmin || article.authorId === uid || item.uid === uid"
                           command="b"
                           :icon="Delete"
-                          v-if="isAdmin || article.authorId === uid || item.uid === uid"
                           @click="deleteRow(item.id)"
                           >删除
                         </el-dropdown-item>
@@ -219,7 +219,6 @@ async function getArticle() {
 // 复制功能
 
 function addCodeHighLight() {
-  // eslint-disable-next-line
   const codeBlocks = document.querySelectorAll('[class*="language-"]')
   codeBlocks.forEach((item: HTMLElement) => {
     const strArr = item.className.match(/language-([a-zA-Z]+)/) //匹配language-javascript的后半部分

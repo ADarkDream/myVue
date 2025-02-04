@@ -3,38 +3,38 @@
   <div class="editMusicListInfoDrawer">
     <div class="header">
       <el-button link @click="isShowEditMusicListInfoDrawer = false">取消</el-button>
-      <el-button link :disabled="isLoading" @click="editMusicListInfo">{{ isCreateFlag ? "创建" : "修改" }}</el-button>
+      <el-button :disabled="isLoading" link @click="editMusicListInfo">{{ isCreateFlag ? "创建" : "修改" }}</el-button>
     </div>
-    <el-form :model="formData" label-position="top">
+    <el-form label-position="top" :model="formData">
       <el-row :gutter="20" style="display: flex; justify-content: center">
-        <el-col :xs="8" :sm="12" :md="12" :lg="6" :xl="6">
+        <el-col :lg="6" :md="12" :sm="12" :xl="6" :xs="8">
           <el-form-item>
             <UploadImage />
           </el-form-item>
         </el-col>
-        <el-col :xs="16" :sm="12" :md="12" :lg="12" :xl="12">
-          <el-form-item :required="true" label="歌单命名：">
-            <el-input placeholder="听别人的故事，印证自己的心事" v-model.trim="formData.name" />
+        <el-col :lg="12" :md="12" :sm="12" :xl="12" :xs="16">
+          <el-form-item label="歌单命名：" :required="true">
+            <el-input v-model.trim="formData.name" placeholder="听别人的故事，印证自己的心事" />
           </el-form-item>
           <el-form-item label="歌单介绍：">
-            <el-input type="textarea" placeholder="希望是个小小故事，献给小小的人儿。" v-model.trim="formData.description" />
+            <el-input v-model.trim="formData.description" placeholder="希望是个小小故事，献给小小的人儿。" type="textarea" />
           </el-form-item>
           <el-form-item label="封面地址：">
             <el-input
-              type="textarea"
-              placeholder="封面地址(若不填则使用歌单最新一首歌的封面)"
               v-model.trim="formData.pic_url"
               :disabled="isLoading"
+              placeholder="封面地址(若不填则使用歌单最新一首歌的封面)"
+              type="textarea"
             />
           </el-form-item>
           <el-form-item>
             <label class="container" :class="{ active: isOpen }">
-              <input type="checkbox" v-model="isOpen" />
+              <input v-model="isOpen" type="checkbox" />
               <svg viewBox="0 0 64 64">
                 <path
+                  class="path"
                   d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
                   pathLength="575.0541381835938"
-                  class="path"
                 ></path>
               </svg>
               <span>公开</span>

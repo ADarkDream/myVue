@@ -11,7 +11,7 @@
         ><el-icon> <Refresh /> </el-icon>刷新</el-button
       >
     </div>
-    <el-form v-model="newMusic" label-width="auto" label-position="top" style="width: 100%; margin-top: 20px">
+    <el-form v-model="newMusic" label-position="top" label-width="auto" style="width: 100%; margin-top: 20px">
       <el-form-item>
         <template #label
           >输入歌单id&ensp;<el-icon>
@@ -26,7 +26,7 @@
             <el-input v-model.trim.number="cloudMusicListID" placeholder="输入网易云歌单ID或分享链接" />
           </el-col>
           <el-col :span="6">
-            <el-button @click="search_song_or_list(cloudMusicListID, false)" type="success" plain> 搜索 </el-button>
+            <el-button plain type="success" @click="search_song_or_list(cloudMusicListID, false)"> 搜索 </el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -36,17 +36,17 @@
             <el-input v-model.trim.number="cloudMusicID" placeholder="输入网易云音乐ID或分享链接"></el-input>
           </el-col>
           <el-col :span="6">
-            <el-button @click="search_song_or_list(cloudMusicID, true)" type="primary" plain>添加并播放 </el-button>
+            <el-button plain type="primary" @click="search_song_or_list(cloudMusicID, true)">添加并播放 </el-button>
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item prop="src" label="输入音频链接">
+      <el-form-item label="输入音频链接" prop="src">
         <el-row :gutter="24">
           <el-col :span="18">
             <el-input v-model="musicUrl" placeholder="输入音频链接"></el-input>
           </el-col>
           <el-col :span="6">
-            <el-button @click="addMusic(musicUrl)" type="primary" plain>添加并播放</el-button>
+            <el-button plain type="primary" @click="addMusic(musicUrl)">添加并播放</el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -54,7 +54,7 @@
     <!-- <el-text type="danger">用户上传的音乐(此页面高度待调整)</el-text> -->
     <!-- 用户上传的音乐 -->
     <h2>用户上传的音乐</h2>
-    <MusicListSongsList :songs-list="customMusicList" :height="350" />
+    <MusicListSongsList :height="350" :songs-list="customMusicList" />
   </div>
 </template>
 

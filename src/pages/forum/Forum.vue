@@ -12,9 +12,9 @@
     <router-view v-slot="{ Component }">
       <Transition name="shade">
         <keep-alive v-if="isKeepAlive">
-          <component :is="Component" :setRouterBreadcrumb="setRouterBreadcrumb" class="forumComponent" />
+          <component :is="Component" class="forumComponent" :set-router-breadcrumb="setRouterBreadcrumb" />
         </keep-alive>
-        <component v-else :is="Component" :setRouterBreadcrumb="setRouterBreadcrumb" class="forumComponent" />
+        <component :is="Component" v-else class="forumComponent" :set-router-breadcrumb="setRouterBreadcrumb" />
       </Transition>
     </router-view>
   </div>

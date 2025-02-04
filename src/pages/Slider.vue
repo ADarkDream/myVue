@@ -3,14 +3,14 @@
     <!-- 左边侧边栏 -->
     <div class="sidebar">
       <div class="slides-list">
-        <div v-for="(item, index) in imgList" :key="index" @click="selectSlide(index)" :class="{ isChecked: imgIndex === index }">
+        <div v-for="(item, index) in imgList" :key="index" :class="{ isChecked: imgIndex === index }" @click="selectSlide(index)">
           幻灯片 {{ index + 1 }} <button @click="viewImg(index)">浏览</button>
           <button @click="edit(index)">编辑</button>
         </div>
       </div>
       <div class="controls">
         <button @click="addSlide(false)">add</button>
-        <input style="display: none" ref="inputRef" type="file" @change="handleImageUpload" />
+        <input ref="inputRef" style="display: none" type="file" @change="handleImageUpload" />
 
         <button @click="removeSlide">del</button>
         <button @click="play">{{ isPlaying ? "pause" : "play" }}</button>
@@ -21,7 +21,7 @@
       <h3>{{ isEdit ? "编辑" : "预览" }}</h3>
       <div v-if="imgList?.length !== 0">
         <TransitionGroup name="list">
-          <img :src="imgList[imgIndex].src" alt="Image Preview" @click="addSlide(true)" />
+          <img alt="Image Preview" :src="imgList[imgIndex].src" @click="addSlide(true)" />
         </TransitionGroup>
         <p v-if="!isEdit">{{ imgList[imgIndex].desc }}</p>
         <textarea v-else v-model="imgList[imgIndex].desc" placeholder="填写备注..."></textarea>

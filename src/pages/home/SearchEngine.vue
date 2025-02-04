@@ -3,40 +3,40 @@
   <div class="searchDiv">
     <!-- 当前的搜索引擎-->
     <el-button class="engine" style="margin-left: 5px">
-      <img class="searchEngine thisSearchEngine" :src="searchImg" :alt="engineName" @click="showEngines = !showEngines" />&ensp;
+      <img :alt="engineName" class="searchEngine thisSearchEngine" :src="searchImg" @click="showEngines = !showEngines" />&ensp;
     </el-button>
     <template v-if="showEngines">
       <!--    默认的搜索引擎列表-->
-      <div class="engines" v-for="item in searchEngines" :key="item.id">
-        <el-button class="engine" v-show="engineId !== item.id && item.isShow">
-          <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)" />
+      <div v-for="item in searchEngines" :key="item.id" class="engines">
+        <el-button v-show="engineId !== item.id && item.isShow" class="engine">
+          <img :alt="item.name" class="searchEngine" :src="item.src" @click="changeEngine(item)" />
         </el-button>
       </div>
       <!--    自定义的搜索引擎列表-->
-      <div class="engines" v-for="item in userEngines" :key="item.id">
-        <el-button class="engine" v-show="engineId !== item.id && item.isShow">
-          <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)" />
+      <div v-for="item in userEngines" :key="item.id" class="engines">
+        <el-button v-show="engineId !== item.id && item.isShow" class="engine">
+          <img :alt="item.name" class="searchEngine" :src="item.src" @click="changeEngine(item)" />
         </el-button>
       </div>
     </template>
     <!--    添加自定义搜索引擎-->
-    <el-button plain type="primary" class="engine" :icon="More" v-if="showEngines" @click="engineOption = !engineOption" />
+    <el-button v-if="showEngines" class="engine" :icon="More" plain type="primary" @click="engineOption = !engineOption" />
     <!--    搜索引擎切换-->
-    <el-button class="change" style="margin-left: 0" @click="showEngines = !showEngines" :icon="Sort" />
+    <el-button class="change" :icon="Sort" style="margin-left: 0" @click="showEngines = !showEngines" />
     <!--    输入框-->
-    <input class="search" type="text" :placeholder="placeholder" v-model.trim="keyword" @keyup.enter="search" />
+    <input v-model.trim="keyword" class="search" :placeholder="placeholder" type="text" @keyup.enter="search" />
 
-    <el-button class="searchBtn" @click="search" :icon="Search" />
+    <el-button class="searchBtn" :icon="Search" @click="search" />
   </div>
   <!-- 用户更改搜索引擎列表-->
-  <el-dialog title="更改搜索引擎列表" :width="dialogWidth" v-model="engineOption" :fullscreen="!isPC">
+  <el-dialog v-model="engineOption" :fullscreen="!isPC" title="更改搜索引擎列表" :width="dialogWidth">
     <EditEngines
-      :userEngines="userEngines"
-      :engineId="engineId"
-      :getEngineList="getEngineList"
-      :hideList="hideList"
-      :hideUserEngine="hideUserEngine"
-      :closeEngineOption="closeEngineOption"
+      :close-engine-option="closeEngineOption"
+      :engine-id="engineId"
+      :get-engine-list="getEngineList"
+      :hide-list="hideList"
+      :hide-user-engine="hideUserEngine"
+      :user-engines="userEngines"
     />
   </el-dialog>
 </template>

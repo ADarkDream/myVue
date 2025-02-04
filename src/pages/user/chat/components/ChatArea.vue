@@ -1,24 +1,24 @@
 <template>
   <div class="chat-area">
     <div class="chat-area-header">
-      <el-button @click="reLink" size="small" type="warning" plain>重连</el-button>
-      <el-text type="primary" style="font-size: 22px">{{ isLogin ? "" : "临时" }}聊天室[Demo]</el-text>
+      <el-button plain size="small" type="warning" @click="reLink">重连</el-button>
+      <el-text style="font-size: 22px" type="primary">{{ isLogin ? "" : "临时" }}聊天室[Demo]</el-text>
       <el-button
+        size="small"
+        title="点击复制当前房间号"
         type="primary"
         @click="copyText('https:muxidream.cn/Chat/hall?roomID=' + playerInfo.roomID + '&playerName=这里填昵称', '房间号')"
-        title="点击复制当前房间号"
-        size="small"
         >复制房间地址
       </el-button>
     </div>
     <el-scrollbar ref="scrollbarRef">
-      <div class="chat-area-main" ref="content">
+      <div ref="content" class="chat-area-main">
         <el-text type="info"
           >支持多人聊天，如果房间内没人了会自动关闭，聊天记录暂时不支持长期保存,暂时未优化移动端界面。
         </el-text>
         <br />
         <el-text type="warning">如果消息发不出去可以试试点左上角重连</el-text>
-        <el-button link @click="showFeedback" type="success">测试期间如有bug请点击此处反馈！</el-button>
+        <el-button link type="success" @click="showFeedback">测试期间如有bug请点击此处反馈！</el-button>
         <!--            <div class="chat-area-group">
            <img class="chat-area-profile"
                   src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/3364143/download+%283%29+%281%29.png" alt=""/>
@@ -34,7 +34,7 @@
             :class="['chat-msg', item.playerID === playerInfo.playerID ? 'owner' : 'guest']"
           >
             <div class="chat-msg-profile">
-              <img class="chat-msg-img" :src="headImgUrl || imageSrc" alt="" />
+              <img alt="" class="chat-msg-img" :src="headImgUrl || imageSrc" />
               <!--              <el-text class="chat-msg-title">{{ item.playerName }}</el-text>-->
               <el-text class="chat-msg-date">{{ getDiffTime(item.time) }}</el-text>
             </div>
@@ -67,8 +67,8 @@
       <!--        <path-->
       <!--            d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>-->
       <!--      </svg>-->
-      <el-input type="textarea" ref="inputRef" v-model="msg" @keyup.enter="sendMsg" placeholder="Type something here..." />
-      <el-button type="primary" @click="sendMsg" :icon="Promotion">发送</el-button>
+      <el-input ref="inputRef" v-model="msg" placeholder="Type something here..." type="textarea" @keyup.enter="sendMsg" />
+      <el-button :icon="Promotion" type="primary" @click="sendMsg">发送</el-button>
       <!--      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"-->
       <!--           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-smile">-->
       <!--        <circle cx="12" cy="12" r="10"/>-->

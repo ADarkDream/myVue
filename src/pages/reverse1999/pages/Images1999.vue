@@ -6,11 +6,11 @@
       <el-row v-if="isPC" class="header2">
         <el-col :sm="3">
           <el-select
-            placeholder="选择版本"
             v-model="condition.version"
-            multiple
             collapse-tags
             collapse-tags-tooltip
+            multiple
+            placeholder="选择版本"
             :suffix-icon="Search"
           >
             <el-option v-for="item in diffVersionInfo" :key="item?.version" :label="item?.versionName" :value="item?.version" />
@@ -18,15 +18,15 @@
         </el-col>
         <el-col :sm="4">
           <el-tree-select
-            placeholder="包含角色"
             v-model="condition.roles"
-            :data="roleTree"
-            :render-after-expand="false"
-            multiple
-            show-checkbox
             collapse-tags
             collapse-tags-tooltip
+            :data="roleTree"
             filterable
+            multiple
+            placeholder="包含角色"
+            :render-after-expand="false"
+            show-checkbox
             :suffix-icon="Search"
           />
         </el-col>
@@ -38,7 +38,7 @@
           </el-select>
         </el-col>
         <el-col :sm="2">
-          <el-select :disabled="!condition.orderBy" v-model.trim="condition.order" placeholder="排序方向">
+          <el-select v-model.trim="condition.order" :disabled="!condition.orderBy" placeholder="排序方向">
             <el-option label="正序" value="" />
             <el-option label="倒序" value="desc" />
           </el-select>
@@ -57,43 +57,43 @@
           </el-select>
         </el-col>
         <el-col :sm="8">
-          <el-button @click="render(true)" type="primary">筛选/查找</el-button>
+          <el-button type="primary" @click="render(true)">筛选/查找</el-button>
           <el-button @click="clearFilter">清除筛选</el-button>
-          <el-button type="success" plain @click="checkReverseUpdate()">检查更新</el-button>
-          <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
+          <el-button plain type="success" @click="checkReverseUpdate()">检查更新</el-button>
+          <el-button plain type="success" @click="export_excel()">导出Excel</el-button>
           <!-- <el-button type="primary" @click="dialogVisible = true" disabled>导出Excel</el-button> -->
         </el-col>
       </el-row>
       <!--移动端筛选框-->
-      <div class="header" v-else>
-        <el-button @click="dialogVisible = true" type="primary">筛选/查找</el-button>
-        <el-button type="success" plain @click="checkReverseUpdate()">检查更新</el-button>
-        <el-button type="success" plain @click="render(true)" :icon="Refresh" title="刷新图片信息">刷新</el-button>
-        <el-button type="success" plain @click="export_excel()">导出Excel</el-button>
+      <div v-else class="header">
+        <el-button type="primary" @click="dialogVisible = true">筛选/查找</el-button>
+        <el-button plain type="success" @click="checkReverseUpdate()">检查更新</el-button>
+        <el-button :icon="Refresh" plain title="刷新图片信息" type="success" @click="render(true)">刷新</el-button>
+        <el-button plain type="success" @click="export_excel()">导出Excel</el-button>
       </div>
     </div>
     <el-table
       ref="tableRef"
-      :data="tableData"
+      border
       class="myCustomElTable"
+      :data="tableData"
+      :default-sort="{ prop: 'imgIndex', order: 'custom' }"
+      fit
+      highlight-current-row
       :max-height="mainPanelContentHeight - (isPC ? 100 : 70)"
       stripe
-      border
-      highlight-current-row
       table-layout="auto"
-      :default-sort="{ prop: 'imgIndex', order: 'custom' }"
       @sort-change="handleSortChange"
-      fit
     >
-      <el-table-column prop="imgIndex" label="页序" width="80" align="center" sortable>
+      <el-table-column align="center" label="页序" prop="imgIndex" sortable width="80">
         <template #default="scope">
           <span>{{ scope.$index + 1 }}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="id" label="ID" min-width="60" align="center" sortable v-if="isAdmin" />
-      <el-table-column prop="version" label="版本" min-width="100" align="center">
+      <el-table-column v-if="isAdmin" align="center" label="ID" min-width="60" prop="id" sortable />
+      <el-table-column align="center" label="版本" min-width="100" prop="version">
         <template #default="scope">
-          <el-select placeholder="选择版本" v-model="imgInfo.version" v-if="showEdit(scope.$index)">
+          <el-select v-if="showEdit(scope.$index)" v-model="imgInfo.version" placeholder="选择版本">
             <el-option v-for="item in diffVersionInfo" :key="item?.version" :label="item?.versionName" :value="item?.version" />
           </el-select>
           <el-text v-else>
@@ -101,28 +101,28 @@
           </el-text>
         </template>
       </el-table-column>
-      <el-table-column prop="imgUrl" sum-text :label="isEditRow === -1 ? '图片' : '链接'" width="200" align="center">
+      <el-table-column align="center" :label="isEditRow === -1 ? '图片' : '链接'" prop="imgUrl" sum-text width="200">
         <template #default="scope">
           <el-input
-            type="textarea"
+            v-if="isEditRow === scope.$index"
             v-model="imgInfo.imgUrl"
             :disabled="!isAdmin"
             placeholder="请输入图片链接"
-            v-if="isEditRow === scope.$index"
+            type="textarea"
           />
           <!--preview-teleported解决图片显示不全的问题-->
-          <div v-show="isEditRow !== scope.$index" class="preImg" :id="'imgDiv-' + imgInfo.imgIndex">
+          <div v-show="isEditRow !== scope.$index" :id="'imgDiv-' + imgInfo.imgIndex" class="preImg">
             <el-image
-              :src="scope.row.imgUrl"
-              :zoom-rate="1.2"
               :id="'img-' + scope.row.imgIndex"
+              fit="scale-down"
+              :initial-index="scope.row.imgIndex"
+              lazy
               :max-scale="7"
               :min-scale="0.2"
               :preview-src-list="previewImgList"
-              :initial-index="scope.row.imgIndex"
-              fit="scale-down"
-              lazy
               :preview-teleported="true"
+              :src="scope.row.imgUrl"
+              :zoom-rate="1.2"
             >
               <template #error>
                 <div class="image-slot">
@@ -135,75 +135,75 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="roleNames" label="包含角色" min-width="150" align="center">
+      <el-table-column align="center" label="包含角色" min-width="150" prop="roleNames">
         <template #default="scope">
           <el-tree-select
+            v-if="isEditRow === scope.$index"
             v-model="roleIDList"
             :data="roleTree"
-            @change="updateRoleNames()"
+            filterable
             multiple
             :render-after-expand="false"
             show-checkbox
-            filterable
-            v-if="isEditRow === scope.$index"
+            @change="updateRoleNames()"
           >
           </el-tree-select>
-          <el-text type="primary" v-else>{{ scope.row.roleNames }}</el-text>
+          <el-text v-else type="primary">{{ scope.row.roleNames }}</el-text>
         </template>
       </el-table-column>
-      <el-table-column prop="newName" label="图片名" min-width="150" align="center">
+      <el-table-column align="center" label="图片名" min-width="150" prop="newName">
         <template #default="scope">
-          <el-input type="textarea" v-model="imgInfo.newName" placeholder="请输入图片名称" v-if="showEdit(scope.$index)" />
+          <el-input v-if="showEdit(scope.$index)" v-model="imgInfo.newName" placeholder="请输入图片名称" type="textarea" />
           <span v-else>
             {{ scope.row.newName }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="oldName" label="官方原名" min-width="150" align="center">
+      <el-table-column align="center" label="官方原名" min-width="150" prop="oldName">
         <template #default="scope">
           <div v-if="showEdit(scope.$index)">
-            <el-input type="textarea" v-model="imgInfo.oldName" placeholder="请输入图片名称" />
+            <el-input v-model="imgInfo.oldName" placeholder="请输入图片名称" type="textarea" />
           </div>
           <div v-else>
             {{ scope.row.oldName }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="nickName" label="别称" min-width="100" align="center">
+      <el-table-column align="center" label="别称" min-width="100" prop="nickName">
         <template #default="scope">
           <div v-if="showEdit(scope.$index)">
-            <el-input type="textarea" v-model="imgInfo.nickName" placeholder="请输入图片名称" />
+            <el-input v-model="imgInfo.nickName" placeholder="请输入图片名称" type="textarea" />
           </div>
           <div v-else>
             {{ scope.row.nickName }}
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="imgPath" sum-text label="服务器存储路径" width="110" align="center" v-if="isAdmin" />
-      <el-table-column prop="time" label="官方上传时间" min-width="110" align="center" />
+      <el-table-column v-if="isAdmin" align="center" label="服务器存储路径" prop="imgPath" sum-text width="110" />
+      <el-table-column align="center" label="官方上传时间" min-width="110" prop="time" />
       <!-- <el-table-column prop="created_time" label="整理时间" min-width="150" align="center">
           <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
         </el-table-column> -->
-      <el-table-column prop="updated_time" label="上次修改时间" min-width="150" align="center">
+      <el-table-column align="center" label="上次修改时间" min-width="150" prop="updated_time">
         <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
       </el-table-column>
-      <el-table-column fixed="right" label="操作" min-width="100" align="center">
-        <template #header v-if="isPC">
+      <el-table-column align="center" fixed="right" label="操作" min-width="100">
+        <template v-if="isPC" #header>
           <div style="display: flex; justify-content: space-around">
             <span>操作</span
-            ><el-button type="success" size="small" plain @click="render(true)" :icon="Refresh" title="刷新图片信息"></el-button>
+            ><el-button :icon="Refresh" plain size="small" title="刷新图片信息" type="success" @click="render(true)"></el-button>
           </div>
         </template>
         <template #default="scope">
           <div v-if="isEditRow !== scope.$index">
-            <el-button link type="primary" size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link type="danger" size="small" :disabled="!isAdmin" @click="deleteRow(scope.$index, scope.row)">
+            <el-button link size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button :disabled="!isAdmin" link size="small" type="danger" @click="deleteRow(scope.$index, scope.row)">
               删除
             </el-button>
           </div>
           <div v-else>
-            <el-button link type="info" size="small" @click="handleCancel">取消 </el-button>
-            <el-button link type="primary" size="small" @click.prevent="checkReverseUpdateRow(imgInfo, scope.row)">
+            <el-button link size="small" type="info" @click="handleCancel">取消 </el-button>
+            <el-button link size="small" type="primary" @click.prevent="checkReverseUpdateRow(imgInfo, scope.row)">
               更新
             </el-button>
           </div>
@@ -214,25 +214,25 @@
       <el-pagination
         v-model:current-page="currentPage"
         v-model:page-size="condition.pageSize"
-        size="small"
-        :page-sizes="[10, 25, 50, 100]"
         :layout="layout"
+        :page-sizes="[10, 25, 50, 100]"
+        size="small"
         :total="total"
-        @size-change="render()"
         @current-change="render()"
+        @size-change="render()"
       />
     </div>
 
     <!--移动端筛选框2-->
-    <el-drawer v-model="dialogVisible" title="筛选图片" :show-close="false" direction="btt" :append-to-body="true" size="50%">
+    <el-drawer v-model="dialogVisible" :append-to-body="true" direction="btt" :show-close="false" size="50%" title="筛选图片">
       <el-row>
         <el-col :sm="3">
           <el-select
-            placeholder="选择版本"
             v-model="condition.version"
-            multiple
             collapse-tags
             collapse-tags-tooltip
+            multiple
+            placeholder="选择版本"
             :suffix-icon="Search"
           >
             <el-option v-for="item in diffVersionInfo" :key="item?.version" :label="item?.versionName" :value="item?.version" />
@@ -240,15 +240,15 @@
         </el-col>
         <el-col :sm="4">
           <el-tree-select
-            placeholder="包含角色"
             v-model="condition.roles"
-            :data="roleTree"
-            :render-after-expand="false"
-            multiple
-            show-checkbox
             collapse-tags
             collapse-tags-tooltip
+            :data="roleTree"
             filterable
+            multiple
+            placeholder="包含角色"
+            :render-after-expand="false"
+            show-checkbox
             :suffix-icon="Search"
           />
         </el-col>
@@ -260,7 +260,7 @@
           </el-select>
         </el-col>
         <el-col :sm="2">
-          <el-select :disabled="!condition.orderBy" v-model.trim="condition.order" placeholder="排序方向">
+          <el-select v-model.trim="condition.order" :disabled="!condition.orderBy" placeholder="排序方向">
             <el-option label="正序" value="" />
             <el-option label="倒序" value="desc" />
           </el-select>
@@ -279,7 +279,7 @@
           </el-select>
         </el-col>
         <el-col :sm="8">
-          <el-button @click="render(true)" type="primary">筛选/查找</el-button>
+          <el-button type="primary" @click="render(true)">筛选/查找</el-button>
           <el-button @click="clearFilter">清除筛选</el-button>
         </el-col>
       </el-row>

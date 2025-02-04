@@ -9,16 +9,16 @@
         </el-button-group>
         <el-date-picker
           v-if="isPC"
-          style="max-width: 250px"
           v-model="dateRange"
-          type="daterange"
+          :disabled-date="disabledDate"
+          end-placeholder="选择账单结束日期"
           range-separator="To"
           start-placeholder="选择账单开始日期"
-          end-placeholder="选择账单结束日期"
+          style="max-width: 250px"
+          type="daterange"
           unlink-panels
-          @change="getBillList"
-          :disabled-date="disabledDate"
           value-format="YYYY-MM-DD"
+          @change="getBillList"
         />
         <el-button-group>
           <el-button @click="getNewDateRange('minus')"
@@ -35,21 +35,21 @@
         </el-button-group>
       </div>
       <el-date-picker
-        style="max-width: 250px"
         v-if="!isPC"
         v-model="dateRange"
-        type="daterange"
+        :disabled-date="disabledDate"
+        end-placeholder="选择账单结束日期"
         range-separator="To"
         start-placeholder="选择账单开始日期"
-        end-placeholder="选择账单结束日期"
+        style="max-width: 250px"
+        type="daterange"
         unlink-panels
-        @change="getBillList"
-        :disabled-date="disabledDate"
         value-format="YYYY-MM-DD"
+        @change="getBillList"
       />
     </el-header>
     <el-empty v-if="isNull" description="暂无账单">
-      <el-button @click="showBillPanel" type="primary">添加账单</el-button>
+      <el-button type="primary" @click="showBillPanel">添加账单</el-button>
       <!--        <el-button v-if="uid===bookInfo.uid" type="primary" @click="copyText(`【默默的小站】注册登陆之后可前往https://muxidream.cn/user/books加入协作账本【${bookInfo.name}】，账本ID：${bookInfo.bid}，协作码：${bookInfo.key},协作码仅一次有效。`,'账本ID和协作码')-->
       <!--">邀请协作-->
       <!--        </el-button>-->
@@ -57,17 +57,17 @@
     <el-main v-else style="padding-top: 0">
       <el-table
         ref="tableRef"
+        border
         :data="billList"
         :height="screenHeight - 290"
-        stripe
-        border
-        show-overflow-tooltip
         highlight-current-row
-        row-key="id"
-        table-layout="auto"
-        :span-method="objectSpanMethod"
         :row-class-name="showDelLine"
+        row-key="id"
         :row-style="hide"
+        show-overflow-tooltip
+        :span-method="objectSpanMethod"
+        stripe
+        table-layout="auto"
         @row-click="showBillPanel"
       >
         <!--                        show-summary-->
@@ -75,34 +75,34 @@
         <template #empty>
           <el-empty />
         </template>
-        <el-table-column prop="gid" label="组序" min-width="50" align="center" sortable />
-        <el-table-column prop="name" label="名目" min-width="80" align="center" />
-        <el-table-column prop="type" label="类型" min-width="70" align="center" />
-        <el-table-column prop="price" label="支出" min-width="70" align="center" />
-        <el-table-column prop="username" label="昵称" min-width="70" align="center">
+        <el-table-column align="center" label="组序" min-width="50" prop="gid" sortable />
+        <el-table-column align="center" label="名目" min-width="80" prop="name" />
+        <el-table-column align="center" label="类型" min-width="70" prop="type" />
+        <el-table-column align="center" label="支出" min-width="70" prop="price" />
+        <el-table-column align="center" label="昵称" min-width="70" prop="username">
           <template #default="scope">
             <el-text type="primary">{{ scope.row.username }}</el-text>
           </template>
         </el-table-column>
-        <el-table-column prop="desc" label="备注" min-width="100" align="center" />
-        <el-table-column prop="bill_date" label="账单日期" min-width="120" align="center">
+        <el-table-column align="center" label="备注" min-width="100" prop="desc" />
+        <el-table-column align="center" label="账单日期" min-width="120" prop="bill_date">
           <template #default="scope">{{ scope.row.bill_date.substring(0, 10) }}</template>
         </el-table-column>
-        <el-table-column prop="created_time" label="创建时间" min-width="70" v-if="false" align="center">
+        <el-table-column v-if="false" align="center" label="创建时间" min-width="70" prop="created_time">
           <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
         </el-table-column>
-        <el-table-column prop="updated_time" label="更新时间" min-width="70" v-if="false" align="center">
+        <el-table-column v-if="false" align="center" label="更新时间" min-width="70" prop="updated_time">
           <template #default="scope">{{ getDiffTime(scope.row.updated_time) }}</template>
         </el-table-column>
-        <el-table-column fixed="right" label="操作" min-width="100" align="center">
+        <el-table-column align="center" fixed="right" label="操作" min-width="100">
           <template #default="scope">
             <!--              <el-button link type="primary" size="small" @click.stop="handleEdit(scope.$index, scope.row)">编辑-->
             <!--              </el-button>-->
             <el-button
               v-if="scope.row.status === 0"
               link
-              type="primary"
               size="small"
+              type="primary"
               @click.stop="deleteRow(scope.$index, { gid: scope.row.gid }, 1)"
             >
               销账
@@ -110,13 +110,13 @@
             <el-button
               v-if="scope.row.status === 1"
               link
-              type="info"
               size="small"
+              type="info"
               @click.stop="deleteRow(scope.$index, { gid: scope.row.gid }, 0)"
             >
               还原
             </el-button>
-            <el-button link type="danger" size="small" @click.stop="deleteRow(scope.$index, { id: scope.row.id }, 2)">
+            <el-button link size="small" type="danger" @click.stop="deleteRow(scope.$index, { id: scope.row.id }, 2)">
               删除
             </el-button>
           </template>
@@ -129,7 +129,7 @@
           已销账单：
           <el-switch v-model="isShowDelLine" active-text="显示" inactive-text="隐藏" inline-prompt />
         </el-text>
-        <el-button @click="showBillPanel" type="primary" :style="isPC ? '' : 'margin: 4px 5px'">添加账单 </el-button>
+        <el-button :style="isPC ? '' : 'margin: 4px 5px'" type="primary" @click="showBillPanel">添加账单 </el-button>
       </div>
     </el-footer>
   </el-container>

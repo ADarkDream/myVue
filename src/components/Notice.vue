@@ -2,10 +2,10 @@
   <!-- <el-scrollbar class="notice"> -->
   <el-tabs v-model="showFlag.show_num" @tab-click="tabClick">
     <!--       网站介绍区-->
-    <el-tab-pane :name="1" label="网站介绍">
+    <el-tab-pane label="网站介绍" :name="1">
       <el-collapse-transition class="noticeContent">
         <el-collapse v-model="showFlag.active_num" accordion>
-          <el-collapse-item title="网站介绍" :name="1">
+          <el-collapse-item :name="1" title="网站介绍">
             <el-card class="introduction">
               <el-text tag="p">
                 1.本站为社交化导航网站，提供
@@ -22,18 +22,18 @@
                 <el-button
                   link
                   target="_blank"
+                  :title="contactGroup[0].title"
                   type="primary"
                   @click="copyText(contactGroup[0].value, contactGroup[0].name, contactGroup[0].url)"
-                  :title="contactGroup[0].title"
                   >{{ contactGroup[0].name }}
                 </el-button>
                 ;重返未来群：
                 <el-button
                   link
                   target="_blank"
+                  :title="contactGroup[1].title"
                   type="primary"
                   @click="copyText(contactGroup[1].value, contactGroup[1].name, contactGroup[1].url)"
-                  :title="contactGroup[1].title"
                   >{{ contactGroup[1].name }} </el-button
                 >。
               </el-text>
@@ -43,19 +43,19 @@
               <el-text tag="p"
                 >4.你可以
                 <el-text
-                  tag="a"
-                  type="success"
                   href="https://mp-00526be3-cd12-41bd-84f7-bfbce63bb7d0.cdn.bspapp.com/test1/BookMarks_2023_8_15_2.zip"
+                  tag="a"
                   title="下载书签"
+                  type="success"
                   >下载
                 </el-text>
                 并解压出HTML文件，导入到自己的浏览器收藏夹。导入步骤可参考教程视频：
                 <el-text
+                  href="https://www.bilibili.com/video/BV1rr4y1S79J/"
                   tag="a"
                   target="_blank"
-                  type="primary"
-                  href="https://www.bilibili.com/video/BV1rr4y1S79J/"
                   title="B站教程视频"
+                  type="primary"
                   >点击此处
                 </el-text>
                 。
@@ -77,23 +77,23 @@
               >
             </el-card>
           </el-collapse-item>
-          <el-collapse-item title="友情链接" :name="2">
+          <el-collapse-item :name="2" title="友情链接">
             <div class="friendLinks">
-              <el-link v-for="(item, index) in friendlyLink" :key="index" target="_blank" :href="item.url" :title="item.title"
-                ><el-image class="link_ico" :src="item.imgUrl || customIco" :alt="item.name">
-                  <template #error> <img class="link_ico" :src="customIco" :alt="item.name" /> </template></el-image
+              <el-link v-for="(item, index) in friendlyLink" :key="index" :href="item.url" target="_blank" :title="item.title"
+                ><el-image :alt="item.name" class="link_ico" :src="item.imgUrl || customIco">
+                  <template #error> <img :alt="item.name" class="link_ico" :src="customIco" /> </template></el-image
                 >{{ item.name }}
               </el-link>
             </div>
           </el-collapse-item>
-          <el-collapse-item title="隐私政策" :name="3">
+          <el-collapse-item :name="3" title="隐私政策">
             <el-card class="privacyStatement">
               <p>
                 本站与 Microsoft Clarity
                 合作，通过行为指标、热图和会话回放来捕捉您使用本站的轨迹，以改进本站的产品和服务。网站使用数据是通过第一方和第三方
                 Cookie 以及其他跟踪技术捕获的，以确定产品和服务的受欢迎程度和在线活动。此外，本站将这些信息用于网站优化。有关
                 Microsoft 如何收集和使用您的数据的更多信息，请访问
-                <el-button link type="primary" :href="'https://privacy.microsoft.com/zh-CN/privacystatement'"
+                <el-button :href="'https://privacy.microsoft.com/zh-CN/privacystatement'" link type="primary"
                   >Microsoft 隐私声明 </el-button
                 >。
               </p>
@@ -116,11 +116,11 @@
       </el-collapse-transition>
     </el-tab-pane>
     <!--    更新相关-->
-    <el-tab-pane :name="2" label="更新相关">
+    <el-tab-pane label="更新相关" :name="2">
       <el-collapse-transition class="noticeContent">
         <el-collapse v-model="showFlag.active_num" accordion style="border: none; text-align: left">
           <!--    待更新的功能-->
-          <el-collapse-item title="待更新的功能" :name="1">
+          <el-collapse-item :name="1" title="待更新的功能">
             <template v-for="item in noUpdated" :key="item.id">
               <p>
                 <el-icon>
@@ -136,26 +136,26 @@
               其他：<el-text
                 v-for="(item, index) in otherNoUpdated"
                 :key="index"
-                type="info"
                 size="small"
-                tag="p"
                 :style="{
                   'text-decoration': item.isCompleted ? 'line-through' : 'none',
                 }"
+                tag="p"
+                type="info"
               >
                 {{ index + 1 }}.{{ item.text }}
               </el-text>
             </p>
           </el-collapse-item>
-          <el-collapse-item title="已更新的公告" :name="2">
+          <el-collapse-item :name="2" title="已更新的公告">
             <el-timeline style="padding-left: 0"
               ><br />
               <el-timeline-item
                 v-for="item in updateNotes.slice().reverse()"
                 :key="item.id"
+                placement="top"
                 style="text-align: left"
                 :timestamp="item.time"
-                placement="top"
               >
                 <el-card>
                   <el-text tag="p"> {{ item.title }}</el-text>
@@ -168,11 +168,11 @@
       </el-collapse-transition>
     </el-tab-pane>
     <!--联系和反馈-->
-    <el-tab-pane :name="3" label="联系与反馈">
+    <el-tab-pane label="联系与反馈" :name="3">
       <el-collapse-transition class="noticeContent">
-        <el-collapse v-model="showFlag.active_num" v-show="showFlag.show_num === 3" accordion style="border: none">
+        <el-collapse v-show="showFlag.show_num === 3" v-model="showFlag.active_num" accordion style="border: none">
           <!--联系方式-->
-          <el-collapse-item title="联系方式" :name="1">
+          <el-collapse-item :name="1" title="联系方式">
             <div style="display: flex; justify-content: space-around">
               <el-button
                 v-for="item in contact"
@@ -186,24 +186,24 @@
             </div>
           </el-collapse-item>
           <!--    留言反馈-->
-          <el-collapse-item title="留言反馈" :name="2">
+          <el-collapse-item :name="2" title="留言反馈">
             <el-form style="margin: 0 5%">
               <el-form-item>
                 <el-input
-                  type="text"
                   v-model.trim="feedback.contact"
                   maxlength="30"
                   placeholder="[选填]可在此填写联系方式"
+                  type="text"
                 ></el-input>
               </el-form-item>
               <el-form-item>
                 <el-input
-                  type="textarea"
                   v-model.trim="feedback.content"
-                  minlength="5"
                   maxlength="200"
-                  show-word-limit
+                  minlength="5"
                   placeholder="[必填]可在此提交建议、bug反馈或其他内容"
+                  show-word-limit
+                  type="textarea"
                 />
               </el-form-item>
             </el-form>

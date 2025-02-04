@@ -6,7 +6,7 @@
       :style="'--bgImage:' + `url(${musicListInfo.pic_url || musicListInfo.default_cover_url || defaultAlbumArt})`"
     >
       <div class="save" @click.stop>
-        <LikeHeart class="likeHeart" :isLike="isLike" @click="toggleLike()" v-if="!isOwner" />
+        <LikeHeart v-if="!isOwner" class="likeHeart" :is-like="isLike" @click="toggleLike()" />
         <el-dropdown v-else class="optionBtn" :trigger="isPC ? 'hover' : 'click'">
           <span>
             <el-icon>
