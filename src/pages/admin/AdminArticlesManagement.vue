@@ -1,8 +1,15 @@
 <template>
   <el-header class="header1"> 文章管理 </el-header>
   <div class="header2">
-    <el-switch v-model="tableVisible" active-text="表格" inactive-text="矩形" size="large" />
-    <el-button v-show="tableVisible" @click="clearFilter">清空全部筛选</el-button>
+    <el-switch
+      v-model="tableVisible"
+      active-text="表格"
+      inactive-text="矩形"
+      size="large"
+    />
+    <el-button v-show="tableVisible" @click="clearFilter"
+      >清空全部筛选</el-button
+    >
   </div>
   <el-scrollbar height="500px">
     <el-main v-if="tableVisible" style="padding-bottom: 0; padding-top: 0">
@@ -76,21 +83,44 @@
           width="120"
         >
           <template #default="scope">
-            <el-button v-if="scope.row.status === 0" text type="primary">待审核</el-button>
-            <el-button v-else-if="scope.row.status === 1" text type="info">已发布</el-button>
-            <el-button v-else-if="scope.row.status === 2" text type="danger">未过审</el-button>
+            <el-button v-if="scope.row.status === 0" text type="primary"
+              >待审核</el-button
+            >
+            <el-button v-else-if="scope.row.status === 1" text type="info"
+              >已发布</el-button
+            >
+            <el-button v-else-if="scope.row.status === 2" text type="danger"
+              >未过审</el-button
+            >
           </template>
         </el-table-column>
         <el-table-column label="创建时间" prop="created_time" width="150">
-          <template #default="scope">{{ getTime(scope.row.created_time) }}</template>
+          <template #default="scope">{{
+            getTime(scope.row.created_time)
+          }}</template>
         </el-table-column>
         <el-table-column label="修改时间" prop="created_time" width="150">
-          <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
+          <template #default="scope">{{
+            getTime(scope.row.updated_time)
+          }}</template>
         </el-table-column>
         <el-table-column fixed="right" label="操作" width="100">
           <template #default="scope">
-            <el-button link size="small" type="primary" @click="goArticle(scope.row, 1)">审核 </el-button>
-            <el-button link size="small" type="danger" @click="deleteRow(scope.row.id)"> 删除 </el-button>
+            <el-button
+              link
+              size="small"
+              type="primary"
+              @click="goArticle(scope.row, 1)"
+              >审核
+            </el-button>
+            <el-button
+              link
+              size="small"
+              type="danger"
+              @click="deleteRow(scope.row.id)"
+            >
+              删除
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -102,8 +132,15 @@
           <el-main class="cards">
             <el-button class="title" text>待审核</el-button>
             <el-divider> {{ noSubmitArticleList.length }}</el-divider>
-            <el-card v-for="(item, index) in noSubmitArticleList" :key="index" class="card" shadow="hover">
-              <template #header>{{ item.title }}——作者：{{ item.author }}</template>
+            <el-card
+              shadow="hover"
+              class="card"
+              v-for="(item, index) in noSubmitArticleList"
+              :key="index"
+            >
+              <template #header
+                >{{ item.title }}——作者：{{ item.author }}</template
+              >
               <el-space spacer="|">
                 <span>板块：{{ item.area }}</span>
                 <span>标签：{{ item.tags }}</span>
@@ -115,8 +152,12 @@
               </el-space>
               <template #footer>
                 <div class="footer">
-                  <el-button type="primary" @click="goArticle(item, 1)">审核</el-button>
-                  <el-button type="danger" @click="deleteRow(item.id)">删除</el-button>
+                  <el-button type="primary" @click="goArticle(item, 1)"
+                    >审核</el-button
+                  >
+                  <el-button type="danger" @click="deleteRow(item.id)"
+                    >删除</el-button
+                  >
                 </div>
               </template>
             </el-card>
@@ -129,7 +170,11 @@
           <el-main class="cards">
             <el-button class="title" text type="danger">审核未通过</el-button>
             <el-divider>{{ failedArticleList.length }}</el-divider>
-            <el-card v-for="(item, index) in failedArticleList" :key="index" class="card">
+            <el-card
+              v-for="(item, index) in failedArticleList"
+              class="card"
+              :key="index"
+            >
               <template #header>标题：{{ item.title }}</template>
               <el-space spacer="|">
                 <span>板块：{{ item.area }}</span>
@@ -142,8 +187,12 @@
               </el-space>
               <template #footer>
                 <div class="footer">
-                  <el-button type="primary" @click="goArticle(item, 1)">审核</el-button>
-                  <el-button type="danger" @click="deleteRow(item.id)">删除</el-button>
+                  <el-button type="primary" @click="goArticle(item, 1)"
+                    >审核</el-button
+                  >
+                  <el-button type="danger" @click="deleteRow(item.id)"
+                    >删除</el-button
+                  >
                 </div>
               </template>
             </el-card>
@@ -156,8 +205,10 @@
           <el-main class="cards">
             <el-button class="title" text type="primary">已发布</el-button>
             <el-divider>{{ articleList.length }}</el-divider>
-            <el-card v-for="(item, index) in articleList" :key="index" class="card" shadow="hover">
-              <template #header>{{ item.title }}——作者：{{ item.author }}</template>
+            <el-card shadow="hover" class="card" v-for="item in articleList">
+              <template #header
+                >{{ item.title }}——作者：{{ item.author }}</template
+              >
               <el-space spacer="|">
                 <span>板块：{{ item.area }}</span>
                 <span>标签：{{ item.tags }}</span>
@@ -169,8 +220,12 @@
               </el-space>
               <template #footer>
                 <div class="footer">
-                  <el-button type="primary" @click="goArticle(item, 1)">审核</el-button>
-                  <el-button type="danger" @click="deleteRow(item.id)">删除</el-button>
+                  <el-button type="primary" @click="goArticle(item, 1)"
+                    >审核</el-button
+                  >
+                  <el-button type="danger" @click="deleteRow(item.id)"
+                    >删除</el-button
+                  >
                 </div>
               </template>
             </el-card>
@@ -182,61 +237,66 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router"
-import momo from "@/apis"
-import { ElMessage, ElMessageBox, type TableColumnCtx, type TableInstance } from "element-plus"
-import { onMounted, reactive, ref } from "vue"
+import { useRouter } from "vue-router";
+import momo from "@/apis";
+import {
+  ElMessage,
+  ElMessageBox,
+  type TableColumnCtx,
+  type TableInstance,
+} from "element-plus";
+import { onMounted, reactive, ref } from "vue";
 //hooks
-import useTimeStamp from "@/hooks/useTimestamp"
+import useTimeStamp from "@/hooks/useTimestamp";
 //types
-import type { Article } from "@/types/articles"
+import type { Article } from "@/types/articles";
 
-const router = useRouter()
+const router = useRouter();
 const goArticle = (item: Article, isEdit: number) => {
   // const {id, title, area, tags, text} = item
-  router.push({ path: "/forum/article", query: { id: item.id, isEdit } })
-}
+  router.push({ path: "/forum/article", query: { id: item.id, isEdit } });
+};
 
 //时间戳转换
-const { getTime } = useTimeStamp()
+const { getTime } = useTimeStamp();
 
-const allArticleList: Article[] = reactive([]) //所有列表
+const allArticleList: Article[] = reactive([]); //所有列表
 
-const noSubmitArticleList: Article[] = reactive([]) //待审核
-const failedArticleList: Article[] = reactive([]) //审核未通过
-const articleList: Article[] = reactive([]) //已发表
+const noSubmitArticleList: Article[] = reactive([]); //待审核
+const failedArticleList: Article[] = reactive([]); //审核未通过
+const articleList: Article[] = reactive([]); //已发表
 
 //管理员
 onMounted(async () => {
-  await getAllArticleList()
-})
+  await getAllArticleList();
+});
 
 //region获取所有文章
 const getAllArticleList = async () => {
   try {
-    const result = await momo.get("/getAllUserArticleList")
-    console.log(result)
-    const { msg, list } = result
-    ElMessage.success(msg)
+    const result = await momo.get("/getAllUserArticleList");
+    console.log(result);
+    const { msg, list } = result;
+    ElMessage.success(msg);
     //清除旧数据
-    allArticleList.splice(0, allArticleList.length)
-    noSubmitArticleList.splice(0, noSubmitArticleList.length)
-    failedArticleList.splice(0, failedArticleList.length)
-    articleList.splice(0, articleList.length)
+    allArticleList.splice(0, allArticleList.length);
+    noSubmitArticleList.splice(0, noSubmitArticleList.length);
+    failedArticleList.splice(0, failedArticleList.length);
+    articleList.splice(0, articleList.length);
     //添加新数据
     list.forEach((item: Article) => {
-      allArticleList.push(item)
+      allArticleList.push(item);
       if (Number(item.status) === 0)
-        noSubmitArticleList.push(item) //待审核的
+        noSubmitArticleList.push(item); //待审核的
       else if (Number(item.status) === 1)
-        articleList.push(item) //审核通过的
-      else if (Number(item.status) === 2) failedArticleList.push(item) //审核未通过的
-    })
+        articleList.push(item); //审核通过的
+      else if (Number(item.status) === 2) failedArticleList.push(item); //审核未通过的
+    });
   } catch (error) {
-    console.log("发生错误：")
-    console.log(error)
+    console.log("发生错误：");
+    console.log(error);
   }
-}
+};
 
 //endregion
 const deleteRow = (id: number) => {
@@ -247,41 +307,45 @@ const deleteRow = (id: number) => {
     showClose: false,
   })
     .then(() => {
-      deleteArticle(id)
+      deleteArticle(id);
     })
-    .catch(() => ElMessage.info("删除操作已取消"))
-}
+    .catch(() => ElMessage.info("删除操作已取消"));
+};
 
 //删除文章
 const deleteArticle = async (id: number) => {
   try {
-    const result = await momo.delete("/deleteArticle", { id })
+    const result = await momo.delete("/deleteArticle", { id });
     // console.log(result)
-    const { msg } = result
-    ElMessage.success(msg)
+    const { msg } = result;
+    ElMessage.success(msg);
     //删除之后刷新列表
 
-    await getAllArticleList()
+    await getAllArticleList();
   } catch (error) {
-    console.log("发生错误：")
-    console.error(error)
+    console.log("发生错误：");
+    console.error(error);
   }
-}
+};
 
 //下面是表格模式
-const tableVisible = ref(true)
-const tableRef = ref<TableInstance>()
+const tableVisible = ref(true);
+const tableRef = ref<TableInstance>();
 
 //清空全部筛选条件
 const clearFilter = () => {
-  tableRef.value!.clearFilter()
-}
+  tableRef.value!.clearFilter();
+};
 
 //筛选器
-const filterHandler = (value: string, row: Article, column: TableColumnCtx<Article>) => {
-  const property = column["property"] as keyof Article //断言property是Article中的键名
-  return row[property] === value
-}
+const filterHandler = (
+  value: string,
+  row: Article,
+  column: TableColumnCtx<Article>
+) => {
+  const property = column["property"] as keyof Article; //断言property是Article中的键名
+  return row[property] === value;
+};
 </script>
 
 <style scoped>

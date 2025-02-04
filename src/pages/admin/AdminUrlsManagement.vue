@@ -2,16 +2,33 @@
   <el-header class="header1"> 导航管理 </el-header>
   <div class="header2">
     <el-col :span="3">
-      <el-button type="primary" @click="dialogVisible = true">发布新导航</el-button>
+      <el-button type="primary" @click="dialogVisible = true"
+        >发布新导航</el-button
+      >
     </el-col>
     <el-col :span="3">
-      <el-input v-model.trim="searchUrl.name" clearable placeholder="网站名" :prefix-icon="Search" />
+      <el-input
+        v-model.trim="searchUrl.name"
+        clearable
+        placeholder="网站名"
+        :prefix-icon="Search"
+      />
     </el-col>
     <el-col :span="3">
-      <el-input v-model.trim="searchUrl.detail" clearable placeholder="网站简介" :prefix-icon="Search" />
+      <el-input
+        v-model.trim="searchUrl.detail"
+        clearable
+        placeholder="网站简介"
+        :prefix-icon="Search"
+      />
     </el-col>
     <el-col v-if="false" :span="3">
-      <el-input v-model.trim="searchUrl.uid" clearable placeholder="上传者uid" :prefix-icon="Search" />
+      <el-input
+        v-model.trim="searchUrl.uid"
+        clearable
+        placeholder="上传者uid"
+        :prefix-icon="Search"
+      />
     </el-col>
     <el-col :span="3">
       <el-select v-model.trim="searchUrl.status" placeholder="All">
@@ -23,11 +40,27 @@
     <el-col :span="3">
       <el-select v-model.trim="searchUrl.sort" placeholder="All">
         <el-option label="网站分类(全选)" value="" />
-        <el-option v-for="(item, index) in sort" :key="index" :label="item.text" :value="item.value" />
+        <el-option
+          v-for="(item, index) in sort"
+          :key="index"
+          :label="item.text"
+          :value="item.value"
+        />
+        <el-option
+          v-for="(item, index) in sort"
+          :key="index"
+          :label="item.text"
+          :value="item.value"
+        />
       </el-select>
     </el-col>
     <el-col v-if="false" :span="3">
-      <el-input v-model.trim="searchUrl.tags" clearable placeholder="网站标签" :prefix-icon="Search" />
+      <el-input
+        v-model.trim="searchUrl.tags"
+        clearable
+        placeholder="网站标签"
+        :prefix-icon="Search"
+      />
     </el-col>
     <el-col :span="5">
       <el-button type="primary" @click="filterChange">筛选查找</el-button>
@@ -35,7 +68,12 @@
     </el-col>
   </div>
   <el-main style="padding: 0">
-    <el-form class="search" label-position="left" label-width="auto" :model="newUrl">
+    <el-form
+      class="search"
+      label-position="left"
+      label-width="auto"
+      :model="newUrl"
+    >
       <el-form-item label-width="auto"> </el-form-item>
     </el-form>
 
@@ -53,7 +91,14 @@
       @sort-change="handleSortChange"
     >
       <!--              @filter-change="filterChange">-->
-      <el-table-column align="center" fixed label="ID" prop="id" sortable width="70" />
+      <el-table-column
+        align="center"
+        fixed
+        label="ID"
+        prop="id"
+        sortable
+        width="70"
+      />
       <el-table-column align="center" label="图标" prop="img" width="60">
         <template #default="scope">
           <el-input v-if="isEditRow === scope.$index" v-model="newUrl.img" />
@@ -81,25 +126,41 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="上传用户uid" prop="uid" width="120">
+      <el-table-column
+        align="center"
+        label="上传用户uid"
+        prop="uid"
+        width="120"
+      >
         <template #default="scope">
           <el-button v-if="scope.row.uid === 0" text>管理员</el-button>
           <el-button v-else text type="primary">{{ scope.row.uid }}</el-button>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="网站状态" prop="status" width="130">
+      <el-table-column
+        align="center"
+        label="网站状态"
+        prop="status"
+        width="130"
+      >
         <!--                       :filters="[ {text: '待审核', value: 0},{text: '正在使用', value: 1}]" column-key="status">-->
         <!--                       :filter-method="filterHandler">-->
         <template #default="scope">
           <template v-if="isEditRow === scope.$index">
-            <el-select v-model="newUrl.status" default-first-option placeholder="待审核">
+            <el-select
+              v-model="newUrl.status"
+              default-first-option
+              placeholder="待审核"
+            >
               <el-option label="待审核" :value="0" />
               <el-option label="正在使用" :value="1" />
             </el-select>
           </template>
           <template v-else>
             <el-button v-if="scope.row.status === 1" text>正在使用</el-button>
-            <el-button v-else-if="scope.row.status === 0" text type="primary">待审核</el-button>
+            <el-button v-else-if="scope.row.status === 0" text type="primary"
+              >待审核</el-button
+            >
           </template>
         </template>
       </el-table-column>
@@ -108,8 +169,17 @@
         <!--                       :filter-method="filterHandler">-->
         <template #default="scope">
           <template v-if="isEditRow === scope.$index">
-            <el-select v-model="newUrl.sort" default-first-option placeholder="选择分类(默认为更新说明)">
-              <el-option v-for="(item, index) in sort" :key="index" :label="item.text" :value="item.value" />
+            <el-select
+              v-model="newUrl.sort"
+              default-first-option
+              placeholder="选择分类(默认为更新说明)"
+            >
+              <el-option
+                v-for="(item, index) in sort"
+                :key="index"
+                :label="item.text"
+                :value="item.value"
+              />
             </el-select>
           </template>
           <template v-else>
@@ -117,20 +187,55 @@
           </template>
         </template>
       </el-table-column>
-      <el-table-column v-if="false" align="center" label="标签" prop="tags" width="120" />
+      <el-table-column
+        v-if="false"
+        align="center"
+        label="标签"
+        prop="tags"
+        width="120"
+      />
 
-      <el-table-column align="center" label="更新时间" prop="updated_time" width="150">
-        <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
+      <el-table-column
+        align="center"
+        label="更新时间"
+        prop="updated_time"
+        width="150"
+      >
+        <template #default="scope">{{
+          getTime(scope.row.updated_time)
+        }}</template>
       </el-table-column>
       <el-table-column align="center" fixed="right" label="操作" width="100">
         <template #default="scope">
           <div v-if="isEditRow !== scope.$index">
-            <el-button link size="small" type="primary" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button link size="small" type="danger" @click="deleteRow(scope.$index, scope.row.id)"> 删除 </el-button>
+            <el-button
+              link
+              size="small"
+              type="primary"
+              @click="handleEdit(scope.$index, scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+              link
+              size="small"
+              type="danger"
+              @click="deleteRow(scope.$index, scope.row.id)"
+            >
+              删除
+            </el-button>
           </div>
           <div v-else>
-            <el-button link size="small" type="primary" @click="handleCancel">取消 </el-button>
-            <el-button link size="small" type="primary" @click.prevent="checkUpdateRow(newUrl, scope.row)"> 更新 </el-button>
+            <el-button link size="small" type="primary" @click="handleCancel"
+              >取消
+            </el-button>
+            <el-button
+              link
+              size="small"
+              type="primary"
+              @click.prevent="checkUpdateRow(newUrl, scope.row)"
+            >
+              更新
+            </el-button>
           </div>
         </template>
       </el-table-column>
@@ -139,7 +244,11 @@
       <el-pagination
         v-model:current-page="currentPage"
         v-model:page-size="pageSize"
-        :layout="total / pageSize > 10 ? 'total, sizes, prev, pager, next,jumper' : 'total, sizes, prev, pager, next'"
+        :layout="
+          total / pageSize > 10
+            ? 'total, sizes, prev, pager, next,jumper'
+            : 'total, sizes, prev, pager, next'
+        "
         :page-sizes="[10, 25, 50, 100]"
         :total="total"
         @current-change="handleCurrentChange"
@@ -155,41 +264,41 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch } from "vue"
-import momo from "@/apis"
-import { Search } from "@element-plus/icons-vue"
-import { ElMessage, ElMessageBox } from "element-plus"
-import type { TableInstance } from "element-plus"
+import { reactive, ref, watch } from "vue";
+import momo from "@/apis";
+import { Search } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import type { TableInstance } from "element-plus";
 //hooks
-import useTimeStamp from "@/hooks/useTimestamp"
+import useTimeStamp from "@/hooks/useTimestamp";
 //components
-import AddUrl from "@/components/AddUrl.vue"
+import AddUrl from "@/components/AddUrl.vue";
 //utils
-import myFunction from "@/utils/myFunction"
+import myFunction from "@/utils/myFunction";
 
-const { getTime } = useTimeStamp()
-const { diffObj } = myFunction
+const { getTime } = useTimeStamp();
+const { diffObj } = myFunction;
 
 //添加导航网站面板的显示与隐藏
-let dialogVisible = ref(false)
+let dialogVisible = ref(false);
 
-const tableRef = ref<TableInstance>()
+const tableRef = ref<TableInstance>();
 
 //清空全部筛选条件
 const clearFilter = () => {
   // tableRef.value!.clearFilter()
   // render()
   // total.value = totalData.length
-  searchUrl.name = ""
-  searchUrl.detail = ""
+  searchUrl.name = "";
+  searchUrl.detail = "";
   // searchUrl.uid=''
-  searchUrl.status = 2
-  searchUrl.sort = ""
+  searchUrl.status = 2;
+  searchUrl.sort = "";
   // searchUrl.tags=''
-  render()
-  total.value = totalData.length
-  flag.value = true
-}
+  render();
+  total.value = totalData.length;
+  flag.value = true;
+};
 
 //监听排序行为，并修改数组顺序,否则删除会出错
 function handleSortChange() {
@@ -199,60 +308,77 @@ function handleSortChange() {
   //   if (a[prop] > b[prop]) return order === 'ascending' ? 1 : -1;
   //   return 0;
   // })
-  if (flag.value) render()
+  if (flag.value) render();
 }
 
 //筛选标记(false表示筛选过了)
-const flag = ref(true)
+const flag = ref(true);
 
 //筛选方法
 function filterChange() {
   //预设筛选条件
-  const filterName = (item) => (searchUrl.name === "" ? true : item.name.toLowerCase().includes(searchUrl.name.toLowerCase()))
+  const filterName = (item) =>
+    searchUrl.name === ""
+      ? true
+      : item.name.toLowerCase().includes(searchUrl.name.toLowerCase());
   const filterDetail = (item) =>
-    searchUrl.detail === "" ? true : item.detail.toLowerCase().includes(searchUrl.detail.toLowerCase())
+    searchUrl.detail === ""
+      ? true
+      : item.detail.toLowerCase().includes(searchUrl.detail.toLowerCase());
   // const filterUid = item => item.uid.toString().includes(searchUrl.uid.toString())
-  const filterStatus = (item) => (searchUrl.status === 2 ? true : item.status === searchUrl.status)
-  const filterSort = (item) => (searchUrl.sort === "" ? true : item.sort.includes(searchUrl.sort))
-  const filterTags = (item) => (searchUrl.tags === "" ? true : item.tags.includes(searchUrl.tags))
+  const filterStatus = (item) =>
+    searchUrl.status === 2 ? true : item.status === searchUrl.status;
+  const filterSort = (item) =>
+    searchUrl.sort === "" ? true : item.sort.includes(searchUrl.sort);
+  const filterTags = (item) =>
+    searchUrl.tags === "" ? true : item.tags.includes(searchUrl.tags);
   //开始筛选
-  const newArr = totalData.filter((item) => filterName(item) && filterDetail(item) && filterStatus(item) && filterSort(item))
+  const newArr = totalData.filter(
+    (item) =>
+      filterName(item) &&
+      filterDetail(item) &&
+      filterStatus(item) &&
+      filterSort(item)
+  );
   //将表格显示的数据清空再填充筛选后的数据
-  tableData.splice(0, tableData.length, ...newArr)
+  tableData.splice(0, tableData.length, ...newArr);
   //修改筛选标记(false表示筛选过了)
-  flag.value = false
-  total.value = tableData.length
+  flag.value = false;
+  total.value = tableData.length;
 }
 
 //表格里的数据
-let tableData = reactive([])
+let tableData = reactive([]);
 //总的数据
-const totalData = reactive([])
+const totalData = reactive([]);
 //当前页码
-const currentPage = ref(1)
+const currentPage = ref(1);
 //每页显示多少条数据
-const pageSize = ref(25)
-const total = ref(totalData.length)
+const pageSize = ref(25);
+const total = ref(totalData.length);
 watch(pageSize, (value, oldValue, onCleanup) => {
-  console.log(value)
-})
+  console.log(value);
+});
 
 function render() {
   //清空表格显示的数据
-  tableData.splice(0, tableData.length)
+  tableData.splice(0, tableData.length);
   //根据当前页码计算出应显示的数据
-  const newData = totalData.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
+  const newData = totalData.slice(
+    (currentPage.value - 1) * pageSize.value,
+    currentPage.value * pageSize.value
+  );
   newData.forEach((item: Url) => {
-    tableData.push(item)
-  })
+    tableData.push(item);
+  });
 }
 
 const handleSizeChange = (val: number) => {
-  render()
-}
+  render();
+};
 const handleCurrentChange = (val: number) => {
-  render()
-}
+  render();
+};
 
 let searchUrl = reactive<Url>({
   id: 0,
@@ -265,7 +391,7 @@ let searchUrl = reactive<Url>({
   tags: "",
   status: 2,
   updated_time: "",
-})
+});
 
 let newUrl = reactive<Url>({
   id: 0,
@@ -277,24 +403,24 @@ let newUrl = reactive<Url>({
   tags: "",
   status: 1,
   updated_time: "",
-})
+});
 
 interface Url {
-  id?: number
-  img?: string
-  name?: string
-  detail?: string
-  url?: string
-  sort?: string
-  tags?: string
-  status?: number
-  uid?: number
-  updated_time?: string
+  id?: number;
+  img?: string;
+  name?: string;
+  detail?: string;
+  url?: string;
+  sort?: string;
+  tags?: string;
+  status?: number;
+  uid?: number;
+  updated_time?: string;
 }
 
 interface Sort {
-  text: string
-  value: string
+  text: string;
+  value: string;
 }
 
 let sort = reactive<Sort[]>([
@@ -308,59 +434,60 @@ let sort = reactive<Sort[]>([
   { text: "虚拟机", value: "vm" },
   { text: "杂项", value: "other" },
   { text: "娱乐", value: "webGame" },
-])
+]);
 
-const getText = (value: string) => sort.find((item) => item.value === value)
+const getText = (value: string) => sort.find((item) => item.value === value);
 
 //获取全部网址
-getAllUrlList()
+getAllUrlList();
 
 function getAllUrlList() {
   momo
     .get("/getAllUrlList")
     .then((result) => {
-      console.log(result)
-      const { msg, urlList } = result
-      ElMessage.success(msg)
-      total.value = urlList.length
+      console.log(result);
+      const { msg, urlList } = result;
+      ElMessage.success(msg);
+      total.value = urlList.length;
 
       // tableData.splice(0, tableData.length)
       // urlList.forEach((item: Url) => {
       //   tableData.push(item)
       // })
-      totalData.splice(0, totalData.length)
+      totalData.splice(0, totalData.length);
       urlList.forEach((item: Url) => {
-        totalData.push(item)
-      })
-      render()
+        totalData.push(item);
+      });
+      render();
     })
     .catch((error) => {
-      console.log("发生错误：")
-      console.dir(error)
-    })
+      console.log("发生错误：");
+      console.dir(error);
+    });
 }
 
 //编辑标记
-let isEditRow = ref<number>(-1)
+let isEditRow = ref<number>(-1);
 
 //编辑网址信息(修改编辑标记)
 const handleEdit = (index: number, row: Url) => {
-  isEditRow.value = index
-  newUrl = Object.assign(newUrl, row)
-}
+  isEditRow.value = index;
+  newUrl = Object.assign(newUrl, row);
+};
 
 //还原编辑标记
 function handleCancel() {
-  isEditRow.value = -1
+  isEditRow.value = -1;
 }
 
 //对上传的数据进行格式检查
 function checkUpdateRow(newData: Url, oldData: Url) {
-  const data = diffObj(newData, oldData) as Url
+  const data = diffObj(newData, oldData) as Url;
   //判断网址信息是否修改
-  if (Object.keys(data).length === 0) return ElMessage.info("网址信息未修改，已取消上传。")
+  if (Object.keys(data).length === 0)
+    return ElMessage.info("网址信息未修改，已取消上传。");
   //校验格式
-  updateRow(data, oldData.id, oldData)
+  updateRow(data, oldData.id, oldData);
 }
 
 //上传更新的网址信息
@@ -372,20 +499,20 @@ function updateRow(data: Url, id: number, oldData: Url) {
     })
     .then((result) => {
       // console.log(result)
-      const { msg } = result
+      const { msg } = result;
       //更新修订时间为当前时间
-      data.updated_time = new Date().toISOString()
+      data.updated_time = new Date().toISOString();
       //将修改后的信息显示出来
-      Object.assign(oldData, data)
+      Object.assign(oldData, data);
       //去除编辑标记
-      isEditRow.value = -1
-      ElMessage.success(msg)
+      isEditRow.value = -1;
+      ElMessage.success(msg);
     })
     .catch((error) => {
-      console.log("发生错误：")
-      console.log(error)
-      ElMessage.error(error.msg)
-    })
+      console.log("发生错误：");
+      console.log(error);
+      ElMessage.error(error.msg);
+    });
 }
 
 const deleteRow = (index: number, id: number) => {
@@ -396,10 +523,10 @@ const deleteRow = (index: number, id: number) => {
     showClose: false,
   })
     .then(() => {
-      deleteUrl(index, id)
+      deleteUrl(index, id);
     })
-    .catch(() => ElMessage.info("删除操作已取消"))
-}
+    .catch(() => ElMessage.info("删除操作已取消"));
+};
 
 //删除网址
 const deleteUrl = (index: number, id: number) => {
@@ -407,17 +534,17 @@ const deleteUrl = (index: number, id: number) => {
     .delete("/deleteUrl", { id })
     .then((result) => {
       // console.log(result)
-      ElMessage.success(result.msg)
+      ElMessage.success(result.msg);
 
-      const newArr = totalData.filter((item) => item.id !== id)
-      totalData.splice(0, totalData.length, ...newArr)
-      filterChange()
+      const newArr = totalData.filter((item) => item.id !== id);
+      totalData.splice(0, totalData.length, ...newArr);
+      filterChange();
       // location.reload()
     })
     .catch((error) => {
-      console.dir("发生错误：" + error)
-    })
-}
+      console.dir("发生错误：" + error);
+    });
+};
 </script>
 
 <style scoped>

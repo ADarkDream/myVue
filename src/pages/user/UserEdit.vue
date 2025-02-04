@@ -22,7 +22,12 @@
           <el-option label="其他" value="其他" />
         </el-select>
       </el-form-item>
-      <Toolbar :default-config="toolbarConfig" :editor="editorRef" :mode="mode" style="margin: 0 10px; width: 100%" />
+      <Toolbar
+        :default-config="toolbarConfig"
+        :editor="editorRef"
+        :mode="mode"
+        style="margin: 0 10px; width: 100%"
+      />
       <Editor
         v-model="valueHtml"
         class="editor"
@@ -32,7 +37,13 @@
         @on-created="handleCreated"
       />
 
-      <el-footer style="margin: 20px 0 40px 0; display: flex; justify-content: space-evenly">
+      <el-footer
+        style="
+          margin: 20px 0 40px 0;
+          display: flex;
+          justify-content: space-evenly;
+        "
+      >
         <el-button @click="addDraft">保存为草稿</el-button>
         <el-button type="primary" @click="submit">发布文章</el-button>
       </el-footer>
@@ -41,19 +52,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, shallowRef, onUnmounted, toRefs } from "vue"
-import { useRoute, useRouter } from "vue-router"
-import { IToolbarConfig, IEditorConfig } from "@wangeditor/editor"
-import "@wangeditor/editor/dist/css/style.css" // 引入 css
-import { Editor, Toolbar } from "@wangeditor/editor-for-vue"
-import momo from "@/apis"
+import { ref, reactive, shallowRef, onUnmounted, toRefs } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { IToolbarConfig, IEditorConfig } from "@wangeditor/editor";
+import "@wangeditor/editor/dist/css/style.css"; // 引入 css
+import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
+import momo from "@/apis";
 //stores
-import { useResponsiveStore } from "@/store/useResponsiveStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //utils
-import { emitter } from "@/utils/emitter"
+import { emitter } from "@/utils/emitter";
 
-const responsiveStore = useResponsiveStore()
-const { isPC, screenHeight } = toRefs(responsiveStore)
+const responsiveStore = useResponsiveStore();
+const { isPC, screenHeight } = toRefs(responsiveStore);
 //region 表单
 const data = reactive({
   id: "",
@@ -61,17 +72,17 @@ const data = reactive({
   area: "",
   tags: "",
   text: "",
-})
+});
 
 function check(val: string) {
   // console.log(typeof val.trim().length)
   if (val === undefined) {
-    ElMessage.error("文章标题、发布板块、标签设置不能为空")
-    return false
+    ElMessage.error("文章标题、发布板块、标签设置不能为空");
+    return false;
   } else if (val.trim().length < 2 || val.trim().length > 30) {
-    ElMessage.error("请输入2-30位字符")
-    return false
-  } else return true
+    ElMessage.error("请输入2-30位字符");
+    return false;
+  } else return true;
 }
 
 //endregion
@@ -79,48 +90,48 @@ function check(val: string) {
 //region富文本编辑器
 
 // 编辑器实例，必须用 shallowRef
-const editorRef = shallowRef()
+const editorRef = shallowRef();
 
 // 内容 HTML,初始文本
 // const valueHtml = ref('<p>有bug，刷新时路由没变，标题变了</p>')
-const valueHtml = ref("")
-const toolbarConfig: Partial<IToolbarConfig> = {}
+const valueHtml = ref("");
+const toolbarConfig: Partial<IToolbarConfig> = {};
 const editorConfig: Partial<IEditorConfig> = {
   placeholder: "请输入要发布的内容...",
   autoFocus: false,
-}
+};
 
 // 组件销毁时，清除监听器，销毁编辑器
 onUnmounted(() => {
-  removeEventListener("beforeunload", listener)
-  console.log("已退出编辑界面")
-  const editor = editorRef.value
-  if (editor === null) return
-  editor.destroy()
-})
+  removeEventListener("beforeunload", listener);
+  console.log("已退出编辑界面");
+  const editor = editorRef.value;
+  if (editor === null) return;
+  editor.destroy();
+});
 
 const handleCreated = (editor: any) => {
-  editorRef.value = editor // 记录 editor 实例，重要！
-}
+  editorRef.value = editor; // 记录 editor 实例，重要！
+};
 
 //endregion上面是模板
-const mode = ref("")
+const mode = ref("");
 
 //编辑器中的文本
-const text = ref()
+const text = ref();
 //获取文本内容
 const insertText = () => {
-  const editor = editorRef.value // 获取 editor ，必须等待它渲染完之后
-  if (editor == null) return false //下面 执行 editor API
+  const editor = editorRef.value; // 获取 editor ，必须等待它渲染完之后
+  if (editor == null) return false; //下面 执行 editor API
   // text.value = editor.getText()
-  text.value = editor.getHtml()
+  text.value = editor.getHtml();
   if (editor.isEmpty() || text.value.trim() === "") {
-    ElMessage.error("文章内容不能为空！")
-    return false
+    ElMessage.error("文章内容不能为空！");
+    return false;
   }
-  return true
+  return true;
   // console.log(text.value)//文本内容
-}
+};
 
 //需要去除的菜单
 toolbarConfig.excludeKeys = [
@@ -131,100 +142,106 @@ toolbarConfig.excludeKeys = [
   "headerSelect",
   "italic",
   "group-more-style", // 排除菜单组，F12检查元素，写菜单组 key 的值即可
-]
+];
 
 //文章传参类型声明
 interface Article {
-  id: number
-  title: string
-  text: string
-  html: string
-  area: string
-  tags: string
-  isDraft: string
+  id: number;
+  title: string;
+  text: string;
+  html: string;
+  area: string;
+  tags: string;
+  isDraft: string;
 }
 
 //编辑文章或草稿
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 // console.log(route.params.id)
-const { id, title, area, tags, html, isDraft } = route.query as unknown as Article
+const { id, title, area, tags, html, isDraft } =
+  route.query as unknown as Article;
 if (isDraft !== null) {
-  data.title = title
-  data.area = area
-  data.tags = tags
-  valueHtml.value = html
+  data.title = title;
+  data.area = area;
+  data.tags = tags;
+  valueHtml.value = html;
 }
 
 //发布文章
 function submit() {
-  if (insertText() && check(data.title) && check(data.area) && check(data.tags)) {
+  if (
+    insertText() &&
+    check(data.title) &&
+    check(data.area) &&
+    check(data.tags)
+  ) {
     // console.log(text.value)
-    if (id !== null && isDraft === "0") data.id = id.toString()
-    data.text = text.value
-    console.log(data)
+    if (id !== null && isDraft === "0") data.id = id.toString();
+    data.text = text.value;
+    console.log(data);
     //控制全屏加载动画的显示
     const loading = ElLoading.service({
       lock: true,
       text: "正在审核中，请稍后...",
       background: "rgba(0, 0, 0, 0.7)",
-    })
+    });
     momo
       .post("/submitArticle", data)
       .then((result) => {
-        const { code, msg } = result
-        loading.close()
+        const { code, msg } = result;
+        loading.close();
         if (code === 200) {
-          ElMessage.success(msg)
+          ElMessage.success(msg);
           setTimeout(() => {
-            emitter.emit("pageRender", 2)
-            router.push({ name: "userManagement" })
-          }, 1500)
+            emitter.emit("pageRender", 2);
+            router.push({ name: "userManagement" });
+          }, 1500);
         }
       })
       .catch((error) => {
-        loading.close()
-        console.log("发生错误：")
-        console.log(error)
-        ElMessage.error("发生错误：" + error.message)
-      })
+        loading.close();
+        console.log("发生错误：");
+        console.log(error);
+        ElMessage.error("发生错误：" + error.message);
+      });
   }
 }
 
 //保存到草稿
 function addDraft() {
   if (!insertText()) {
-    ElMessage.error("文章不能为空")
+    ElMessage.error("文章不能为空");
   } else {
-    if (id !== null && isDraft === "1") data.id = id.toString()
-    data.text = text.value
-    console.log(data)
+    if (id !== null && isDraft === "1") data.id = id.toString();
+    data.text = text.value;
+    console.log(data);
     momo
       .post("/addDraft", data)
       .then((result) => {
-        const { code, msg } = result
+        const { code, msg } = result;
         if (code === 200) {
-          ElMessage.success(msg)
+          ElMessage.success(msg);
           setTimeout(() => {
-            sessionStorage.setItem("activeNumber", "2")
-            location.href = "#/userCenter/userManagement"
-          }, 1500)
+            sessionStorage.setItem("activeNumber", "2");
+            location.href = "#/userCenter/userManagement";
+          }, 1500);
         }
-        console.log(result)
+        console.log(result);
       })
       .catch((error) => {
-        ElMessage.error("发生错误：" + error.message)
-        console.dir("发生错误：" + error)
-      })
+        ElMessage.error("发生错误：" + error.message);
+        console.dir("发生错误：" + error);
+      });
   }
 }
 
 //阻止用户直接关闭当前标签页——————(还差判断，去往其他界面不会被阻止，实在不行用emmit在父组件监听)
 const listener = (event: Event) => {
-  if (!data.text) event.preventDefault() // 阻止默认的关闭行为
+  if (!data.text) event.preventDefault(); // 阻止默认的关闭行为
   // event.returnValue = ''; // 设置警告消息为空字符串，以触发浏览器显示默认的关闭提示
-}
-window.addEventListener("beforeunload", listener)
+};
+window.addEventListener("beforeunload", listener);
 </script>
 
 <style scoped>

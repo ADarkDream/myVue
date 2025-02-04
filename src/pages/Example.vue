@@ -2,12 +2,33 @@
   <div v-if="false" class="example">
     <div class="control">
       <el-form :inline="true" :model="resortRule">
-        <el-form-item :class="{ checked: !!resortRule.star }" label="星级筛选" prop="star">
-          <el-select v-model="resortRule.star" clearable filterable multiple placeholder="选择星级" @change="filterAndSortRoles">
-            <el-option v-for="item in options_star" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+        <el-form-item
+          :class="{ checked: !!resortRule.star }"
+          label="星级筛选"
+          prop="star"
+        >
+          <el-select
+            v-model="resortRule.star"
+            clearable
+            filterable
+            multiple
+            placeholder="选择星级"
+            @change="filterAndSortRoles"
+          >
+            <el-option
+              v-for="item in options_star"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :class="{ checked: !!resortRule.damageType }" label="伤害类型筛选" prop="damageType">
+        <el-form-item
+          :class="{ checked: !!resortRule.damageType }"
+          label="伤害类型筛选"
+          prop="damageType"
+        >
           <el-select
             v-model="resortRule.damageType"
             clearable
@@ -16,7 +37,13 @@
             placeholder="选择伤害类型"
             @change="filterAndSortRoles"
           >
-            <el-option v-for="item in options_damageType" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-option
+              v-for="item in options_damageType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="排序类型" prop="valueType">
@@ -28,7 +55,13 @@
             placeholder="选择伤害类型"
             @change="filterAndSortRoles"
           >
-            <el-option v-for="item in options_valueType" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            <el-option
+              v-for="item in options_valueType"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
           </el-select>
         </el-form-item>
         <el-switch
@@ -44,33 +77,63 @@
       <form v-if="false" @submit.prevent="filterAndSortRoles">
         <!-- 星级筛选 -->
         <label for="star-select">星级筛选：{{ resortRule.star }}</label>
-        <select id="star-select" v-model="star" multiple @change="updateStarSelection">
-          <option v-for="item in options_star" :key="item.value" :value="item.value">
+        <select
+          id="star-select"
+          v-model="star"
+          multiple
+          @change="updateStarSelection"
+        >
+          <option
+            v-for="item in options_star"
+            :key="item.value"
+            :value="item.value"
+          >
             {{ item.label }}
           </option>
         </select>
 
         <!-- 伤害类型筛选 -->
         <label for="damageType-select">伤害类型筛选：</label>
-        <select id="damageType-select" v-model="resortRule.damageType" @change="filterAndSortRoles">
+        <select
+          id="damageType-select"
+          v-model="resortRule.damageType"
+          @change="filterAndSortRoles"
+        >
           <option value="">请选择</option>
-          <option v-for="item in options_damageType" :key="item.value" :value="item.value">
+          <option
+            v-for="item in options_damageType"
+            :key="item.value"
+            :value="item.value"
+          >
             {{ item.label }}
           </option>
         </select>
 
         <!-- 排序类型 -->
         <label for="valueType-select">排序类型：</label>
-        <select id="valueType-select" v-model="resortRule.valueType" @change="filterAndSortRoles">
+        <select
+          id="valueType-select"
+          v-model="resortRule.valueType"
+          @change="filterAndSortRoles"
+        >
           <option value="">请选择</option>
-          <option v-for="item in options_valueType" :key="item.value" :value="item.value">
+          <option
+            v-for="item in options_valueType"
+            :key="item.value"
+            :value="item.value"
+          >
             {{ item.label }}
           </option>
         </select>
 
         <!-- 排序方向 -->
         <label for="isAsc-switch">排序方向：</label>
-        <input id="isAsc-switch" v-model="resortRule.isAsc" type="checkbox" @change="filterAndSortRoles" />
+        <input
+          id="isAsc-switch"
+          v-model="resortRule.isAsc"
+          type="checkbox"
+          @change="filterAndSortRoles"
+        />
         <span>{{ resortRule.isAsc ? "升序" : "降序" }}</span>
       </form>
     </div>
@@ -83,12 +146,20 @@
           <div>ID： {{ item.id }}</div>
           <div>姓名： {{ item.name }}</div>
           <div>星级： {{ item.star }}</div>
-          <div :class="{ checked: !!resortRule.damageType }">伤害类型： {{ item.damageType }}</div>
+          <div :class="{ checked: !!resortRule.damageType }">
+            伤害类型： {{ item.damageType }}
+          </div>
         </div>
         <div class="info">
-          <div :class="{ checked: resortRule.valueType === 'attack' }">攻击： {{ item.attack }}</div>
-          <div :class="{ checked: resortRule.valueType === 'defense' }">防御： {{ item.defense }}</div>
-          <div :class="{ checked: resortRule.valueType === 'life' }">生命： {{ item.life }}</div>
+          <div :class="{ checked: resortRule.valueType === 'attack' }">
+            攻击： {{ item.attack }}
+          </div>
+          <div :class="{ checked: resortRule.valueType === 'defense' }">
+            防御： {{ item.defense }}
+          </div>
+          <div :class="{ checked: resortRule.valueType === 'life' }">
+            生命： {{ item.life }}
+          </div>
         </div>
       </div>
     </div>
@@ -97,7 +168,10 @@
       <div class="wrapper">
         <div class="box">
           <div class="box-header">
-            <div class="head-img" :style="{ 'background-image': `url(${momo})` }"></div>
+            <div
+              class="head-img"
+              :style="{ 'background-image': `url(${momo})` }"
+            ></div>
             <div>
               <p class="text-title">STORY</p>
               <p>OF THE</p>
@@ -120,7 +194,12 @@
 
   <div>
     <ul id="list">
-      <li v-for="(item, index) in items" :key="index" @mouseleave="hideHoverBox" @mouseover="showHoverBox($event, item)">
+      <li
+        v-for="(item, index) in items"
+        :key="index"
+        @mouseleave="hideHoverBox"
+        @mouseover="showHoverBox($event, item)"
+      >
         {{ item.text }}
       </li>
     </ul>
@@ -139,30 +218,30 @@
 </template>
 
 <script lang="ts" setup>
-import momo from "/favicon_144x144.png"
+import momo from "/favicon_144x144.png";
 type TestRole = {
   /**角色 ID */
-  id: string
+  id: string;
   /**角色星级 */
-  star: number
+  star: number;
   /**角色名称 */
-  name: string
+  name: string;
   /**角色伤害类型 */
-  damageType: "现实" | "精神"
+  damageType: "现实" | "精神";
   /**角色攻击值 */
-  attack: number
+  attack: number;
   /**角色防御值 */
-  defense: number
+  defense: number;
   /**角色生命值 */
-  life: number
-}
+  life: number;
+};
 
 type ResortRule = {
-  star: number[]
-  damageType: "现实" | "精神" | ""
-  valueType: "attack" | "defense" | "life" | ""
-  isAsc: boolean
-}
+  star: number[];
+  damageType: "现实" | "精神" | "";
+  valueType: "attack" | "defense" | "life" | "";
+  isAsc: boolean;
+};
 
 //筛选和排序条件
 const resortRule = reactive<ResortRule>({
@@ -170,7 +249,7 @@ const resortRule = reactive<ResortRule>({
   damageType: "",
   valueType: "",
   isAsc: true,
-})
+});
 
 //星级选项
 const options_star = [
@@ -179,14 +258,14 @@ const options_star = [
   { value: 4, label: "4星" },
   { value: 5, label: "5星" },
   { value: 6, label: "6星" },
-]
+];
 
 //伤害类型选项
 const options_damageType = [
   { value: "", label: "不限" },
   { value: "现实", label: "现实" },
   { value: "精神", label: "精神" },
-]
+];
 
 //数值类型选项
 const options_valueType = [
@@ -194,23 +273,25 @@ const options_valueType = [
   { value: "attack", label: "攻击" },
   { value: "defense", label: "防御" },
   { value: "life", label: "生命" },
-]
+];
 
 //原生多选框筛选函数
-const star = ref([])
+const star = ref([]);
 
 function updateStarSelection() {
-  const selectValue = star.value[0]
-  const checkedStars = JSON.parse(JSON.stringify(resortRule.star))
+  const selectValue = star.value[0];
+  const checkedStars = JSON.parse(JSON.stringify(resortRule.star));
   if (checkedStars.includes(selectValue)) {
-    checkedStars.splice(checkedStars.indexOf(selectValue), 1)
+    checkedStars.splice(checkedStars.indexOf(selectValue), 1);
   } else {
-    checkedStars.push(selectValue)
+    checkedStars.push(selectValue);
   }
-  resortRule.star = checkedStars.filter((item) => item !== undefined).sort((a, b) => a - b)
-  console.log(selectValue)
+  resortRule.star = checkedStars
+    .filter((item) => item !== undefined)
+    .sort((a, b) => a - b);
+  console.log(selectValue);
 
-  filterAndSortRoles() // 触发筛选和排序逻辑
+  filterAndSortRoles(); // 触发筛选和排序逻辑
 }
 
 /**
@@ -219,18 +300,22 @@ function updateStarSelection() {
 function filterAndSortRoles() {
   showList.value = roles
     .filter((role) => {
-      const starMatches = resortRule.star.length === 0 || resortRule.star.includes(role.star) // 如果 star 条件为空，不筛选
-      const damageTypeMatches = !resortRule.damageType || role.damageType === resortRule.damageType // 如果 damageType 为空，不筛选
-      return starMatches && damageTypeMatches
+      const starMatches =
+        resortRule.star.length === 0 || resortRule.star.includes(role.star); // 如果 star 条件为空，不筛选
+      const damageTypeMatches =
+        !resortRule.damageType || role.damageType === resortRule.damageType; // 如果 damageType 为空，不筛选
+      return starMatches && damageTypeMatches;
     })
     .sort((a: any, b: any) => {
       if (a[resortRule.valueType] === b[resortRule.valueType]) {
-        return resortRule.isAsc ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id) // ID 升序
+        return resortRule.isAsc
+          ? a.id.localeCompare(b.id)
+          : b.id.localeCompare(a.id); // ID 升序
       }
       return resortRule.isAsc
         ? a[resortRule.valueType] - b[resortRule.valueType]
-        : b[resortRule.valueType] - a[resortRule.valueType] // 数值降序
-    })
+        : b[resortRule.valueType] - a[resortRule.valueType]; // 数值降序
+    });
 }
 
 /**示例角色数组*/
@@ -325,43 +410,43 @@ const roles: TestRole[] = [
     defense: 160,
     life: 950,
   },
-]
+];
 
 /**显示的角色数组*/
-const showList = ref<TestRole[]>([])
+const showList = ref<TestRole[]>([]);
 
 onMounted(() => {
-  showList.value = roles
-  filterAndSortRoles()
-})
+  showList.value = roles;
+  filterAndSortRoles();
+});
 
 // 列表数据
 const items = ref([
   { text: "列表项 1", content: "内容 1" },
   { text: "列表项 2", content: "内容 2" },
   { text: "列表项 3", content: "内容 3" },
-])
+]);
 
 // 状态和位置
-const isHoverBoxVisible = ref(false)
-const hoverBoxPosition = ref({ left: 0, top: 0 })
-const hoverContent = ref("")
+const isHoverBoxVisible = ref(false);
+const hoverBoxPosition = ref({ left: 0, top: 0 });
+const hoverContent = ref("");
 
 // 显示悬浮框
 const showHoverBox = (event, item) => {
-  const rect = event.target.getBoundingClientRect()
-  hoverContent.value = item.content
+  const rect = event.target.getBoundingClientRect();
+  hoverContent.value = item.content;
   hoverBoxPosition.value = {
     left: rect.left,
     top: rect.bottom - 80,
-  }
-  isHoverBoxVisible.value = true
-}
+  };
+  isHoverBoxVisible.value = true;
+};
 
 // 隐藏悬浮框
 const hideHoverBox = () => {
-  isHoverBoxVisible.value = false
-}
+  isHoverBoxVisible.value = false;
+};
 </script>
 <style scoped>
 .control {

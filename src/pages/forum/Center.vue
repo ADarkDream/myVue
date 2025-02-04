@@ -3,7 +3,12 @@
     <!--   文章筛选区-->
     <el-collapse v-model="activeNames" accordion>
       <el-collapse-item title="&ensp;&ensp;&ensp;文章筛选条件">
-        <el-form :inline="isPC" label-position="left" :model="articleParams" size="small">
+        <el-form
+          :inline="isPC"
+          label-position="left"
+          :model="articleParams"
+          size="small"
+        >
           <el-form-item label="文章标题">
             <el-input
               v-model.trim="articleParams.title"
@@ -49,13 +54,27 @@
     <!--文章列表区-->
     <div class="content">
       <div
-        v-for="{ id, title, coverUrl, area, tags, author, created_time } in articleList"
+        v-for="{
+          id,
+          title,
+          coverUrl,
+          area,
+          tags,
+          author,
+          created_time,
+        } in articleList"
         :key="id"
         class="card"
         @click="toArticle(id, title)"
       >
         <div class="articleCover">
-          <el-image v-if="coverUrl" :draggable="false" fit="cover" lazy :src="coverUrl">
+          <el-image
+            :src="item.coverUrl"
+            fit="cover"
+            :draggable="false"
+            v-if="item.coverUrl"
+            lazy
+          >
             <template #error>
               <div class="image-slot">
                 <el-icon size="40px">
@@ -75,11 +94,17 @@
             <el-text size="large" truncated>{{ title }}</el-text>
           </div>
           <div>
-            <el-text size="small" tag="sub" truncated>板块：{{ area }}&ensp;&ensp;&ensp;标签：{{ tags }} </el-text>
+            <el-text size="small" tag="sub" truncated
+              >板块：{{ area }}&ensp;&ensp;&ensp;标签：{{ tags }}
+            </el-text>
           </div>
           <div class="footer">
-            <el-text size="small" style="width: 30%" tag="b" truncated>{{ author }}</el-text>
-            <el-text size="small" truncated> &ensp;&ensp;发布于:{{ getDiffTime(created_time) }} </el-text>
+            <el-text size="small" tag="b" style="width: 30%" truncated>{{
+              item.author
+            }}</el-text>
+            <el-text size="small" truncated>
+              &ensp;&ensp;发布于:{{ getDiffTime(item.created_time) }}
+            </el-text>
           </div>
         </div>
       </div>
@@ -88,71 +113,72 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue"
-import { useRouter, useRoute } from "vue-router"
-import { Search, Picture as IconPicture } from "@element-plus/icons-vue"
+import { ref, reactive, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { Search, Picture as IconPicture } from "@element-plus/icons-vue";
 //stores
-import { useResponsiveStore } from "@/store/useResponsiveStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //hooks
-import useTimeStamp from "@/hooks/useTimestamp"
+import useTimeStamp from "@/hooks/useTimestamp";
 //apis
-import { api_getArticleList } from "@/apis/article"
+import { api_getArticleList } from "@/apis/article";
 //types
-import { Article, ArticleParams } from "@/types/articles"
+import { Article, ArticleParams } from "@/types/articles";
 
-const responsiveStore = useResponsiveStore()
+const responsiveStore = useResponsiveStore();
 
-const { isPC } = toRefs(responsiveStore)
-const { getDiffTime } = useTimeStamp()
+const { isPC } = toRefs(responsiveStore);
+const { getDiffTime } = useTimeStamp();
 
 const { setRouterBreadcrumb } = defineProps<{
-  setRouterBreadcrumb: Function
-}>()
+  setRouterBreadcrumb: Function;
+}>();
 
 //路由跳转，前往文章页
-const router = useRouter()
-const route = useRoute()
+const router = useRouter();
+const route = useRoute();
 
-const activeNames = ref("1")
+const activeNames = ref("1");
 // 文章列表查询参数
 const articleParams = reactive<ArticleParams>({
   title: "",
   author: "",
   area: "",
   tags: "",
-})
+});
 
 //用来接收查询的文章列表
-const articleList = ref<Article[]>([])
+const articleList = ref<Article[]>([]);
 
 // 跳转到文章
-const toArticle = (id: number, title: string) => setRouterBreadcrumb(1, { name: "article", label: title, query: { id } })
+const toArticle = (id: number, title: string) =>
+  setRouterBreadcrumb(1, { name: "article", label: title, query: { id } });
 
 //获取文章列表
 const getArticleList = async () => {
-  articleList.value = await api_getArticleList(articleParams)
-}
+  articleList.value = await api_getArticleList(articleParams);
+};
 
 //清除查询表单
 function clearForm() {
-  articleParams.title = ""
-  articleParams.author = ""
-  articleParams.area = ""
-  articleParams.tags = ""
+  articleParams.title = "";
+  articleParams.author = "";
+  articleParams.area = "";
+  articleParams.tags = "";
   // 清除地址栏参数
-  router.push({ name: "center" })
+  router.push({ name: "center" });
   // 重新获取文章列表
-  getArticleList()
+  getArticleList();
 }
 
 onMounted(async () => {
   //从文章页跳转过来的数据
-  const { author, area, tags } = route.query as unknown as Article
-  if (author) articleParams.author = author
-  if (area) articleParams.area = area
-  if (tags) articleParams.tags = tags
-  await getArticleList()
-})
+  const { author, area, tags } = route.query as unknown as Article;
+  if (author) articleParams.author = author;
+  if (area) articleParams.area = area;
+  if (tags) articleParams.tags = tags;
+  await getArticleList();
+});
 </script>
 <style scoped>
 .el-select {

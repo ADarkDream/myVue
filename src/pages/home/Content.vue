@@ -3,167 +3,204 @@
     <el-card class="content">
       <div class="title">
         <el-tooltip content="推荐导航网站" placement="bottom">
-          <el-button circle :icon="UploadFilled" type="success" @click="changeFlag" />
+          <el-button
+            circle
+            :icon="UploadFilled"
+            type="success"
+            @click="changeFlag"
+          />
         </el-tooltip>
         <el-text style="font-size: 20px" type="primary">{{ sortName }}</el-text>
         <!--      <el-button v-if="false" @click="addAllUrl(localList[num],targetList[num])">批量上传 {{ nameList[num] }}-->
         <!--        网址到数据库-->
         <!--      </el-button>-->
         <el-tooltip content="隐藏，精简模式" placement="bottom">
-          <el-button circle :icon="CloseBold" type="danger" @click="showContent" />
+          <el-button
+            circle
+            :icon="CloseBold"
+            type="danger"
+            @click="showContent"
+          />
         </el-tooltip>
       </div>
       <el-divider />
       <div class="mainContent">
         <!--网址显示区域-->
-        <el-card v-for="(item, index) in resultList" :key="index" class="cards" shadow="hover">
-          <el-button link plain
-            ><img alt="" class="urlImg" :src="item.img" />
-            <el-link :href="item.url" target="_blank" type="primary" :underline="false"> {{ item.name }}</el-link>
+        <el-card
+          class="cards"
+          shadow="hover"
+          v-for="(item, index) in resultList"
+          :key="index"
+        >
+          <el-button plain link
+            ><img class="urlImg" :src="item.img" alt="" />
+            <el-link
+              :href="item.url"
+              type="primary"
+              :underline="false"
+              target="_blank"
+            >
+              {{ item.name }}</el-link
+            >
           </el-button>
           <template #footer>{{ item.detail }}</template>
         </el-card>
       </div>
     </el-card>
     <!--上传导航网址-->
-    <el-dialog v-model="dialogVisible" :show-close="false" style="opacity: 1" title="推荐导航网站" :width="dialogWidth">
+    <el-dialog
+      v-model="dialogVisible"
+      :show-close="false"
+      style="opacity: 1"
+      title="推荐导航网站"
+      :width="dialogWidth"
+    >
       <AddUrl />
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, reactive, ref, toRefs } from "vue"
-import { CloseBold, UploadFilled } from "@element-plus/icons-vue"
+import { onBeforeUnmount, onMounted, reactive, ref, toRefs } from "vue";
+import { CloseBold, UploadFilled } from "@element-plus/icons-vue";
 //stores
-import { useUserInfoStore } from "@/store/user/useUserInfoStore"
+import { useUserInfoStore } from "@/store/user/useUserInfoStore";
 //hooks
-import { useResponsiveStore } from "@/store/useResponsiveStore"
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 //components
-import AddUrl from "@/components/AddUrl.vue"
+import AddUrl from "@/components/AddUrl.vue";
 //utils
-import { emitter } from "@/utils/emitter"
+import { emitter } from "@/utils/emitter";
 //types
-import { NavigationObj, Navigation, WebsiteInfoItem } from "@/types/url"
+import { NavigationObj, Navigation, WebsiteInfoItem } from "@/types/url";
 //apis
-import { api_get_url_list, api_get_url_list_info } from "@/apis/home/content"
+import { api_get_url_list, api_get_url_list_info } from "@/apis/home/content";
 
-defineProps(["showContent"])
-const userInfoStore = useUserInfoStore()
-const responsiveStore = useResponsiveStore()
-const { isLogin } = toRefs(userInfoStore)
-const { dialogWidth } = toRefs(responsiveStore)
+defineProps(["showContent"]);
+const userInfoStore = useUserInfoStore();
+const responsiveStore = useResponsiveStore();
+const { isLogin } = toRefs(userInfoStore);
+const { dialogWidth } = toRefs(responsiveStore);
 
-const activeIndex = ref<number>(0) //导航分类的序号
-const sortName = ref<string>("") //导航分类标题
+const activeIndex = ref<number>(0); //导航分类的序号
+const sortName = ref<string>(""); //导航分类标题
 //查询到的数据存储到本地
-const localListObj = reactive<NavigationObj>(JSON.parse(localStorage.getItem("localListObj") || "{}")) //从本地获取
+const localListObj = reactive<NavigationObj>(
+  JSON.parse(localStorage.getItem("localListObj") || "{}")
+); //从本地获取
 //查询到的数据存储到本地
-const localList = reactive<WebsiteInfoItem[]>(JSON.parse(localStorage.getItem("localList") || "[]")) //从本地获取
-const cloudList = reactive<WebsiteInfoItem[]>(JSON.parse(sessionStorage.getItem("cloudList") || "[]")) //云端最新的列表
+const localList = reactive<WebsiteInfoItem[]>(
+  JSON.parse(localStorage.getItem("localList") || "[]")
+); //从本地获取
+const cloudList = reactive<WebsiteInfoItem[]>(
+  JSON.parse(sessionStorage.getItem("cloudList") || "[]")
+); //云端最新的列表
 //底部当前呈现的网址数据
-const resultList = reactive<Navigation[]>([])
+const resultList = reactive<Navigation[]>([]);
 
 //上传导航网站面板的显示与隐藏
-const dialogVisible = ref(false)
+const dialogVisible = ref(false);
 
 //region本地数据切换逻辑
 
 //获取导航分类信息
 const getUrlListInfo = async () => {
   try {
-    const result = await api_get_url_list_info()
-    const { code, msg, data } = result
-    if (code !== 200 || !data) return ElMessage.error(msg)
-    console.log("getUrlListInfo", result)
+    const result = await api_get_url_list_info();
+    const { code, msg, data } = result;
+    if (code !== 200 || !data) return ElMessage.error(msg);
+    console.log("getUrlListInfo", result);
 
-    cloudList.splice(0, cloudList.length, ...data!)
-    sessionStorage.setItem("cloudList", JSON.stringify(cloudList))
-    let isChangeFlag = localList.length === 0 //如果不存在本地列表，则直接修改
-    console.log("localList", localList)
+    cloudList.splice(0, cloudList.length, ...data!);
+    sessionStorage.setItem("cloudList", JSON.stringify(cloudList));
+    let isChangeFlag = localList.length === 0; //如果不存在本地列表，则直接修改
+    console.log("localList", localList);
     if (!isChangeFlag)
       //本地列表存在，则检查是否是最新数据
       //遍历本地导航信息是否为最新，不为最新则删除localListObj中对应的键
       localList.forEach((item) => {
         // 在cloudList中查找匹配的infoItem,返回的是数组
         const thisItem = cloudList.filter(
-          (infoItem) => item.sort === infoItem.sort && item.updated_time === infoItem.updated_time
-        ) //类型一致但时间相等，不修改
-        if (item.sort === "tool") console.log(item, thisItem)
+          (infoItem) =>
+            item.sort === infoItem.sort &&
+            item.updated_time === infoItem.updated_time
+        ); //类型一致但时间相等，不修改
+        if (item.sort === "tool") console.log(item, thisItem);
         if (thisItem.length === 0) {
           // thisItem中无结果，则表示未找到或找不到一致的,删除localListObj中对应的键(导航分类)
-          delete localListObj[item.sort]
-          console.log("导航分类已更新", item.sort)
-          isChangeFlag = true
+          delete localListObj[item.sort];
+          console.log("导航分类已更新", item.sort);
+          isChangeFlag = true;
         }
-      })
+      });
     //本地列表不存在或被修改，更新本地列表
     if (isChangeFlag) {
-      localStorage.setItem("localListObj", JSON.stringify(localListObj))
-      localStorage.setItem("localList", JSON.stringify(cloudList))
-      console.log("本地导航列表已更新")
+      localStorage.setItem("localListObj", JSON.stringify(localListObj));
+      localStorage.setItem("localList", JSON.stringify(cloudList));
+      console.log("本地导航列表已更新");
     }
   } catch (error) {
-    console.log("发生错误：")
-    console.dir(error)
+    console.log("发生错误：");
+    console.dir(error);
   }
-}
+};
 
 //获取新一页分类的导航数据
 const getNewList = async (sort: string) => {
   try {
     //如果本地localListObj有对应的导航信息，则直接加载
     if (localListObj[sort]) {
-      sortName.value = localList[activeIndex.value].name //修改分类的标题名
-      console.log("正在使用本地缓存的导航数据", sort)
-      return resultList.splice(0, resultList.length, ...localListObj[sort])
+      sortName.value = localList[activeIndex.value].name; //修改分类的标题名
+      console.log("正在使用本地缓存的导航数据", sort);
+      return resultList.splice(0, resultList.length, ...localListObj[sort]);
     }
-    const result = await api_get_url_list(sort)
-    console.log("getNewList", result)
+    const result = await api_get_url_list(sort);
+    console.log("getNewList", result);
 
-    const { code, msg, data } = result
-    if (code !== 200 || !data) return ElMessage.error(msg)
+    const { code, msg, data } = result;
+    if (code !== 200 || !data) return ElMessage.error(msg);
 
-    resultList.splice(0, resultList.length, ...data!) //显示在页面上
-    localListObj[sort] = data //将本分类导航加入到localListObj
-    localList[activeIndex.value] = cloudList[activeIndex.value] //将本分类导航的信息加入到localList
-    sortName.value = localList[activeIndex.value].name //修改分类的标题名
+    resultList.splice(0, resultList.length, ...data!); //显示在页面上
+    localListObj[sort] = data; //将本分类导航加入到localListObj
+    localList[activeIndex.value] = cloudList[activeIndex.value]; //将本分类导航的信息加入到localList
+    sortName.value = localList[activeIndex.value].name; //修改分类的标题名
     //存入本地
-    localStorage.setItem("localList", JSON.stringify(localList))
-    localStorage.setItem("localListObj", JSON.stringify(localListObj))
+    localStorage.setItem("localList", JSON.stringify(localList));
+    localStorage.setItem("localListObj", JSON.stringify(localListObj));
   } catch (error) {
-    console.log("调用getNewList函数时捕获到错误:")
-    console.error(error)
-    ElMessage.error("云端数据获取失败")
+    console.log("调用getNewList函数时捕获到错误:");
+    console.error(error);
+    ElMessage.error("云端数据获取失败");
   }
-}
+};
 
 //用emitter得到Aside组件里面的点击事件传来的值，用于更改导航列表
 const handleGetNewList = async (Num: number) => {
-  activeIndex.value = Num
-  await getNewList(cloudList[activeIndex.value].sort)
-}
+  activeIndex.value = Num;
+  await getNewList(cloudList[activeIndex.value].sort);
+};
 //endregion
 
 //注册切换导航列表的事件
-emitter.on("getListNum", handleGetNewList)
+emitter.on("getListNum", handleGetNewList);
 
 //控制该功能登录后使用
 function changeFlag() {
-  console.log(isLogin.value)
-  if (isLogin.value) dialogVisible.value = !dialogVisible.value
-  else return ElMessage.info("该功能需要登录后使用！")
+  console.log(isLogin.value);
+  if (isLogin.value) dialogVisible.value = !dialogVisible.value;
+  else return ElMessage.info("该功能需要登录后使用！");
 }
 
 onMounted(async () => {
-  if (cloudList.length === 0 || localList.length === 0) await getUrlListInfo()
-  if (cloudList[activeIndex.value]) await getNewList(cloudList[activeIndex.value].sort)
-})
+  if (cloudList.length === 0 || localList.length === 0) await getUrlListInfo();
+  if (cloudList[activeIndex.value])
+    await getNewList(cloudList[activeIndex.value].sort);
+});
 
 onBeforeUnmount(() => {
-  emitter.off("getListNum", handleGetNewList)
-  console.log("注销了getListNum的emitter监听")
-})
+  emitter.off("getListNum", handleGetNewList);
+  console.log("注销了getListNum的emitter监听");
+});
 
 //region 批量上传网址到数据库
 // function addAllUrl(urlList, tableName) {
