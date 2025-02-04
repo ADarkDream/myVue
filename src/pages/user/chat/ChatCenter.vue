@@ -49,7 +49,7 @@ socket.value.on("connection", (result: ResultData<{ playerID: string }>) => {
 })
 
 //监听自己创建房间的消息
-socket.value.on("room-add", result => {
+socket.value.on("room-add", (result) => {
   console.log("room-add收到消息：", result)
   const { code, msg, data } = result
   if (code === 200) {
@@ -63,7 +63,7 @@ socket.value.on("room-add", result => {
 })
 
 //监听自己加入房间的消息
-socket.value.on("room-join", result => {
+socket.value.on("room-join", (result) => {
   console.log("room-join收到消息：", result)
   const { code, msg, data } = result
   if (code === 200) {
@@ -104,7 +104,7 @@ const mergeAndSortArrays = (array1: ChatMsg[], array2: ChatMsg[]): ChatMsg[] => 
 }
 
 //房间内的消息
-socket.value.on("room-message", result => {
+socket.value.on("room-message", (result) => {
   console.log("room-message收到消息：", result)
   const { code, msg, data } = result
   if (code === 200) {
@@ -116,7 +116,7 @@ socket.value.on("room-message", result => {
 })
 
 //监听其他人加入房间的信息
-socket.value.on("player-join", result => {
+socket.value.on("player-join", (result) => {
   console.log("player-join收到消息：", result)
   const { code, msg, data } = result
   if (code === 200 && data.playerInfo.playerID !== playerInfo.value.playerID)
@@ -127,7 +127,7 @@ socket.value.on("player-join", result => {
 })
 
 //监听其他人离开房间的信息
-socket.value.on("player-leave", result => {
+socket.value.on("player-leave", (result) => {
   console.log("player-leave收到消息：", result)
   const { code, msg, data } = result
   if (code === 200) ElMessage.info(msg) //roomMsg.push({type: data.type, msg, time: data.time})
@@ -137,7 +137,7 @@ socket.value.on("player-leave", result => {
 const cycle = ref(1)
 
 // 监听连接错误事件
-socket.value.on("connect_error", err => {
+socket.value.on("connect_error", (err) => {
   ElMessage.error("聊天服务器连接失败,正在重试第" + cycle.value + "次")
   cycle.value++
   if (cycle.value > 3) {

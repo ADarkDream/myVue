@@ -29,7 +29,7 @@ export const useChatInfoStore = defineStore(
     const setRName = (roomName: string) => (playerInfo.roomName = roomName)
     const setPlayerInfo = (newPlayerInfo: PlayerInfo) => {
       const keys = Object.keys(newPlayerInfo)
-      keys.forEach(key => {
+      keys.forEach((key) => {
         if (key in playerInfo) playerInfo[key] = newPlayerInfo[key]
       })
       console.log("playerInfo", playerInfo)

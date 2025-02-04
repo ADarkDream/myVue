@@ -45,7 +45,7 @@ export default function () {
       //获取阵营列表
       const campObj = {} as Record<string, number>
       const raceObj = {} as Record<string, number>
-      roleList.forEach(item => {
+      roleList.forEach((item) => {
         if (!item.camp || !item.race) return
         if (!campObj[item.camp]) campObj[item.camp] = 1
         else campObj[item.camp] += 1
@@ -53,10 +53,10 @@ export default function () {
         else raceObj[item.race] += 1
       })
 
-      campInfo.value = Object.keys(campObj).map(item => {
+      campInfo.value = Object.keys(campObj).map((item) => {
         return { name: item, count: campObj[item] }
       })
-      raceInfo.value = Object.keys(raceObj).map(item => {
+      raceInfo.value = Object.keys(raceObj).map((item) => {
         return { name: item, count: raceObj[item] }
       })
       // raceInfo.value = Object.keys(raceObj).map(item => {

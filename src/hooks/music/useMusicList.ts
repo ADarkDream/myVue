@@ -31,15 +31,23 @@ export default function () {
     //如果查询单个歌单，且歌单对象中有这个歌单的信息，且不要最新的(用缓存)
     if (!latest && music_list_id && Object.keys(musicListInfoObj).includes(music_list_id.toString())) {
       console.log(`已加载本地缓存的歌单${music_list_id}的信息`)
-      return { status: 1, list: [musicListInfoObj.value[music_list_id]], msg: `已加载本地缓存的歌单${music_list_id}的信息` }
+      return {
+        status: 1,
+        list: [musicListInfoObj.value[music_list_id]],
+        msg: `已加载本地缓存的歌单${music_list_id}的信息`,
+      }
     }
 
     //查询多个歌单，或查询最新的情况(不要缓存)下
-    const { status, list, msg } = await musicListUtils.getMusicListsInfo({ is_login, user_id, music_list_id })
+    const { status, list, msg } = await musicListUtils.getMusicListsInfo({
+      is_login,
+      user_id,
+      music_list_id,
+    })
     //处理请求后的信息
     if (status === 1) {
       const newIdList: number[] = []
-      list?.forEach(MusicListInfo => {
+      list?.forEach((MusicListInfo) => {
         const { music_list_id, cloud_music_list_id } = MusicListInfo
         //添加两个歌单的id键值对信息
         connectionObj.value[music_list_id] = cloud_music_list_id!
@@ -83,7 +91,12 @@ export default function () {
 
     if (localInfo && localList) return { status: 1, msg: "已获取本地缓存数据" }
     console.log(`本地缓存没有歌单${music_list_id}的信息,查询服务器`)
-    const { code, msg, data } = await musicListUtils.getMusicList({ music_list_id, limit, offset, is_login })
+    const { code, msg, data } = await musicListUtils.getMusicList({
+      music_list_id,
+      limit,
+      offset,
+      is_login,
+    })
     //处理请求后的信息
     if (status === 1 && data) save_music_info(data, music_list_id)
     return { code, msg }
@@ -91,7 +104,12 @@ export default function () {
 
   //搜索网易云的歌单及音乐信息
   const getCloudMusicList = async ({ cloud_music_list_id, limit, offset, latest }: QueryCloudMusicList) => {
-    const { code, data, msg } = (await musicListUtils.getCloudMusicList({ cloud_music_list_id, limit, offset, latest })) as {
+    const { code, data, msg } = (await musicListUtils.getCloudMusicList({
+      cloud_music_list_id,
+      limit,
+      offset,
+      latest,
+    })) as {
       status: number
       data?: MusicList
       msg: string
@@ -160,7 +178,7 @@ export default function () {
 
         musicListInfoObj.value[music_list_id.toString()] = musicListInfo.value
         //更新歌单数据
-        const newMusicList = musicList.value.filter(songInfo => {
+        const newMusicList = musicList.value.filter((songInfo) => {
           return !music_id_list.value.includes(songInfo.id)
         })
         musicList.value = newMusicList
@@ -235,7 +253,10 @@ export default function () {
       })
       if (confirmResult === "confirm") {
         // 用户点击了确认按钮，执行删除操作
-        const result = await musicListUtils.updateMyMusicListInfo({ music_list_id, status: 0 })
+        const result = await musicListUtils.updateMyMusicListInfo({
+          music_list_id,
+          status: 0,
+        })
         if (result.status === 1) {
           delete connectionObj.value[music_list_id]
           delete musicListObj.value[music_list_id.toString()]

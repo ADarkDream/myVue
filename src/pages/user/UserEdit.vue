@@ -29,7 +29,7 @@
         v-model="valueHtml"
         :defaultConfig="editorConfig"
         :mode="mode"
-        @onCreated="handleCreated"
+        @on-created="handleCreated"
       />
 
       <el-footer style="margin: 20px 0 40px 0; display: flex; justify-content: space-evenly">
@@ -85,7 +85,10 @@ const editorRef = shallowRef()
 // const valueHtml = ref('<p>有bug，刷新时路由没变，标题变了</p>')
 const valueHtml = ref("")
 const toolbarConfig: Partial<IToolbarConfig> = {}
-const editorConfig: Partial<IEditorConfig> = { placeholder: "请输入要发布的内容...", autoFocus: false }
+const editorConfig: Partial<IEditorConfig> = {
+  placeholder: "请输入要发布的内容...",
+  autoFocus: false,
+}
 
 // 组件销毁时，清除监听器，销毁编辑器
 onUnmounted(() => {
@@ -168,7 +171,7 @@ function submit() {
     })
     momo
       .post("/submitArticle", data)
-      .then(result => {
+      .then((result) => {
         const { code, msg } = result
         loading.close()
         if (code === 200) {
@@ -179,7 +182,7 @@ function submit() {
           }, 1500)
         }
       })
-      .catch(error => {
+      .catch((error) => {
         loading.close()
         console.log("发生错误：")
         console.log(error)
@@ -198,7 +201,7 @@ function addDraft() {
     console.log(data)
     momo
       .post("/addDraft", data)
-      .then(result => {
+      .then((result) => {
         const { code, msg } = result
         if (code === 200) {
           ElMessage.success(msg)
@@ -209,7 +212,7 @@ function addDraft() {
         }
         console.log(result)
       })
-      .catch(error => {
+      .catch((error) => {
         ElMessage.error("发生错误：" + error.message)
         console.dir("发生错误：" + error)
       })

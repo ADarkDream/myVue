@@ -185,7 +185,7 @@ getImages()
 function getImages() {
   momo
     .get("/getImages")
-    .then(result => {
+    .then((result) => {
       console.log(result)
       const { msg, data } = result
       ElMessage.success(msg)
@@ -194,7 +194,7 @@ function getImages() {
         tableData.push(item)
       })
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.dir(error)
     })
@@ -219,15 +219,12 @@ function handleCancel() {
 function checkUpdateRow(newData: Image, oldData: Image) {
   //判断是否修改为黑名单
   if (newData.status === 2) newData.sort = "blacklist"
-  const data = <Image>diffObj(newData, oldData)
+  const data = diffObj(newData, oldData) as Image
   //判断公告信息是否修改
   if (Object.keys(data).length === 0) return ElMessage.info("图片信息未修改，已取消上传。")
-  else {
-    //校验格式
 
-    //id被洗掉了，手动添加
-    updateRow(data, oldData.id, oldData)
-  }
+  //校验格式
+  updateRow(data, oldData.id, oldData)
 }
 
 //上传更新的图片信息
@@ -237,7 +234,7 @@ function updateRow(data: Image, id: number, oldData: Image) {
       data,
       id,
     })
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       const { msg, newPath } = result
       //判断是否修改文件路径
@@ -250,7 +247,7 @@ function updateRow(data: Image, id: number, oldData: Image) {
       isEditRow.value = -1
       ElMessage.success(msg)
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
       //ElMessage.error('发生错误：' + error.message)
@@ -275,13 +272,13 @@ const deleteRow = (index: number, info: Image) => {
 const deleteImage = (index: number, data: Image) => {
   momo
     .delete("/deleteImage", data)
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       ElMessage.success(result.msg)
       tableData.splice(index, 1)
       ElMessage.info("因为浏览器和CDN缓存，图片链接可能一段时间后才失效")
     })
-    .catch(error => {
+    .catch((error) => {
       console.dir("发生错误：" + error)
     })
 }

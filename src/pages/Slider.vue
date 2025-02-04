@@ -4,7 +4,8 @@
     <div class="sidebar">
       <div class="slides-list">
         <div v-for="(item, index) in imgList" :key="index" @click="selectSlide(index)" :class="{ isChecked: imgIndex === index }">
-          幻灯片 {{ index + 1 }} <button @click="viewImg(index)">浏览</button> <button @click="edit(index)">编辑</button>
+          幻灯片 {{ index + 1 }} <button @click="viewImg(index)">浏览</button>
+          <button @click="edit(index)">编辑</button>
         </div>
       </div>
       <div class="controls">

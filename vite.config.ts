@@ -52,7 +52,7 @@ export default ({ mode, command }: { mode: string; command: string }) => {
     plugins: [
       vue({
         template: {
-          compilerOptions: { isCustomElement: tag => tag.startsWith("wc-") },
+          compilerOptions: { isCustomElement: (tag) => tag.startsWith("wc-") },
         },
       }),
       //SVG插件

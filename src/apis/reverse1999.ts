@@ -3,10 +3,10 @@ import { VersionParams } from "@/types/reverse1999"
 
 /**获取版本列表或角色列表*/
 export const api_getVersion = async (params: VersionParams, isAdmin = false) => {
-  const result = await momo.get<{ versionList: VersionInfo[]; roleList: Role[] }>(
-    isAdmin ? "/getAllVersion" : "/getVersion",
-    params
-  )
+  const result = await momo.get<{
+    versionList: VersionInfo[]
+    roleList: Role[]
+  }>(isAdmin ? "/getAllVersion" : "/getVersion", params)
   console.log("/返回的数据为：", result)
   return result
 }
@@ -55,10 +55,10 @@ export const api_updateRole = async (roleInfo: Role, isAdmin = false) => {
 
 /**用户和管理员获取图片信息*/
 export const api_getImage = async (condition: ImgParams, isAdmin = false) => {
-  const result = await momo.get<{ imgList: ReverseImg[] | ReverseImgInfo[]; totalNum: number }>(
-    isAdmin ? "/getAllWallpaper" : "/getWallpaper",
-    condition
-  )
+  const result = await momo.get<{
+    imgList: ReverseImg[] | ReverseImgInfo[]
+    totalNum: number
+  }>(isAdmin ? "/getAllWallpaper" : "/getWallpaper", condition)
   console.log("/api_getImage返回的数据为：", result)
   const { code, data } = result
   if (code === 300 || !data) return //没有查询结果则不进行以下操作
@@ -73,8 +73,7 @@ export const api_updateImage = async (data: ReverseImgInfo, isAdmin = false) => 
   if (code === 200) {
     ElMessage.success(msg)
     return true
-  } //没有查询结果则不进行以下操作
-  else return false
+  } else return false //没有查询结果则不进行以下操作
 }
 
 /**检查以影像之是否有更新(未收录图片)*/

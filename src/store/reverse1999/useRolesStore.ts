@@ -69,5 +69,13 @@ export const useRolesStore = defineStore("1999_roles", () => {
     }
   }
 
-  return { isLoading, isEdit, isShowAddRoleDrawer, oldFormData, formData, reSetFormData, toggleAddRoleDrawer }
+  return {
+    isLoading,
+    isEdit,
+    isShowAddRoleDrawer,
+    oldFormData,
+    formData,
+    reSetFormData,
+    toggleAddRoleDrawer,
+  }
 })

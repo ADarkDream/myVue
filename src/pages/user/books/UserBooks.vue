@@ -128,7 +128,11 @@ const updateBook = async (isDelete = false, index: number) => {
     //删除账本
     if (isDelete)
       books.splice(index, 1) //修改账本信息
-    else books[index] = Object.assign(books[index], { ...newBookInfo.value, updated_time: Date.now() })
+    else
+      books[index] = Object.assign(books[index], {
+        ...newBookInfo.value,
+        updated_time: Date.now(),
+      })
     //退出编辑
     isEditID.value = 0
   } catch (error) {

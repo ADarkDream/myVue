@@ -17,7 +17,7 @@
             <div class="songInfo">
               <el-text
                 >{{ index + 1 }}、{{ item.name || "未命名" }} -
-                {{ item.artists.length !== 0 ? item.artists.map(artist => artist.name).join("&") : "未知艺术家" }} </el-text
+                {{ item.artists.length !== 0 ? item.artists.map((artist) => artist.name).join("&") : "未知艺术家" }} </el-text
               >&ensp;
               <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text>
             </div>
@@ -85,7 +85,10 @@ const { changePanelIndex } = mainPanelConfigStore
 
 const { showMusicListDrawer } = useMusic()
 const { toggleMusic, play } = useMusicPlay()
-const { songsList, height } = defineProps(["songsList", "height"]) as { songsList: CloudSongInfo[]; height: number }
+const { songsList, height } = defineProps(["songsList", "height"]) as {
+  songsList: CloudSongInfo[]
+  height: number
+}
 
 const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   //如果是当前播放的歌曲，则暂停

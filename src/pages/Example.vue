@@ -157,15 +157,15 @@ type TestRole = {
   life: number
 }
 
-type resortRule = {
+type ResortRule = {
   star: number[]
-  damageType: "现实" | "精神"
-  valueType: "attack" | "defense" | "life"
+  damageType: "现实" | "精神" | ""
+  valueType: "attack" | "defense" | "life" | ""
   isAsc: boolean
 }
 
 //筛选和排序条件
-const resortRule = reactive({
+const resortRule = reactive<ResortRule>({
   star: [],
   damageType: "",
   valueType: "",
@@ -207,7 +207,7 @@ function updateStarSelection() {
   } else {
     checkedStars.push(selectValue)
   }
-  resortRule.star = checkedStars.filter(item => item !== undefined).sort((a, b) => a - b)
+  resortRule.star = checkedStars.filter((item) => item !== undefined).sort((a, b) => a - b)
   console.log(selectValue)
 
   filterAndSortRoles() // 触发筛选和排序逻辑
@@ -218,7 +218,7 @@ function updateStarSelection() {
  */
 function filterAndSortRoles() {
   showList.value = roles
-    .filter(role => {
+    .filter((role) => {
       const starMatches = resortRule.star.length === 0 || resortRule.star.includes(role.star) // 如果 star 条件为空，不筛选
       const damageTypeMatches = !resortRule.damageType || role.damageType === resortRule.damageType // 如果 damageType 为空，不筛选
       return starMatches && damageTypeMatches
@@ -235,16 +235,96 @@ function filterAndSortRoles() {
 
 /**示例角色数组*/
 const roles: TestRole[] = [
-  { id: "B1", star: 6, name: "B1", damageType: "精神", attack: 320, defense: 240, life: 1000 },
-  { id: "A2", star: 6, name: "A2", damageType: "精神", attack: 400, defense: 140, life: 2900 },
-  { id: "A3", star: 4, name: "A3", damageType: "精神", attack: 320, defense: 240, life: 600 },
-  { id: "D2", star: 3, name: "D2", damageType: "现实", attack: 250, defense: 130, life: 870 },
-  { id: "B2", star: 4, name: "B2", damageType: "精神", attack: 500, defense: 240, life: 700 },
-  { id: "B3", star: 3, name: "B3", damageType: "精神", attack: 320, defense: 300, life: 900 },
-  { id: "A1", star: 5, name: "A1", damageType: "现实", attack: 500, defense: 150, life: 1000 },
-  { id: "E1", star: 2, name: "E1", damageType: "精神", attack: 220, defense: 120, life: 800 },
-  { id: "C1", star: 5, name: "C1", damageType: "精神", attack: 320, defense: 140, life: 900 },
-  { id: "D1", star: 4, name: "D1", damageType: "现实", attack: 280, defense: 160, life: 950 },
+  {
+    id: "B1",
+    star: 6,
+    name: "B1",
+    damageType: "精神",
+    attack: 320,
+    defense: 240,
+    life: 1000,
+  },
+  {
+    id: "A2",
+    star: 6,
+    name: "A2",
+    damageType: "精神",
+    attack: 400,
+    defense: 140,
+    life: 2900,
+  },
+  {
+    id: "A3",
+    star: 4,
+    name: "A3",
+    damageType: "精神",
+    attack: 320,
+    defense: 240,
+    life: 600,
+  },
+  {
+    id: "D2",
+    star: 3,
+    name: "D2",
+    damageType: "现实",
+    attack: 250,
+    defense: 130,
+    life: 870,
+  },
+  {
+    id: "B2",
+    star: 4,
+    name: "B2",
+    damageType: "精神",
+    attack: 500,
+    defense: 240,
+    life: 700,
+  },
+  {
+    id: "B3",
+    star: 3,
+    name: "B3",
+    damageType: "精神",
+    attack: 320,
+    defense: 300,
+    life: 900,
+  },
+  {
+    id: "A1",
+    star: 5,
+    name: "A1",
+    damageType: "现实",
+    attack: 500,
+    defense: 150,
+    life: 1000,
+  },
+  {
+    id: "E1",
+    star: 2,
+    name: "E1",
+    damageType: "精神",
+    attack: 220,
+    defense: 120,
+    life: 800,
+  },
+  {
+    id: "C1",
+    star: 5,
+    name: "C1",
+    damageType: "精神",
+    attack: 320,
+    defense: 140,
+    life: 900,
+  },
+  {
+    id: "D1",
+    star: 4,
+    name: "D1",
+    damageType: "现实",
+    attack: 280,
+    defense: 160,
+    life: 950,
+  },
 ]
 
 /**显示的角色数组*/

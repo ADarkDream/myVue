@@ -158,14 +158,9 @@ const handleEdit = (index: number, row: Comment) => {
 
 //对上传的数据进行格式检查
 function checkUpdateRow(newData: Comment, oldData: Comment) {
-  const data = <Comment>diffObj(newData, oldData)
-  //判断评论信息是否修改
-  if (Object.keys(data).length === 0) return ElMessage.info("评论信息未修改，已取消上传。")
-  else {
-    //校验格式
-
-    updateRow(data, oldData)
-  }
+  const data = diffObj(newData, oldData) as Comment //判断评论信息是否修改
+  if (Object.keys(data).length === 0) return ElMessage.info("评论信息未修改，已取消上传。") //校验格式
+  updateRow(data, oldData)
 }
 
 //上传更新的评论信息
@@ -175,7 +170,7 @@ function updateRow(data: Comment, oldData: Comment) {
       data,
       id: oldData.id, //id被洗掉了，手动添加
     })
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       const { msg } = result
       //更新修订时间为当前时间
@@ -186,7 +181,7 @@ function updateRow(data: Comment, oldData: Comment) {
       isEditRow.value = -1
       ElMessage.success(msg)
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
       //ElMessage.error('发生错误：' + error.message)
@@ -212,13 +207,13 @@ const deleteRow = (index: number, id: number) => {
 const deleteComment = (index: number, id: number) => {
   momo
     .delete("/deleteComment", { id })
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       ElMessage.success(result.msg)
       tableData.splice(index, 1)
       console.log(tableData)
     })
-    .catch(error => {
+    .catch((error) => {
       console.dir("发生错误：" + error)
     })
 }

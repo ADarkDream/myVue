@@ -48,9 +48,14 @@
     </el-collapse>
     <!--文章列表区-->
     <div class="content">
-      <div class="card" v-for="item in articleList" @click="toArticle(item.id, item.title)">
+      <div
+        class="card"
+        v-for="{ id, title, coverUrl, area, tags, author, created_time } in articleList"
+        :key="id"
+        @click="toArticle(id, title)"
+      >
         <div class="articleCover">
-          <el-image :src="item.coverUrl" fit="cover" :draggable="false" v-if="item.coverUrl" lazy>
+          <el-image :src="coverUrl" fit="cover" :draggable="false" v-if="coverUrl" lazy>
             <template #error>
               <div class="image-slot">
                 <el-icon size="40px">
@@ -67,14 +72,14 @@
         </div>
         <div class="articleInfo">
           <div>
-            <el-text size="large" truncated>{{ item.title }}</el-text>
+            <el-text size="large" truncated>{{ title }}</el-text>
           </div>
           <div>
-            <el-text size="small" tag="sub" truncated>板块：{{ item.area }}&ensp;&ensp;&ensp;标签：{{ item.tags }} </el-text>
+            <el-text size="small" tag="sub" truncated>板块：{{ area }}&ensp;&ensp;&ensp;标签：{{ tags }} </el-text>
           </div>
           <div class="footer">
-            <el-text size="small" tag="b" style="width: 30%" truncated>{{ item.author }}</el-text>
-            <el-text size="small" truncated> &ensp;&ensp;发布于:{{ getDiffTime(item.created_time) }} </el-text>
+            <el-text size="small" tag="b" style="width: 30%" truncated>{{ author }}</el-text>
+            <el-text size="small" truncated> &ensp;&ensp;发布于:{{ getDiffTime(created_time) }} </el-text>
           </div>
         </div>
       </div>

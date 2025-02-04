@@ -20,7 +20,9 @@ export const api_getArticleList = async (params: ArticleParams) => {
  * @returns
  */
 export async function api_getNotice(sort: string[]) {
-  const result = await momo.get<{ noticeList: Notice[] }>("/getNotices", { sort })
+  const result = await momo.get<{ noticeList: Notice[] }>("/getNotices", {
+    sort,
+  })
   console.log("/返回的数据为：", result)
   return result
 }

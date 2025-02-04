@@ -67,7 +67,7 @@ export const useMusicListStore = defineStore(
      * 公开的歌单列表
      */
     const publicMusicListInfo = computed<MusicListInfo[]>(() =>
-      publicMusicIdList.value.map(id => musicListInfoObj[id.toString()]).filter(info => info !== undefined)
+      publicMusicIdList.value.map((id) => musicListInfoObj[id.toString()]).filter((info) => info !== undefined)
     )
     /**
      * 用户创建的歌单id列表
@@ -77,7 +77,7 @@ export const useMusicListStore = defineStore(
      * 用户创建的歌单列表
      */
     const myMusicListInfo = computed<MusicListInfo[]>(() =>
-      myMusicIdList.value.map(id => musicListInfoObj[id.toString()]).filter(info => info !== undefined)
+      myMusicIdList.value.map((id) => musicListInfoObj[id.toString()]).filter((info) => info !== undefined)
     )
 
     /**
@@ -120,7 +120,7 @@ export const useMusicListStore = defineStore(
       //获取播放列表中所有歌曲的id值
       const idList = Object.keys(playListIndex.value)
 
-      newMusicList.forEach(song => {
+      newMusicList.forEach((song) => {
         //如果新添加的歌曲已经在播放列表中存在
         if (idList.includes(song.id.toString())) {
           index = playListIndex.value[song.id]
@@ -227,8 +227,8 @@ export const useMusicListStore = defineStore(
 
       if (isAdd)
         //添加
-        idList.forEach(id => tempSet.add(id)) // 删除
-      else idList.forEach(id => tempSet.delete(id))
+        idList.forEach((id) => tempSet.add(id)) // 删除
+      else idList.forEach((id) => tempSet.delete(id))
 
       // console.log('updateMusicIdList', flag, [...tempSet]);
 

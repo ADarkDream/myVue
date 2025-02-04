@@ -89,7 +89,7 @@ export default function useVirtualList(config: Config) {
   // 数据源发生变动
   watch(
     () => config.data.value,
-    async newVla => {
+    async (newVla) => {
       await nextTick()
       // 更新数据源
       dataSource = newVla
@@ -123,7 +123,7 @@ export default function useVirtualList(config: Config) {
       const Items: HTMLElement[] = Array.from(document.querySelectorAll(config.itmeContainer))
       console.log("Items", Items)
       // 进行缓存
-      Items.forEach(el => {
+      Items.forEach((el) => {
         if (!RenderedItemsCache[index]) {
           RenderedItemsCache[index] = el.offsetHeight
         }

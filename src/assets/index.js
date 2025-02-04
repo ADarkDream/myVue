@@ -1,15 +1,15 @@
 const jinrishici = require("jinrishici")
-jinrishici.load(result => {
+jinrishici.load((result) => {
   console.log(result)
 })
 
 function a() {
   jinrishici.load(
-    result => {
+    (result) => {
       this.msg = result.content
       console.log(this.msg)
     },
-    err => {
+    (err) => {
       console.log(err)
     }
   )

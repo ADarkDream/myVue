@@ -52,7 +52,10 @@ export const useUserInfoStore = defineStore(
       get: () => adminInfo.value.username || userInfo.value.username,
       set: (val: string) => (isAdmin.value ? (adminInfo.value.username = val) : (userInfo.value.username = val)),
     })
-    const signature = computed({ get: () => userInfo.value.signature, set: (val: string) => (userInfo.value.signature = val) })
+    const signature = computed({
+      get: () => userInfo.value.signature,
+      set: (val: string) => (userInfo.value.signature = val),
+    })
     const headImgUrl = computed({
       get: () => adminInfo.value.headImgUrl || userInfo.value.headImgUrl,
       set: (val: string) => (isAdmin.value ? (adminInfo.value.headImgUrl = val) : (userInfo.value.headImgUrl = val)),
@@ -64,7 +67,10 @@ export const useUserInfoStore = defineStore(
     /**
      * 用户设置的背景图
      */
-    const bgUrl = computed({ get: () => userInfo.value.bgUrl, set: (val: string) => (userInfo.value.bgUrl = val) })
+    const bgUrl = computed({
+      get: () => userInfo.value.bgUrl,
+      set: (val: string) => (userInfo.value.bgUrl = val),
+    })
     const isLogin = ref(false)
     const isAdmin = ref(false)
     const errorFlag = ref(false) //头像错误标志
@@ -82,11 +88,11 @@ export const useUserInfoStore = defineStore(
      */
     function updateLocalUserInfo(newUserInfo: UserInfo, is_admin = false) {
       if (is_admin) {
-        ;(Object.keys(newUserInfo) as (keyof AdminInfo)[]).forEach(key => {
+        ;(Object.keys(newUserInfo) as (keyof AdminInfo)[]).forEach((key) => {
           adminInfo.value[key] = newUserInfo[key]
         })
       } else {
-        ;(Object.keys(newUserInfo) as (keyof UserInfo)[]).forEach(key => {
+        ;(Object.keys(newUserInfo) as (keyof UserInfo)[]).forEach((key) => {
           // 如果 userInfo 没有这个 key，则新建该 key
           if (!(key in userInfo.value)) {
             userInfo.value[key] = undefined // 初始化新键

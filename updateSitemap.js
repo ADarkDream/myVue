@@ -12,14 +12,49 @@ const pipelineAsync = promisify(pipeline)
 
 async function generateSitemap() {
   const links = [
-    { url: "/", changefreq: "monthly", priority: 1, lastmod: new Date().toISOString() },
-    { url: "/reverse1999/download", changefreq: "monthly", priority: 1, lastmod: new Date().toISOString() },
-    { url: "/reverse1999/roles", changefreq: "monthly", priority: 0.5, lastmod: new Date().toISOString() },
-    { url: "/reverse1999/images", changefreq: "monthly", priority: 0.5, lastmod: new Date().toISOString() },
-    { url: "/forum", changefreq: "monthly", priority: 0.7, lastmod: new Date().toISOString() },
-    { url: "/music", changefreq: "monthly", priority: 0.5, lastmod: new Date().toISOString() },
+    {
+      url: "/",
+      changefreq: "monthly",
+      priority: 1,
+      lastmod: new Date().toISOString(),
+    },
+    {
+      url: "/reverse1999/download",
+      changefreq: "monthly",
+      priority: 1,
+      lastmod: new Date().toISOString(),
+    },
+    {
+      url: "/reverse1999/roles",
+      changefreq: "monthly",
+      priority: 0.5,
+      lastmod: new Date().toISOString(),
+    },
+    {
+      url: "/reverse1999/images",
+      changefreq: "monthly",
+      priority: 0.5,
+      lastmod: new Date().toISOString(),
+    },
+    {
+      url: "/forum",
+      changefreq: "monthly",
+      priority: 0.7,
+      lastmod: new Date().toISOString(),
+    },
+    {
+      url: "/music",
+      changefreq: "monthly",
+      priority: 0.5,
+      lastmod: new Date().toISOString(),
+    },
     //二级域名
-    { url: "https://demos.muxidream.cn/sitemap.xml", changefreq: "monthly", priority: 0.5, lastmod: new Date().toISOString() },
+    {
+      url: "https://demos.muxidream.cn/sitemap.xml",
+      changefreq: "monthly",
+      priority: 0.5,
+      lastmod: new Date().toISOString(),
+    },
   ]
 
   const stream = new SitemapStream({
@@ -32,7 +67,7 @@ async function generateSitemap() {
     let sitemapContent = data.toString()
 
     // 移除多余命名空间
-    sitemapContent = sitemapContent.replace(/<urlset[^>]+>/, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')
+    sitemapContent = sitemapContent.replace(/<urlset[^>]+>/, "<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>")
 
     // 检查并移除无效的 <script/> 元素
     sitemapContent = sitemapContent.replace(/<script\/>/g, "")

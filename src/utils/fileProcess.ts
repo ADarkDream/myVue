@@ -19,7 +19,10 @@ export default {
 
     // 导出 Excel
     // XLSX.writeFile(workbook, fileName +".xlsx") // 可以直接保存，但saveAs兼容更好
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" })
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    })
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" })
     saveAs(blob, fileName + ".xlsx")
   },

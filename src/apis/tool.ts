@@ -6,7 +6,9 @@ import momo from "@/apis"
  * @returns
  */
 export async function api_getRedirectUrl(url: string) {
-  const result = await momo.get<{ redirectUrl: string }>("/getRedirectUrl", { url })
+  const result = await momo.get<{ redirectUrl: string }>("/getRedirectUrl", {
+    url,
+  })
   console.log("/getRedirectUrl返回的数据为：", result)
   return result
 }

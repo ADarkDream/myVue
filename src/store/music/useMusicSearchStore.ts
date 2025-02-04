@@ -65,5 +65,14 @@ export const useMusicSearchStore = defineStore("music_search", () => {
     }
   }
 
-  return { isShowSearchPanel, hotWords, searchConfig, searchResult, searchResultType, totalNum, search, getHotWords }
+  return {
+    isShowSearchPanel,
+    hotWords,
+    searchConfig,
+    searchResult,
+    searchResultType,
+    totalNum,
+    search,
+    getHotWords,
+  }
 })

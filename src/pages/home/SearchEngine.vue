@@ -7,17 +7,17 @@
     </el-button>
     <template v-if="showEngines">
       <!--    默认的搜索引擎列表-->
-      <template class="engines" v-for="item in searchEngines" :key="item.id">
+      <div class="engines" v-for="item in searchEngines" :key="item.id">
         <el-button class="engine" v-show="engineId !== item.id && item.isShow">
           <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)" />
         </el-button>
-      </template>
+      </div>
       <!--    自定义的搜索引擎列表-->
-      <template class="engines" v-for="item in userEngines" :key="item.id">
+      <div class="engines" v-for="item in userEngines" :key="item.id">
         <el-button class="engine" v-show="engineId !== item.id && item.isShow">
           <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)" />
         </el-button>
-      </template>
+      </div>
     </template>
     <!--    添加自定义搜索引擎-->
     <el-button plain type="primary" class="engine" :icon="More" v-if="showEngines" @click="engineOption = !engineOption" />
@@ -152,7 +152,7 @@ function changeEngine(item: EngineData) {
   baseUrl.value = item.baseUrl
   searchUrl.value = item.baseUrl + item.searchUrl
   searchImg.value = item.src
-  showEngines.value = !showEngines
+  showEngines.value = !showEngines.value
 }
 
 //隐藏用户自定义搜索引擎
@@ -177,7 +177,7 @@ async function getEngineList() {
   if (isLogin.value) {
     await momo
       .get("/getEngines")
-      .then(result => {
+      .then((result) => {
         console.log("获取自定义搜索引擎列表", result)
         let { engineList } = result
         userEngines.splice(0, userEngines.length)
@@ -188,7 +188,7 @@ async function getEngineList() {
         })
         localStorage.setItem("userEngines", JSON.stringify(engineList))
       })
-      .catch(error => {
+      .catch((error) => {
         console.dir("发生错误：")
         console.dir(error)
         //ElMessage.error('发生错误：' + error.message)
@@ -213,7 +213,7 @@ onMounted(async () => {
   hideList.forEach((item: EngineData) => {
     //网页加载，遍历用户设置隐藏默认搜索引擎
     if (item !== null)
-      searchEngines.forEach(engine => {
+      searchEngines.forEach((engine) => {
         if (engine.id === item.id) engine.isShow = item.isShow
       })
   })
@@ -230,7 +230,7 @@ onMounted(async () => {
   } else if (hideLocalList.length !== 0) {
     //网页加载，遍历用户设置隐藏未登录用户的自定义的搜索引擎
     hideLocalList.forEach((item: EngineData) => {
-      if (!!item)
+      if (item)
         userEngines.forEach((engine: EngineData) => {
           if (engine.id === item.id) engine.isShow = item.isShow
         })

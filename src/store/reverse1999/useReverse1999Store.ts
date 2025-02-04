@@ -14,7 +14,7 @@ export const useReverse1999Store = defineStore(
       //判断是否为完整的版本信息
       const isFull =
         Array.isArray(versionInfo.value) &&
-        versionInfo.value.every(item => "version" in item && "versionName" in item && !("time" in item) && !("status" in item))
+        versionInfo.value.every((item) => "version" in item && "versionName" in item && !("time" in item) && !("status" in item))
 
       const Arr = isFull
         ? versionInfo.value
@@ -49,13 +49,13 @@ export const useReverse1999Store = defineStore(
 
     /**根据阵营分类的角色树*/
     const roleTree = computed(() =>
-      campInfo.value.map(camp => {
+      campInfo.value.map((camp) => {
         const children = allRoleInfo.value
-          .map(role => {
+          .map((role) => {
             //去除已删除的角色，将角色根据阵营分组
             if (role.status !== 0 && role.camp === camp.name) return { label: role.name, value: role.id }
           })
-          .filter(item => item !== undefined) //过滤掉空值
+          .filter((item) => item !== undefined) //过滤掉空值
         return { label: camp.name, value: camp.name, children }
       })
     )

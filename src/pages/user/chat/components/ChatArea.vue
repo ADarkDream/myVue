@@ -164,7 +164,10 @@ const reLink = () => {
 //发送信息
 const sendMsg = () => {
   if (msg.value) {
-    socket.value.emit("room-message", { message: msg.value, playerInfo: playerInfo.value })
+    socket.value.emit("room-message", {
+      message: msg.value,
+      playerInfo: playerInfo.value,
+    })
     msg.value = ""
   }
 }
@@ -213,7 +216,10 @@ window.addEventListener("beforeunload", listener)
 
 //退出,删除全部监听
 onUnmounted(() => {
-  socket.value.emit("room-leave", { playerInfo: playerInfo.value, reason: "离开聊天界面" })
+  socket.value.emit("room-leave", {
+    playerInfo: playerInfo.value,
+    reason: "离开聊天界面",
+  })
   removeEventListener("beforeunload", listener)
   console.log("已退出chatRoom")
   // socket.removeAllListeners()

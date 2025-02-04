@@ -22,7 +22,7 @@ const musicList = {
       ElMessage.error("请求的idList不能为空")
       return false
     }
-    idList.forEach(id => {
+    idList.forEach((id) => {
       // 尝试将id转换为数字
       const num = Number(id)
       // 检查是否成功转换为数字，并且是一个正整数
@@ -81,12 +81,16 @@ const musicList = {
    */
   getCloudMusicList: async ({ cloud_music_list_id, limit, offset, latest }: QueryCloudMusicList) => {
     try {
-      const result = await momo.get<MusicList>("/getCloudMusicList", { cloud_music_list_id, limit, offset, latest })
+      const result = await momo.get<MusicList>("/getCloudMusicList", {
+        cloud_music_list_id,
+        limit,
+        offset,
+        latest,
+      })
       console.log("搜索网易云的歌单及音乐信息", result)
       const { code, msg, data } = result
-      if (code === 200 && data) {
-        return { status: 1, data: data }
-      } // else if (code === 300)
+      if (code === 200 && data) return { status: 1, data: data }
+      // else if (code === 300)
       //    return { status: 0, msg }
       else return { status: 0, msg }
     } catch (error) {
@@ -163,7 +167,10 @@ const musicList = {
    */
   connectMusicToList: async (music_id_list: number[], music_list_id: number) => {
     try {
-      const result = await momo.post("/addCloudMusicToList", { music_id_list, music_list_id })
+      const result = await momo.post("/addCloudMusicToList", {
+        music_id_list,
+        music_list_id,
+      })
       console.log("/connectMusicToList", result)
       return result
     } catch (err) {
@@ -180,7 +187,10 @@ const musicList = {
    */
   deleteMusicFromList: async (music_id_list: number[], music_list_id: number) => {
     try {
-      const result = await momo.delete("/deleteMusicFromList", { music_list_id, music_id_list })
+      const result = await momo.delete("/deleteMusicFromList", {
+        music_list_id,
+        music_id_list,
+      })
       console.log("/deleteMusicFromList返回的数据为：", result)
       // const { code, msg, data } = result
       return { status: 1 }

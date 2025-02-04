@@ -1,7 +1,7 @@
 //定义搜索引擎接口
 interface EngineData {
-  index?: number
   id: number
+  index?: number
   engineId?: number
   name?: string
   baseUrl: string
@@ -12,8 +12,8 @@ interface EngineData {
 }
 
 type ThisEngine = {
-  index: number
   id?: number
+  index: number
   engineId?: number
   name: string
   baseUrl: string

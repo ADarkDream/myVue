@@ -53,16 +53,20 @@ export default function () {
     param.append("sort", "headImg")
     momo
       .post("/upload", param)
-      .then(result => {
+      .then((result) => {
         // console.log(result)
-        const { msg, imgUrl } = result as { status: number; msg: string; imgUrl: string }
+        const { msg, imgUrl } = result as {
+          status: number
+          msg: string
+          imgUrl: string
+        }
         ElMessage.success(msg)
         console.log("获取成功：", imgUrl)
         setTimeout(() => {
           location.reload()
         }, 1000)
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error)
       })
   }
@@ -75,5 +79,12 @@ export default function () {
     headImgDialogVisible.value = false
   }
 
-  return { fileChange, updateAvatar, cancel, imgUrl, changeHeadImgBtnFlag, headImgDialogVisible }
+  return {
+    fileChange,
+    updateAvatar,
+    cancel,
+    imgUrl,
+    changeHeadImgBtnFlag,
+    headImgDialogVisible,
+  }
 }

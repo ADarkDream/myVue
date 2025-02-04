@@ -312,7 +312,7 @@ getAllUsers()
 function getAllUsers() {
   momo
     .get("/getAllUsers")
-    .then(result => {
+    .then((result) => {
       console.log(result)
 
       const { msg, userList } = result
@@ -322,7 +322,7 @@ function getAllUsers() {
         tableData.push(item)
       })
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.dir(error)
     })
@@ -332,7 +332,7 @@ function getAllAdmins() {
   if (!tableVisible.value) return
   momo
     .get("/getAllAdmins")
-    .then(result => {
+    .then((result) => {
       console.log(result)
       const { msg, userList } = result
       ElMessage.success(msg)
@@ -341,7 +341,7 @@ function getAllAdmins() {
         tableData2.push(item)
       })
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.dir(error)
     })
@@ -383,29 +383,24 @@ function handleCancel() {
 
 //对上传的数据进行格式检查
 function checkUpdateRow(newData: UserInfo, oldData: UserInfo, isAdmin: boolean) {
-  const data = <UserInfo>diffObj(newData, oldData)
+  const data = diffObj(newData, oldData) as UserInfo
   //判断用户信息是否修改
   if (Object.keys(data).length === 0) return ElMessage.info("用户信息未修改，已取消上传。")
-  else {
-    //校验格式
 
-    //清洗多余数据
-    Object.keys(data).forEach(key => {
-      if (key === "headImgUrl" || key === "headImgStatus" || key === "bgUrl" || key === "bgStatus") delete data[key]
-    })
-    //如果是管理员信息
-    if (isAdmin)
-      Object.keys(data).forEach(key => {
-        if (key === "bgId" || key === "signature") delete data[key]
-      })
-    else
-      Object.keys(data).forEach(key => {
-        if (key === "isSuperAdmin" || key === "password") delete data[key]
-      })
+  //清洗多余数据
+  let { headImgUrl, headImgStatus, bgUrl, bgStatus, ...restData } = data
 
-    //uid被洗掉了，手动添加
-    updateRow(data, oldData.uid, oldData, isAdmin)
+  //如果是管理员信息
+  if (isAdmin) {
+    const { bgId, signature, ...lastData } = data
+    restData = lastData
+  } else {
+    const { isSuperAdmin, password, ...lastData } = data
+    restData = lastData
   }
+
+  //uid被洗掉了，手动添加
+  updateRow(restData, oldData.uid!, oldData, isAdmin)
 }
 
 //上传新的用户信息
@@ -417,19 +412,19 @@ function updateRow(data: UserInfo, uid: number, oldData: UserInfo, isAdmin: bool
       data,
       uid,
     })
-    .then(result => {
+    .then((result) => {
       console.log(result)
       const { msg } = result
       //修改更新时间
       oldData.updated_time = new Date().toISOString()
-      if (isSuperAdmin) data.password = ""
+      if (isSuperAdmin.value) data.password = ""
       //将修改后的信息显示出来
       Object.assign(oldData, data)
       //去除编辑标记
       isEditRow.value = -1
       ElMessage.success(msg)
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
       //ElMessage.error('发生错误：' + error.message)
@@ -442,12 +437,12 @@ function addAdmin(uid: number) {
   if (!isSuperAdmin.value) return
   momo
     .post("/addAdmin", { uid })
-    .then(result => {
+    .then((result) => {
       console.log(result)
       const { msg } = result
       ElMessage.success(msg)
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
     })
@@ -477,13 +472,13 @@ const deleteUser = (index: number, uid: number, isAdmin: boolean) => {
   if (isAdmin) url = "/deleteAdmin"
   momo
     .delete(url, { uid })
-    .then(result => {
+    .then((result) => {
       console.log(result)
       ElMessage.success(result.msg)
       if (isAdmin) tableData2.splice(index, 1)
       else tableData.splice(index, 1)
     })
-    .catch(error => {
+    .catch((error) => {
       console.dir("发生错误：")
       console.log(error)
     })

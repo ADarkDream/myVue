@@ -15,14 +15,14 @@ const apiClient = axios.create({
 
 //#region 请求拦截器
 apiClient.interceptors.request.use(
-  config => {
+  (config) => {
     const userInfoStore = useUserInfoStore()
     if (userInfoStore.token) {
       config.headers.Authorization = `Bearer ${userInfoStore.token}`
     }
     return config
   },
-  error => Promise.reject(error)
+  (error) => Promise.reject(error)
 )
 //#endregion
 
@@ -32,7 +32,7 @@ apiClient.interceptors.request.use(
 const isErrorPrinted = ref(false)
 
 apiClient.interceptors.response.use(
-  response => {
+  (response) => {
     // 提取 token 并更新
     if (response.headers.authorization) {
       const userInfoStore = useUserInfoStore()
@@ -75,7 +75,7 @@ apiClient.interceptors.response.use(
 
     return Promise.reject(response)
   },
-  error => {
+  (error) => {
     if (error.code === "ERR_NETWORK" && !isErrorPrinted.value) {
       ElMessage.error("抱歉，暂时无法连接服务器。")
       isErrorPrinted.value = true

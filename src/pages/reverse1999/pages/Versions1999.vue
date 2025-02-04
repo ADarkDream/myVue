@@ -191,12 +191,12 @@ const export_excel = () => {
   // })
 
   // 数据
-  const data = allRoleInfo.value.map(row => {
+  const data = allRoleInfo.value.map((row) => {
     return propsIndex
       .map((prop, index) => {
         return row[prop as keyof Role] || ""
       })
-      .filter(item => item !== undefined)
+      .filter((item) => item !== undefined)
   })
   // 组合数据，第一行是表头
   const sheetData = [headers, ...data]

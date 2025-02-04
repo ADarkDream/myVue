@@ -156,7 +156,11 @@ const isSubmit = route.query.isSubmit
 if (isSubmit === "0") isShow.value = false
 
 const toForumCenter = (author: string, area: string, tags: string) =>
-  setRouterBreadcrumb(0, { name: "center", label: "论坛", query: { author, area, tags } })
+  setRouterBreadcrumb(0, {
+    name: "center",
+    label: "论坛",
+    query: { author, area, tags },
+  })
 
 //时间戳转换
 let { getDiffTime } = useTimeStamp()
@@ -187,10 +191,10 @@ async function getArticle() {
       id: route.query.id,
       isAdmin: isAdmin.value,
     })
-    .then(async result => {
+    .then(async (result) => {
       console.log(result)
       const { comments: commentsData } = result
-      console.log(!!comments)
+      console.log(!!comments.value)
       // ElMessage.success(msg)
       article.value = result.article
       //判断返回的数据中是否有评论
@@ -204,7 +208,7 @@ async function getArticle() {
       hljs.highlightAll()
       addCodeHighLight()
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
       ElMessage.error(error.msg)
@@ -215,11 +219,12 @@ async function getArticle() {
 // 复制功能
 
 function addCodeHighLight() {
+  // eslint-disable-next-line
   const codeBlocks = document.querySelectorAll('[class*="language-"]')
   codeBlocks.forEach((item: HTMLElement) => {
-    const language = item.className.match(/language-([a-zA-Z]+)/)[1] //匹配language-javascript的后半部分
-
-    if (!!hljs.getLanguage(language))
+    const strArr = item.className.match(/language-([a-zA-Z]+)/) //匹配language-javascript的后半部分
+    const language = strArr?.length ? strArr[1] : ""
+    if (language && hljs.getLanguage(language))
       //如果支持该语言
       hljs.highlightElement(item) //给代码块高亮
     else console.log(item.classList)
@@ -271,7 +276,7 @@ function addComment() {
         articleId: route.query.id,
         comment: comment.value.trim(),
       })
-      .then(result => {
+      .then((result) => {
         // console.log(result)
         loading.close()
         const { code, msg } = result
@@ -282,7 +287,7 @@ function addComment() {
           getArticle()
         }
       })
-      .catch(error => {
+      .catch((error) => {
         loading.close()
         console.log("发生错误：")
         console.log(error)
@@ -297,7 +302,7 @@ function checkArticle(status: number) {
       id: route.query.id,
       status,
     })
-    .then(result => {
+    .then((result) => {
       console.log(result)
       ElMessage.success(result.msg)
       // 成功之后返回管理界面
@@ -305,7 +310,7 @@ function checkArticle(status: number) {
         router.back()
       }, 1500)
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
     })
@@ -330,14 +335,14 @@ const deleteRow = (id: number) => {
 const deleteComment = (id: number) => {
   momo
     .delete("/deleteTheComment", { id })
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       ElMessage.success(result.msg)
       setTimeout(() => {
         location.reload()
       }, 1500)
     })
-    .catch(error => {
+    .catch((error) => {
       console.dir("发生错误：" + error)
     })
 }
@@ -348,7 +353,7 @@ const isFixed = ref(false)
 //输入评论框距离页面顶部的距离,默认设置1000
 const commentsBoxOffsetTop = ref(1000)
 
-emitter.on("comments-move", scrollTop => (isFixed.value = scrollTop >= commentsBoxOffsetTop.value))
+emitter.on("comments-move", (scrollTop) => (isFixed.value = scrollTop >= commentsBoxOffsetTop.value))
 // 组件挂载时
 onMounted(async () => {
   await getArticle() //获取文章和评论

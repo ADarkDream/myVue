@@ -206,7 +206,10 @@ const getNewDateRange = (flag: string) => {
 //获取新的账单
 const getBillList = () => {
   console.log(dateRange.value)
-  emitter.emit("get-bill-list", { start_date: dateRange.value[0], end_date: dateRange.value[1] })
+  emitter.emit("get-bill-list", {
+    start_date: dateRange.value[0],
+    end_date: dateRange.value[1],
+  })
 }
 
 //修改日/周/月

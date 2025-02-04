@@ -61,5 +61,12 @@ export const useMusicListDrawerStore = defineStore("music_list_drawer", () => {
     }
   }
 
-  return { isShowMusicListDrawer, music_id_list, isShowEditMusicListInfoDrawer, isCreateFlag, formData, reSetFormData }
+  return {
+    isShowMusicListDrawer,
+    music_id_list,
+    isShowEditMusicListInfoDrawer,
+    isCreateFlag,
+    formData,
+    reSetFormData,
+  }
 })

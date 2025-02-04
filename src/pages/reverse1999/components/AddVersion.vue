@@ -89,7 +89,7 @@ const submitForm = async () => {
     oldFormData.value.versionName = oldFormData.value.halfText + oldFormData.value.halfName
     if (isEdit.value) {
       //修改或删除版本
-      const { halfText, halfName, ...tempData } = <VersionInfo>diffObj(formData.value, oldFormData.value)
+      const { halfText, halfName, ...tempData } = diffObj(formData.value, oldFormData.value) as VersionInfo
 
       //判断版本信息是否修改
       if (!Object.keys(tempData).length) {

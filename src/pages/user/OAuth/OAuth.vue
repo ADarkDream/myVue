@@ -1,4 +1,4 @@
-<template></template>
+<template><div></div></template>
 
 <script setup lang="ts">
 import { onMounted } from "vue"
@@ -98,7 +98,12 @@ const receiveMessage = async (event: MessageEvent) => {
             role: "verifier",
             step: 1,
             msg: "已通过验证",
-            data: { access_token, expired_time, type, reffer: route.query.reffer },
+            data: {
+              access_token,
+              expired_time,
+              type,
+              reffer: route.query.reffer,
+            },
           },
           import.meta.env.VITE_BASE_IP
         )

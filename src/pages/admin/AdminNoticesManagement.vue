@@ -28,7 +28,7 @@
         <template #default="scope">
           <div v-if="isEditRow === scope.$index">
             <el-select placeholder="选择分类(默认为更新说明)" v-model="newNotice.sort" default-first-option>
-              <el-option v-for="item in noticeSort" :label="item.text" :value="item.value" />
+              <el-option v-for="(item, index) in noticeSort" :key="index" :label="item.text" :value="item.value" />
             </el-select>
           </div>
           <div v-else-if="scope.row.sort === 'updateNotes'">更新说明</div>
@@ -94,7 +94,7 @@
       </el-form-item>
       <el-form-item label="公告分类">
         <el-select v-model="form.sort" placeholder="选择公告类型">
-          <el-option v-for="item in noticeSort" :label="item.text" :value="item.value" />
+          <el-option v-for="(item, index) in noticeSort" :key="index" :label="item.text" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="公告内容">
@@ -179,7 +179,7 @@ getNotices()
 function getNotices() {
   momo
     .get("/getAllNotices")
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       const { msg, noticeList } = result
       ElMessage.success(msg)
@@ -188,7 +188,7 @@ function getNotices() {
         tableData.push(item)
       })
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.dir(error)
     })
@@ -212,14 +212,11 @@ function handleCancel() {
 
 //对上传的数据进行格式检查
 function checkUpdateRow(newData: Notice, oldData: Notice) {
-  const data = <Notice>diffObj(newData, oldData)
+  const data = diffObj(newData, oldData) as Notice
   //判断公告信息是否修改
   if (Object.keys(data).length === 0) return ElMessage.info("公告信息未修改，已取消上传。")
-  else {
-    //校验格式
-
-    updateRow(data, oldData)
-  }
+  //校验格式
+  updateRow(data, oldData)
 }
 
 //上传更新的公告信息
@@ -229,7 +226,7 @@ function updateRow(data: Notice, oldData: Notice) {
       data,
       id: oldData.id, //id被洗掉了，手动添加
     })
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       const { msg } = result
       //更新修订时间为当前时间
@@ -240,7 +237,7 @@ function updateRow(data: Notice, oldData: Notice) {
       isEditRow.value = -1
       ElMessage.success(msg)
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
       //ElMessage.error('发生错误：' + error.message)
@@ -258,13 +255,13 @@ function submitNotice(data: Notice) {
   if (data.title === "" || data.sort === "" || data.content === "") return ElMessage.error("公告标题、分类、内容均不能为空！")
   momo
     .post("/submitNotice", data)
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       const { msg } = result
       ElMessage.success(msg)
       location.reload()
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
       //ElMessage.error('发生错误：' + error.message)
@@ -289,13 +286,13 @@ const deleteRow = (index: number, id: number) => {
 const deleteNotice = (index: number, id: number) => {
   momo
     .delete("/deleteNotice", { id })
-    .then(result => {
+    .then((result) => {
       // console.log(result)
       ElMessage.success(result.msg)
       tableData.splice(index, 1)
       console.log(tableData)
     })
-    .catch(error => {
+    .catch((error) => {
       console.dir("发生错误：" + error)
     })
 }

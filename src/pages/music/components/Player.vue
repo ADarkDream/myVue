@@ -5,7 +5,7 @@
     <div class="play-panel" :class="{ active: infoBarActive }">
       <span ref="musicName" class="name" :class="{ scroll: isScrollName }" :style="transformX"
         >{{ isLoading ? "加载中" : thisMusic.name || "未命名" }}——<span class="artist">
-          {{ isLoading ? "加载中" : thisMusic.artists.map(artist => artist.name).join("&") || "未知艺术家" }}
+          {{ isLoading ? "加载中" : thisMusic.artists.map((artist) => artist.name).join("&") || "未知艺术家" }}
         </span>
       </span>
       <div class="progress-bar">

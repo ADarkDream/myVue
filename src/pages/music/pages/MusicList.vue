@@ -143,7 +143,11 @@ const refresh = async () => {
   const { music_list_id, cloud_music_list_id } = musicListInfo.value
   let result
   if (isOwner.value) result = await getMusicList({ music_list_id, is_login: isLogin.value }, true)
-  else result = await getCloudMusicList({ cloud_music_list_id: cloud_music_list_id!, latest: 1 })
+  else
+    result = await getCloudMusicList({
+      cloud_music_list_id: cloud_music_list_id!,
+      latest: 1,
+    })
   const { code, msg } = result
 
   if (status === 1) ElMessage.success("刷新成功")

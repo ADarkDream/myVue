@@ -156,7 +156,7 @@ const myFunction = {
   diffObj: <T>(newData: T, oldData: T): Partial<T> => {
     const result: Partial<T> = {}
     const keys = new Set([...Object.keys(newData), ...Object.keys(oldData)])
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (newData[key as keyof T] !== oldData[key as keyof T]) {
         result[key as keyof T] = newData[key as keyof T]
       }
@@ -235,7 +235,10 @@ const myFunction = {
     justTypes?: boolean
   }) => {
     try {
-      const result = await momo.post<{ resultArr: string[] }>("/getTypes", { jsonData, justTypes })
+      const result = await momo.post<{ resultArr: string[] }>("/getTypes", {
+        jsonData,
+        justTypes,
+      })
       console.log("/返回的数据为：", result)
       // const { code, msg, data } = result
     } catch (err) {

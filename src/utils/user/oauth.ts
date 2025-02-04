@@ -31,7 +31,10 @@ export default {
     //     console.log('accessToken', accessToken);
     // QC.api()
     try {
-      const result = await momo.post<{ userInfo: UserInfo }>(url, { access_token, expired_time })
+      const result = await momo.post<{ userInfo: UserInfo }>(url, {
+        access_token,
+        expired_time,
+      })
       console.log("qq_oauth返回的数据为：", result)
       const { code, msg, data } = result
       //登录成功

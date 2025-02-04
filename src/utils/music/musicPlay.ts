@@ -17,7 +17,9 @@ const musicPlay = {
     try {
       const { id, cloud_music_id, fee, status } = song
       //获取播放链接
-      const result = await momo.get<{ playInfo: { id: number; cloud_music_id: number; src: string } }>("/getPlayInfo", {
+      const result = await momo.get<{
+        playInfo: { id: number; cloud_music_id: number; src: string }
+      }>("/getPlayInfo", {
         id,
         cloud_music_id,
         fee,
@@ -40,12 +42,20 @@ const musicPlay = {
   //根据网易云音乐id数组，批量获取音乐信息(不含播放链接和歌词)
   getCloudMusic: async (idList: number[]) => {
     try {
-      const result = await momo.get<{ songsInfo: CloudSongInfo[]; errorIdList: string[] }>("/getCloudMusic", { idList })
+      const result = await momo.get<{
+        songsInfo: CloudSongInfo[]
+        errorIdList: string[]
+      }>("/getCloudMusic", { idList })
       // console.log(result)
       const { code, data, msg } = result
       console.log("获取的音乐信息：", data)
       if (code === 200 || code === 300) {
-        if (data?.songsInfo) return { status: 1, data: data as { songsInfo: CloudSongInfo[]; errorIdList: string[] }, msg }
+        if (data?.songsInfo)
+          return {
+            status: 1,
+            data: data as { songsInfo: CloudSongInfo[]; errorIdList: string[] },
+            msg,
+          }
         return { status: 0, msg }
       }
 
@@ -65,7 +75,12 @@ const musicPlay = {
       const { code, data, msg } = result
       console.log("获取的音乐信息：", data)
       if (code === 200 || code === 300) {
-        if (data?.songsInfo) return { status: 1, data: data as { songsInfo: CloudSongInfo[]; errorIdList: string[] }, msg }
+        if (data?.songsInfo)
+          return {
+            status: 1,
+            data: data as { songsInfo: CloudSongInfo[]; errorIdList: string[] },
+            msg,
+          }
         return { status: 0, msg }
       }
 

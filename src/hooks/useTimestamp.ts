@@ -13,9 +13,8 @@ export default function () {
       /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(timestamp.toString())
     ) {
       return new Date(timestamp).getTime()
-    }
-    //时间戳若不是13位  补全为13位
-    else if (typeof timestamp === "number" && timestamp.toString().length < 13) {
+    } else if (typeof timestamp === "number" && timestamp.toString().length < 13) {
+      //时间戳若不是13位  补全为13位
       let timestampStr = timestamp.toString()
       for (let i = timestampStr.length; i < 13; i++) {
         timestampStr += "0"
@@ -135,5 +134,12 @@ export default function () {
   }
 
   // 向外暴露
-  return { getTime, getDate, getDiffTime, getDiffTimestamp, formatDate, formatMusicTime }
+  return {
+    getTime,
+    getDate,
+    getDiffTime,
+    getDiffTimestamp,
+    formatDate,
+    formatMusicTime,
+  }
 }

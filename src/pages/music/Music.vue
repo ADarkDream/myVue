@@ -162,7 +162,13 @@ const toggleToMusicList = async (
   if (cloud_music_list_id) {
     const { status } = await getCloudMusicList({ cloud_music_list_id, latest })
     if (status === 0) return
-  } else if (music_list_id) await getMusicList({ music_list_id, limit: undefined, offset: 0, is_login })
+  } else if (music_list_id)
+    await getMusicList({
+      music_list_id,
+      limit: undefined,
+      offset: 0,
+      is_login,
+    })
   changePanelIndex(2)
 }
 

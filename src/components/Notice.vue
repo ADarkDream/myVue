@@ -135,10 +135,13 @@
               </el-icon>
               其他：<el-text
                 v-for="(item, index) in otherNoUpdated"
+                :key="index"
                 type="info"
                 size="small"
                 tag="p"
-                :style="{ 'text-decoration': item.isCompleted ? 'line-through' : 'none' }"
+                :style="{
+                  'text-decoration': item.isCompleted ? 'line-through' : 'none',
+                }"
               >
                 {{ index + 1 }}.{{ item.text }}
               </el-text>
@@ -170,7 +173,7 @@
         <el-collapse v-model="showFlag.active_num" v-show="showFlag.show_num === 3" accordion style="border: none">
           <!--联系方式-->
           <el-collapse-item title="联系方式" :name="1">
-            <template style="display: flex; justify-content: space-around">
+            <div style="display: flex; justify-content: space-around">
               <el-button
                 v-for="item in contact"
                 :key="item.id"
@@ -180,7 +183,7 @@
                 @click="copyText(item.value, item.title, item.url)"
                 >{{ item.name }}
               </el-button>
-            </template>
+            </div>
           </el-collapse-item>
           <!--    留言反馈-->
           <el-collapse-item title="留言反馈" :name="2">
@@ -244,10 +247,38 @@ const { showFlag, changePage } = defineProps(["showFlag", "changePage"]) //切�
 
 //站点链接
 const siteLink = [
-  { id: 1, type: "primary", title: "首页导航", name: "站点导航", pathName: "home", url: "" },
-  { id: 2, type: "primary", title: "论坛文章", name: "论坛文章", pathName: "forum", url: "" },
-  { id: 3, type: "primary", title: "重返未来相关界面", name: "重返未来官图筛选和下载", pathName: "reverse1999", url: "" },
-  { id: 4, type: "primary", title: "在线音乐播放", name: "在线音乐播放", pathName: "music", url: "" },
+  {
+    id: 1,
+    type: "primary",
+    title: "首页导航",
+    name: "站点导航",
+    pathName: "home",
+    url: "",
+  },
+  {
+    id: 2,
+    type: "primary",
+    title: "论坛文章",
+    name: "论坛文章",
+    pathName: "forum",
+    url: "",
+  },
+  {
+    id: 3,
+    type: "primary",
+    title: "重返未来相关界面",
+    name: "重返未来官图筛选和下载",
+    pathName: "reverse1999",
+    url: "",
+  },
+  {
+    id: 4,
+    type: "primary",
+    title: "在线音乐播放",
+    name: "在线音乐播放",
+    pathName: "music",
+    url: "",
+  },
 ]
 
 //联系方式
@@ -260,12 +291,26 @@ const contactGroup = [
     url: "https://qm.qq.com/cgi-bin/qm/qr?k=64Jtp9gH81G0ndqR_TGeUZLrP_MKE9eU&jump_from=webapi&authKey=BkihB0yK7m3dhvou57J/OPWP+7BsDBirgRKjud/BIWnXa9pM40wSwo0ORdMHlE5V",
     imgUrl: "",
   },
-  { id: 2, title: "点击前往QQ", name: "金兔子特供部门🐰", value: "904688184", url: "https://qm.qq.com/q/Oq8R7YS6sM", imgUrl: "" },
+  {
+    id: 2,
+    title: "点击前往QQ",
+    name: "金兔子特供部门🐰",
+    value: "904688184",
+    url: "https://qm.qq.com/q/Oq8R7YS6sM",
+    imgUrl: "",
+  },
 ]
 
 //联系方式
 const contact = [
-  { id: 1, title: "QQ号", name: "QQ", value: "1224021291", url: "tencent://message/?uin=1224021291", imgUrl: "" },
+  {
+    id: 1,
+    title: "QQ号",
+    name: "QQ",
+    value: "1224021291",
+    url: "tencent://message/?uin=1224021291",
+    imgUrl: "",
+  },
   {
     id: 2,
     title: "微博首页地址",
@@ -295,7 +340,13 @@ const contact = [
 //友情链接
 const friendlyLink = [
   { id: 1, title: "资源收藏与分享", name: "lsgfish-resource-sharing", url: "" },
-  { id: 2, title: "小新书", name: "小新书", url: "https://lilemy.cn/", imgUrl: "https://lilemy.cn/favicon.ico" },
+  {
+    id: 2,
+    title: "小新书",
+    name: "小新书",
+    url: "https://lilemy.cn/",
+    imgUrl: "https://lilemy.cn/favicon.ico",
+  },
 ]
 
 //其他待做
@@ -304,12 +355,28 @@ const otherNoUpdated = [
   { id: 2, text: "文章的封面设置", isCompleted: false },
   { id: 3, text: "新闻页面优化", isCompleted: true },
   { id: 4, text: "音乐——歌词", isCompleted: false },
-  { id: 5, text: "文章和评论、公告都没有限制查询条数，每次都查询所有文章以及对应的所有评论", isCompleted: false },
+  {
+    id: 5,
+    text: "文章和评论、公告都没有限制查询条数，每次都查询所有文章以及对应的所有评论",
+    isCompleted: false,
+  },
   { id: 6, text: "给登录和注册加一张竖屏背景图或磨砂效果", isCompleted: false },
-  { id: 7, text: "重构1999下载界面，重构角色图片关系表，添加其他9图，更换瀑布流实现插件", isCompleted: false },
+  {
+    id: 7,
+    text: "重构1999下载界面，重构角色图片关系表，添加其他9图，更换瀑布流实现插件",
+    isCompleted: false,
+  },
   { id: 8, text: "SSG或SSR优化", isCompleted: false },
-  { id: 9, text: "按需引入elementplus组件和样式并减小打包体积：", isCompleted: true },
-  { id: 10, text: "聊天界面时间不能实时更新，可以设置监听器，切换分钟时页面的getDiffTime重新加载一下", isCompleted: false },
+  {
+    id: 9,
+    text: "按需引入elementplus组件和样式并减小打包体积：",
+    isCompleted: true,
+  },
+  {
+    id: 10,
+    text: "聊天界面时间不能实时更新，可以设置监听器，切换分钟时页面的getDiffTime重新加载一下",
+    isCompleted: false,
+  },
   { id: 11, text: "GenAI Script", isCompleted: false },
 ]
 

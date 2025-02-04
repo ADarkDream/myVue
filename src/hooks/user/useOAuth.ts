@@ -132,14 +132,17 @@ export default function () {
         "TencentLogin",
         `width=${newWinWidth},height=${newWinHeight},top=${top},left=${left},menubar=0,scrollbars=1, resizable = 1, status = 1, titlebar = 0, toolbar = 0, location = 1`
       )
-    } //移动端
-    else return (location.href = url)
+    } else return (location.href = url) //移动端
 
     if (oauth_window.value) {
       //定时器发送验证信息
       timer.value = setInterval(() => {
         console.log("发送验证", import.meta.env.VITE_BASE_IP)
-        oauth_window.value.postMessage({ role: "visitor", step: 0, data: { type, key } })
+        oauth_window.value.postMessage({
+          role: "visitor",
+          step: 0,
+          data: { type, key },
+        })
       }, 1000)
 
       //监听器接收信息

@@ -261,7 +261,7 @@ const getArticleList = async () => {
     const articleList = reactive([])
     const noSubmitArticleList = reactive([])
     //添加新数据
-    list.forEach(item => {
+    list.forEach((item) => {
       if (Number(item.status) === 1)
         articleList.push(item) //审核通过的
       else noSubmitArticleList.push(item) //待审核的
@@ -296,7 +296,9 @@ const newSignature = ref(signature.value)
 //修改个性签名
 const editSignature = async () => {
   try {
-    const result = await momo.post("/updateSignature", { signature: newSignature.value?.trim() })
+    const result = await momo.post("/updateSignature", {
+      signature: newSignature.value?.trim(),
+    })
     console.log(result)
     const { data } = result
     signature.value = data
@@ -435,7 +437,7 @@ const submitForm = (data: FormInstance | undefined, flag: number) => {
     loading.value = false
   }, 2000)
   if (!data) return
-  data.validate(res => {
+  data.validate((res) => {
     if (res) {
       //此处调用momo上传
       console.log(ruleForm)
@@ -464,9 +466,8 @@ const updateUser = async (changeData: AccountChange, url: string) => {
     if (flag === 0) {
       username.value = data
       location.reload()
-    }
-    //修改邮箱或密码，重新登录
-    else if (flag === 1) {
+    } else if (flag === 1) {
+      //修改邮箱或密码，重新登录
       email.value = data
       setTimeout(() => {
         sessionStorage.setItem("isLogin", "0")

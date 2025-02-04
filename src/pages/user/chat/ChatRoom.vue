@@ -20,7 +20,7 @@
                 <el-button type="primary" @click="sendMsg2()">发送</el-button>
                 <el-button type="primary" @click="addMsg()">重连</el-button>
                 <el-button type="danger" @click="closeConnection2()">关闭连接</el-button>
-                <el-button type="danger" @click="">断开连接</el-button>
+                <el-button type="danger">断开连接</el-button>
               </el-button-group>
             </template>
           </el-card>

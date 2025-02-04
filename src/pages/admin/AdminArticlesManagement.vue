@@ -102,7 +102,7 @@
           <el-main class="cards">
             <el-button text class="title">待审核</el-button>
             <el-divider> {{ noSubmitArticleList.length }}</el-divider>
-            <el-card shadow="hover" class="card" v-for="item in noSubmitArticleList">
+            <el-card shadow="hover" class="card" v-for="(item, index) in noSubmitArticleList" :key="index">
               <template #header>{{ item.title }}——作者：{{ item.author }}</template>
               <el-space spacer="|">
                 <span>板块：{{ item.area }}</span>
@@ -113,9 +113,11 @@
                 创建时间：{{ getTime(item.created_time) }}<br />
                 修改时间：{{ getTime(item.created_time) }}
               </el-space>
-              <template #footer class="footer">
-                <el-button type="primary" @click="goArticle(item, 1)">审核</el-button>
-                <el-button type="danger" @click="deleteRow(item.id)">删除</el-button>
+              <template #footer>
+                <div class="footer">
+                  <el-button type="primary" @click="goArticle(item, 1)">审核</el-button>
+                  <el-button type="danger" @click="deleteRow(item.id)">删除</el-button>
+                </div>
               </template>
             </el-card>
           </el-main>
@@ -127,7 +129,7 @@
           <el-main class="cards">
             <el-button text type="danger" class="title">审核未通过</el-button>
             <el-divider>{{ failedArticleList.length }}</el-divider>
-            <el-card v-for="item in failedArticleList" class="card">
+            <el-card v-for="(item, index) in failedArticleList" class="card" :key="index">
               <template #header>标题：{{ item.title }}</template>
               <el-space spacer="|">
                 <span>板块：{{ item.area }}</span>
@@ -138,9 +140,11 @@
                 创建时间：{{ getTime(item.created_time) }}<br />
                 修改时间：{{ getTime(item.created_time) }}
               </el-space>
-              <template #footer class="footer">
-                <el-button type="primary" @click="goArticle(item, 1)">审核</el-button>
-                <el-button type="danger" @click="deleteRow(item.id)">删除</el-button>
+              <template #footer>
+                <div class="footer">
+                  <el-button type="primary" @click="goArticle(item, 1)">审核</el-button>
+                  <el-button type="danger" @click="deleteRow(item.id)">删除</el-button>
+                </div>
               </template>
             </el-card>
           </el-main>
@@ -152,7 +156,7 @@
           <el-main class="cards">
             <el-button text type="primary" class="title">已发布</el-button>
             <el-divider>{{ articleList.length }}</el-divider>
-            <el-card shadow="hover" class="card" v-for="item in articleList">
+            <el-card shadow="hover" class="card" v-for="(item, index) in articleList" :key="index">
               <template #header>{{ item.title }}——作者：{{ item.author }}</template>
               <el-space spacer="|">
                 <span>板块：{{ item.area }}</span>
@@ -163,9 +167,11 @@
                 创建时间：{{ getTime(item.created_time) }}<br />
                 修改时间：{{ getTime(item.created_time) }}
               </el-space>
-              <template #footer class="footer">
-                <el-button type="primary" @click="goArticle(item, 1)">审核</el-button>
-                <el-button type="danger" @click="deleteRow(item.id)">删除</el-button>
+              <template #footer>
+                <div class="footer">
+                  <el-button type="primary" @click="goArticle(item, 1)">审核</el-button>
+                  <el-button type="danger" @click="deleteRow(item.id)">删除</el-button>
+                </div>
               </template>
             </el-card>
           </el-main>

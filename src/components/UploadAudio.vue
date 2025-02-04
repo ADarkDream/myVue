@@ -29,7 +29,7 @@
       <template #tip>
         <div class="upload_desc">
           <el-text type="info">.mp4/m4a/flac</el-text>
-          <el-text type="info"> <{{ options.maxSize }}MB</el-text>
+          <el-text type="info">&lt;{{ options.maxSize }}MB</el-text>
         </div>
       </template>
     </el-upload>
@@ -111,7 +111,7 @@ const upload = ref<UploadInstance>()
  * 已有文件之后，onchange事件不再触发，此函数覆盖上传
  * @param files
  */
-const handleExceed: UploadProps["onExceed"] = files => {
+const handleExceed: UploadProps["onExceed"] = (files) => {
   //清除上传输入框的内容
   // upload.value!.clearFiles()
   const file = files[0] as UploadRawFile

@@ -14,7 +14,7 @@ const copy = (text: string) => {
 export default {
   update(el) {
     const blocks = el.querySelectorAll("pre code")
-    blocks.forEach(block => {
+    blocks.forEach((block) => {
       if (block.getAttribute("highlighted") === "true") {
         return
       }

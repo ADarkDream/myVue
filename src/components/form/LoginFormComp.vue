@@ -98,7 +98,7 @@ const submitForm = async () => {
   isLoading.value = true
 
   if (!ruleFormRef.value) return
-  await ruleFormRef.value.validate(async res => {
+  await ruleFormRef.value.validate(async (res) => {
     if (res) {
       //此处调用momo上传
       await login()

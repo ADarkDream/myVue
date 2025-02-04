@@ -18,7 +18,7 @@
     <el-main>
       <el-scrollbar :height="isPC ? screenHeight - 220 : screenHeight - 120">
         <!--新闻列表区-->
-        <div class="card" v-for="item in newsList">
+        <div class="card" v-for="(item, index) in newsList" :key="index">
           <div class="articleCover">
             <el-image :src="item.pic" fit="cover" :draggable="false" lazy>
               <template #error>
@@ -108,12 +108,12 @@ onMounted(() => {
 function getNewsChannel() {
   momo
     .get("/newsChannel")
-    .then(result => {
+    .then((result) => {
       console.log(result)
       const { data } = result
       channelList.splice(0, channelList.length, ...data)
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
       //ElMessage.error('发生错误：' + error.message)
@@ -126,12 +126,12 @@ function getNews(type: string) {
       type,
       num: newsNum.value,
     })
-    .then(result => {
+    .then((result) => {
       console.log(result)
       const { data } = result
       newsList.splice(0, newsList.length, ...data)
     })
-    .catch(error => {
+    .catch((error) => {
       console.log("发生错误：")
       console.log(error)
     })

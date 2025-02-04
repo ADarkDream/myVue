@@ -64,7 +64,9 @@ const { showEditMusicListInfoDrawer } = useMusic()
 
 const isLike = ref(false)
 
-const { musicListInfo } = defineProps(["musicListInfo"]) as { musicListInfo: MusicListInfo }
+const { musicListInfo } = defineProps(["musicListInfo"]) as {
+  musicListInfo: MusicListInfo
+}
 
 const isOwner = ref(musicListInfo.uid === uid.value)
 

@@ -54,5 +54,12 @@ export const useBookStore = defineStore("book", () => {
       })
   }
 
-  return { thisBill, billList, updateBillList, addBill, updateBill, deleteBill }
+  return {
+    thisBill,
+    billList,
+    updateBillList,
+    addBill,
+    updateBill,
+    deleteBill,
+  }
 })

@@ -58,5 +58,15 @@ export const useUploadFileStore = defineStore("upload_file", () => {
     changeBtnsFlag.value = false
   }
 
-  return { options, oldMd5, md5, uploadFile, changeBtnsFlag, isLoading, fileInfo, cancelUpload, resetUpload }
+  return {
+    options,
+    oldMd5,
+    md5,
+    uploadFile,
+    changeBtnsFlag,
+    isLoading,
+    fileInfo,
+    cancelUpload,
+    resetUpload,
+  }
 })

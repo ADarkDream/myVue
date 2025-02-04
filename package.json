@@ -5,25 +5,29 @@
   "type": "module",
   "scripts": {
     "dev": "vite --mode development",
-    "build:prod": "npm run sitemap && npm exec vite build --mode production",
+    "build:prod": "pnpm run sitemap && pnpm exec vite build --mode production",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview --mode production",
     "build-only": "vite build",
-    "type-check": "vue-tsc --build --noEmit --force",
-    "prettier-check": "prettier --check .",
-    "prettier": "prettier --write .",
-    "start": "npm run dev",
-    "sitemap": "node updateSitemap.js"
+    "start": "pnpm run dev",
+    "sitemap": "node updateSitemap.js",
+    "lint-staged": "lint-staged",
+    "check:type": "vue-tsc --build --noEmit --force",
+    "check:prettier": "prettier --check .",
+    "check": "eslint .",
+    "lint": "eslint . --fix",
+    "lint:prettier": "prettier . --write",
+    "lint:commitlint": "commitlint --edit $1",
+    "commit": "git add . && pnpm exec lint-staged && cz"
   },
   "lint-staged": {
-    "**/*.{js,jsx,tsx,ts,less,md,json}": [
-      "npm run prettier"
+    "**/*.{cjs,mjs,js,jsx,tsx,ts,less,md,json}": [
+      "pnpm exec eslint --fix"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run prettier",
-      "commit-msg": "npm exec commitlint --edit $1"
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-git"
     }
   },
   "dependencies": {
@@ -54,16 +58,24 @@
   "devDependencies": {
     "@commitlint/cli": "^19.7.1",
     "@commitlint/config-conventional": "^19.7.1",
+    "@commitlint/types": "^19.5.0",
+    "@eslint/js": "^9.19.0",
     "@tsconfig/node20": "^20.1.4",
     "@types/file-saver": "^2.0.7",
     "@types/node": "^20.17.12",
     "@types/spark-md5": "^3.0.5",
+    "@typescript-eslint/eslint-plugin": "^8.22.0",
+    "@typescript-eslint/parser": "^8.22.0",
     "@vitejs/plugin-legacy": "^5.4.3",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/language-server": "^2.2.0",
     "@vue/tsconfig": "^0.5.1",
+    "cz-git": "^1.11.0",
+    "eslint": "^9.19.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "eslint-plugin-vue": "^9.32.0",
+    "globals": "^15.14.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
     "npm-run-all2": "^6.2.6",
@@ -72,6 +84,7 @@
     "sass-loader": "^16.0.4",
     "sitemap": "^8.0.0",
     "typescript": "^5.7.3",
+    "typescript-eslint": "^8.22.0",
     "unplugin-auto-import": "^0.17.8",
     "unplugin-icons": "^0.20.2",
     "unplugin-vue-components": "^0.26.0",
@@ -82,6 +95,7 @@
     "vite-plugin-vue-setup-extend": "^0.4.0",
     "vite-svg-loader": "^5.1.0",
     "vitepress": "^1.5.0",
+    "vue-eslint-parser": "^9.4.3",
     "vue-tsc": "^2.2.0"
   }
 }

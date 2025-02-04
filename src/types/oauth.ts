@@ -59,6 +59,11 @@ type Step_0 = { type: string; key: string }
 /**
  * 发信进程 1
  */
-type Step_1 = { access_token: string; expired_time: Date; type: string; reffer: string }
+type Step_1 = {
+  access_token: string
+  expired_time: Date
+  type: string
+  reffer: string
+}
 
 export type { CallbackOAuth, QQOAuthCheck, PostMessageCheck, Step_0, Step_1 }
