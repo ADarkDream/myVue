@@ -13,9 +13,9 @@
           </div>
           <div v-else>
             <!--更换壁纸-->
-            <el-button class="bgBtn" :icon="Switch" @click="toggleBG({ getNewBg: true })">更换壁纸</el-button>
+            <el-button :icon="Switch" @click="toggleBG({ getNewBg: true })">更换壁纸</el-button>
             <!--重返未来-->
-            <el-button class="bgBtn" :icon="Download" @click="goTo('download')"> 重返未来 </el-button>
+            <el-button :icon="Download" @click="goTo('download')"> 重返未来 </el-button>
           </div>
           <!--日夜切换-->
           <el-switch v-model="isDark" active-text="夜" class="isDarkBtn" inactive-text="日" inline-prompt>
@@ -197,11 +197,7 @@
                 退出管理员登录
               </el-dropdown-item>
               <!--更换壁纸-->
-              <el-dropdown-item class="bgBtn" :icon="Switch" @click="toggleBG({ getNewBg: true })">更换壁纸 </el-dropdown-item>
-              <!--重返未来-->
-              <el-dropdown-item v-if="!isReverse1999" class="bgBtn" :icon="Download" @click="goTo('download')"
-                >重返未来
-              </el-dropdown-item>
+              <el-dropdown-item :icon="Switch" @click="toggleBG({ getNewBg: true })">更换壁纸 </el-dropdown-item>
               <!--新闻-->
               <el-dropdown-item @click="goTo('news')">
                 <SVG_news class="el-icon" />
@@ -212,7 +208,7 @@
               <!--临时聊天室-->
               <el-dropdown-item :icon="Comment" @click="goTo('hall')"> 聊天室demo </el-dropdown-item>
               <!--重返未来-->
-              <el-dropdown-item v-if="!isReverse1999" :icon="Download" @click="goTo('download')"> 重返未来 </el-dropdown-item>
+              <el-dropdown-item :icon="Download" @click="goTo('download')"> 重返未来 </el-dropdown-item>
               <!--音乐播放器-->
               <el-dropdown-item @click="goTo('music')">
                 <SVG_music class="el-icon" />

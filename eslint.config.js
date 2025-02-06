@@ -35,7 +35,7 @@ export default [
   /** prettier 配置 */
   eslintPluginPrettierRecommended,
 
-  //javascript 规则
+  /**自定义规则*/
   {
     files: ["**/*.{js,mjs,cjs,ts,vue}"],
     languageOptions: {
@@ -168,7 +168,7 @@ export default [
             "EVENTS", // e.g. '@click="functionCall"', 'v-on="event"'
             "CONTENT", // e.g. 'v-text', 'v-html'
           ],
-          alphabetical: false, //同组内的属性会按字母排序
+          alphabetical: false, //同组内的属性会按字母排序(true)
         },
       ],
 

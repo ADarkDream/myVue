@@ -32,7 +32,7 @@ const Images1999 = () => import("@/pages/reverse1999/pages/Images1999.vue")
 const Versions1999 = () => import("@/pages/reverse1999/pages/Versions1999.vue")
 const Test = () => import("@/pages/Test.vue")
 const News = () => import("@/pages/News.vue")
-const NewsContent = () => import("@/pages/NewsContent.vue")
+// const NewsContent = () => import("@/pages/NewsContent.vue")
 const Admin1999ImagesManagement = () => import("@/pages/admin/Admin1999ImagesManagement.vue")
 const ChatCenter = () => import("@/pages/user/chat/ChatCenter.vue")
 const ChatHall = () => import("@/pages/user/chat/ChatHall.vue")
@@ -270,11 +270,11 @@ const routes = [
         path: "center",
         component: News,
       },
-      {
-        name: "newsContent",
-        path: "newsContent",
-        component: NewsContent,
-      },
+      // {
+      //   name: "newsContent",
+      //   path: "newsContent",
+      //   component: NewsContent,
+      // },
     ],
   },
 ]

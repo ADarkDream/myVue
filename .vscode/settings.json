@@ -1,0 +1,16 @@
+{
+    "cSpell.words": [
+        "axios",
+        "hitokoto",
+        "jinrishici",
+        "myvue",
+        "Symbian",
+        "VITE"
+    ],
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit",
+        "source.fixAll.eslint": "explicit"
+    }
+}

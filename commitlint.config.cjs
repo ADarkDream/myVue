@@ -1,12 +1,16 @@
+// @see https://commitlint.js.org/
+// @see https://cz-git.qbb.sh/zh/guide/
 const { defineConfig } = require("cz-git")
 const { resolve } = require("path")
 const fs = require("fs")
 
+//#region scope本地缓存设置,每次新增的自定义scope都会追加到scope选项末尾
 /**项目配置的默认scope*/
-const defaultScopeArr = ["core", "deps", "config", "ui", "auth", "api", "store", "hook", "util"]
+const defaultScopeArr = ["core", "deps", "config", "ui", "auth", "api", "store", "hook", "util", "vite", "readme"]
 
-//#region scope本地缓存,每次新写的scope都会追加到末尾，可在本地git仓库中查看或删除(需要在资源管理器中打开隐藏文件夹)
+/**本地缓存文件，可在本地git仓库中查看或删除(需要在资源管理器中打开隐藏文件夹)*/
 const __SCOPE_CACHE_PATH = resolve(__dirname, "./.git/scope-cache.json")
+
 /**用正则过滤只包含英文逗号、下划线、字母（中英文）、数字的有效 scope*/
 const isValidScope = (scope) => {
   const regex = /^[a-zA-Z0-9\u4e00-\u9fa5_-]+$/ // 只允许字母、数字、下划线、中文、逗号
@@ -56,12 +60,16 @@ module.exports = defineConfig({
   extends: ["@commitlint/config-conventional"],
   parserPreset: {
     parserOpts: {
-      headerPattern: /^(\w+)(?:\(([\w\u4e00-\u9fa5a-zA-Z0-9,_-]+)\))?:\s([\s\S]+)$/, // /^(\p{Emoji_Presentation}?\s?\w+)(?:\(([^)]*)\))?:\s(.+)$/u,
+      /**提交信息正则，可自定义，此处代表：type(scope): subject，即类型(范围)：主题
+       * scope为可选，且限定格式只包含英文逗号(用于单次提交多个scope)、下划线、字母（中英文）、数字
+       * 若自定义，需要注意和rules中的type-enum和prompt中的types相匹配，否则会校验报错type或subject为空
+       */
+      headerPattern: /^([\w-]+)(?:\(([\w\u4e00-\u9fa5a-zA-Z0-9,_-]+)\))?:\s([\s\S]+)$/,
       headerCorrespondence: ["type", "scope", "subject"],
     },
   },
   rules: {
-    "scope-case": [2, "always", "lower-case"], // scope 大小写
+    "scope-case": [2, "always", ["lower-case", "camel-case", "kebab-case"]], // scope 小写，允许中文
     "subject-case": [0], // 关闭 subject 大小写规则
     "type-empty": [2, "never"], // 确保 type 不为空
     "subject-empty": [2, "never"], // 确保 subject 不为空
@@ -88,7 +96,7 @@ module.exports = defineConfig({
     alias: { fd: "docs: fix typos" },
     messages: {
       type: "选择你要提交的类型 :",
-      scope: "选择一个提交范围（可选，custom为自定义，空格键或右键多选，回车键确认）:",
+      scope: "选择一个提交范围（可为空，可自定义，空格键或右键可多选，回车键确认）:",
       customScope: "请输入自定义的提交范围（仅支持用下划线、中文字符、小写英文字符、数字，且用 , 分隔）:",
       subject: "填写简短精炼的变更描述 :\n",
       body: "填写更加详细的变更描述（可选）。使用 | 换行 :\n",
@@ -151,11 +159,11 @@ module.exports = defineConfig({
     allowCustomScopes: true,
     allowEmptyScopes: true,
     customScopesAlign: "bottom",
-    customScopesAlias: "custom",
-    emptyScopesAlias: "empty",
+    customScopesAlias: "自定义",
+    emptyScopesAlias: "空",
     upperCaseSubject: false,
     markBreakingChangeMode: false, //描述 : 添加额外的问题重大变更(BREAKING CHANGES)提问，询问是否需要添加 "!" 标识于头部
-    allowBreakingChanges: ["feat", "fix"],
+    allowBreakingChanges: ["feat", "fix"], //仅这两项允许破坏性提交
     breaklineNumber: 100,
     breaklineChar: "|",
     skipQuestions: [],
