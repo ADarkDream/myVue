@@ -91,7 +91,7 @@ export default function () {
 
     if (localInfo && localList) return { status: 1, msg: "已获取本地缓存数据" }
     console.log(`本地缓存没有歌单${music_list_id}的信息,查询服务器`)
-    const { code, msg, data } = await musicListUtils.getMusicList({
+    const { status, msg, data } = await musicListUtils.getMusicList({
       music_list_id,
       limit,
       offset,
@@ -99,12 +99,12 @@ export default function () {
     })
     //处理请求后的信息
     if (status === 1 && data) save_music_info(data, music_list_id)
-    return { code, msg }
+    return { status, msg }
   }
 
   //搜索网易云的歌单及音乐信息
   const getCloudMusicList = async ({ cloud_music_list_id, limit, offset, latest }: QueryCloudMusicList) => {
-    const { code, data, msg } = (await musicListUtils.getCloudMusicList({
+    const { status, data, msg } = (await musicListUtils.getCloudMusicList({
       cloud_music_list_id,
       limit,
       offset,
@@ -119,7 +119,7 @@ export default function () {
       const music_list_id = data.musicListInfo.music_list_id
       save_music_info(data, music_list_id)
     }
-    return { code, msg }
+    return { status, msg }
   }
 
   //处理请求后的歌单信息或歌曲列表，存入对象，更新当前
@@ -147,7 +147,7 @@ export default function () {
    * @param music_list_id -数据库的歌单id
    */
   const connectMusicToList = async (music_list_id: number) => {
-    const { status } = await musicListUtils.connectMusicToList(music_id_list.value, music_list_id)
+    const { code } = await musicListUtils.connectMusicToList(music_id_list.value, music_list_id)
     if (code === 200) {
       ElMessage.success("添加成功")
       isShowMusicListDrawer.value = false //关闭歌单列表
@@ -192,7 +192,7 @@ export default function () {
    */
   const createMusicList = async (formData: MusicListInfo) => {
     try {
-      const { code, msg, music_list_info } = await musicListUtils.createMusicList(formData)
+      const { status, msg, music_list_info } = await musicListUtils.createMusicList(formData)
       if (status === 1 && music_list_info) {
         const { music_list_id } = music_list_info
         ElMessage.success(msg)

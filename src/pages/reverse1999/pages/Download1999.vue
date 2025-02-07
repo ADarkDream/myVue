@@ -174,23 +174,11 @@
           <el-button :type="autoFlag ? 'primary' : 'default'" @click="autoCol">
             <SVG_auto class="el-icon" /> <span>自动</span>
           </el-button>
-          <el-button
-            :type="autoFlag === false && colNum === 3 ? 'primary' : 'default'"
-            @click="
-              colNum = 3
-              autoFlag = false
-            "
-          >
+          <el-button :type="autoFlag === false && colNum === 3 ? 'primary' : 'default'" @click="autoCol(3)">
             <SVG_grid_four class="el-icon" />
             <span>3列</span>
           </el-button>
-          <el-button
-            :type="autoFlag === false && colNum === 5 ? 'primary' : 'default'"
-            @click="
-              colNum = 5
-              autoFlag = false
-            "
-          >
+          <el-button :type="autoFlag === false && colNum === 5 ? 'primary' : 'default'" @click="autoCol(5)">
             <SVG_grid_nine class="el-icon" />
             <span>5列</span>
           </el-button>

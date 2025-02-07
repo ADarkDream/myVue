@@ -11,7 +11,13 @@
     },
   ],
   "settings": {
-    "cSpell.words": ["avinfo", "myvue", "QINIUTHUMBNAIL"],
+    "cSpell.words": [
+      "avinfo",
+      "expressjwt",
+      "myvue",
+      "QINIUTHUMBNAIL"
+    ],
     "terminal.explorerKind": "both",
+    "github-enterprise.uri": "https://gitee.com/",
   },
 }

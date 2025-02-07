@@ -9,13 +9,7 @@
           <el-input v-model="addBookForm.intro" maxlength="30" placeholder="输入账本简介" />
         </el-form-item>
         <div class="btn">
-          <el-button
-            @click="
-              reset(addBookFormRef)
-              cancelAddBook()
-            "
-            >取消</el-button
-          >
+          <el-button @click="exit('add')">取消</el-button>
           <el-button type="primary" @click="submit(addBookForm, '/addBook')">新建</el-button>
         </div>
       </el-form>
@@ -30,13 +24,7 @@
         </el-form-item>
 
         <div class="btn">
-          <el-button
-            @click="
-              reset(joinBookFormRef)
-              cancelAddBook()
-            "
-            >取消</el-button
-          >
+          <el-button @click="exit('join')">取消</el-button>
           <el-button type="primary" @click="submit(joinBookForm, '/joinBook')">申请</el-button>
         </div>
       </el-form>
@@ -63,7 +51,10 @@ const joinBookForm = reactive<{ bid: number | null; key: string }>({
 })
 
 const { cancelAddBook } = defineProps(["cancelAddBook"])
-
+const exit = (flag: "join" | "add") => {
+  reset(flag === "join" ? joinBookFormRef.value : addBookFormRef.value)
+  cancelAddBook()
+}
 //新建账本或加入账本协作
 const submit = async (formData, url: string) => {
   try {

@@ -73,7 +73,7 @@
       </el-button-group>
     </div>
     <music-list-songs-list
-      v-show="musicList.length !== 0"
+      v-show="musicList.length"
       :height="mainPanelContentHeight - (isPC ? 100 : 70)"
       :is-owner
       :songs-list="musicList"
