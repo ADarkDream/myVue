@@ -122,3 +122,16 @@ body {
     background-color: var(--el-bg-color);
   }
 }
+
+
+/** 禁止选中(PC端防止图片被拖拽) */
+.disSelect{
+  -webkit-user-select: none;
+  /* Chrome, Opera, Safari */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Standard syntax */
+}

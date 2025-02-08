@@ -1,10 +1,11 @@
 <template>
   <el-container class="homePanel" style="overflow: hidden">
     <!--  侧边栏-->
-    <el-aside direction="vertical">
+    <div class="homeAside">
       <Aside :show-content="showContent" />
-    </el-aside>
-    <el-main style="position: relative">
+    </div>
+
+    <el-main>
       <!--首页时钟-->
       <Time :class="timeClass" @click="showContent(true)" />
       <!--搜索框区域-->
@@ -36,7 +37,6 @@ import Aside from "@/components/Aside.vue"
 import Approve from "@/components/Approve.vue"
 import SearchEngine from "@/pages/home/SearchEngine.vue"
 import Content from "@/pages/home/Content.vue"
-
 const responsiveStore = useResponsiveStore()
 const { isPC } = toRefs(responsiveStore)
 const { isScroll } = responsiveStore
@@ -79,7 +79,7 @@ function showContent(isHide = false) {
   height: 100%;
 }
 
-Aside {
+homeAside {
   position: absolute;
   bottom: 0;
   /* top: 50px; */
@@ -130,16 +130,6 @@ Aside {
   bottom: 20px;
 }
 
-.content {
-  width: 80%;
-  height: 70%;
-  margin: 20px auto 0;
-  opacity: 0.8;
-  /*     min-height: 100%;
-          display: grid;
-          grid-template-rows: auto 1fr auto;*/
-}
-
 .contentUp {
   transform: translateY(-50px);
 }
@@ -179,13 +169,9 @@ Aside {
     height: 10%;
   }
 */
-  Aside {
+  /* homeAside {
     width: 0;
-  }
-
-  .content {
-    width: 100%;
-  }
+  } */
 
   .contentUp {
     transform: translateY(0);

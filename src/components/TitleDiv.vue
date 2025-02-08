@@ -1,120 +1,118 @@
 <template>
   <el-container class="titleDiv">
     <!--PC端标题-->
-    <el-row v-if="isPC" class="title">
+    <div v-if="isPC" class="title">
       <!--左上角-->
-      <el-col class="title-left" :lg="5" :md="6" :sm="8">
-        <el-space spacer="">
-          <div v-if="!isHome">
-            <!--返回键-->
-            <el-button :icon="ArrowLeftBold" @click="router.back()">返回</el-button>
-            <!--首页-->
-            <el-button :icon="HomeFilled" plain @click="goTo('home')">首页</el-button>
-          </div>
-          <div v-else>
-            <!--更换壁纸-->
-            <el-button :icon="Switch" @click="toggleBG({ getNewBg: true })">更换壁纸</el-button>
-            <!--重返未来-->
-            <el-button :icon="Download" @click="goTo('download')"> 重返未来 </el-button>
-          </div>
-          <!--日夜切换-->
-          <el-switch v-model="isDark" active-text="夜" class="isDarkBtn" inactive-text="日" inline-prompt>
-            <template #active-action>
-              <el-icon>
-                <Moon />
-              </el-icon>
-            </template>
-            <template #inactive-action>
-              <el-icon>
-                <Sunny />
-              </el-icon>
-            </template>
-          </el-switch>
-        </el-space>
-      </el-col>
+      <div style="display: flex; flex-wrap: nowrap">
+        <!-- <el-space spacer=""> -->
+        <div v-if="!isHome">
+          <!--返回键-->
+          <el-button :icon="ArrowLeftBold" @click="router.back()">返回</el-button>
+          <!--首页-->
+          <el-button :icon="HomeFilled" plain @click="goTo('home')">首页</el-button>
+        </div>
+        <div v-else>
+          <!--更换壁纸-->
+          <el-button :icon="Switch" @click="toggleBG({ getNewBg: true })">更换壁纸</el-button>
+          <!--重返未来-->
+          <el-button :icon="Download" @click="goTo('download')"> 重返未来 </el-button>
+        </div>
+        <!--日夜切换-->
+        <el-switch v-model="isDark" active-text="夜" class="isDarkBtn" inactive-text="日" inline-prompt>
+          <template #active-action>
+            <el-icon>
+              <Moon />
+            </el-icon>
+          </template>
+          <template #inactive-action>
+            <el-icon>
+              <Sunny />
+            </el-icon>
+          </template>
+        </el-switch>
+        <!-- </el-space> -->
+      </div>
       <!--中间导航-->
-      <el-col :lg="13" :md="11" :sm="8"> </el-col>
+      <!-- <el-col :lg="13" :md="9" :sm="8"> </el-col> -->
       <!--右上角-->
-      <el-col class="title-right" :lg="6" :md="7" :sm="8">
-        <el-space>
-          <!--播放指示器-->
-          <el-button v-show="showPlayer" link @click="togglePlayerVisible()">
-            <el-tooltip content="显示播放器" effect="light" placement="bottom">
-              <SVG_music class="musicIcon" :class="{ paused: !isPlaying }" />
-            </el-tooltip>
-          </el-button>
-          <!--登录按钮-->
-          <el-button v-if="!isLogin" @click="showLogin = true">
-            <svg class="headIcon" viewBox="0 0 1024 1024">
-              <path
-                d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"
-                fill="CurrentColor"
-              ></path>
-              <path
-                d="M512 220.223c-88.224 0-160 71.776-160 160s71.776 160 160 160c88.225 0 160-71.775 160-160s-71.775-160-160-160z m0 256c-52.935 0-96-43.065-96-96s43.065-96 96-96 96 43.065 96 96-43.065 96-96 96z"
-                fill="CurrentColor"
-              ></path>
-            </svg>
-            &ensp;登录
-          </el-button>
-          <!--登陆后的按钮-->
-          <el-button v-if="isLogin" class="username" type="primary" @click="goCenter">
-            <el-image alt="" class="userImg" :onerror="errorImage" :src="headImgUrl" />
-            &ensp;{{ username }}
-          </el-button>
-          <!--论坛-->
-          <el-button v-if="!isForum" :icon="Comment" plain @click="goTo('center')">论坛</el-button>
-          <!--选项菜单-->
-          <el-dropdown>
-            <span>
-              <el-button class="option" :icon="Operation"> 选项 </el-button>
-            </span>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <!--管理中心-->
-                <el-dropdown-item v-if="isAdmin" :icon="Avatar" @click="goCenter"> 管理中心 </el-dropdown-item>
-                <!--用户中心-->
-                <el-dropdown-item v-else-if="isLogin" :icon="UserFilled" @click="goCenter"> 用户中心 </el-dropdown-item>
-                <!--记账本功能-->
-                <!--              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="goTo('books')">-->
-                <!--                前往账本-->
-                <!--              </el-dropdown-item>-->
-                <!--退出登录-->
-                <el-dropdown-item v-if="isLogin" :icon="SwitchButton" @click="loginOut()"> 退出登录 </el-dropdown-item>
-                <!--退出登录 -->
-                <el-dropdown-item v-if="isLogin && isAdmin" :icon="SwitchButton" @click="loginOut(true)">
-                  退出管理员登录
-                </el-dropdown-item>
-                <!--更换壁纸-->
-                <el-dropdown-item v-if="!isHome" :icon="Switch" @click="toggleBG({ getNewBg: true })">更换壁纸</el-dropdown-item>
-                <!--新闻-->
-                <el-dropdown-item @click="goTo('news')">
-                  <SVG_news class="el-icon" />
-                  &ensp;新闻
-                </el-dropdown-item>
-                <!--公告-->
-                <el-dropdown-item :icon="BellFilled" @click="showNotice = !showNotice"> 公告 </el-dropdown-item>
-                <!--临时聊天室-->
-                <el-dropdown-item :icon="Comment" @click="goTo('hall')"> 聊天室demo </el-dropdown-item>
-                <!--重返未来-->
-                <el-dropdown-item v-if="!isReverse1999" :icon="Download" @click="goTo('download')"> 重返未来 </el-dropdown-item>
-                <!--音乐播放器-->
-                <el-dropdown-item @click="goTo('music')">
-                  <SVG_music class="el-icon" />
-                  &ensp;音乐播放器
-                </el-dropdown-item>
-                <!--默默的博客-->
-                <el-dropdown-item :icon="EditPen" @click="toBlogs()"> &ensp;默默的博客(建设中) </el-dropdown-item>
-                <!--默默的其他作品-->
-                <el-dropdown-item :icon="Platform" @click="toDemos()"> &ensp;默默的其他作品 </el-dropdown-item>
-                <!--设置-->
-                <el-dropdown-item :icon="Tools" @click="showSetting = !showSetting"> 设置 </el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
-        </el-space>
-      </el-col>
-    </el-row>
+      <div>
+        <!--播放指示器-->
+        <el-button v-show="showPlayer" link @click="togglePlayerVisible()">
+          <el-tooltip content="显示播放器" effect="light" placement="bottom">
+            <SVG_music class="musicIcon" :class="{ paused: !isPlaying }" />
+          </el-tooltip>
+        </el-button>
+        <!--登陆后的按钮-->
+        <el-button v-if="isLogin" class="username" type="primary" @click="goCenter">
+          <el-image alt="" class="userImg" :onerror="errorImage" :src="headImgUrl" />
+          &ensp;{{ username }}
+        </el-button>
+        <!--登录按钮-->
+        <el-button v-else @click="showLogin = true">
+          <svg class="headIcon" viewBox="0 0 1024 1024">
+            <path
+              d="M511.333 63.333c-247.424 0-448 200.576-448 448s200.576 448 448 448 448-200.576 448-448-200.576-448-448-448z m0 832c-51.868 0-102.15-10.144-149.451-30.15-36.011-15.231-69.123-35.67-98.812-60.897 12.177-31.985 42.226-63.875 84.223-88.903C396.189 686.243 456.222 669.53 512 669.53c55.631 0 115.416 16.658 164.026 45.703 41.762 24.953 71.689 56.812 83.863 88.804-29.764 25.342-62.976 45.865-99.106 61.146-47.299 20.006-97.582 30.15-149.45 30.15z m296.268-139.658c-20.493-35.937-54.353-68.855-98.747-95.381C649.75 624.979 579.839 605.53 512 605.53c-67.964 0-138.094 19.488-197.471 54.875-44.644 26.606-78.656 59.594-99.195 95.586-23.835-28.755-43.234-60.652-57.85-95.208-20.006-47.3-30.15-97.583-30.15-149.451s10.144-102.15 30.15-149.451c19.337-45.719 47.034-86.792 82.321-122.078 35.286-35.287 76.359-62.983 122.078-82.321 47.3-20.006 97.583-30.15 149.451-30.15 51.868 0 102.15 10.144 149.451 30.15 45.719 19.337 86.792 47.034 122.078 82.321 35.287 35.286 62.983 76.359 82.321 122.078 20.006 47.3 30.15 97.583 30.15 149.451s-10.144 102.15-30.15 149.451c-14.563 34.429-33.869 66.22-57.583 94.892z"
+              fill="CurrentColor"
+            ></path>
+            <path
+              d="M512 220.223c-88.224 0-160 71.776-160 160s71.776 160 160 160c88.225 0 160-71.775 160-160s-71.775-160-160-160z m0 256c-52.935 0-96-43.065-96-96s43.065-96 96-96 96 43.065 96 96-43.065 96-96 96z"
+              fill="CurrentColor"
+            ></path>
+          </svg>
+          &ensp;登录
+        </el-button>
+        <!--论坛-->
+        <el-button v-if="!isForum" :icon="Comment" plain @click="goTo('center')">论坛</el-button>
+        <!--选项菜单-->
+        <el-dropdown style="margin-left: 10px">
+          <span>
+            <el-button class="option" :icon="Operation"> 选项 </el-button>
+          </span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <!--管理中心-->
+              <el-dropdown-item v-if="isAdmin" :icon="Avatar" @click="goCenter"> 管理中心 </el-dropdown-item>
+              <!--用户中心-->
+              <el-dropdown-item v-else-if="isLogin" :icon="UserFilled" @click="goCenter"> 用户中心 </el-dropdown-item>
+              <!--记账本功能-->
+              <!--              <el-dropdown-item v-if="isLogin" :icon="Notebook" @click="goTo('books')">-->
+              <!--                前往账本-->
+              <!--              </el-dropdown-item>-->
+              <!--退出登录-->
+              <el-dropdown-item v-if="isLogin" :icon="SwitchButton" @click="loginOut()"> 退出登录 </el-dropdown-item>
+              <!--退出登录 -->
+              <el-dropdown-item v-if="isLogin && isAdmin" :icon="SwitchButton" @click="loginOut(true)">
+                退出管理员登录
+              </el-dropdown-item>
+              <!--更换壁纸-->
+              <el-dropdown-item v-if="!isHome" :icon="Switch" @click="toggleBG({ getNewBg: true })">更换壁纸</el-dropdown-item>
+              <!--新闻-->
+              <el-dropdown-item @click="goTo('news')">
+                <SVG_news class="el-icon" />
+                &ensp;新闻
+              </el-dropdown-item>
+              <!--公告-->
+              <el-dropdown-item :icon="BellFilled" @click="showNotice = !showNotice"> 公告 </el-dropdown-item>
+              <!--临时聊天室-->
+              <el-dropdown-item :icon="Comment" @click="goTo('hall')"> 聊天室demo </el-dropdown-item>
+              <!--重返未来-->
+              <el-dropdown-item v-if="!isReverse1999" :icon="Download" @click="goTo('download')"> 重返未来 </el-dropdown-item>
+              <!--音乐播放器-->
+              <el-dropdown-item @click="goTo('music')">
+                <SVG_music class="el-icon" />
+                &ensp;音乐播放器
+              </el-dropdown-item>
+              <!--默默的博客-->
+              <el-dropdown-item :icon="EditPen" @click="toBlogs()"> &ensp;默默的博客(建设中) </el-dropdown-item>
+              <!--默默的其他作品-->
+              <el-dropdown-item :icon="Platform" @click="toDemos()"> &ensp;默默的其他作品 </el-dropdown-item>
+              <!--设置-->
+              <el-dropdown-item :icon="Tools" @click="showSetting = !showSetting"> 设置 </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+    </div>
 
     <!--  移动端标题-->
     <el-row v-if="!isPC" class="title" :style="isPC || isHome ? '' : 'background-color: rgba(0,0,0,0.4)'">

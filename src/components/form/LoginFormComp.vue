@@ -9,7 +9,7 @@
     status-icon
   >
     <el-form-item prop="email">
-      <el-input v-model.lazy.trim="ruleForm.email" autocomplete="off" placeholder="输入邮箱" />
+      <el-input v-model.lazy.trim.lowercase="ruleForm.email" autocomplete="off" placeholder="输入邮箱" />
     </el-form-item>
     <el-form-item prop="password">
       <el-input v-model.lazy.trim="ruleForm.password" autocomplete="off" placeholder="输入密码" type="password" />
@@ -38,24 +38,23 @@
 
 <script lang="ts" setup>
 import { reactive, ref } from "vue"
-import momo from "@/apis"
 import type { FormInstance, FormRules } from "element-plus"
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore"
 import { useResponsiveStore } from "@/store/useResponsiveStore"
 //hooks
 import useOAuth from "@/hooks/user/useOAuth"
+//apis
+import { api_login } from "@/apis/user/login"
 //utils
 import verifyRules from "@/utils/verifyRules"
 import titleDiv from "@/utils/titleDiv"
 //types
 import type { loginForm } from "@/types/form"
-import { UserInfo } from "@/types/user"
 
 const { showNotice } = titleDiv
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
-const { isLogin } = toRefs(userInfoStore)
 const { updateLocalUserInfo } = userInfoStore
 const { isPC } = toRefs(responsiveStore)
 const { to_qq_oauth } = useOAuth()
@@ -125,19 +124,11 @@ const login = async () => {
   try {
     //解决点击登录后马上切换导致误通过的BUG
     if (!ruleForm.policy) return
-    const { email, password } = ruleForm
-    const result = await momo.post<{ userInfo: UserInfo }>("/login", {
-      email: email.toLowerCase(),
-      password,
-    })
-
-    // console.log(result)
-    if (!result.data) return ElMessage.error("登录失败")
-    const { userInfo } = result.data
+    const userInfo = await api_login(ruleForm)
+    if (!userInfo) return
     updateLocalUserInfo(userInfo)
     //成功提示信息
     ElMessage.success(`用户 ${userInfo.username} 登录成功`)
-
     setTimeout(() => {
       location.reload()
       // router.replace({ name: "home" })

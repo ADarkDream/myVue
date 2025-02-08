@@ -1,31 +1,39 @@
 <template>
   <!--搜索框区域-->
   <div class="searchDiv">
-    <!-- 当前的搜索引擎-->
-    <el-button class="engine" style="margin-left: 5px">
-      <img :alt="engineName" class="searchEngine thisSearchEngine" :src="searchImg" @click="showEngines = !showEngines" />&ensp;
-    </el-button>
-    <template v-if="showEngines">
+    <!-- 搜索引擎区域 -->
+    <div style="display: flex">
+      <!-- 当前的搜索引擎-->
+      <div class="engine">
+        <img :alt="engineName" class="searchEngine" :src="searchImg" @click="showEngines = !showEngines" />&ensp;
+      </div>
       <!--    默认的搜索引擎列表-->
-      <div v-for="item in searchEngines" :key="item.id" class="engines">
-        <el-button v-show="engineId !== item.id && item.isShow" class="engine">
-          <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)" />
-        </el-button>
+      <div
+        v-for="item in searchEngines"
+        v-show="showEngines && engineId !== item.id && item.isShow"
+        :key="item.id"
+        class="engine"
+      >
+        <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)" />
       </div>
       <!--    自定义的搜索引擎列表-->
-      <div v-for="item in userEngines" :key="item.id" class="engines">
-        <el-button v-show="engineId !== item.id && item.isShow" class="engine">
-          <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)" />
-        </el-button>
+      <div
+        v-for="item in userEngines"
+        v-show="showEngines || (engineId !== item.id && item.isShow)"
+        :key="item.id"
+        class="engine"
+      >
+        <img class="searchEngine" :src="item.src" :alt="item.name" @click="changeEngine(item)" />
       </div>
-    </template>
-    <!--    添加自定义搜索引擎-->
-    <el-button v-if="showEngines" class="engine" :icon="More" plain type="primary" @click="engineOption = !engineOption" />
-    <!--    搜索引擎切换-->
-    <el-button class="change" :icon="Sort" style="margin-left: 0" @click="showEngines = !showEngines" />
-    <!--    输入框-->
+      <!--    添加自定义搜索引擎-->
+      <el-button v-show="showEngines" class="change" plain :icon="More" @click="engineOption = !engineOption" />
+      <!--    搜索引擎切换-->
+      <el-button class="change" plain :icon="Sort" @click="showEngines = !showEngines" />
+      <!--    输入框-->
+    </div>
+    <!-- 输入框 -->
     <input v-model.trim="keyword" class="search" :placeholder="placeholder" type="text" @keyup.enter="search" />
-
+    <!-- 搜索按钮 -->
     <el-button class="searchBtn" :icon="Search" @click="search" />
   </div>
   <!-- 用户更改搜索引擎列表-->
@@ -242,9 +250,11 @@ onMounted(async () => {
 <style scoped>
 .searchDiv {
   position: relative;
-  margin: 0 30%;
-  padding: 0;
-  text-align: center;
+  box-sizing: border-box;
+  margin: 0 auto;
+  width: 45%;
+  padding: 0 0 0 10px;
+  height: 50px;
   display: flex;
   align-items: center;
   background-color: white;
@@ -252,23 +262,15 @@ onMounted(async () => {
   border: white 2px solid;
   border-radius: 25px;
   opacity: 0.7;
-}
-
-.engines {
-  /* position: absolute;
-  */
-  border: transparent;
-  display: flex;
-  justify-content: flex-start;
-  top: 60px;
-  height: 45px;
-  background-color: transparent;
+  overflow: hidden;
 }
 
 .engine {
-  height: 40px;
-  width: 40px;
-
+  width: 50px;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: transparent;
   border: transparent;
 }
@@ -282,19 +284,15 @@ img {
   width: 40px;
 }
 
-.thisSearchEngine {
-  margin-left: 5px;
-}
-
 .change {
   height: 50px;
-  width: 10px;
+  width: 30px;
+  margin-left: 0;
   border: transparent;
 }
 
 .search {
-  width: 100%;
-  height: 5%;
+  flex: 1;
   font-size: 23px;
   background-color: transparent;
   outline: none;
@@ -304,9 +302,7 @@ img {
 }
 
 .searchBtn {
-  float: right;
-  width: 7%;
-  height: 50px;
+  width: 30px;
   border-radius: 0 25px 25px 0;
   background-color: transparent;
   border: none;
@@ -316,22 +312,23 @@ img {
 @media (max-width: 780px) {
   .searchDiv {
     margin: 0 auto;
-    padding: 0;
     width: 90%;
+    height: 40px;
   }
-
+  .change {
+    height: 40px;
+  }
   .searchEngine {
     width: 20px;
     height: 20px;
   }
 
   .engine {
-    padding: 0;
+    width: 25px;
   }
 
   .search {
     font-size: 16px;
-    height: 15%;
   }
 }
 </style>

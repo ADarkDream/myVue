@@ -1,8 +1,5 @@
 <template>
   <!--显示网站图标-->
-  <!--  <el-card>-->
-
-  <!--  </el-card>-->
   <el-form label-width="auto" :model="form" style="max-width: 600px; margin: 0 auto">
     <el-image alt="该地址无法获取默认图标" :src="src" style="width: 40px; height: 40px" />
     <el-form-item label="站点名称">
@@ -23,7 +20,7 @@
       <el-input v-model="form.detail" placeholder="选填，站点的一句话介绍" />
     </el-form-item>
     <el-form-item label="站点图标">
-      <el-input v-model="form.img" placeholder="选填，站点图标链接或base64编码图片" />
+      <el-input v-model.trim="form.img" placeholder="选填，站点图标链接或base64编码图片" />
     </el-form-item>
     <div>
       <!--        <el-button @click="dialogVisible=false">取消上传</el-button>-->
@@ -34,12 +31,12 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue"
-import momo from "@/apis"
 //types
 import type { Navigation } from "@/types/url"
 import type { TableFilterItem } from "@/types/global"
 //files
 import ico_custom from "@/assets/home/custom.png"
+import { api_add_url } from "@/apis/home/website"
 
 const form: Navigation = reactive({
   img: "",
@@ -74,15 +71,13 @@ const checkIco = () => {
 //上传新的导航网址
 const addUrl = async (data: Navigation) => {
   if (!data.name || !data.sort || !data.url) return ElMessage.error("导航站点名、分类、网址均不能为空！")
-  if (!data.img.trim()) data.img = "https://quaint-tomato-hare.faviconkit.com/" + form.url
+  if (!data.img) data.img = "https://quaint-tomato-hare.faviconkit.com/" + form.url
   try {
-    const result = await momo.post("/addUrl", data)
-    console.log(result)
-    const { msg } = result
-    ElMessage.success(msg)
-    setTimeout(() => {
-      location.reload()
-    }, 2000)
+    const flag = await api_add_url(data)
+    if (flag)
+      setTimeout(() => {
+        location.reload()
+      }, 2000)
   } catch (error) {
     console.log("发生错误：")
     console.dir(error)

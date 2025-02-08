@@ -78,6 +78,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     Time: typeof import('./src/components/Time.vue')['default']
     TitleDiv: typeof import('./src/components/TitleDiv.vue')['default']
+    ToolBox: typeof import('./src/components/home/toolBox.vue')['default']
     UploadAudio: typeof import('./src/components/UploadAudio.vue')['default']
     UploadImage: typeof import('./src/components/UploadImage.vue')['default']
     VolumeComp: typeof import('./src/components/smallComp/VolumeComp.vue')['default']

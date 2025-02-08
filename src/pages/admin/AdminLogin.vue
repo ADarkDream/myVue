@@ -1,40 +1,40 @@
 <template>
-  <div class="loginForm">
+  <!-- <div class="loginForm">
     <h2>Admin Login</h2>
     <div class="user-box">
-      <input v-model.lazy.trim="ruleForm.email" name="" required type="text" />
+      <input v-model.lazy.trim="ruleForm.email" name="email" required type="text" />
       <label>Email</label>
     </div>
     <div class="user-box">
-      <input name="" required type="password" />
+      <input name="password" required type="password" />
       <label>Password</label>
     </div>
     <div>
+      <el-button :loading="loading" @click="resetForm(ruleFormRef)">Reset</el-button>
       <el-button :loading="loading" @click="submitForm(ruleFormRef)">Login</el-button>
     </div>
-  </div>
+  </div> -->
   <el-form
-    v-show="false"
+    v-show="true"
     ref="ruleFormRef"
     class="loginForm"
-    label-position="top"
+    label-position="left"
     label-width="auto"
     :model="ruleForm"
     :rules="Rules"
     status-icon
   >
-    <el-form-item class="user-box" prop="email">
-      <el-input v-model.lazy.trim="ruleForm.email" autocomplete="off" />
-      <label>输入邮箱</label>
+    <h2>Admin Login</h2>
+    <el-form-item label="邮箱" prop="email">
+      <el-input v-model.lazy.trim="ruleForm.email" clearable />
     </el-form-item>
-    <el-form-item class="user-box" prop="password">
-      <el-input v-model.lazy.trim="ruleForm.password" autocomplete="off" type="password" @keyup.enter="submitForm(ruleFormRef)" />
-      <label>输入密码</label>
+    <el-form-item label="密码" prop="password" class="password">
+      <el-input v-model.lazy.trim="ruleForm.password" type="password" clearable @keyup.enter="submitForm(ruleFormRef)" />
     </el-form-item>
-    <!-- <div class="btn">
-    <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-    <el-button type="primary" @click="submitForm(ruleFormRef)" :loading="loading">登录</el-button>
-  </div>-->
+    <div class="btn">
+      <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+      <el-button type="primary" :loading="loading" @click="submitForm(ruleFormRef)">登录</el-button>
+    </div>
   </el-form>
 </template>
 
@@ -45,7 +45,7 @@ import type { FormInstance, FormRules } from "element-plus"
 //stores
 import { useUserInfoStore } from "@/store/user/useUserInfoStore"
 import verifyRules from "@/utils/verifyRules"
-import { api_login_admin } from "@/apis/admin"
+import { api_login_admin } from "@/apis/admin/login"
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
@@ -94,11 +94,10 @@ const resetForm = (formEL: FormInstance | undefined) => {
 //region登录账号
 const login = async () => {
   try {
-    const { data } = await api_login_admin(ruleForm)
+    const userInfo = await api_login_admin(ruleForm)
     loading.value = false
-    if (!data) return
-    const { userInfo } = data
-    ElMessage.success(`管理员  ${userInfo.username} 登录成功`)
+    if (!userInfo) return
+    ElMessage.success(`管理员 ${userInfo.username} 登录成功`)
     userInfoStore.updateLocalUserInfo(userInfo, true)
     router.replace({ name: "adminUsersManagement" })
   } catch (error) {
@@ -113,7 +112,7 @@ const login = async () => {
 <style scoped>
 .loginForm {
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
   width: 400px;
   padding: 40px;
@@ -191,5 +190,24 @@ const login = async () => {
   background-color: transparent;
   color: var(--el-color-primary);
   scale: 1.2;
+}
+@media (max-width: 780px) {
+  .loginForm {
+    height: 100%;
+    width: 100%;
+    padding-top: 50%;
+  }
+}
+
+/* 输入框内部透明(自动填充时) */
+.el-input :deep(.el-input__inner:-webkit-autofill) {
+  background-color: transparent !important;
+  transition: all 5000s ease-in-out 0s; /*通过延时渲染背景色变相去除背景颜色*/
+}
+/* 输入框透明 */
+.el-input :deep(.el-input__wrapper),
+.el-input :deep(.el-input__inner) {
+  background-color: transparent;
+  color: #fff; /* 这里改成你想要的颜色 */
 }
 </style>
