@@ -570,7 +570,8 @@ function checkImage(imgInfo: ReverseImg, index: number, e: Event) {
   //这个事件要绑定el-image父级盒子上
   const { imgUrl, newName } = imgInfo
   const target = e.target as HTMLInputElement
-  console.log("点击图片", imgUrl, newName, target)
+  // console.log("点击图片", imgUrl, newName, target)
+  // console.log(isChoose.value)
 
   if (isChoose.value === "none") {
     //没有进入多选状态，此时点击是全屏浏览图片，添加底部菜单
@@ -676,14 +677,17 @@ function selectBtn(type?: "none" | "all" | "part") {
     case "none": //进入多选状态
       selectAll()
       isChoose.value = "all"
+      previewImgList.value = []
       break
     case "all": //清空选择
       selectAll(false)
       isChoose.value = "part"
+      previewImgList.value = []
       break
     case "part": //退出多选状态
       selectAll(false)
       isChoose.value = "none"
+      previewImgList.value = imgList.value.map((item) => item.imgUrl)
       break
     default:
       ElMessage.error("未知的选择状态")

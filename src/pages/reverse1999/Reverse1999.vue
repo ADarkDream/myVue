@@ -34,7 +34,7 @@
           </el-text>
         </template>
       </el-tab-pane>
-      <el-tab-pane :name="4">
+      <!-- <el-tab-pane :name="4">
         <template #label>
           <el-text class="tab-label">
             <el-icon> <Setting /> </el-icon>&ensp;设置
@@ -66,7 +66,7 @@
           <el-text tag="p">1、播放失败的重试函数待测试是否有效</el-text>
           <el-text tag="p">2、浏览器媒体界面，列表最后一首到第一首会出错，播放时间不归位</el-text>
         </div>
-      </el-tab-pane>
+      </el-tab-pane> -->
       <!-- 使用 keep-alive 缓存页面, slot props 动态渲染路由组件 -->
       <router-view v-show="isShowOtherPage" v-slot="{ Component }">
         <Transition :name="toRight ? 'list' : 'relist'">
