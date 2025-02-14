@@ -1,41 +1,38 @@
 # myVue
 
-This template should help get you started developing with Vue 3 in Vite.
+默默的小站前端
 
-## Recommended IDE Setup
+## 项目说明
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable
-Vetur).
+公开本项目前端部分以供展示
 
-## Type Support for `.vue` Imports in TS
+尚有部分冗余文件未删除，部分bug未修复
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type
-checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript
-language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
+### 项目安装
 
 ```sh
 npm install
+#or
+pnpm i
 ```
 
-### Compile and Hot-Reload for Development
+### 项目运行
 
 ```sh
-npm run dev
+npm run start
+#or
+pnpm start
 ```
 
-### Type-Check, Compile and Minify for Production
+### 项目打包
 
 ```sh
-npm run build
+npm run build:prod
+#or
+pnpm build:prod
 ```
 
-## 记录
+## 其他记录
 
 ### 关于瀑布流
 
@@ -45,11 +42,8 @@ npm run build
 >
 > 最后使用第三方库`wc-flow-layout`实现，[项目地址](https://www.npmjs.com/package/wc-flow-layout)
 >
-> grid布局纯CSS可以实现自定义网格展示(不变的数据)，但要动态实现瀑布流需要结合JS计算每一个新增元素的位置和坐标，[实现思路](https://www.bilibili.com/video/BV1dt421L7a7/?share_source=copy_web&vd_source=4a848b0771dedcff278c8618837fdf90)
->
-> 最后使用第三方库`wc-flow-layout`实现，[项目地址](https://www.npmjs.com/package/wc-flow-layout)
 
-## 脚本说明
+## 脚本说明(部分)
 
 ```text
 "prepare": "husky",                                                     // 每次运行 npm i 时执行，如果 husky 没有初始化，则初始化 husky
@@ -91,7 +85,6 @@ npm run build
 │── components.d.ts         // 自动导入 Vue 组件,提供 TypeScript 类型支持
 │── eslint.config.js        // eslint 配置
 │── package.json            // 依赖管理，存储项目信息、依赖包、脚本命令等
-│── postcss.config.js       // PostCSS 配置文件，用于处理 CSS 预处理、插件等
 │── tailwind.config.js      // Tailwind CSS 配置文件
 │── tsconfig.json           // TypeScript 配置文件
 │── tsconfig.node.json      // 用于 Node.js 运行的 TypeScript 配置
@@ -99,17 +92,20 @@ npm run build
 └── vite.config.ts          // Vite 配置文件，定义构建、插件、代理等前端开发环境的相关配置
 ```
 
-## 编译器插件相关
+## 推荐的编译器设置
 
 已在 .vscode 中配置如下自动格式化和默认格式化插件，VSCode打开项目应该会提示安装插件。
 
 如果使用其他编译器，应该也有同类设置和插件。
 
->强烈推荐VSCode安装下方插件:
->因为项目配置了 Prettier 和 ESLint ，所以请在[VSCode中设置工作区默认格式化工具和自动格式化](https://cloud.tencent.com.cn/developer/information/%E5%A6%82%E4%BD%95%E5%9C%A8vscode%E4%B8%AD%E4%BF%AE%E6%94%B9%E8%87%AA%E5%8A%A8%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%A7%84%E5%88%99%EF%BC%9F)以防冲突
+>强烈推荐VSCode安装下方插件，因为项目配置了 Prettier 和 ESLint ，所以请在[VSCode中设置工作区默认格式化工具和自动格式化](https://cloud.tencent.com.cn/developer/information/%E5%A6%82%E4%BD%95%E5%9C%A8vscode%E4%B8%AD%E4%BF%AE%E6%94%B9%E8%87%AA%E5%8A%A8%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%A7%84%E5%88%99%EF%BC%9F)以防冲突
+>
 >[VSCode插件-Prettier（可配置自动格式化）](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+>
 >[VSCode插件-ESLint（可配置自动检查、错误提醒和修复建议）](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+>
 >[VSCode插件-Naive-ui-helper（在组件上按空格出现悬浮提醒)](https://marketplace.visualstudio.com/items?itemName=forestXie.naive-ui-helper)
+>
 >[VSCode插件-TailWind CSS（悬浮于类名上显示对应原生CSS，且带有文档跳转链接）](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
 
 ## Git 提交规范
@@ -134,7 +130,7 @@ npm run build
 
 3、commit 信息格式校验：
 
-commit 信息输入完成之后会触发格式检查，检查无误才会将代码提交到本地仓库。（**如果试错多次仍无法过校验,有可能是`commitlint.config.cjs`配置问题**）
+commit 信息输入完成之后会触发格式检查，检查无误才会将代码提交到本地仓库。（**如果试错多次仍无法过校验，有可能是配置问题**）
 
 4、将本地仓库代码提交到远程仓库
 【可选】配置用户名和邮箱，以便提交代码时能够识别身份：
@@ -151,11 +147,11 @@ commit 信息输入完成之后会触发格式检查，检查无误才会将代�
 
 如果不需要引导式提交，可执行命令`git add . && npm exec lint-staged && git commit`进行提交，命令说明如下：
 
-1、`git add  .`:先将被修改的代码添加到暂存区；
+1、`git add  .`：先将被修改的代码添加到暂存区；
 
 2、`npm exec lint-staged`：引导式提交中的第1步，代码格式化和检查；
 
-3、`git commit`:原版提交方式；
+3、`git commit`：原版提交方式；
 
 提交信息详细规则在`commitlint.config.cjs`中可以查看，大致格式如`{type}({scope,scope}): {subject}`。
 
@@ -163,4 +159,4 @@ commit 信息输入完成之后会触发格式检查，检查无误才会将代�
 
 4、引导式提交中的第3步和第4步
 
->此工作流程文章：[代码审查和 git commit 引导、校验工作流](https://blogs.muxidream.cn/commit)
+>如果你对这个工作流程感兴趣，欢迎阅读文章：[代码审查和 git commit 引导、校验工作流](https://mp.weixin.qq.com/s/ta7lt3-BZvkLyjyLW934BA)
