@@ -14,6 +14,9 @@ import VueDevTools from "vite-plugin-vue-devtools"
 import svgLoader from "vite-svg-loader"
 import { createHtmlPlugin } from "vite-plugin-html"
 import { loadEnv } from "vite"
+// 引入unplugin-element-plus,按需导入样式
+// vite.config.js
+import ElementPlus from "unplugin-element-plus/vite"
 // https://vitejs.dev/config/
 
 /**
@@ -86,6 +89,10 @@ export default ({ mode, command }: { mode: string; command: string }) => {
             enabledCollections: ["ep"],
           }),
         ],
+      }),
+      ElementPlus({
+        //组件中文配置
+        defaultLocale: "zh-cn",
       }),
       Icons({
         autoInstall: true,

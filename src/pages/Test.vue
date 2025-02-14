@@ -8,7 +8,7 @@
           <el-button @click="router.push({ name: 'music' })">点击前往音乐播放器</el-button>
         </el-button-group>
       </div>
-      <el-divider direction="horizontal">本地图片幻灯片</el-divider>
+      <!-- <el-divider direction="horizontal">本地图片幻灯片</el-divider>
       <Slider />
       <el-divider direction="horizontal">文件上传测试</el-divider>
       <UploadAudio />
@@ -19,7 +19,58 @@
         <el-button size="default" type="primary" @click="connect_by_qq(true)">QQ绑定_新窗口</el-button>
       </p>
       <el-divider direction="horizontal">WIKI测试题</el-divider>
-      <Example />
+      <Example /> -->
+      <p>父组件value: {{ value }}</p>
+
+      <!--  <p>sourceData: {{ data.length }}</p>
+      filter node method: -->
+      <!-- <el-tree-select
+        v-model="value"
+        multiple
+        show-checkbox
+        filterable
+        lazy
+        :render-after-expand="false"
+        :data="data"
+        :filter-node-method="filterNodeMethod"
+        :load="loadData"
+        style="width: 240px"
+      /> -->
+      <!-- <div class="flex gap-2">
+        <el-tag v-for="tag in nameList" :key="tag" type="primary" style="margin: 2px">{{ tag }}</el-tag>
+      </div> -->
+      <!-- <el-input-tag
+        v-model="nameList"
+        clearable
+        placeholder="Please input"
+        @input="onQueryChanged"
+        trigger="none"
+        @remove-tag="onRemoveTag"
+      /> -->
+      <!-- <el-input v-model="query" style="width: 240px" placeholder="Please enter keyword" @input="onQueryChanged">
+        <template #prefix>
+          <div class="flex gap-2">
+            <el-tag v-for="tag in nameList" :key="tag" type="primary" style="margin: 2px">{{ tag }}</el-tag>
+          </div>
+        </template>
+      </el-input> -->
+      <!-- <ElTreeV2
+        ref="treeRef"
+        :data="data"
+        show-checkbox
+        filterable
+        :props="{
+          children: 'children',
+          label: 'label',
+          value: 'value',
+        }"
+        :default-checked-keys="value"
+        :render-after-expand="false"
+        :filter-method="filterNodeMethod"
+        style="width: 240px; text-align: left"
+        @check="handleNodeClick"
+      /> -->
+      <CustomTreeSelect :tree="data" :default-value-arr="value" @update-data="handleData" />
     </el-main>
   </div>
 </template>
@@ -34,6 +85,9 @@ import { useResponsiveStore } from "@/store/useResponsiveStore"
 import { useUserInfoStore } from "@/store/user/useUserInfoStore"
 
 import useOAuth from "@/hooks/user/useOAuth"
+import { useReverse1999Store } from "@/store/reverse1999/useReverse1999Store"
+import useReverse1999 from "@/hooks/reverse1999/useReverse1999"
+import CustomTreeSelect from "@/components/smallComp/CustomTreeSelect.vue"
 // import { useMusicPlayStore } from "@/store/music/useMusicPlayStore";
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
@@ -54,6 +108,28 @@ const login_by_qq = (is_oauth = false) => {
 const connect_by_qq = (is_oauth = false) => {
   if (!isLogin.value) return ElMessage.info("请先登录")
   to_qq_oauth({ is_oauth, isPC: isPC.value, type: "connect" })
+}
+const reverse1999Store = useReverse1999Store()
+/**树状筛选 */
+const { getVersion } = useReverse1999()
+
+const value = ref<number[]>([])
+
+const data = ref<TreeItem[]>([])
+//获取全部图片
+onMounted(async () => {
+  //获取版本列表并添加到菜单
+  // await getVersion({ version: "diff", role: "all" }, true)
+  // await render()
+  // const reverse1999Store = useReverse1999Store()
+  // sourceData = toRaw(reverse1999Store.roleTree)
+  // value.value = [1]
+  // data.value = toRaw(reverse1999Store.roleTree) as TreeItem[]
+})
+
+const handleData = (data: { labelArr: string[]; valueArr: number[] }) => {
+  console.log("父组件接收到：", data)
+  value.value = data.valueArr
 }
 </script>
 <style scoped>

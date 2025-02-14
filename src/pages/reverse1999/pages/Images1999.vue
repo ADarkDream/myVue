@@ -17,17 +17,14 @@
           </el-select>
         </el-col>
         <el-col :sm="4">
-          <el-tree-select
+          <el-select-v2
             v-model="condition.roles"
+            :options="options"
+            placeholder="包含角色"
+            multiple
+            filterable
             collapse-tags
             collapse-tags-tooltip
-            :data="roleTree"
-            filterable
-            multiple
-            placeholder="包含角色"
-            :render-after-expand="false"
-            show-checkbox
-            :suffix-icon="Search"
           />
         </el-col>
         <el-col :sm="2">
@@ -137,17 +134,17 @@
       </el-table-column>
       <el-table-column align="center" label="包含角色" min-width="150" prop="roleNames">
         <template #default="scope">
-          <el-tree-select
+          <el-select-v2
             v-if="isEditRow === scope.$index"
             v-model="roleIDList"
-            :data="roleTree"
             filterable
+            placeholder="包含角色"
             multiple
-            :render-after-expand="false"
-            show-checkbox
+            collapse-tags
+            collapse-tags-tooltip
+            :options="options"
             @change="updateRoleNames()"
-          >
-          </el-tree-select>
+          />
           <el-text v-else type="primary">{{ scope.row.roleNames }}</el-text>
         </template>
       </el-table-column>
@@ -187,7 +184,7 @@
       <el-table-column align="center" label="上次修改时间" min-width="150" prop="updated_time">
         <template #default="scope">{{ getTime(scope.row.updated_time) }}</template>
       </el-table-column>
-      <el-table-column align="center" fixed="right" label="操作" min-width="100">
+      <el-table-column align="center" fixed="right" min-width="120">
         <template v-if="isPC" #header>
           <div style="display: flex; justify-content: space-around">
             <span>操作</span
@@ -239,17 +236,13 @@
           </el-select>
         </el-col>
         <el-col :sm="4">
-          <el-tree-select
-            v-model="condition.roles"
-            collapse-tags
-            collapse-tags-tooltip
-            :data="roleTree"
+          <el-select-v2
+            v-model="roleIDList"
             filterable
-            multiple
+            :options="options"
             placeholder="包含角色"
-            :render-after-expand="false"
-            show-checkbox
-            :suffix-icon="Search"
+            multiple
+            @change="updateRoleNames()"
           />
         </el-col>
         <el-col :sm="2">
@@ -304,7 +297,7 @@ import useReverse1999 from "@/hooks/reverse1999/useReverse1999"
 import myFunction from "@/utils/myFunction"
 import fileProcess from "@/utils/fileProcess"
 //types
-import type { TableInstance } from "element-plus"
+import type { ElTree, TableInstance } from "element-plus"
 import { Sort } from "@/types/global"
 import { api_checkReverseUpdate, api_getImage, api_updateImage } from "@/apis/reverse1999"
 
@@ -316,11 +309,16 @@ const { mainPanelContentHeight, screenHeight, isPC } = toRefs(responsiveStore)
 const { allRoleInfo, diffVersionInfo } = toRefs(reverse1999Store)
 const versionNameDictionary = computed(() => reverse1999Store.versionNameDictionary)
 const roleNameDictionary = computed(() => reverse1999Store.roleNameDictionary)
-const roleTree = computed(() => reverse1999Store.roleTree)
+
 const { isAdmin, isLogin } = toRefs(userInfoStore)
 const { getTime } = useTimeStamp()
 const { getVersion } = useReverse1999()
 const { deepEqual, diffObj } = myFunction
+
+// 角色选项
+const options = computed(() => {
+  return allRoleInfo.value.map((item) => ({ label: item.name, value: item.id }))
+})
 
 //region  树状选择框
 const roleIDList = ref<number[]>([]) //树状选择框当前的值(是角色ID字符串数组)
@@ -425,7 +423,7 @@ function handleSortChange({ prop, order }: Sort<ReverseImgInfo>) {
 //获取全部图片
 onMounted(async () => {
   //获取版本列表并添加到菜单
-  await getVersion({ version: "diff", role: "all" })
+  await getVersion({ version: "diff", role: "all" }, true)
   await render()
 })
 

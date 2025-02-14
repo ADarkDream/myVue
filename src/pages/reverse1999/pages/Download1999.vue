@@ -171,14 +171,14 @@
       <div v-show="isShow" class="floatBar">
         <el-button :icon="Top" type="default" @click="scrollToTop">返回顶部</el-button>
         <el-button-group class="btnGroup" type="info">
-          <el-button :type="autoFlag ? 'primary' : 'default'" @click="autoCol">
+          <el-button :type="autoFlag ? 'primary' : 'default'" @click="autoCol()">
             <SVG_auto class="el-icon" /> <span>自动</span>
           </el-button>
-          <el-button :type="autoFlag === false && colNum === 3 ? 'primary' : 'default'" @click="autoCol(3)">
+          <el-button :type="!autoFlag && colNum === 3 ? 'primary' : 'default'" @click="autoCol(3)">
             <SVG_grid_four class="el-icon" />
             <span>3列</span>
           </el-button>
-          <el-button :type="autoFlag === false && colNum === 5 ? 'primary' : 'default'" @click="autoCol(5)">
+          <el-button :type="!autoFlag && colNum === 5 ? 'primary' : 'default'" @click="autoCol(5)">
             <SVG_grid_nine class="el-icon" />
             <span>5列</span>
           </el-button>
@@ -803,7 +803,7 @@ watch(screenWidth, (newVal, oldVal) => {
 function autoCol(num?: number) {
   if (num) {
     autoFlag.value = false
-    colNum.value = 3
+    colNum.value = num
     return
   }
   autoFlag.value = true

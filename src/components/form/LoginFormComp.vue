@@ -9,7 +9,7 @@
     status-icon
   >
     <el-form-item prop="email">
-      <el-input v-model.lazy.trim.lowercase="ruleForm.email" autocomplete="off" placeholder="输入邮箱" />
+      <el-input v-model.lazy.trim="ruleForm.email" autocomplete="off" placeholder="输入邮箱" />
     </el-form-item>
     <el-form-item prop="password">
       <el-input v-model.lazy.trim="ruleForm.password" autocomplete="off" placeholder="输入密码" type="password" />
@@ -124,6 +124,7 @@ const login = async () => {
   try {
     //解决点击登录后马上切换导致误通过的BUG
     if (!ruleForm.policy) return
+    ruleForm.email = ruleForm.email.toLowerCase()
     const userInfo = await api_login(ruleForm)
     if (!userInfo) return
     updateLocalUserInfo(userInfo)

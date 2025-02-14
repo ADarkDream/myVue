@@ -7,7 +7,7 @@
         size="small"
         title="点击复制当前房间号"
         type="primary"
-        @click="copyText('https:muxidream.cn/Chat/hall?roomID=' + playerInfo.roomID + '&playerName=这里填昵称', '房间号')"
+        @click="copyText('https://muxidream.cn/Chat/hall?roomID=' + playerInfo.roomID + '&playerName=这里填昵称', '房间号')"
         >复制房间地址
       </el-button>
     </div>

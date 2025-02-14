@@ -96,6 +96,8 @@ const submitForm = async () => {
         isLoading.value = false
         return ElMessage.info("版本信息未修改，已取消上传。")
       }
+      console.log("tempData", tempData)
+
       await updateVersion({ ...tempData, id: formData.value.id })
     } else {
       //新增版本

@@ -61,3 +61,10 @@ type NoticeActiveNum = {
    */
   active_num?: number
 }
+
+/**树节点结构*/
+export type TreeItem = {
+  label: string
+  value: any
+  children?: TreeItem[]
+}

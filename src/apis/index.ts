@@ -38,7 +38,7 @@ apiClient.interceptors.response.use(
       const userInfoStore = useUserInfoStore()
       userInfoStore.setTokenByType(response.headers.authorization)
     }
-    console.log("响应拦截器response", response)
+    // console.log("响应拦截器response", response)
     const baseURL = response.config.baseURL
     const result = response.data
 

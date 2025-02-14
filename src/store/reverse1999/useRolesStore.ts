@@ -1,14 +1,10 @@
 // 引入defineStore用于创建store
 import { defineStore } from "pinia"
-import { reactive, ref, toRefs } from "vue"
-
-import { useUserInfoStore } from "../user/useUserInfoStore"
+import { ref } from "vue"
 import myFunction from "@/utils/myFunction"
 
 // 定义并暴露一个store
 export const useRolesStore = defineStore("1999_roles", () => {
-  const userInfoStore = useUserInfoStore()
-  const { isLogin, uid } = toRefs(userInfoStore)
   const { deepClone } = myFunction
 
   const isLoading = ref(false)

@@ -20,9 +20,9 @@
     <el-form-item prop="checkPassword">
       <el-input v-model.lazy.trim="ruleForm.checkPassword" autocomplete="off" placeholder="确认密码" type="password" />
     </el-form-item>
-    <el-form-item prop="emailCode">
+    <el-form-item prop="code">
       <div style="display: flex; justify-content: space-between; width: 100%">
-        <el-input v-model.lazy.trim="ruleForm.emailCode" autocomplete="off" placeholder="输入邮箱获取验证码" />
+        <el-input v-model.lazy.trim="ruleForm.code" autocomplete="off" placeholder="输入邮箱获取验证码" />
         <el-button :disabled="isDisabled" type="primary" @click="getEmailCode()">
           {{ isDisabled ? t + "秒后获取" : "获取" }}
         </el-button>
@@ -48,6 +48,7 @@ import verifyRules from "@/utils/verifyRules"
 import titleDiv from "@/utils/titleDiv"
 //types
 import type { registerForm } from "@/types/form"
+import { api_get_email_code, api_register } from "@/apis/user/login"
 
 const ruleFormRef = ref<FormInstance>()
 
@@ -66,7 +67,7 @@ const ruleForm = reactive<registerForm>({
   email: "",
   password: "",
   checkPassword: "",
-  emailCode: "",
+  code: "",
   policy: false,
 })
 
@@ -87,7 +88,7 @@ const Rules = ref<FormRules<typeof ruleForm>>({
   email: [{ validator: verifyRules.email, required: true, trigger: "blur" }],
   password: [{ validator: verifyRules.password, required: true, trigger: "blur" }],
   checkPassword: [{ validator: validatePassword, required: true, trigger: "blur" }],
-  emailCode: [{ validator: verifyRules.emailCode, required: true, trigger: "blur" }],
+  code: [{ validator: verifyRules.emailCode, required: true, trigger: "blur" }],
   policy: [{ validator: verifyRules.policy, required: true, trigger: "blur" }],
 })
 
@@ -96,7 +97,8 @@ const getEmailCode = async () => {
   try {
     const reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+(([.-])[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/i
     if (!reg.test(ruleForm.email)) return ElMessage.error("邮箱格式不正确，请重新输入！")
-
+    const isOk = await api_get_email_code(ruleForm.email)
+    if (!isOk) return
     timer1.value = setInterval(() => {
       t.value--
       isDisabled.value = true
@@ -107,9 +109,6 @@ const getEmailCode = async () => {
       }
       console.log("定时器", t.value)
     }, 1000)
-
-    const result = await momo.post("/getEmailCode", { email: ruleForm.email })
-    ElMessage.success(result.msg)
   } catch (error) {
     console.log("发生错误：")
     console.error(error)
@@ -146,18 +145,8 @@ const register = async () => {
   try {
     //解决点击注册后马上切换导致误通过的BUG
     if (!ruleForm.policy) return
-    const { username, email, password } = ruleForm
-    const result = await momo.post("/register", {
-      username,
-      email: email.toLowerCase(),
-      password,
-      code: ruleForm.emailCode,
-    })
-    console.log(result)
-    const { msg } = result
-    //成功提示信息
-    ElMessage.success(msg)
-    sessionStorage.setItem("email", email)
+    const isOK = await api_register(ruleForm)
+    if (!isOK) return
     resetForm() //清除表单
     //打开登录界面
     toLogin(true)

@@ -47,9 +47,9 @@ export const useReverse1999Store = defineStore(
       }, {})
     )
 
-    /**根据阵营分类的角色树*/
-    const roleTree = computed(() =>
-      campInfo.value.map((camp) => {
+    // 渲染角色树,将角色根据阵营分组,供el-tree-v2使用(el-tree-select组件在数据量过大的情况下会内存溢出)
+    const renderTree = () => {
+      return campInfo.value.map((camp) => {
         const children = allRoleInfo.value
           .map((role) => {
             //去除已删除的角色，将角色根据阵营分组
@@ -58,7 +58,7 @@ export const useReverse1999Store = defineStore(
           .filter((item) => item !== undefined) //过滤掉空值
         return { label: camp.name, value: camp.name, children }
       })
-    )
+    }
 
     /**是否可修改、编辑的状态*/
     const statusOptions = ref([
@@ -126,9 +126,9 @@ export const useReverse1999Store = defineStore(
       raceInfo,
       versionNameDictionary,
       roleNameDictionary,
-      roleTree,
       statusOptions,
       changePanelIndex,
+      renderTree,
     }
   },
   {
