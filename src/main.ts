@@ -28,7 +28,8 @@ import "@/assets/css/custom_el.css"
 import "@/assets/css/animation.css"
 //自定义主题样式
 import "@/assets/css/main.css"
-
+import { MotionPlugin } from "@vueuse/motion"
+import myCustomMotion from "@/utils/customMotion"
 // import '@/assets/css/base.css'
 
 const app = createApp(App)
@@ -41,6 +42,11 @@ app.use(pinia)
 app.use(router)
 app.use(VSwatches) //调色盘
 app.use(hljsVuePlugin) //代码高亮，标签
+/**
+ * @vueuse/motion动画库，后面可改为局部安装
+ * https://motion.vueuse.org/getting-started/introduction#global-installation
+ */
+app.use(MotionPlugin, myCustomMotion)
 app.mount("#app")
 
 //全局初始化

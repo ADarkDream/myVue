@@ -1,6 +1,7 @@
 <template>
   <div class="mainPanel">
-    <el-main>
+    <Swiper />
+    <el-main v-if="false">
       <h1>本页面为功能测试页</h1>
       <div style="margin-top: 10px; padding: 20px">
         <el-button-group>
@@ -81,6 +82,7 @@ import { useRouter } from "vue-router"
 import UploadAudio from "@/components/UploadAudio.vue"
 import Example from "./Example.vue"
 import Slider from "@/pages/Slider.vue"
+import Swiper from "@/components/Swiper.vue"
 import { useResponsiveStore } from "@/store/useResponsiveStore"
 import { useUserInfoStore } from "@/store/user/useUserInfoStore"
 
@@ -133,11 +135,14 @@ const handleData = (data: { labelArr: string[]; valueArr: number[] }) => {
 }
 </script>
 <style scoped>
-.el-container {
+.mainPanel {
+  width: 100%;
+}
+/* .el-container {
   background-color: var(--el-bg-color);
   display: flex;
   justify-content: center;
-}
+} */
 
 .center {
   position: absolute;
