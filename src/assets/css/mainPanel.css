@@ -23,6 +23,7 @@
   border-radius: 10px;
   background-color: var(--main-panel-bg-color);
   opacity: var(--main-panel-bg-opacity);
+  z-index:-1
 }
 
 .mainPanel .tabs {
