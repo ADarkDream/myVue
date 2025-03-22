@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    //    "types": ["vite/client"],
+    //"types": ["vite/client"],
     // "module": "esnext",
     //使用 import.meta.dev需要配置下面两排
     "target": "esnext",
@@ -25,12 +25,17 @@
     //未使用参数检查
     "noUnusedParameters": true,
     //编译器查找 type definition 文件的根路径列表
-    "typeRoots": ["node_modules/@types", "@/types"],
+    "typeRoots": [
+      "node_modules/@types",
+      "@/types"
+    ],
     //允许默认导入CommonJS模块
     "baseUrl": "./",
     // 这里需要配置
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
       // 这里需要配置
     }
     // 如果baseUrl设置为'src',那paths就应该配置为{"@/*": "./*"},如下：
@@ -39,8 +44,17 @@
     //  "@/*": ["./*"]
     // }
   },
-  "include": ["src/**/*.ts", "src/types/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "env.d.ts", "auto-imports.d.ts"],
-  "exclude": ["node_modules"],
+  "include": [
+    "src/**/*.ts",
+    "src/types/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "env.d.ts",
+    "auto-imports.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
   // "files": [],
   "references": [
     // {

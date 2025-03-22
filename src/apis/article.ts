@@ -1,5 +1,4 @@
 import momo from "@/apis"
-import { Notice } from "@/types/global"
 import { ArticleParams, Article } from "@/types/articles"
 
 /**
@@ -13,18 +12,6 @@ export const api_getArticleList = async (params: ArticleParams) => {
   const { code, data } = result
   if (code === 200) return data!.list
   else return []
-}
-/**
- * 请求论坛文章列表
- * @param sort -公告类型数组
- * @returns
- */
-export async function api_getNotice(sort: string[]) {
-  const result = await momo.get<{ noticeList: Notice[] }>("/getNotices", {
-    sort,
-  })
-  console.log("/返回的数据为：", result)
-  return result
 }
 
 /**

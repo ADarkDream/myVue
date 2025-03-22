@@ -139,9 +139,11 @@ commit 信息输入完成之后会触发格式检查，检查无误才会将代�
 
 `git config --global user.email 你的邮箱`
 
-如果你没有关联仓库，运行命令`git remote add origin https://github.com/WIKI-1999/WIKI-1999-Frontend.git`
+如果你没有关联仓库，运行命令`git remote add origin https://github.com/ADarkDream/myVue.git`
 
 运行命令`git push -u origin master`可将本地仓库代码提交到远程仓库
+
+`git push Gitee master` or `git push GitHub master`
 
 二、自行提交
 
