@@ -8,8 +8,7 @@
           <p class="title">默认情况下，你可以一次性批量下载最多{{ downloadLimitNum }}张图片。</p>
           <p>
             1.如果你下载的数量不多，
-            <el-text type="primary">长按或右键保存</el-text>
-            更快且不消耗本站流量。
+            <el-text type="primary">长按或右键图片</el-text>，手动保存速度更快。
           </p>
           <p>
             2.如果你要一次性下载更多图片，请查看
@@ -45,8 +44,8 @@
               @click="copyText('https://nodejs.org/zh-cn', 'Node.Js中文官网地址', 'https://nodejs.org/zh-cn')"
               >Node.js环境
             </el-link>
-            ，在脚本所在目录的CMD窗口输入命令
-            <el-text type="primary">node i</el-text>
+            ，在脚本所在目录的命令窗口输入命令
+            <el-text type="primary">npm i</el-text>
             安装依赖，然后输入
             <el-text type="primary">npm run server</el-text>
             即可运行。
@@ -70,7 +69,8 @@
           </p>
           <p>
             <b>
-              满足以上任一条件，再次点击
+              满足以上任一条件，点击
+              <span class="primary">检查本地代理</span>可查看下载器是否可用，若未报错，再次点击
               <span class="primary">开始下载</span>
               即可进行正常下载。</b
             >
@@ -102,7 +102,7 @@
             <p>
               2.
               <el-link type="primary" @click="changePage(2)">大量下载</el-link>
-              ：通过默默提供的脚本，在你的本地运行一个网站代理，再从本地直接从
+              ：通过默默提供的脚本，在你的本地运行一个网站代理，再通过本地直接从
               <el-link
                 title="点击前往重返未来1999官网"
                 type="primary"

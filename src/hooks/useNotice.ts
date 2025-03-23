@@ -17,6 +17,7 @@ export default function () {
 
   //获取已发布公告
   const getNotices = async (types: string[]) => {
+    console.log("获取公告类型：", types)
     try {
       const temp_types = new Set(types)
       let temp_updateNotes: Notice[] = []

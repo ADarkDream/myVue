@@ -44,7 +44,7 @@
             <el-form-item label="选择角色[默认全选]：" style="flex-direction: column">
               <div class="roleSort">
                 <!--遍历阵营-->
-                <el-text>角色所属阵营：</el-text>
+                <el-text>角色所属阵营(瞎编的)：</el-text>
                 <el-checkbox
                   v-for="({ name, count }, index) in campInfo"
                   :key="index"
@@ -105,7 +105,7 @@
             <div style="text-align: center">
               <el-button @click="reset">重置</el-button>
               <el-button :icon="Search" type="primary" @click="getImages">筛选</el-button>
-              <el-button v-show="isShow" :icon="Warning" type="warning" @click="showDownloadNotice()"> 下载须知 </el-button>
+              <el-button :icon="Warning" type="warning" @click="showDownloadNotice()"> 下载须知 </el-button>
               <br v-if="!isPC" />
               <el-button v-show="isShow" :icon="chooseType[isChoose].icon" :type="chooseType[isChoose].type" @click="selectBtn()">
                 <span>{{ chooseType[isChoose].text }}</span>
@@ -162,7 +162,9 @@
           <el-text>(设计中)</el-text>&ensp; 当前收到赞赏： <el-text type="success">{{ fee }}</el-text
           >&ensp;元(手动录入会有延迟)
           <br />
-          <el-button v-if="!showPayCode" type="success" @click="showPayCode = true">点击展示微信赞赏码</el-button>
+          <el-button v-if="!showPayCode" type="success" @click="showPayCode = true">
+            <SVG_good class="el-icon" /> <span>赞赏</span></el-button
+          >
           <el-image v-else :src="pay_code_src" style="width: 200px" />
         </el-collapse-item>
       </el-collapse>
@@ -269,6 +271,7 @@ import logo from "@/assets/logo-small.png"
 import SVG_auto from "@/assets/reverse1999/auto.svg?component"
 import SVG_grid_four from "@/assets/reverse1999/grid_four.svg?component"
 import SVG_grid_nine from "@/assets/reverse1999/grid_nine.svg?component"
+import SVG_good from "@/assets/reverse1999/good.svg?component"
 import { api_getImage } from "@/apis/reverse1999"
 import { UserInfo } from "@/types/user"
 
@@ -350,7 +353,7 @@ const imgDivRefs = ref<HTMLDivElement[]>([])
 //是否显示收款码
 const showPayCode = ref(false)
 //已赞助费用
-const fee = ref(Number(others.value[0]?.content) || 0)
+const fee = computed(() => others.value[0]?.content || 0)
 //单次最大下载数量
 const downloadLimitNum = ref(25)
 
