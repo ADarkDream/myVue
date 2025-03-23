@@ -50,7 +50,7 @@ export default function () {
 
   //如果音乐有id没地址，则要通过id获取最新的src，然后重新赋值
   const resetUrl = async (song: CloudSongInfo) => {
-    if (song.src) return
+    if (song.src) return true
     //获取播放链接
     const newSong = await useMusicPlay.getMusicUrl(song)
     if (newSong?.src) {
@@ -59,7 +59,12 @@ export default function () {
       ElMessage.info(`播放：${playList.value[index].name}`)
       //切换到添加的这首歌
       // await toggleMusic({index})
-    } else return ElMessage.warning("暂不支持该音乐")
+      return true
+    } else {
+      ElMessage.warning("暂不支持该音乐，将播放下一首")
+      toggleMusic({})
+      return false
+    }
   }
 
   //播放和暂停
@@ -87,8 +92,8 @@ export default function () {
     //     playingIndex.value = 0
     //     ElMessage.info('歌曲不存在,已跳转到第一首')
     // }
-    await resetUrl(thisMusic.value)
-
+    const flag = await resetUrl(thisMusic.value)
+    if (!flag) return
     if (audioContext.value.state === "suspended") {
       await audioContext.value.resume()
     }
@@ -285,7 +290,8 @@ export default function () {
 
     console.log("即将播放", thisMusic.value)
     //获取播放链接
-    await resetUrl(thisMusic.value)
+    const flag = await resetUrl(thisMusic.value)
+    if (!flag) return
     //重置播放进度
     changeCurrentTime(0)
     // if (song?.fee === 1 && !song.src) {
@@ -303,7 +309,8 @@ export default function () {
     if (retryCount === 1) {
       const song = thisMusic.value
       song.src = ""
-      await resetUrl(song)
+      const flag = await resetUrl(song)
+      if (!flag) return
     }
     await audioElement.value.play().catch(async (err) => {
       if (retryCount < 5) {
