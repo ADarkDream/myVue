@@ -70,7 +70,8 @@ apiClient.interceptors.response.use(
       // localStorage.removeItem('token');
       // sessionStorage.clear();
       alert(result.msg)
-      location.href = "/login" // 跳转登录页
+      location.href = "/" //"/login" // 跳转登录页
+      console.log("没有登录页，跳转到首页")
     }
 
     return Promise.reject(response)

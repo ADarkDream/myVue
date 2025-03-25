@@ -33,3 +33,5 @@ coverage
 helper.json
 public/sitemap.xml
 public/sitemap.xml.gz
+
+.vercel

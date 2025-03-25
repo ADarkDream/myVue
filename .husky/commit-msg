@@ -6,5 +6,5 @@ if echo "$commit_message" | grep -qE '^Merge '; then
   exit 0
 fi
 
-# 运行 commitlint
-npx --no-install commitlint --edit "$1"
+# 运行 commitlint,如果用npm运行脚本，需要将pnpm exec替换为npx
+pnpm exec commitlint --edit "$1"
