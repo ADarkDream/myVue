@@ -3,7 +3,7 @@
     <div class="header">
       <div class="searchDiv">
         <el-button :icon="Back" size="small" @click="isShowSearchPanel = false"></el-button>
-        <el-input v-model.trim="keyWords" class="search" clearable placeholder="歌曲名或歌手名" @keyup.enter="searchMusic()" />
+        <el-input v-model="keyWords" class="search" clearable placeholder="歌曲名或歌手名" @keyup.enter="searchMusic()" />
         <el-button size="small" type="primary" @click="searchMusic()">搜索</el-button>
       </div>
       <el-radio-group v-if="false" v-model="searchConfig.type" size="small" style="height: 30px">
@@ -84,7 +84,7 @@ const changeKeyWords = (newWords: string) => {
 const searchMusic = async () => {
   //没有搜索值，返回
   if (!keyWords.value) return ElMessage.info("搜索不能为空")
-  searchConfig.value.s = keyWords.value
+  searchConfig.value.s = keyWords.value.trim()
 
   const offset = (page.value - 1) * limitNum
   if (offset < 0 || offset > totalNum.value) return ElMessage.info("页码错误")

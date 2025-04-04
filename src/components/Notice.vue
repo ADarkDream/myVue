@@ -345,7 +345,7 @@ const friendlyLink = [
     title: "小新书",
     name: "小新书",
     url: "https://lilemy.cn/",
-    imgUrl: "https://lilemy.cn/favicon.ico",
+    imgUrl: "/images/xiaoxin.ico",
   },
 ]
 

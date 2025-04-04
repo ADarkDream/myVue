@@ -26,7 +26,7 @@
             <el-input v-model.trim.number="cloudMusicListID" placeholder="输入网易云歌单ID或分享链接" />
           </el-col>
           <el-col :span="6">
-            <el-button plain type="success" @click="search_song_or_list(cloudMusicListID, false)"> 搜索 </el-button>
+            <el-button plain type="success" @click="search_song_or_list(cloudMusicListID, false)">播放/跳转</el-button>
           </el-col>
         </el-row>
       </el-form-item>

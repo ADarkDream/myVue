@@ -12,7 +12,7 @@
       type="info"
       @click="copyText('50011502001039', '备案号', 'https://beian.mps.gov.cn/#/query/webSearch?code=50011502001039')"
     >
-      <el-image alt="图片加载失败" src="https://beian.mps.gov.cn/favicon.ico" style="width: 20px" />
+      <el-image alt="图片加载失败" :src="gov" style="width: 20px" />
       &ensp;渝公网安备50011502001039
     </el-button>
     <el-text v-if="noWrap || isPC" style="margin: 0 1px" type="info">|</el-text>
@@ -31,6 +31,8 @@ import { useNoticeStore } from "@/store/useNoticeStore"
 //utils
 import titleDiv from "@/utils/titleDiv"
 import myFunction from "@/utils/myFunction"
+//files
+import gov from "@/assets/gov.ico"
 
 const responsiveStore = useResponsiveStore()
 const noticeStore = useNoticeStore()
