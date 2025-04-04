@@ -11,7 +11,7 @@
         ><el-icon> <Refresh /> </el-icon>刷新</el-button
       >
     </div>
-    <el-form v-model="newMusic" label-position="top" label-width="auto" style="width: 100%; margin-top: 20px">
+    <el-form v-model="newMusic" label-position="top" label-width="auto" style="width: 100%; margin-top: 20px; text-align: left">
       <el-form-item>
         <template #label
           >输入歌单id&ensp;<el-icon>

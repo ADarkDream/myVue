@@ -1,44 +1,89 @@
 {
   "name": "默默的小站",
   "short_name": "MoMo",
-  "display_override": ["window-control-overlay","standalone", "minimal-ui"],
+  "display_override": [
+    "window-control-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
   "display": "standalone",
   "start_url": "/",
   "scope": "/",
-  "lang":"zh-CN",
+  "lang": "zh-CN",
   "background_color": "#000",
   "description": "一个社交化导航网站，致力于资源分享，及重返未来1999游戏资源站。社区建设中...",
-    "icons": [
+  "icons": [
     {
-      "src": "/favicon.ico",
+      "src": "/favicon_16x16.png",
       "sizes": "16x16",
-      "type": "image/x-icon"
-    },{
+      "type": "image/png"
+    },
+    {
       "src": "/favicon_42x42.ico",
       "sizes": "42x42",
       "type": "image/x-icon"
-    },{
+    },
+    {
       "src": "/favicon_64x64.ico",
       "sizes": "64x64",
       "type": "image/x-icon"
-    },{
+    },
+    {
+      "src": "/favicon_96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
       "src": "/favicon_128x128.ico",
       "sizes": "128x128",
       "type": "image/x-icon"
-    },{
+    },
+    {
       "src": "/favicon_144x144.png",
       "sizes": "144x144",
       "type": "image/png"
-    }],
-    "shortcuts":[
-         {
-           "name": "重返未来1999",
-            "short_name": "1999",
-            "url": "/reverse1999",
-            "description":"重返未来1999以影像之下载"
-        }, {
-           "name": "我的账本",
-           "url": "/user/books"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "重返未来1999",
+      "short_name": "1999",
+      "url": "/reverse1999",
+      "description": "重返未来1999以影像之下载",
+      "icons": [
+        {
+          "src": "/favicon_96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
         }
-    ]
+      ]
+    },
+    {
+      "name": "我的账本",
+      "url": "/user/books",
+      "icons": [
+        {
+          "src": "/favicon_96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/pwa_pc.jpeg",
+      "sizes": "1962x1120",
+      "type": "image/jpg",
+      "form_factor": "wide",
+      "label": "首页"
+    },
+    {
+      "src": "/images/pwa_mobile.jpeg",
+      "sizes": "563x1000",
+      "type": "image/jpg",
+      "form_factor": "narrow",
+      "label": "首页"
+    }
+  ]
 }

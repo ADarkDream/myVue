@@ -1,7 +1,9 @@
 <template>
   <!--  时钟区域-->
   <div class="tool-box" @click="jumpToUrl">
-    <div class="tool-icon disSelect"><img :src="props.toolInfo.img" :alt="props.toolInfo.title" :draggable="false" /></div>
+    <div class="tool-icon disSelect">
+      <img :src="props.toolInfo.img" :alt="props.toolInfo.title" :draggable="false" loading="lazy" />
+    </div>
     <div class="tool-info">
       <div class="tool-title">{{ props.toolInfo.title || props.toolInfo.name }}</div>
       <div class="tool-desc">{{ props.toolInfo.desc || props.toolInfo.detail }}</div>

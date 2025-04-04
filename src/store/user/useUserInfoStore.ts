@@ -1,11 +1,11 @@
 import { defineStore } from "pinia"
-import { computed, ref, toRefs } from "vue"
+import { computed, ref } from "vue"
 import { ElMessage } from "element-plus"
 import { jwtDecode } from "jwt-decode"
-//hooks
-
 //types
 import type { AdminInfo, Token, UserInfo } from "@/types/user"
+//files
+import BG_PC from "/images/bg_pc.jpg"
 
 // 定义并暴露一个store
 export const useUserInfoStore = defineStore(
@@ -18,7 +18,7 @@ export const useUserInfoStore = defineStore(
     //是否使用本地背景图
     const useUserBGUrl = ref(false)
     //本地背景图
-    const localBgUrl = ref("")
+    const localBgUrl = ref(BG_PC)
 
     const userInfo = ref<UserInfo>({
       username: "",

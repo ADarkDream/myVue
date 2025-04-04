@@ -9,9 +9,16 @@
       <!-- 主要呈现部分(Home / Forum)-->
       <div class="main">
         <router-view v-slot="{ Component }">
-          <transition name="fade">
-            <component :is="Component" v-if="Component" class="view-component" view-component />
-          </transition>
+          <Suspense>
+            <template #default>
+              <transition name="fade">
+                <component :is="Component" class="view-component" />
+              </transition>
+            </template>
+            <template #fallback>
+              <div class="loading">Loading...</div>
+            </template>
+          </Suspense>
         </router-view>
       </div>
     </el-container>

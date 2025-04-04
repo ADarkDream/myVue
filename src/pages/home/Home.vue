@@ -11,7 +11,7 @@
       <!--搜索框区域-->
       <SearchEngine />
       <!--内容区域-->
-      <el-collapse-transition v-show="isShow" class="content">
+      <el-collapse-transition v-if="isShow" v-motion-slide-bottom class="content">
         <Content :show-content="showContent" />
       </el-collapse-transition>
     </el-main>

@@ -76,7 +76,7 @@ const routes = [
   {
     //聊天大厅
     name: "chat",
-    path: "/Chat",
+    path: "/chat",
     component: ChatCenter,
     redirect: { name: "hall" },
     children: [

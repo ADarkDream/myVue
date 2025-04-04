@@ -3,15 +3,13 @@
   <head>
     <title>默默的小站</title>
     <meta charset="UTF-8" />
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <meta content="默默" name="author" />
     <meta content="一个社交化导航网站，致力于资源分享，及重返未来1999游戏资源站。社区建设中..." name="description" />
-    <link rel="manifest" href="/manifest.json" />
-    <!--下一行删掉之后移动端会丢失响应式-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="baidu-site-verification" content="codeva-A4yk8FKcSI" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon-precomposed" href="/favicon_144x144.png" />
-    <!-- <link rel="stylesheet" href="@/assets/base.css" type="text/css"> -->
     <style>
       /*#region 以下是网站加载动画的样式*/
       #loading-mask {
@@ -121,13 +119,6 @@
       html.classList.remove("dark")
     }
 
-    //如果首次加载没有设置夜间模式，新增
-    // if (!Object.keys(responsive).length) {
-    //     sessionStorage.setItem('responsive', JSON.stringify({
-    //         ...responsive,
-    //         isDark
-    //     }))
-    // }
     let isMaskHidden = false
     //加载事件，刷新或首次加载页面触发
     document.onreadystatechange = function () {
