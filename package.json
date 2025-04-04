@@ -21,6 +21,7 @@
     "lint:commitlint": "commitlint --edit $1",
     "lint:diff": "git add . && pnpm exec lint-staged",
     "commit": "pnpm run lint:diff && cz",
+    "push": "git push Gitee && git push origin",
     "prepare": "husky"
   },
   "lint-staged": {

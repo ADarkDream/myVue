@@ -46,7 +46,7 @@ pnpm build:prod
 ## 脚本说明(部分)
 
 ```text
-"prepare": "husky",                                                     // 每次运行 npm i 时执行，如果 husky 没有初始化，则初始化 husky
+"prepare": "husky",                                                     // 每次执行 npm i 时触发，如果 husky 没有初始化，则初始化 husky
 "check:type": "vue-tsc --build --noEmit --force",                       // 执行 TypeScript 类型检查，但不生成任何输出文件
 "check:prettier": "prettier --check .",                                 // 检查项目所有文件并报告不符合格式化规则的代码
 "check": "eslint .",                                                    // 检查项目所有文件并报告不符合格式化和校验规则的代码
@@ -85,7 +85,6 @@ pnpm build:prod
 │── components.d.ts         // 自动导入 Vue 组件,提供 TypeScript 类型支持
 │── eslint.config.js        // eslint 配置
 │── package.json            // 依赖管理，存储项目信息、依赖包、脚本命令等
-│── tailwind.config.js      // Tailwind CSS 配置文件
 │── tsconfig.json           // TypeScript 配置文件
 │── tsconfig.node.json      // 用于 Node.js 运行的 TypeScript 配置
 │── updateSitemap.js        // 项目打包时，根据router生成网站站点地图的脚本文件【网站新增路由需要手动更新本脚本内容】
@@ -104,13 +103,10 @@ pnpm build:prod
 >
 >[VSCode插件-ESLint（可配置自动检查、错误提醒和修复建议）](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 >
->[VSCode插件-Naive-ui-helper（在组件上按空格出现悬浮提醒)](https://marketplace.visualstudio.com/items?itemName=forestXie.naive-ui-helper)
->
->[VSCode插件-TailWind CSS（悬浮于类名上显示对应原生CSS，且带有文档跳转链接）](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
 
 ## Git 提交规范
 
-项目已配置引导式提交工具，运行`commit`脚本,例如`npm run commit`，即可触发，大致步骤如下。
+项目已配置引导式提交工具，执行`commit`脚本,例如`npm run commit`，即可触发，大致步骤如下。
 
 一、引导式提交
 
@@ -139,11 +135,17 @@ commit 信息输入完成之后会触发格式检查，检查无误才会将代�
 
 `git config --global user.email 你的邮箱`
 
-如果你没有关联仓库，运行命令`git remote add origin https://github.com/ADarkDream/myVue.git`
+执行命令`git remote -v`查看当前项目关联的远程仓库，如果你没有关联仓库，执行如下命令可关联本项目的仓库：
 
-运行命令`git push -u origin master`可将本地仓库代码提交到远程仓库
+``` bash
+git remote add origin https://github.com/ADarkDream/myVue.git
+# and
+git remote add Gitee https://gitee.com/MuXi-Dream/myVue.git
+```
 
-`git push Gitee master` or `git push GitHub master`
+执行脚本`push`或命令`git push Gitee && git push origin`可将本地仓库代码提交到所有相关联的远程仓库
+
+或`git push Gitee master` or `git push origin master`可分别推送到两个仓库
 
 二、自行提交
 
