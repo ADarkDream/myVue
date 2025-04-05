@@ -50,7 +50,7 @@ import { useUserInfoStore } from "@/store/user/useUserInfoStore"
 //types
 import { EngineData, ThisEngine } from "@/types/url"
 //files
-import ico_custom from "@/assets/home/custom.png"
+import ico_custom from "@/assets/home/custom.svg?url"
 
 const userInfoStore = useUserInfoStore()
 const { isLogin } = toRefs(userInfoStore)

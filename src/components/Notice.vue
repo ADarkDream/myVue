@@ -234,7 +234,7 @@ import Approve from "@/components/Approve.vue"
 import myFunction from "@/utils/myFunction"
 import titleDiv from "@/utils/titleDiv"
 //files
-import customIco from "@/assets/home/custom.png"
+import customIco from "@/assets/home/custom.svg?url"
 
 const noticeStore = useNoticeStore()
 const { updateNotes, noUpdated, feedback } = toRefs(noticeStore)

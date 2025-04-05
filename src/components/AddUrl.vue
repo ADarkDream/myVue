@@ -35,7 +35,7 @@ import { reactive, ref } from "vue"
 import type { Navigation } from "@/types/url"
 import type { TableFilterItem } from "@/types/global"
 //files
-import ico_custom from "@/assets/home/custom.png"
+import ico_custom from "@/assets/home/custom.svg?url"
 import { api_add_url } from "@/apis/home/website"
 
 const form: Navigation = reactive({

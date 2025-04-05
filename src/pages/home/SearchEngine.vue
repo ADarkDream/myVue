@@ -5,7 +5,7 @@
     <div style="display: flex">
       <!-- 当前的搜索引擎-->
       <div class="engine">
-        <img :alt="engineName" class="searchEngine" :src="searchImg" @click="showEngines = !showEngines" />&ensp;
+        <img :alt="engineName" class="searchEngine" :src="searchImg" @click="showEngines = !showEngines" />
       </div>
       <!--    默认的搜索引擎列表-->
       <div
@@ -63,7 +63,6 @@ import EditEngines from "@/components/EditEngines.vue"
 import { emitter } from "@/utils/emitter"
 //types
 import { EngineData } from "@/types/url"
-
 const { searchEngines } = useLocalEnginesStore()
 const userInfoStore = useUserInfoStore()
 const responsiveStore = useResponsiveStore()
@@ -266,7 +265,7 @@ onMounted(async () => {
 }
 
 .engine {
-  width: 50px;
+  width: 45px;
   margin: 0;
   display: flex;
   justify-content: center;

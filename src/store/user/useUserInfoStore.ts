@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode"
 //types
 import type { AdminInfo, Token, UserInfo } from "@/types/user"
 //files
-import BG_PC from "/images/bg_pc.jpg"
+import BG_PC from "/images/bg_pc.webp"
 
 // 定义并暴露一个store
 export const useUserInfoStore = defineStore(
