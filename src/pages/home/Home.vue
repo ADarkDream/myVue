@@ -1,10 +1,7 @@
 <template>
   <el-container class="homePanel" style="overflow: hidden">
     <!--  侧边栏-->
-    <div class="homeAside">
-      <Aside :show-content="showContent" />
-    </div>
-
+    <Aside :show-content="showContent" />
     <el-main>
       <!--首页时钟-->
       <Time :class="timeClass" @click="showContent(true)" />
@@ -77,16 +74,6 @@ function showContent(isHide = false) {
 .homePanel {
   width: 100%;
   height: 100%;
-}
-
-homeAside {
-  position: absolute;
-  bottom: 0;
-  /* top: 50px; */
-  left: 0;
-  /* width: 8%; */
-  height: 100%;
-  z-index: 100;
 }
 
 .time {
@@ -169,9 +156,6 @@ homeAside {
     height: 10%;
   }
 */
-  /* homeAside {
-    width: 0;
-  } */
 
   .contentUp {
     transform: translateY(0);

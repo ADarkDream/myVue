@@ -12,6 +12,8 @@ import "element-plus/theme-chalk/base.css"
 import "element-plus/theme-chalk/dark/css-vars.css"
 import "wc-flow-layout"
 import pinia from "@/store"
+//  注册自定义图标组件
+import "virtual:svg-icons-register"
 
 /*调色盘*/
 import VSwatches from "vue3-swatches"
