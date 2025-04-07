@@ -12,8 +12,10 @@ import legacy from "@vitejs/plugin-legacy"
 import compression from "vite-plugin-compression"
 import VueDevTools from "vite-plugin-vue-devtools"
 import svgLoader from "vite-svg-loader"
+import htmlMinify from "vite-plugin-html-minify"
 import { createHtmlPlugin } from "vite-plugin-html"
 import { loadEnv } from "vite"
+
 // 引入unplugin-element-plus,按需导入样式
 // vite.config.js
 import ElementPlus from "unplugin-element-plus/vite"
@@ -30,7 +32,8 @@ export default ({ mode, command }: { mode: string; command: string }) => {
       __VUE_PROD_DEVTOOLS__: true, //打开控制台插件
     },
     server: {
-      host: "0.0.0.0", //开发模式开启调试的外网网址
+      // host: "0.0.0.0", //开发模式开启调试的外网网址
+      open: true, //自动打开浏览器
       proxy: {
         //前端代理的接口，仅限本地开发使用，上线之后需要nginx或后端代理
         //     "/download1999": {
@@ -118,6 +121,13 @@ export default ({ mode, command }: { mode: string; command: string }) => {
             VITE_NODE_MODE: env.VITE_NODE_MODE,
           },
         },
+      }),
+      // html文件压缩
+      htmlMinify({
+        collapseWhitespace: true, // 折叠空格
+        removeComments: true, // 移除注释
+        minifyJS: true, // 压缩 <script> 中的 JS
+        minifyCSS: true, // 压缩 <style> 中的 CSS
       }),
     ],
     resolve: {

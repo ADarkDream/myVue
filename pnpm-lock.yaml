@@ -192,6 +192,9 @@ importers:
       vite-plugin-html:
         specifier: ^3.2.2
         version: 3.2.2(vite@5.4.11(@types/node@20.17.12)(sass@1.83.4)(terser@5.37.0))
+      vite-plugin-html-minify:
+        specifier: ^1.0.0
+        version: 1.0.0(rollup@4.30.1)(vite@5.4.11(@types/node@20.17.12)(sass@1.83.4)(terser@5.37.0))
       vite-plugin-vue-devtools:
         specifier: ^7.7.0
         version: 7.7.0(@nuxt/kit@3.15.1(rollup@4.30.1))(rollup@4.30.1)(vite@5.4.11(@types/node@20.17.12)(sass@1.83.4)(terser@5.37.0))(vue@3.5.13(typescript@5.7.3))
@@ -2120,6 +2123,10 @@ packages:
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
 
+  commander@10.0.1:
+    resolution: {integrity: sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==}
+    engines: {node: '>=14'}
+
   commander@13.1.0:
     resolution: {integrity: sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==}
     engines: {node: '>=18'}
@@ -2796,6 +2803,11 @@ packages:
   html-minifier-terser@6.1.0:
     resolution: {integrity: sha512-YXxSlJBZTP7RS3tWnQw74ooKa6L9b9i9QYXY21eUEvhZ3u9XLfv6OnFsQq6RxkhHygsaUMvYsZRV5rU/OVNZxw==}
     engines: {node: '>=12'}
+    hasBin: true
+
+  html-minifier-terser@7.2.0:
+    resolution: {integrity: sha512-tXgn3QfqPIpGl9o+K5tpcj3/MN4SfLtsx2GWwBC3SSd0tXQGyF3gsSqad8loJgKZGM3ZxbYDd5yhiBIdWpmvLA==}
+    engines: {node: ^14.13.1 || >=16.0.0}
     hasBin: true
 
   html-tags@3.3.1:
@@ -4092,6 +4104,11 @@ packages:
     resolution: {integrity: sha512-5QJKBDc+gNYVqL/skgFAP81Yuzo9R+EAf19d+EtsMF/i8kFUpNi3J/H01QD3Oo8zBQn+NzoCIFkpPLynoOzaJg==}
     peerDependencies:
       vite: '>=2.0.0'
+
+  vite-plugin-html-minify@1.0.0:
+    resolution: {integrity: sha512-Y3ztp4RnYkpDKgkrtyYV3iMd3orCTcq2WgZinR5Wtmp/fDjXumAsX5ijKZMdzr/UdXzDUR+lQj/QxBpan/zkMg==}
+    peerDependencies:
+      vite: ^6.1.0
 
   vite-plugin-html@3.2.2:
     resolution: {integrity: sha512-vb9C9kcdzcIo/Oc3CLZVS03dL5pDlOFuhGlZYDCJ840BhWl/0nGeZWf3Qy7NlOayscY4Cm/QRgULCQkEZige5Q==}
@@ -6670,6 +6687,8 @@ snapshots:
 
   comma-separated-tokens@2.0.3: {}
 
+  commander@10.0.1: {}
+
   commander@13.1.0: {}
 
   commander@2.20.3: {}
@@ -7407,6 +7426,16 @@ snapshots:
       clean-css: 5.3.3
       commander: 8.3.0
       he: 1.2.0
+      param-case: 3.0.4
+      relateurl: 0.2.7
+      terser: 5.37.0
+
+  html-minifier-terser@7.2.0:
+    dependencies:
+      camel-case: 4.1.2
+      clean-css: 5.3.3
+      commander: 10.0.1
+      entities: 4.5.0
       param-case: 3.0.4
       relateurl: 0.2.7
       terser: 5.37.0
@@ -8652,6 +8681,14 @@ snapshots:
       vite: 5.4.11(@types/node@20.17.12)(sass@1.83.4)(terser@5.37.0)
     transitivePeerDependencies:
       - supports-color
+
+  vite-plugin-html-minify@1.0.0(rollup@4.30.1)(vite@5.4.11(@types/node@20.17.12)(sass@1.83.4)(terser@5.37.0)):
+    dependencies:
+      '@rollup/pluginutils': 5.1.4(rollup@4.30.1)
+      html-minifier-terser: 7.2.0
+      vite: 5.4.11(@types/node@20.17.12)(sass@1.83.4)(terser@5.37.0)
+    transitivePeerDependencies:
+      - rollup
 
   vite-plugin-html@3.2.2(vite@5.4.11(@types/node@20.17.12)(sass@1.83.4)(terser@5.37.0)):
     dependencies:
