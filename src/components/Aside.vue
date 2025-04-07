@@ -458,6 +458,10 @@ emitter.on("showAsideBtn", handler)
 </script>
 
 <style scoped>
+.el-menu-vertical-demo {
+  left: 0;
+}
+
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
   min-height: 400px;
@@ -478,7 +482,8 @@ emitter.on("showAsideBtn", handler)
 }
 
 .change {
-  position: absolute;
+  position: fixed;
+  left: 0;
   bottom: 0;
   /* width: 100%; */
   border: transparent;

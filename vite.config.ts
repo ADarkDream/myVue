@@ -1,20 +1,20 @@
 import { fileURLToPath, URL } from "node:url"
-
-import { defineConfig } from "vite"
+import { loadEnv, defineConfig } from "vite"
 import vue from "@vitejs/plugin-vue"
+import legacy from "@vitejs/plugin-legacy"
 import AutoImport from "unplugin-auto-import/vite"
 import Components from "unplugin-vue-components/vite"
 import Icons from "unplugin-icons/vite"
 import IconsResolver from "unplugin-icons/resolver"
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers"
-import VueSetupExtend from "vite-plugin-vue-setup-extend"
-import legacy from "@vitejs/plugin-legacy"
 import compression from "vite-plugin-compression"
+import VueSetupExtend from "vite-plugin-vue-setup-extend"
 import VueDevTools from "vite-plugin-vue-devtools"
 import svgLoader from "vite-svg-loader"
 import htmlMinify from "vite-plugin-html-minify"
 import { createHtmlPlugin } from "vite-plugin-html"
-import { loadEnv } from "vite"
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons"
+import path from "path"
 
 // 引入unplugin-element-plus,按需导入样式
 // vite.config.js
@@ -92,6 +92,11 @@ export default ({ mode, command }: { mode: string; command: string }) => {
             enabledCollections: ["ep"],
           }),
         ],
+        // 添加本地组件目录
+        dirs: ["src/components"], // 默认就是这个路径，你可以指定多个
+        extensions: ["vue"],
+        deep: true, // 是否递归子目录
+        dts: "src/components.d.ts", // 生成类型定义文件，推荐开启
       }),
       ElementPlus({
         //组件中文配置
@@ -128,6 +133,12 @@ export default ({ mode, command }: { mode: string; command: string }) => {
         removeComments: true, // 移除注释
         minifyJS: true, // 压缩 <script> 中的 JS
         minifyCSS: true, // 压缩 <style> 中的 CSS
+      }),
+      // 自定义svg组件
+      createSvgIconsPlugin({
+        // 指定图标文件夹（存放SVG的地方）
+        iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
+        symbolId: "icon-[name]",
       }),
     ],
     resolve: {
