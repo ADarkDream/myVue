@@ -11,7 +11,6 @@
       :data="tableData"
       :default-sort="{ prop: 'id', order: 'custom' }"
       highlight-current-row
-      max-height="500"
       stripe
       style="width: 100%"
       table-layout="auto"

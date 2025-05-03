@@ -163,7 +163,7 @@
           >&ensp;元(手动录入会有延迟)
           <br />
           <el-button v-if="!showPayCode" type="success" @click="showPayCode = true">
-            <SVG_good class="el-icon" /> <span>赞赏</span></el-button
+            <SvgIcon name="good" class="el-icon" /> <span>赞赏</span></el-button
           >
           <el-image v-else :src="pay_code_src" style="width: 200px" />
         </el-collapse-item>
@@ -174,14 +174,14 @@
         <el-button :icon="Top" type="default" @click="scrollToTop">返回顶部</el-button>
         <el-button-group class="btnGroup" type="info">
           <el-button :type="autoFlag ? 'primary' : 'default'" @click="autoCol()">
-            <SVG_auto class="el-icon" /> <span>自动</span>
+            <SvgIcon name="auto" class="el-icon" /> <span>自动</span>
           </el-button>
           <el-button :type="!autoFlag && colNum === 3 ? 'primary' : 'default'" @click="autoCol(3)">
-            <SVG_grid_four class="el-icon" />
+            <SvgIcon name="grid_four" class="el-icon" />
             <span>3列</span>
           </el-button>
           <el-button :type="!autoFlag && colNum === 5 ? 'primary' : 'default'" @click="autoCol(5)">
-            <SVG_grid_nine class="el-icon" />
+            <SvgIcon name="grid_nine" class="el-icon" />
             <span>5列</span>
           </el-button>
         </el-button-group>
@@ -268,10 +268,6 @@ import userInfo from "@/utils/userInfo"
 import { NoticeActiveNum } from "@/types/global"
 //files
 import logo from "@/assets/logo-small.png"
-import SVG_auto from "@/assets/reverse1999/auto.svg?component"
-import SVG_grid_four from "@/assets/reverse1999/grid_four.svg?component"
-import SVG_grid_nine from "@/assets/reverse1999/grid_nine.svg?component"
-import SVG_good from "@/assets/reverse1999/good.svg?component"
 import { api_getImage } from "@/apis/reverse1999"
 import { UserInfo } from "@/types/user"
 
@@ -893,7 +889,7 @@ onActivated(() => {
 .floatBar {
   display: flex;
   justify-content: space-between;
-  margin: 0 20px;
+  margin: 5px 20px;
 }
 
 .el-image:hover {

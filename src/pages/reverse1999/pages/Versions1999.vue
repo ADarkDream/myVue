@@ -7,7 +7,6 @@
     <el-table
       ref="tableRef"
       border
-      class="myCustomElTable"
       :data="tableData"
       flexible
       highlight-current-row
@@ -214,10 +213,6 @@ onMounted(async () => {
 .versions1999 {
   .el-tag {
     margin: 2px;
-  }
-
-  .myCustomElTable {
-    border-radius: 5px;
   }
 }
 

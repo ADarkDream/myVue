@@ -4,7 +4,7 @@
     <el-switch v-model="tableVisible" active-text="表格" inactive-text="矩形" size="large" />
     <el-button v-show="tableVisible" @click="clearFilter">清空全部筛选</el-button>
   </div>
-  <el-scrollbar height="500px">
+  <el-scrollbar>
     <el-main v-if="tableVisible" style="padding-bottom: 0; padding-top: 0">
       <el-table
         ref="tableRef"
@@ -12,7 +12,6 @@
         :data="allArticleList"
         :default-sort="{ prop: 'id', order: 'custom' }"
         highlight-current-row
-        max-height="500"
         stripe
         table-layout="auto"
         type="type"

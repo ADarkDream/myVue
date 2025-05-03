@@ -11,10 +11,10 @@ import compression from "vite-plugin-compression"
 import VueSetupExtend from "vite-plugin-vue-setup-extend"
 import VueDevTools from "vite-plugin-vue-devtools"
 import svgLoader from "vite-svg-loader"
-import htmlMinify from "vite-plugin-html-minify"
+import { ViteMinifyPlugin } from "vite-plugin-minify"
 import { createHtmlPlugin } from "vite-plugin-html"
-import { createSvgIconsPlugin } from "vite-plugin-svg-icons"
-import path from "path"
+import { createSvgIconsPlugin } from "vite-plugin-svg-icons-ng"
+import path from "node:path"
 
 // 引入unplugin-element-plus,按需导入样式
 // vite.config.js
@@ -128,7 +128,7 @@ export default ({ mode, command }: { mode: string; command: string }) => {
         },
       }),
       // html文件压缩
-      htmlMinify({
+      ViteMinifyPlugin({
         collapseWhitespace: true, // 折叠空格
         removeComments: true, // 移除注释
         minifyJS: true, // 压缩 <script> 中的 JS
@@ -139,6 +139,7 @@ export default ({ mode, command }: { mode: string; command: string }) => {
         // 指定图标文件夹（存放SVG的地方）
         iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
         symbolId: "icon-[name]",
+        // strokeOverride: true,
       }),
     ],
     resolve: {

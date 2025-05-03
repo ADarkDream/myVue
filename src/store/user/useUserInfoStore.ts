@@ -60,9 +60,9 @@ export const useUserInfoStore = defineStore(
       get: () => adminInfo.value.headImgUrl || userInfo.value.headImgUrl,
       set: (val: string) => (isAdmin.value ? (adminInfo.value.headImgUrl = val) : (userInfo.value.headImgUrl = val)),
     })
-    const isSupperAdmin = computed({
-      get: () => adminInfo.value.isSupperAdmin || false,
-      set: (val: boolean) => (adminInfo.value.isSupperAdmin = val),
+    const isSuperAdmin = computed({
+      get: () => adminInfo.value.isSuperAdmin || false,
+      set: (val: boolean) => (adminInfo.value.isSuperAdmin = val),
     })
     /**
      * 用户设置的背景图
@@ -221,6 +221,7 @@ export const useUserInfoStore = defineStore(
       bgUrl,
       imageSrc,
       isAdmin,
+      isSuperAdmin,
       isLogin,
       localBgUrl,
       useUserBGUrl,

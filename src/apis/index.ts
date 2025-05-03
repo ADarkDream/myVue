@@ -61,6 +61,7 @@ apiClient.interceptors.response.use(
         isErrorPrinted.value = true
         setTimeout(() => (isErrorPrinted.value = false), 1000)
       }
+      // api请求只能在catch中捕获400错误
       return Promise.reject(response)
     }
     if (code === 401 || code === 402) {
@@ -72,6 +73,8 @@ apiClient.interceptors.response.use(
       alert(result.msg)
       location.href = "/" //"/login" // 跳转登录页
       console.log("没有登录页，跳转到首页")
+      // api请求只能在catch中捕获401和402错误
+      return Promise.reject(response)
     }
 
     return Promise.reject(response)

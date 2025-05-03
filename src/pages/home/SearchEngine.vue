@@ -251,7 +251,7 @@ onMounted(async () => {
   position: relative;
   box-sizing: border-box;
   margin: 0 auto;
-  width: 45%;
+  width: 55%;
   padding: 0 0 0 10px;
   height: 50px;
   display: flex;

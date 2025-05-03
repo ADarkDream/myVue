@@ -40,7 +40,7 @@ export async function api_register(params: RegisterParams) {
     password: params.password,
     code: params.code,
   }
-  const result = await momo.post("/getEmailCode", tempParams)
+  const result = await momo.post("/register", tempParams)
   console.log("api_register返回的数据为：", result)
   const { code, msg } = result
   if (code === 200) {

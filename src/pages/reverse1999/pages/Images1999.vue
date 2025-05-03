@@ -72,7 +72,6 @@
     <el-table
       ref="tableRef"
       border
-      class="myCustomElTable"
       :data="tableData"
       :default-sort="{ prop: 'imgIndex', order: 'custom' }"
       fit

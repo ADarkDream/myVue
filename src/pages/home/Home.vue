@@ -2,7 +2,7 @@
   <el-container class="homePanel" style="overflow: hidden">
     <!--  侧边栏-->
     <Aside :show-content="showContent" />
-    <el-main>
+    <div class="home-main">
       <!--首页时钟-->
       <Time :class="timeClass" @click="showContent(true)" />
       <!--搜索框区域-->
@@ -11,16 +11,9 @@
       <el-collapse-transition v-if="isShow" v-motion-slide-bottom class="content">
         <Content :show-content="showContent" />
       </el-collapse-transition>
-    </el-main>
-    <el-footer>
-      <!--      <div :class="{'footer':true,'sticky':isSticky}">-->
-      <!--      <el-button type="primary" link id="jinrishici-sentence">-->
-      <!--        命里有时终须有，命里无时梦里有。-->
-      <!--      </el-button><br>-->
-      <!--备案号-->
-      <Approve :no-wrap="true" />
-      <!--      </div>-->
-    </el-footer>
+    </div>
+
+    <Approve :no-wrap="true" class="home-footer" />
   </el-container>
 </template>
 
@@ -74,6 +67,21 @@ function showContent(isHide = false) {
 .homePanel {
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  .home-main {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 80%;
+  }
+  .home-footer {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 
 .time {

@@ -19,7 +19,7 @@
     </div>
 
     <!--上传导航网址-->
-    <el-dialog v-model="dialogVisible" :show-close="false" title="推荐导航网站" :width="dialogWidth">
+    <el-dialog v-model="dialogVisible" :show-close="false" title="推荐导航网站" :width="dialogWidth" append-to="#app">
       <AddUrl />
     </el-dialog>
   </div>
@@ -51,10 +51,10 @@ const { dialogWidth } = toRefs(responsiveStore)
 const { getUrlListInfo, getNewList } = useWebsite()
 
 const activeIndex = ref(0) //导航分类的序号
-const cloudList = websiteStore.cloudList
-const activeName = toRef(websiteStore, "activeName")
+const { cloudList, activeName, localListObj, activeType } = toRefs(websiteStore)
+
 //底部当前呈现的网址数据
-const resultList = computed(() => websiteStore.localListObj[websiteStore.activeType] || [])
+const resultList = computed(() => localListObj.value[activeType.value] || [])
 
 //上传导航网站面板的显示与隐藏
 const dialogVisible = ref(false)
@@ -62,7 +62,7 @@ const dialogVisible = ref(false)
 //用emitter得到Aside组件里面的点击事件传来的值，用于更改导航列表
 const handleGetNewList = async (Num: number) => {
   activeIndex.value = Num
-  await getNewList(cloudList[activeIndex.value].sort)
+  await getNewList(cloudList.value[activeIndex.value].sort)
 }
 //endregion
 
@@ -80,7 +80,7 @@ function changeFlag() {
 
 onMounted(async () => {
   await getUrlListInfo()
-  if (cloudList[activeIndex.value]) await getNewList(cloudList[activeIndex.value].sort)
+  if (cloudList.value[activeIndex.value]) await getNewList(cloudList.value[activeIndex.value].sort)
 })
 
 onBeforeUnmount(() => {
@@ -110,12 +110,15 @@ onBeforeUnmount(() => {
 </script>
 <style scoped>
 .contentContainer {
-  background-color: rgba(137, 130, 130, 0.7);
+  background-color: rgba(179, 172, 172, 0.5);
   border-radius: 50px;
   padding: 0;
-  width: 70%;
-  margin: 20px auto 0;
+  width: 80%;
+  margin: 20px auto 60px;
   opacity: 0.8;
+  max-height: calc(100% - 270px);
+  display: flex;
+  flex-direction: column;
 }
 
 .contentContainer .title {
@@ -131,6 +134,8 @@ onBeforeUnmount(() => {
   box-sizing: border-box;
   padding: 20px 30px;
   display: grid;
+  flex: 1;
+  overflow: scroll;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 

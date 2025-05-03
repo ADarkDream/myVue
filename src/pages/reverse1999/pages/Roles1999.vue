@@ -50,7 +50,6 @@
     <el-table
       ref="tableRef"
       border
-      class="myCustomElTable"
       :data="tableData"
       :default-sort="{ prop: 'id', order: 'custom' }"
       flexible

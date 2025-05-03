@@ -23,7 +23,7 @@
   border-radius: 10px;
   background-color: var(--main-panel-bg-color);
   opacity: var(--main-panel-bg-opacity);
-  z-index:-1
+  z-index: -1;
 }
 
 .mainPanel .tabs {
@@ -34,6 +34,12 @@
   }
 }
 
+.el-table {
+  margin-top: 10px;
+  border-radius: 5px 5px 0 0;
+  opacity: 0.8;
+}
+
 /*.mainPanel .el-tabs__content{
   overflow-y: scroll;
 }*/
@@ -41,12 +47,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.myCustomElTable {
-  margin-top: 10px;
-  border-radius: 5px 5px 0 0;
-  opacity: 0.8;
 }
 
 .demo-pagination-block + .demo-pagination-block {
@@ -121,7 +121,7 @@
   }
 
   /*#region el-table */
-  .myCustomElTable {
+  .el-table {
     .el-table__header-wrapper {
       height: 40px;
       line-height: 40px;
@@ -137,26 +137,26 @@
                   } */
   }
 
-  .myCustomElTable :deep(.el-table__body-header .el-table__cell) {
+  .el-table :deep(.el-table__body-header .el-table__cell) {
     padding: 0;
   }
 
-  .myCustomElTable :deep(.el-table__body-header .el-table__cell .cell) {
+  .el-table :deep(.el-table__body-header .el-table__cell .cell) {
     padding: 0 5px;
     text-align: center;
   }
 
-  .myCustomElTable :deep(.el-table__header tr th) {
+  .el-table :deep(.el-table__header tr th) {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
   }
 
-  .myCustomElTable :deep(.el-table__row .cell) {
+  .el-table :deep(.el-table__row .cell) {
     padding: 0;
   }
 
-  .myCustomElTable :deep(.success-row) {
+  .el-table :deep(.success-row) {
     background: #f0f9eb;
   }
 
