@@ -148,7 +148,7 @@ const refresh = async () => {
       cloud_music_list_id: cloud_music_list_id!,
       latest: 1,
     })
-  const { code, msg } = result
+  const { status, msg } = result
 
   if (status === 1) ElMessage.success("刷新成功")
   else ElMessage.info(msg)
