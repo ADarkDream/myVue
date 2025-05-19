@@ -25,9 +25,10 @@ import ElementPlus from "unplugin-element-plus/vite"
  * @param mode - 当前的运行模式,如 'development'
  * @param command - 当前执行的 Vite 脚本命令,如 'server'
  **/
-export default ({ mode, command }: { mode: string; command: string }) => {
+export default defineConfig(({ mode }) => {
+  // vite.config.ts中需要显式加载环境变量，且获取方式不是process.env.XXX，而是env.XXX
   const env = loadEnv(mode, process.cwd())
-  return defineConfig({
+  return {
     define: {
       __VUE_PROD_DEVTOOLS__: true, //打开控制台插件
     },
@@ -213,5 +214,5 @@ export default ({ mode, command }: { mode: string; command: string }) => {
     //部署在主路径使用base:“/”(默认状态)，部署在子路径则使用base:“/ProjectName/”
     //webHistory模式下不能使用相对路径base:“./”
     base: "/",
-  })
-}
+  }
+})
