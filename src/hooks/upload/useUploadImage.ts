@@ -6,7 +6,7 @@ import * as SparkMD5 from "spark-md5"
 //stores
 import { useUploadFileStore } from "@/store/upload/uploadFileStore"
 //utils
-import uploadImageUtiles from "@/utils/upload/uploadImage"
+import uploadImageUtils from "@/utils/upload/uploadImage"
 
 export default function () {
   const uploadFileStore = useUploadFileStore()
@@ -59,7 +59,7 @@ export default function () {
 
     isLoading.value = true
     try {
-      fileInfo.value = await uploadImageUtiles.uploadImg(formData)
+      fileInfo.value = await uploadImageUtils.uploadImg(formData)
       isLoading.value = false
       oldMd5.value = md5.value
       //取消上传,重置部分参数

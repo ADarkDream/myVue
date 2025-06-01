@@ -246,5 +246,14 @@ const myFunction = {
       console.error(err)
     }
   },
+  /**检查FormData中是否存在文件*/
+  hasFileInFormData: (formData: FormData) => {
+    for (const value of formData.values()) {
+      if (value instanceof File) {
+        return true // 存在文件
+      }
+    }
+    return false // 没有文件
+  },
 }
 export default myFunction

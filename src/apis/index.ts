@@ -100,16 +100,17 @@ const transformResponse = <T>(response: AxiosResponse<ResultData<T>>): ResultDat
 const request = async <T = any>(
   method: "get" | "post" | "put" | "delete",
   url: string,
-  data?: any,
+  data?: { params?: T; data?: T },
   config?: AxiosRequestConfig
 ) => {
+  console.log("config", config)
   const response = await apiClient({
     method,
     url,
-    data,
-    params: method === "get" || method === "delete" ? data : undefined, // get 和 delete 请求需要使用 params
+    ...data,
     ...config,
   })
+
   const result = transformResponse<T>(response)
   console.log("返回的数据", result)
   return result
@@ -117,10 +118,10 @@ const request = async <T = any>(
 
 // 通过封装简化各请求方法
 const momo = {
-  get: <T>(url: string, data?: any, config?: AxiosRequestConfig) => request<T>("get", url, data, config),
-  post: <T>(url: string, data?: any, config?: AxiosRequestConfig) => request<T>("post", url, data, config),
-  put: <T>(url: string, data?: any, config?: AxiosRequestConfig) => request<T>("put", url, data, config),
-  delete: <T>(url: string, data?: any, config?: AxiosRequestConfig) => request<T>("delete", url, data, config),
+  get: <T>(url: string, params?: any, config?: AxiosRequestConfig) => request<T>("get", url, { params: params }, config),
+  post: <T>(url: string, data?: any, config?: AxiosRequestConfig) => request<T>("post", url, { data: data }, config),
+  put: <T>(url: string, data?: any, config?: AxiosRequestConfig) => request<T>("put", url, { data: data }, config),
+  delete: <T>(url: string, params?: any, config?: AxiosRequestConfig) => request<T>("delete", url, { params: params }, config),
 }
 //#endregion
 
