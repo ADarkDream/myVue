@@ -404,11 +404,7 @@ const links = [
   },
 ]
 
-const scrollToTop = () => {
-  if (download1999.value) {
-    download1999.value.scrollTo({ top: 0, behavior: "smooth" }) // 平滑滚动到顶部
-  }
-}
+const scrollToTop = () => myFunction.scrollToTop(download1999)
 
 onMounted(async () => {
   await Promise.all([getVersion({ version: "diff", role: "diff" }), getNotices(["completed", "unCompleted", "others"])])
@@ -951,7 +947,6 @@ onActivated(() => {
   /* 下划线 */
   .el-collapse-item {
     text-align: left;
-    border-bottom: 1px dotted rgb(103, 102, 102);
     color: currentColor;
 
     /* 多选框字体颜色和方框背景透明 */

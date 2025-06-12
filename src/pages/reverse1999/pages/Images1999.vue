@@ -73,7 +73,7 @@
       ref="tableRef"
       border
       :data="tableData"
-      :default-sort="{ prop: 'imgIndex', order: 'custom' }"
+      :default-sort="{ prop: 'imgIndex', order: 'ascending' }"
       fit
       highlight-current-row
       :max-height="mainPanelContentHeight - (isPC ? 100 : 70)"
@@ -299,6 +299,7 @@ import fileProcess from "@/utils/fileProcess"
 import type { ElTree, TableInstance } from "element-plus"
 import { Sort } from "@/types/global"
 import { api_checkReverseUpdate, api_getImage, api_updateImage } from "@/apis/reverse1999"
+import { H } from "vite/dist/node/types.d-aGj9QkWt"
 
 const responsiveStore = useResponsiveStore()
 const reverse1999Store = useReverse1999Store()
@@ -312,7 +313,7 @@ const roleNameDictionary = computed(() => reverse1999Store.roleNameDictionary)
 const { isAdmin, isLogin } = toRefs(userInfoStore)
 const { getTime } = useTimeStamp()
 const { getVersion } = useReverse1999()
-const { deepEqual, diffObj } = myFunction
+const { deepEqual, diffObj, scrollToTop } = myFunction
 
 // 角色选项
 const options = computed(() => {
@@ -457,6 +458,7 @@ const render = async (isRefresh = false) => {
       // console.log(idList, outputArray)
     }
   })
+  scrollToTop(tableRef)
 }
 
 /**判断并修改新旧筛选条件*/

@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       // host: "0.0.0.0", //开发模式开启调试的外网网址
-      open: true, //自动打开浏览器
+      // open: true, //自动打开浏览器
       proxy: {
         //前端代理的接口，仅限本地开发使用，上线之后需要nginx或后端代理
         //     "/download1999": {

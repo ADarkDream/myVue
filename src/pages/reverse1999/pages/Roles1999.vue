@@ -51,7 +51,7 @@
       ref="tableRef"
       border
       :data="tableData"
-      :default-sort="{ prop: 'id', order: 'custom' }"
+      :default-sort="{ prop: 'id', order: 'ascending' }"
       flexible
       highlight-current-row
       :max-height="mainPanelContentHeight - (isPC ? 100 : 70)"
@@ -233,7 +233,7 @@ const reverse1999Store = useReverse1999Store()
 const { allRoleInfo, campInfo, raceInfo, statusOptions } = toRefs(reverse1999Store)
 const { toggleAddRoleDrawer } = useRolesStore()
 const { getDiffTime, getTime } = useTimeStamp()
-const { diffObj } = myFunction
+const { diffObj, scrollToTop } = myFunction
 const { getVersion, updateRole } = useReverse1999()
 
 //登录判断
@@ -318,6 +318,7 @@ function filterChange() {
 function render() {
   //根据当前页码计算出应显示的数据
   tableData.value = allRoleInfo.value.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
+  scrollToTop(tableRef)
 }
 
 const searchInfo = reactive<Role>({

@@ -255,5 +255,12 @@ const myFunction = {
     }
     return false // 没有文件
   },
+  /**
+   * 使元素平滑滚动到顶部
+   * @param dom 页面的 Ref 元素
+   * */
+  scrollToTop: (dom: Ref<any>) => {
+    dom.value?.scrollTo({ top: 0, behavior: "smooth" }) // 平滑滚动到顶部
+  },
 }
 export default myFunction
