@@ -299,7 +299,6 @@ import fileProcess from "@/utils/fileProcess"
 import type { ElTree, TableInstance } from "element-plus"
 import { Sort } from "@/types/global"
 import { api_checkReverseUpdate, api_getImage, api_updateImage } from "@/apis/reverse1999"
-import { H } from "vite/dist/node/types.d-aGj9QkWt"
 
 const responsiveStore = useResponsiveStore()
 const reverse1999Store = useReverse1999Store()

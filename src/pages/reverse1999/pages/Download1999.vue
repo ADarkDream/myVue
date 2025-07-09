@@ -701,8 +701,9 @@ const checkPort = async () => {
     const result = await axios("http://127.0.0.1:3000")
     console.log("result", result)
 
-    if (result?.data?.code === 200) {
-      ElMessage.success(result?.data?.msg)
+    // 兼容旧版本下载器代码
+    if (result?.data?.code === 200 || result?.data?.data?.status === 200) {
+      ElMessage.success(result?.data?.msg || result?.data?.data?.msg)
       isOpenProxy.value = true
       // return true
     } else {

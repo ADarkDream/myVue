@@ -586,10 +586,10 @@ emitter.on("showNotice", (item: NoticeActiveNum) => {
 
 .music_div {
   width: 100%;
-  height: 0;
   overflow-y: visible;
   position: fixed;
-  bottom: 70px;
+  left: 0;
+  bottom: 0;
 }
 
 @media (hover: hover) {

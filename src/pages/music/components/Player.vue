@@ -289,7 +289,7 @@ if ("mediaSession" in navigator) {
     /*播放音乐的信息面板,播放时上滑*/
 
     &.active {
-      top: -47px;
+      top: -51px;
       opacity: 1;
       transition: all 0.5s ease;
     }
@@ -311,8 +311,8 @@ if ("mediaSession" in navigator) {
       width: 80px;
       border-radius: 50%;
       box-shadow: 0 0 20px 5px rgba(0, 0, 0, 0);
-      transform: scale(1);
-      transition: all 0.5s ease;
+      // transform: scale(1);
+      transition: all 1s ease;
 
       /*专辑图中间的白色圆点*/
       /*     &::after {
@@ -363,6 +363,7 @@ if ("mediaSession" in navigator) {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 2fr;
       border-radius: 5px;
+      justify-items: center;
 
       svg {
         fill: #c2c6cf;
@@ -418,10 +419,14 @@ if ("mediaSession" in navigator) {
   /*播放器右侧按键布局*/
 
   .options {
-    text-align: right;
+    max-width: 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 
     div {
       display: inline-block;
+      display: flex;
+      align-items: center;
     }
   }
 }
