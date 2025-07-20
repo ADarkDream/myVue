@@ -11,10 +11,12 @@
       </template>
     </el-empty>
     <el-scrollbar v-else :height="(height || drawerSize - 80) - 40">
-      <div v-if="responsiveStore.isPC" class="title"><span>标题</span><span>专辑</span></div>
+      <div v-if="responsiveStore.isPC" class="title">
+        <span>序号</span><span style="margin: 0 15px">专辑图</span><span>标题</span><span>专辑</span><span>时长</span>
+      </div>
       <template v-for="(item, index) in songsList" :key="index">
-        <PCPlayListItem v-if="responsiveStore.isPC" :song-info="item" :index="index" />
-        <PhonePlayListItem v-else :song-info="item" :index="index" /> </template
+        <PCPlayListItem v-if="responsiveStore.isPC" v-model:active-item-id="activeItemId" :song-info="item" :index="index" />
+        <PhonePlayListItem v-else v-model:active-item-id="activeItemId" :song-info="item" :index="index" /> </template
     ></el-scrollbar>
   </div>
 </template>
@@ -55,6 +57,8 @@ const { songsList, height } = defineProps(["songsList", "height"]) as {
   songsList: CloudSongInfo[]
   height: number
 }
+/**当前选中的元素的id*/
+const activeItemId = ref(-1)
 
 const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   //如果是当前播放的歌曲，则暂停
@@ -75,11 +79,12 @@ const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   .el-text {
     font-size: 20px;
   }
-
-  .title {
-    display: grid;
-    grid-template-columns: 3fr 2fr 30px;
-    padding: 2px 15px;
-  }
+}
+.title {
+  display: grid;
+  grid-template-columns: 30px 80px 2fr 1fr 30px;
+  padding: 10px 15px 5px;
+  text-align: left;
+  text-wrap: nowrap;
 }
 </style>

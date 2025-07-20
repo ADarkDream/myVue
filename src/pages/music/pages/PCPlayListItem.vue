@@ -1,54 +1,53 @@
 <template>
   <div class="musicDiv" :class="{ isActive: songInfo.id === activeItemId }" @click="activeItemId = songInfo.id">
-    <div class="songInfo">
-      <div>
-        {{ index + 1 }}
-        <div class="relative">
-          <img class="albumPic" :src="songInfo.album.pic_url" />
-          <div class="playIcon absolute z-2 w-1/2 translate-x-1/2">
-            <SVG_music_playing_indicator v-show="songInfo.id === thisMusic.id" />
-          </div>
-        </div>
-        <div>
-          {{ songInfo.name || "未命名" }}
-          <span style="opacity: 0.5">
-            &ensp;&#8209;&ensp;{{
-              songInfo.artists.length !== 0 ? songInfo.artists.map((artist) => artist.name).join("&") : "未知艺术家"
-            }}
-          </span>
-          &ensp; <el-text v-if="songInfo.fee === 1" type="danger">[VIP]</el-text>
-        </div>
-        <div class="btns">
-          <el-button link size="small" type="primary" @click="playTheMusic(songInfo, index)">
-            {{ songInfo.id === thisMusic.id && isPlaying ? "暂停" : "播放" }}
-          </el-button>
-          <el-button link size="small" type="primary" @click="showMusicListDrawer([songInfo.id])"> 收藏 </el-button>
-          <el-button
-            v-if="songInfo.cloud_music_id || songInfo.id"
-            link
-            size="small"
-            type="primary"
-            @click="musicPlayUtils.shareMusicLink(songInfo)"
-          >
-            分享
-          </el-button>
-          <el-button
-            v-if="songInfo.cloud_music_id"
-            link
-            size="small"
-            target="_blank"
-            type="primary"
-            @click="musicListUtils.goToCloudMusic(songInfo.cloud_music_id)"
-          >
-            前往网易云
-          </el-button>
-          <el-button link type="danger" @click="deleteMusicFromPlayList(songInfo.id)">删除</el-button>
-        </div>
+    <div>{{ index + 1 }}</div>
+    <div class="relative">
+      <img class="albumPic" :src="songInfo.album.pic_url" />
+      <div class="albumPic fill-[skyblue] absolute z-2 translate-y-[-100%]">
+        <SVG_music_playing_indicator v-show="songInfo.id === thisMusic.id" />
       </div>
     </div>
+    <div class="flex-1 flex justify-between">
+      <div class="songName">
+        {{ songInfo.name || "未命名" }}
+        <span style="opacity: 0.5">
+          &ensp;&#8209;&ensp;{{
+            songInfo.artists.length !== 0 ? songInfo.artists.map((artist) => artist.name).join("&") : "未知艺术家"
+          }}
+        </span>
+        &ensp; <el-text v-if="songInfo.fee === 1" type="danger">[VIP]</el-text>
+      </div>
+      <div class="btns">
+        <el-button link size="small" type="primary" @click="playTheMusic(songInfo, index)">
+          {{ songInfo.id === thisMusic.id && isPlaying ? "暂停" : "播放" }}
+        </el-button>
+        <el-button link size="small" type="primary" @click="showMusicListDrawer([songInfo.id])"> 收藏 </el-button>
+        <el-button
+          v-if="songInfo.cloud_music_id || songInfo.id"
+          link
+          size="small"
+          type="primary"
+          @click="musicPlayUtils.shareMusicLink(songInfo)"
+        >
+          分享
+        </el-button>
+        <el-button
+          v-if="songInfo.cloud_music_id"
+          link
+          size="small"
+          target="_blank"
+          type="primary"
+          @click="musicListUtils.goToCloudMusic(songInfo.cloud_music_id)"
+        >
+          前往网易云
+        </el-button>
+        <el-button link type="danger" @click="deleteMusicFromPlayList(songInfo.id)">删除</el-button>
+      </div>
+    </div>
+
     <div class="album">{{ songInfo.album.name }}</div>
     <div class="playIcon">
-      <SVG_music_playing_indicator v-show="songInfo.id === thisMusic.id" />
+      {{ getTime(songInfo.duration) }}
     </div>
   </div>
 </template>
@@ -92,13 +91,23 @@ const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
 }
 
 /**当前选中的元素的id*/
-const activeItemId = ref(-1)
+const activeItemId = defineModel("activeItemId", { type: Number, default: -1 })
+
+/**格式化播放时长*/
+const getTime = (time?: number) => {
+  if (!time) return ""
+  const seconds = Number(time)
+  const minutes = Math.floor(seconds / 60)
+  let second = (seconds % 60).toFixed(0)
+  if (second.length < 2) second = "0" + second
+  return `${minutes}:${second}`
+}
 </script>
 
 <style scoped>
 .musicDiv {
   display: grid;
-  grid-template-columns: 3fr 2fr 30px;
+  grid-template-columns: 30px 80px 2fr 1fr 30px;
   padding: 2px 15px;
   text-align: left;
   align-items: center;
@@ -114,21 +123,17 @@ const activeItemId = ref(-1)
     opacity: 0.5;
   }
 
-  .songInfo,
-  .songInfo div {
+  .songInfo {
     display: flex;
     justify-content: space-between;
     align-items: center;
     /* flex-direction: column; */
   }
 
-  /* 播放图标 */
-  .playIcon {
-    /* 限制宽度*/
-    flex: 0 0 30px;
-    fill: skyblue;
-    display: flex;
-    align-items: center;
+  .songName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
@@ -144,7 +149,8 @@ const activeItemId = ref(-1)
   overflow: hidden;
   text-align: right;
   padding-right: 20px;
-  opacity: 0;
+  /* opacity: 0; */
+  display: none;
   transition: all 0.3s ease;
 }
 
@@ -152,9 +158,14 @@ const activeItemId = ref(-1)
 .isActive {
   background: rgba(255, 255, 255, 0.25);
   border-radius: 5px;
+
+  .songName {
+    overflow: hidden;
+  }
 }
 
 .musicDiv:hover .btns {
-  opacity: 1;
+  /* opacity: 1; */
+  display: inline-block;
 }
 </style>

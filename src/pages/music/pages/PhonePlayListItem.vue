@@ -1,5 +1,5 @@
 <template>
-  <div class="musicDiv">
+  <div class="musicDiv" :class="{ isActive: songInfo.id === activeItemId }" @click="activeItemId = songInfo.id">
     <div>
       <div class="songInfo">
         <el-text
@@ -74,6 +74,9 @@ const { songInfo, index } = defineProps(["songInfo", "index"]) as {
   index: number
 }
 
+/**当前选中的元素的id*/
+const activeItemId = defineModel("activeItemId", { type: Number, default: -1 })
+
 const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   //如果是当前播放的歌曲，则暂停
   if (musicInfo.id === thisMusic.value.id) {
@@ -118,7 +121,8 @@ const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   }
 }
 
-.musicDiv:hover {
+.musicDiv:hover,
+.isActive {
   background: rgba(255, 255, 255, 0.25);
   border-radius: 5px;
   .btns {
