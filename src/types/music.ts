@@ -1,5 +1,5 @@
 //艺术家信息
-interface Artist {
+export interface Artist {
   cloud_artist_id?: number
   name: string
   pic_url?: string

@@ -9,7 +9,7 @@
         </span>
       </span>
       <div class="progress-bar">
-        <el-slider v-model="currentTime" :max="duration" :min="0" :show-tooltip="false" @change="changeCurrentTime" />
+        <el-slider v-model="currentTime" :max="duration" :min="0" :show-tooltip="false" @change="handleChange" />
         <div class="time">
           <span>{{ formatMusicTime(currentTime) }}</span
           ><span>{{ formatMusicTime(duration) }}</span>
@@ -96,6 +96,7 @@ import SVG_list_loop from "@/assets/music/list_loop.svg?component"
 import SVG_sequential_play from "@/assets/music/sequential_play.svg?component"
 import SVG_random_play from "@/assets/music/random_play.svg?component"
 import SVG_single_loop from "@/assets/music/single_loop.svg?component"
+import { Arrayable } from "element-plus/es/utils"
 
 const responsiveStore = useResponsiveStore()
 const { drawerSize, containerHeight } = toRefs(responsiveStore)
@@ -135,6 +136,14 @@ const { lockThePlayer, togglePlayerVisible, toggleVolumePanelVisible } = musicPl
 
 const { play, toggleMusic, setMediaInfo, changeCurrentTime } = useMusicPlay()
 
+// 处理El-Slider的change事件类型问题
+const handleChange = (value: Arrayable<number>) => {
+  if (Array.isArray(value)) {
+    changeCurrentTime(value[0])
+  } else {
+    changeCurrentTime(value)
+  }
+}
 //音频DOM元素
 const audioEl = ref<HTMLAudioElement>()
 //歌名和歌手名DOM元素

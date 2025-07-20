@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /*#region修改原生滚动条样式,还差显示和隐藏动画*/
 /* 修改滚动条整体样式 */
 ::-webkit-scrollbar {
@@ -123,9 +125,9 @@ body {
   }
 }
 
-
 /** 禁止选中(PC端防止图片被拖拽) */
-.disSelect{
+.disSelect,
+img {
   -webkit-user-select: none;
   /* Chrome, Opera, Safari */
   -moz-user-select: none;

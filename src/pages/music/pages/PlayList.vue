@@ -11,47 +11,11 @@
       </template>
     </el-empty>
     <el-scrollbar v-else :height="(height || drawerSize - 80) - 40">
+      <div v-if="responsiveStore.isPC" class="title"><span>标题</span><span>专辑</span></div>
       <template v-for="(item, index) in songsList" :key="index">
-        <div class="musicDiv">
-          <div>
-            <div class="songInfo">
-              <el-text
-                >{{ index + 1 }}、{{ item.name || "未命名" }} -
-                {{ item.artists.length !== 0 ? item.artists.map((artist) => artist.name).join("&") : "未知艺术家" }} </el-text
-              >&ensp;
-              <el-text v-if="item.fee === 1" type="danger">[VIP]</el-text>
-            </div>
-            <div class="btns">
-              <el-button link size="small" type="primary" @click="playTheMusic(item, index)"> 播放 </el-button>
-              <el-button link size="small" type="primary" @click="showMusicListDrawer([item.id])"> 收藏 </el-button>
-              <el-button
-                v-if="item.cloud_music_id || item.id"
-                link
-                size="small"
-                type="primary"
-                @click="musicPlayUtils.shareMusicLink(item)"
-              >
-                分享
-              </el-button>
-              <el-button
-                v-if="item.cloud_music_id"
-                link
-                size="small"
-                target="_blank"
-                type="primary"
-                @click="musicListUtils.goToCloudMusic(item.cloud_music_id)"
-              >
-                前往网易云
-              </el-button>
-              <el-button link type="danger" @click="deleteMusicFromPlayList(item.id)">删除</el-button>
-            </div>
-          </div>
-          <div class="playIcon">
-            <SVG_music_playing_indicator v-show="item.id === thisMusic.id" />
-          </div>
-        </div>
-      </template>
-    </el-scrollbar>
+        <PCPlayListItem v-if="responsiveStore.isPC" :song-info="item" :index="index" />
+        <PhonePlayListItem v-else :song-info="item" :index="index" /> </template
+    ></el-scrollbar>
   </div>
 </template>
 
@@ -73,6 +37,8 @@ import musicListUtils from "@/utils/music/musicList"
 import type { CloudSongInfo } from "@/types/music"
 //files
 import SVG_music_playing_indicator from "@/assets/music/music_playing_indicator.svg?component"
+import PCPlayListItem from "./PCPlayListItem.vue"
+import PhonePlayListItem from "./PhonePlayListItem.vue"
 
 const responsiveStore = useResponsiveStore()
 const musicListStore = useMusicListStore()
@@ -109,48 +75,11 @@ const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   .el-text {
     font-size: 20px;
   }
-}
 
-.musicDiv {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 15px;
-  text-align: left;
-  transition: all 0.2s linear;
-  cursor: pointer;
-}
-
-.musicDiv:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.musicDiv button:hover {
-  color: currentColor;
-  transform: scale(1.1);
-  background-color: transparent;
-}
-
-/* 音乐底部菜单 */
-.musicDiv .btns {
-  height: 0;
-  overflow: hidden;
-  transition: height 0.3s ease;
-}
-
-.musicDiv:hover {
-  border-radius: 5px;
-}
-
-.musicDiv:hover .btns {
-  height: 22px;
-}
-
-/* 播放图标 */
-.musicDiv .playIcon {
-  /* 限制宽度*/
-  flex: 0 0 30px;
-  fill: skyblue;
-  display: flex;
-  align-items: center;
+  .title {
+    display: grid;
+    grid-template-columns: 3fr 2fr 30px;
+    padding: 2px 15px;
+  }
 }
 </style>

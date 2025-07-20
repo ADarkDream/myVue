@@ -14,6 +14,7 @@ import svgLoader from "vite-svg-loader"
 import { ViteMinifyPlugin } from "vite-plugin-minify"
 import { createHtmlPlugin } from "vite-plugin-html"
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons-ng"
+import tailwindcss from "@tailwindcss/vite"
 import path from "node:path"
 
 // 引入unplugin-element-plus,按需导入样式
@@ -142,6 +143,7 @@ export default defineConfig(({ mode }) => {
         symbolId: "icon-[name]",
         // strokeOverride: true,
       }),
+      tailwindcss(),
     ],
     resolve: {
       alias: {

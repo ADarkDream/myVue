@@ -86,7 +86,7 @@
               </el-link>
             </div>
           </el-collapse-item>
-          <el-collapse-item :name="3" title="隐私政策">
+          <el-collapse-item v-if="false" :name="3" title="隐私政策">
             <el-card class="privacyStatement">
               <p>
                 本站与 Microsoft Clarity
@@ -339,7 +339,12 @@ const contact = [
 
 //友情链接
 const friendlyLink = [
-  { id: 1, title: "资源收藏与分享", name: "lsgfish-resource-sharing", url: "" },
+  {
+    id: 1,
+    title: "资源收藏与分享",
+    name: "lsgfish-resource-sharing",
+    url: "https://letsgofishing5.github.io/lsgfish-resource-sharing/",
+  },
   {
     id: 2,
     title: "小新书",
