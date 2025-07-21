@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <div class="title">
       <span>歌单广场[暂时只显示最近十个歌单]</span>
       <el-button :icon="Refresh" link @click="getAllMusicListsInfo()">{{ isPC ? "刷新" : "" }}</el-button>

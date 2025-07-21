@@ -1,10 +1,12 @@
 <template>
-  <div class="musicDiv" :class="{ isActive: songInfo.id === activeItemId }" @click="activeItemId = songInfo.id">
+  <div class="musicDiv" :class="{ isActive: checkedIdList.includes(songInfo.id) }" @click="checkMusic(songInfo.id)">
     <div>{{ index + 1 }}</div>
     <div class="relative">
-      <img class="albumPic" :src="songInfo.album.pic_url" />
-      <div class="albumPic fill-[skyblue] absolute z-2 translate-y-[-100%]">
+      <div class="albumPic" :style="{ backgroundImage: `url(${songInfo.album.pic_url})` }"></div>
+      <div class="audioSvg fill-[skyblue] absolute z-2 translate-y-[-100%]">
         <SVG_music_playing_indicator v-show="songInfo.id === thisMusic.id" />
+        <!-- 播放图标 -->
+        <!-- 暂停图标 -->
       </div>
     </div>
     <div class="flex-1 flex justify-between">
@@ -17,7 +19,7 @@
         </span>
         &ensp; <el-text v-if="songInfo.fee === 1" type="danger">[VIP]</el-text>
       </div>
-      <div class="btns">
+      <div v-show="!isBatchOperation" class="btns">
         <el-button link size="small" type="primary" @click="playTheMusic(songInfo, index)">
           {{ songInfo.id === thisMusic.id && isPlaying ? "暂停" : "播放" }}
         </el-button>
@@ -41,7 +43,7 @@
         >
           前往网易云
         </el-button>
-        <el-button link type="danger" @click="deleteMusicFromPlayList(songInfo.id)">删除</el-button>
+        <el-button link type="danger" @click="deleteMusicFromPlayList([songInfo.id])">删除</el-button>
       </div>
     </div>
 
@@ -56,7 +58,6 @@
 import { toRefs } from "vue"
 //stores
 import { useMusicListStore } from "@/store/music/useMusicListStore"
-import { useResponsiveStore } from "@/store/useResponsiveStore"
 //hooks
 import useMusicPlay from "@/hooks/music/useMusicPlay"
 import useMusic from "@/hooks/music/useMusic"
@@ -68,18 +69,26 @@ import type { CloudSongInfo } from "@/types/music"
 //files
 import SVG_music_playing_indicator from "@/assets/music/music_playing_indicator.svg?component"
 
-const responsiveStore = useResponsiveStore()
 const musicListStore = useMusicListStore()
 
-const { drawerSize } = toRefs(responsiveStore)
 const { thisMusic, isPlaying } = toRefs(musicListStore)
 const { deleteMusicFromPlayList } = musicListStore
 
 const { showMusicListDrawer } = useMusic()
 const { toggleMusic, play } = useMusicPlay()
-const { songInfo, index } = defineProps(["songInfo", "index"]) as {
+const { songInfo, index, isBatchOperation, checkedIdList, checkMusic } = defineProps([
+  "songInfo",
+  "index",
+  "isBatchOperation",
+  "checkedIdList",
+  "checkMusic",
+]) as {
   songInfo: CloudSongInfo
   index: number
+  isBatchOperation: boolean
+  /**当前选中的歌曲id列表*/
+  checkedIdList: number[]
+  checkMusic: (id: number) => void
 }
 
 const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
@@ -89,9 +98,6 @@ const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
     console.log("当前播放的歌曲")
   } else toggleMusic({ index })
 }
-
-/**当前选中的元素的id*/
-const activeItemId = defineModel("activeItemId", { type: Number, default: -1 })
 
 /**格式化播放时长*/
 const getTime = (time?: number) => {
@@ -115,6 +121,12 @@ const getTime = (time?: number) => {
   cursor: pointer;
 
   .albumPic {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+    background-size: cover;
+  }
+  .audioSvg {
     width: 50px;
     height: 50px;
     margin: 0 15px;
@@ -162,6 +174,18 @@ const getTime = (time?: number) => {
   .songName {
     overflow: hidden;
   }
+}
+
+.musicDiv:hover .albumPic::after {
+  content: "";
+  position: absolute;
+  margin: 0 15px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(95, 95, 95, 0.7);
+  border-radius: var(--borderRadius);
 }
 
 .musicDiv:hover .btns {

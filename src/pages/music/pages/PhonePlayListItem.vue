@@ -1,5 +1,5 @@
 <template>
-  <div class="musicDiv" :class="{ isActive: songInfo.id === activeItemId }" @click="activeItemId = songInfo.id">
+  <div class="musicDiv" :class="{ isActive: checkedIdList.includes(songInfo.id) }" @click="checkMusic(songInfo.id)">
     <div>
       <div class="songInfo">
         <el-text
@@ -8,8 +8,10 @@
         >&ensp;
         <el-text v-if="songInfo.fee === 1" type="danger">[VIP]</el-text>
       </div>
-      <div class="btns">
-        <el-button link size="small" type="primary" @click="playTheMusic(songInfo, index)"> 播放 </el-button>
+      <div v-show="!isBatchOperation" class="btns">
+        <el-button link size="small" type="primary" @click="playTheMusic(songInfo, index)">{{
+          songInfo.id === thisMusic.id && isPlaying ? "暂停" : "播放"
+        }}</el-button>
         <el-button link size="small" type="primary" @click="showMusicListDrawer([songInfo.id])"> 收藏 </el-button>
         <el-button
           v-if="songInfo.cloud_music_id || songInfo.id"
@@ -30,7 +32,7 @@
         >
           前往网易云
         </el-button>
-        <el-button link type="danger" @click="deleteMusicFromPlayList(songInfo.id)">删除</el-button>
+        <el-button link type="danger" @click="deleteMusicFromPlayList([songInfo.id])">删除</el-button>
       </div>
     </div>
     <div class="playIcon">
@@ -41,8 +43,6 @@
 
 <script setup lang="ts">
 import { toRefs } from "vue"
-import { ElMessage } from "element-plus"
-import { Operation, Delete } from "@element-plus/icons-vue"
 //stores
 import { useMusicListStore } from "@/store/music/useMusicListStore"
 import { useResponsiveStore } from "@/store/useResponsiveStore"
@@ -63,20 +63,26 @@ const musicListStore = useMusicListStore()
 const mainPanelConfigStore = useMainPanelConfigStore()
 
 const { drawerSize } = toRefs(responsiveStore)
-const { thisMusic } = toRefs(musicListStore)
+const { thisMusic, isPlaying } = toRefs(musicListStore)
 const { deleteMusicFromPlayList, clearPlayList } = musicListStore
 const { changePanelIndex } = mainPanelConfigStore
 
 const { showMusicListDrawer } = useMusic()
 const { toggleMusic, play } = useMusicPlay()
-const { songInfo, index } = defineProps(["songInfo", "index"]) as {
+const { songInfo, index, isBatchOperation, checkedIdList, checkMusic } = defineProps([
+  "songInfo",
+  "index",
+  "isBatchOperation",
+  "checkedIdList",
+  "checkMusic",
+]) as {
   songInfo: CloudSongInfo
   index: number
+  isBatchOperation: boolean
+  /**当前选中的歌曲id列表*/
+  checkedIdList: number[]
+  checkMusic: (id: number) => void
 }
-
-/**当前选中的元素的id*/
-const activeItemId = defineModel("activeItemId", { type: Number, default: -1 })
-
 const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   //如果是当前播放的歌曲，则暂停
   if (musicInfo.id === thisMusic.value.id) {
@@ -121,7 +127,6 @@ const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   }
 }
 
-.musicDiv:hover,
 .isActive {
   background: rgba(255, 255, 255, 0.25);
   border-radius: 5px;

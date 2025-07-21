@@ -572,7 +572,7 @@ emitter.on("showNotice", (item: NoticeActiveNum) => {
 /*登录界面的头像矢量图大小*/
 .headImg {
   width: 200px;
-  margin-bottom: 20px;
+  margin: 0 auto 20px;
 }
 
 .setting {

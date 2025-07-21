@@ -136,19 +136,34 @@ export const useMusicListStore = defineStore(
       return index
     }
 
-    //删除播放列表中指定id的歌
-    const deleteMusicFromPlayList = (id: number) => {
-      //获取要删除的歌在歌单列表的序号
-      const index = playListIndex.value[id]
-      // if (index === playingIndex.value) {
-      //     //toggleMusic({})
-      //     return ElMessage.error('不能删除当前播放的歌曲')
-      // }
-      // else if (index < playingIndex.value) {
-      if (playingIndex.value !== 0) playingIndex.value--
-      // console.warn('删除的是播放歌曲之前的歌')
-      // }
-      playList.value.splice(index, 1)
+    /**批量删除播放列表中指定id的歌*/
+    const deleteMusicFromPlayList = (ids: number[]) => {
+      if (!ids.length) return
+
+      // 当前真正播放的歌曲 id（可能不存在）
+      const currentId = playList.value[playingIndex.value]?.id
+
+      // 1. 生成「保留」的新歌单
+      const newList = playList.value.filter((item) => !ids.includes(item.id))
+
+      // 2. 计算新的 playingIndex
+      let newIndex = -1
+      if (currentId !== undefined) {
+        if (!ids.includes(currentId)) {
+          // 当前歌没被删：直接找它在 newList 中的新下标
+          newIndex = newList.findIndex((item) => item.id === currentId)
+        } else {
+          // 当前歌被删：定位到前一首歌的新下标（边界处理到 0）
+          newIndex = Math.max(
+            newList.findIndex((item) => item.id === currentId),
+            0
+          )
+        }
+      }
+
+      // 3. 整体替换
+      playList.value = newList
+      playingIndex.value = newIndex
     }
 
     /**

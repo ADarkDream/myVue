@@ -54,7 +54,10 @@
           <el-text tag="p">6、加提示：批量添加歌曲询问是否覆盖，删除公开歌单告知私有歌单会一并删除</el-text>
           <el-text tag="p">7、加环境变量，基地址等信息存入环境变量</el-text>
           <el-text tag="p" type="warning">8、歌曲分类搜索</el-text>
-          <el-text tag="p" type="warning">9、批量操作功能</el-text>
+          <el-text tag="p" type="danger">9、tailwindcss的html的font-size响应式计算尚未完成</el-text>
+          <el-text tag="p" type="danger">10、其他音乐列表、播放器的播放列表drawer尚未修改为新样式</el-text>
+          <el-text tag="p" type="danger">11、歌曲上的播放图标和暂停图标尚未实现，同时将菜单也改为图标</el-text>
+
           <h2>问题：</h2>
           <el-text tag="p">1、播放失败的重试函数待测试是否有效</el-text>
           <el-text tag="p">2、浏览器媒体界面，列表最后一首到第一首会出错，播放时间不归位</el-text>

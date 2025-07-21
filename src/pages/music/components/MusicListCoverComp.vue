@@ -23,15 +23,15 @@
           </template>
         </el-dropdown>
       </div>
-    </div>
-    <div class="text">
-      <p class="title">
-        <el-text truncated>{{ musicListInfo.name }}</el-text>
-      </p>
-      <p class="info">
-        <span><span v-if="isPC">上次更新：</span> {{ formatDate(new Date(musicListInfo.updated_time)) }}</span
-        ><span>{{ musicListInfo.songsCount }}首</span>
-      </p>
+      <div class="text">
+        <p class="title">
+          <el-text truncated>{{ musicListInfo.name }}</el-text>
+        </p>
+        <p class="info">
+          <span><span v-if="isPC">上次更新：</span> {{ formatDate(new Date(musicListInfo.updated_time)) }}</span
+          ><span>{{ musicListInfo.songsCount }}首</span>
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -78,8 +78,8 @@ const toggleLike = () => {
 
 <style scoped>
 .card {
-  width: 252px;
-  height: 265px;
+  width: 16rem;
+  height: 16rem;
   background: white;
   box-shadow:
     2px 2px 5px #bebebe,
@@ -88,14 +88,15 @@ const toggleLike = () => {
   --bgImage: url("@/assets/music/music.svg");
   --borderRadius: 30px;
   border-radius: var(--borderRadius);
+  overflow: hidden;
 }
 
 .img {
   position: relative;
   width: 100%;
-  height: 75%;
-  border-top-left-radius: var(--borderRadius);
-  border-top-right-radius: var(--borderRadius);
+  height: 100%;
+  border-radius: var(--borderRadius);
+
   background: linear-gradient(#e66465, #9198e5);
   display: flex;
   justify-content: right;
@@ -103,8 +104,7 @@ const toggleLike = () => {
 
 .img::before {
   content: "";
-  border-top-left-radius: var(--borderRadius);
-  border-top-right-radius: var(--borderRadius);
+  border-radius: var(--borderRadius);
   background: var(--bgImage) no-repeat center center/cover;
   position: absolute;
   width: 100%;
@@ -137,7 +137,13 @@ const toggleLike = () => {
 }
 
 .text {
-  margin: 20px;
+  position: absolute;
+
+  bottom: 0;
+  /* height: 4rem; */
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -145,7 +151,8 @@ const toggleLike = () => {
 
 .text .title {
   font-family: "Lucida Sans", sans-serif;
-  font-size: 15px;
+  font-size: 1.5rem;
+  line-height: 1rem;
   font-weight: 600;
   color: black;
 }
@@ -153,9 +160,11 @@ const toggleLike = () => {
 .text .info {
   font-family: "Lucida Sans", sans-serif;
   color: #999;
-  font-size: 13px;
+  font-size: 0.8rem;
+  line-height: 0.8rem;
   display: flex;
   justify-content: space-between;
+  padding: 0 var(--borderRadius);
 }
 
 /*支持hover才触发*/

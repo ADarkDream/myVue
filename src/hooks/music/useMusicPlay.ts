@@ -295,7 +295,7 @@ export default function () {
     //重置播放进度
     changeCurrentTime(0)
     // if (song?.fee === 1 && !song.src) {
-    //     musicListStore.deleteMusicFromPlayList(song.id)
+    //     musicListStore.deleteMusicFromPlayList([song.id])
     //     return ElMessage.warning('暂不支持VIP音乐')
     // }
 

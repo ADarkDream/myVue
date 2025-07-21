@@ -240,9 +240,9 @@ if ("mediaSession" in navigator) {
 
   .play-panel {
     position: absolute;
-    height: 50px;
-    top: 0;
+    height: 70px;
     opacity: 0;
+    top: 0;
     left: 10px;
     right: 10px;
     background-color: var(--infoColor);
