@@ -2,21 +2,18 @@
   <div class="musicDiv" :class="{ isActive: checkedIdList.includes(songInfo.id) }" @click="checkMusic(songInfo.id)">
     <div>{{ index + 1 }}</div>
     <div class="relative">
-      <div class="albumPic" :style="{ backgroundImage: `url(${songInfo.album.pic_url})` }"></div>
-      <div class="audioSvg fill-[skyblue] absolute z-2 translate-y-[-100%]">
+      <!-- <div class="albumPic" :style="{ backgroundImage: `url(${songInfo.album.pic_url}?param=256y256)` }"></div> -->
+      <el-image fit="cover" loading="lazy" class="albumPic" :src="`${songInfo.album.pic_url}?param=256y256`"> </el-image>
+      <div class="audioSvg fill-[skyblue] absolute z-2 top-0 left-0 right-0 bottom-0">
         <SVG_music_playing_indicator v-show="songInfo.id === thisMusic.id" />
         <!-- 播放图标 -->
         <!-- 暂停图标 -->
       </div>
     </div>
-    <div class="flex-1 flex justify-between">
-      <div class="songName">
-        {{ songInfo.name || "未命名" }}
-        <span style="opacity: 0.5">
-          &ensp;&#8209;&ensp;{{
-            songInfo.artists.length !== 0 ? songInfo.artists.map((artist) => artist.name).join("&") : "未知艺术家"
-          }}
-        </span>
+    <div class="flex justify-between overflow-hidden">
+      <div class="songName" :title="songTitle">
+        {{ songName }}
+        <span style="opacity: 0.5"> &ensp;&#8209;&ensp;{{ artistStr }} </span>
         &ensp; <el-text v-if="songInfo.fee === 1" type="danger">[VIP]</el-text>
       </div>
       <div v-show="!isBatchOperation" class="btns">
@@ -46,8 +43,7 @@
         <el-button link type="danger" @click="deleteMusicFromPlayList([songInfo.id])">删除</el-button>
       </div>
     </div>
-
-    <div class="album">{{ songInfo.album.name }}</div>
+    <div class="album" :title="songInfo.album.name">{{ songInfo.album.name }}</div>
     <div class="playIcon">
       {{ getTime(songInfo.duration) }}
     </div>
@@ -91,6 +87,13 @@ const { songInfo, index, isBatchOperation, checkedIdList, checkMusic } = defineP
   checkMusic: (id: number) => void
 }
 
+/**歌手信息*/
+const artistStr = songInfo.artists.length !== 0 ? songInfo.artists.map((artist) => artist.name).join("&") : "未知艺术家"
+/**歌曲名*/
+const songName = songInfo.name || "未命名"
+/**歌曲名 - 歌手信息*/
+const songTitle = songName + " - " + artistStr
+
 const playTheMusic = (musicInfo: CloudSongInfo, index: number) => {
   //如果是当前播放的歌曲，则暂停
   if (musicInfo.id === thisMusic.value.id) {
@@ -124,12 +127,10 @@ const getTime = (time?: number) => {
     width: 50px;
     height: 50px;
     margin: 0 auto;
-    background-size: cover;
   }
   .audioSvg {
     width: 50px;
     height: 50px;
-    margin: 0 15px;
   }
   .album {
     opacity: 0.5;
@@ -143,6 +144,7 @@ const getTime = (time?: number) => {
   }
 
   .songName {
+    flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -179,12 +181,11 @@ const getTime = (time?: number) => {
 .musicDiv:hover .albumPic::after {
   content: "";
   position: absolute;
-  margin: 0 15px;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(95, 95, 95, 0.7);
+  background: rgba(95, 95, 95, 0.5);
   border-radius: var(--borderRadius);
 }
 

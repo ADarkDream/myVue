@@ -11,7 +11,6 @@ declare module 'vue' {
     AddUrl: typeof import('./components/AddUrl.vue')['default']
     Approve: typeof import('./components/Approve.vue')['default']
     Aside: typeof import('./components/Aside.vue')['default']
-    copy: typeof import('./components/Swiper copy.vue')['default']
     CustomTreeSelect: typeof import('./components/smallComp/CustomTreeSelect.vue')['default']
     EditEngines: typeof import('./components/EditEngines.vue')['default']
     ElAffix: typeof import('element-plus/es')['ElAffix']

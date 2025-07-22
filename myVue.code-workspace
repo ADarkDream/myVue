@@ -9,6 +9,9 @@
 		},
 		{
 			"path": "../NeteaseCloudMusicApi"
+		},
+		{
+			"path": "../download-1999"
 		}
 	],
 	"settings": {

@@ -110,7 +110,7 @@
               <el-button v-show="isShow" :icon="chooseType[isChoose].icon" :type="chooseType[isChoose].type" @click="selectBtn()">
                 <span>{{ chooseType[isChoose].text }}</span>
               </el-button>
-              <el-button v-if="imgList.length && isPC" type="success" @click="checkPort()">检查本地代理</el-button>
+              <el-button v-if="imgList.length && isPC" type="success" @click="checkAllPort()">检查本地代理</el-button>
               <el-button v-show="isShow" :icon="Download" type="success" @click="downloadImages">开始下载 </el-button>
               <br />
               <div class="statement">
@@ -695,25 +695,45 @@ function selectBtn(type?: "none" | "all" | "part") {
 //本地代理服务器是否开启的标志
 const isOpenProxy = ref(false)
 
+//本地代理服务器地址数组
+const localhostArr = ["http://localhost:3000", "http://localhost:1999"]
+//本地代理服务器地址
+const localhost = ref("")
+
 //检查本地代理服务器是否打开
-const checkPort = async () => {
+const checkAllPort = async () => {
+  for (const url of localhostArr) {
+    try {
+      //如果已经开启了代理端口，则不再检查
+      if (isOpenProxy.value) return
+      await checkPort(url)
+    } catch (error) {
+      console.error(`检查 ${url} 发生错误：`, error)
+    }
+  }
+  if (!isOpenProxy.value) ElMessage.error("本地代理服务器未正确运行，请检查错误原因")
+  else ElMessage.success("本地代理服务器已开启，感谢您的耐心合作ღ( ´･ᴗ･` )")
+}
+
+const checkPort = async (url: string) => {
   try {
-    const result = await axios("http://127.0.0.1:3000")
+    const result = await axios(url)
     console.log("result", result)
 
     // 兼容旧版本下载器代码
     if (result?.data?.code === 200 || result?.data?.data?.status === 200) {
       ElMessage.success(result?.data?.msg || result?.data?.data?.msg)
       isOpenProxy.value = true
+      localhost.value = url
       // return true
     } else {
       isOpenProxy.value = false
-      ElMessage.error("本地代理服务器未正确运行，请检查错误原因")
+      // ElMessage.error("本地代理服务器未正确运行，请检查错误原因")
       // return false
     }
   } catch (error) {
     console.error("发生错误：", error)
-    ElMessage.error("本地代理服务器检查发生错误")
+    // ElMessage.error("本地代理服务器检查发生错误")
     isOpenProxy.value = false
   }
 }
@@ -743,7 +763,7 @@ const downloadImages = async () => {
     selectBtn("part")
   } else {
     //下载数量大于5
-    await checkPort()
+    await checkAllPort()
     if (isOpenProxy.value) {
       ElMessage.success("正在通过代理端口进行下载，感谢您的耐心合作ღ( ´･ᴗ･` )")
       console.log(downloadList)
@@ -761,7 +781,7 @@ const downloadImg = async (url: string, imgName: string, imgPath: string) => {
   //将下载链接替换为可使用地址
   if (isOpenProxy.value)
     //如果有端口代理
-    imageUrl = url.replace("https://gamecms-res.sl916.com", "http://localhost:3000/download1999")
+    imageUrl = url.replace("https://gamecms-res.sl916.com", localhost.value + "/download1999")
   else if (imgPath) {
     //没有端口代理
     // if (imgPath.startsWith('.'))
@@ -770,7 +790,7 @@ const downloadImg = async (url: string, imgName: string, imgPath: string) => {
     imageUrl = import.meta.env.VITE_QINIU_URL + "/" + imgPath //七牛云备份,路径添加/
   } else {
     //没有端口代理且服务器没有备份
-    imageUrl = url.replace(axios.defaults.baseURL + "/download1999", "http://localhost:3000/download1999")
+    imageUrl = url.replace(axios.defaults.baseURL + "/download1999", localhost.value + "/download1999")
   }
   try {
     const response = await fetch(imageUrl)
