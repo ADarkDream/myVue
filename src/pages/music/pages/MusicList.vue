@@ -148,6 +148,7 @@ const refresh = async () => {
       latest: 1,
     })
   } else {
+    if (!isLogin.value) ElMessage.info("游客模式下不会刷新其他用户创建的歌单")
     result = await getMusicList({ music_list_id, is_login: isLogin.value }, true)
   }
 
