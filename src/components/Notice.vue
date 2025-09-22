@@ -352,6 +352,13 @@ const friendlyLink = [
     url: "https://lilemy.cn/",
     imgUrl: "/images/xiaoxin.ico",
   },
+  {
+    id: 3,
+    title: "小度的小站",
+    name: "小度的小站",
+    url: "https://xiaoducode.cn/",
+    imgUrl: "/images/xiaodu.ico",
+  },
 ]
 
 //其他待做
@@ -428,7 +435,7 @@ const clear_Clarity_cookie = () => {
     .link_ico {
       width: 25px;
       height: 25px;
-      padding-right: 5px;
+      margin-right: 5px;
     }
   }
 }

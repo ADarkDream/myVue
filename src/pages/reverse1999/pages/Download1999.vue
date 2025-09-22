@@ -174,15 +174,15 @@
         <el-button :icon="Top" type="default" @click="scrollToTop">返回顶部</el-button>
         <el-button-group class="btnGroup" type="info">
           <el-button :type="autoFlag ? 'primary' : 'default'" @click="autoCol()">
-            <SvgIcon name="auto" class="el-icon" /> <span>自动</span>
+            <SvgIcon name="auto" class="el-icon" /><span>&ensp;自动</span>
           </el-button>
           <el-button :type="!autoFlag && colNum === 3 ? 'primary' : 'default'" @click="autoCol(3)">
             <SvgIcon name="grid_four" class="el-icon" />
-            <span>3列</span>
+            <span>&ensp;3列</span>
           </el-button>
           <el-button :type="!autoFlag && colNum === 5 ? 'primary' : 'default'" @click="autoCol(5)">
             <SvgIcon name="grid_nine" class="el-icon" />
-            <span>5列</span>
+            <span>&ensp;5列</span>
           </el-button>
         </el-button-group>
       </div>
@@ -628,6 +628,7 @@ const setBackground = async (url: string, name: string) => {
     })
     if (!imageInfo) throw Error
 
+    // !Token中的背景图信息未被修改(后端需要生成新的token，但后端token获取函数没有)
     updateLocalUserInfo({ bgId: imageInfo.id } as UserInfo)
     toggleBG({ newBgUrl: url })
     useUserBGUrl.value = true

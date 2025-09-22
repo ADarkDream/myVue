@@ -19,7 +19,9 @@ export default function () {
   const OAuthStore = useOAuthStore()
   const userInfoStore = useUserInfoStore()
   const { updateLocalUserInfo } = userInfoStore
-  const { oauth_window, timer } = toRefs(OAuthStore)
+  const { timer } = toRefs(OAuthStore)
+
+  let oauth_window: Window | null = null //登录窗口
 
   /**
    * 发送到数据库
@@ -80,7 +82,7 @@ export default function () {
       //清除监听器
       if (timer.value) clearInterval(timer.value)
       //关闭登录窗口
-      oauth_window.value.close()
+      oauth_window?.close()
 
       const { reffer, ...info } = data as Step_1
       console.log(reffer)
@@ -127,18 +129,18 @@ export default function () {
       const left = (winWidth - newWinWidth) / 2
       //获取新窗口距离屏幕顶部的位置
       const top = (winHeight - newWinHeight) / 2
-      oauth_window.value = window.open(
+      oauth_window = window.open(
         url,
         "TencentLogin",
         `width=${newWinWidth},height=${newWinHeight},top=${top},left=${left},menubar=0,scrollbars=1, resizable = 1, status = 1, titlebar = 0, toolbar = 0, location = 1`
       )
     } else return (location.href = url) //移动端
 
-    if (oauth_window.value) {
+    if (oauth_window) {
       //定时器发送验证信息
       timer.value = setInterval(() => {
         console.log("发送验证", import.meta.env.VITE_BASE_IP)
-        oauth_window.value.postMessage({
+        oauth_window?.postMessage({
           role: "visitor",
           step: 0,
           data: { type, key },
@@ -147,6 +149,15 @@ export default function () {
 
       //监听器接收信息
       window.addEventListener("message", receiveMessage, false)
+
+      const checkClosed = setInterval(() => {
+        if (oauth_window && oauth_window.closed) {
+          clearInterval(timer.value)
+          clearInterval(checkClosed)
+          window.removeEventListener("message", receiveMessage)
+          console.log("用户关闭了 OAuth 窗口")
+        }
+      }, 500)
     }
   }
   // QC.Login.showPopup(config.options_qq)

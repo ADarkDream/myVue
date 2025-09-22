@@ -141,7 +141,7 @@ export default defineConfig(({ mode }) => {
         // 指定图标文件夹（存放SVG的地方）
         iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
         symbolId: "icon-[name]",
-        // strokeOverride: true,
+        strokeOverride: true,
       }),
       tailwindcss(),
     ],
