@@ -54,7 +54,7 @@ export default defineConfig(({ mode }) => {
         // }
       },
       warmup: {
-        clientFiles: ["/src/components/TitleDiv.vue"],
+        clientFiles: ["./src/components/TitleDiv.vue"],
       },
     },
     plugins: [
